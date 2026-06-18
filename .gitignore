@@ -18,6 +18,9 @@ dist-ssr
 # turbo
 .turbo
 
+# cloudflare / wrangler local cache & state
+.wrangler
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
