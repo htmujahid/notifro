@@ -1,0 +1,17 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+*.tsbuildinfo
+
+# Capacitor native build artifacts
+/ios/App/Pods
+/ios/App/build
+/ios/App/output
+/ios/App/App/public
+/ios/capacitor-cordova-ios-plugins
+/ios/DerivedData
+
+# Logs
+*.log

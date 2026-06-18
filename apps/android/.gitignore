@@ -1,0 +1,15 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+*.tsbuildinfo
+
+# Capacitor native build artifacts
+/android/app/build
+/android/build
+/android/.gradle
+/android/capacitor-cordova-android-plugins
+
+# Logs
+*.log

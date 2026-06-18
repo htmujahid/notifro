@@ -1,0 +1,41 @@
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.app {
+  min-height: 100svh;
+  padding: max(1.5rem, env(safe-area-inset-top)) 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.app h1 {
+  margin: 0;
+  font-weight: 600;
+}
+
+.app dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.25rem 1rem;
+  margin: 1rem 0 0;
+  font-size: 0.875rem;
+}
+
+.app dt {
+  font-weight: 600;
+}
+
+.app dd {
+  margin: 0;
+}
