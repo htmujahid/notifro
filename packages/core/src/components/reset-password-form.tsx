@@ -6,7 +6,7 @@ import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
 import { useAuth } from "../auth/context"
-import { resetPasswordSchema, type ResetPasswordValues } from "../auth/schemas"
+import { resetPasswordSchema, type ResetPasswordValues } from "../auth/schemas/auth"
 
 export function ResetPasswordForm() {
   const auth = useAuth()

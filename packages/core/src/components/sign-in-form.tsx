@@ -7,7 +7,7 @@ import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
 import { useAuth } from "../auth/context"
-import { signInSchema, type SignInValues } from "../auth/schemas"
+import { signInSchema, type SignInValues } from "../auth/schemas/auth"
 import { GoogleIcon, OrDivider } from "./auth-icons"
 
 export function SignInForm() {
