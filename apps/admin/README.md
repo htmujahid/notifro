@@ -1,47 +1,20 @@
-# OpenNext Starter
+# admin
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+The Renderical admin console — internal tooling for operators to manage tenants, inspect deliveries, and administer the platform.
 
-## Getting Started
+## Stack
 
-Read the documentation at https://opennext.js.org/cloudflare.
+- **Next.js 16** (App Router) + **React 19** + **Tailwind CSS 4** + **TypeScript 5**
+- Deployed to **Cloudflare** via [`@opennextjs/cloudflare`](https://opennext.js.org/cloudflare)
+
+## How it fits
+
+A standalone Next.js app under `src/app/`. Unlike the client apps it is not built from the shared `@workspace/views` layer — it has its own admin-only screens.
 
 ## Develop
 
-Run the Next.js development server:
-
 ```bash
-npm run dev
-# or similar package manager command
+npm run dev       # local Next.js dev server (localhost:3000)
+npm run preview   # preview on the Cloudflare runtime
+npm run deploy    # deploy to Cloudflare
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-## Preview
-
-Preview the application locally on the Cloudflare runtime:
-
-```bash
-npm run preview
-# or similar package manager command
-```
-
-## Deploy
-
-Deploy the application to Cloudflare:
-
-```bash
-npm run deploy
-# or similar package manager command
-```
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!

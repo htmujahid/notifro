@@ -1,0 +1,23 @@
+# @workspace/core
+
+The **stateful logic layer**. Forms, data fetching, mutations, validation, and feature components that drive the screens in [`@workspace/views`](../views).
+
+## Role in the architecture
+
+Core sits between app-wide logic and the presentation layer:
+
+- It builds on [`@workspace/app`](../app) for universal concerns (auth, context).
+- It owns **stateful logic** — React Query data fetching/caching, React Hook Form state, Zod schemas, organization management.
+- Its only consumer downstream is [`@workspace/views`](../views): core supplies the state and handlers, views render them. Core does **not** do raw presentation, and views do **not** own state.
+
+## What's here
+
+- `components/` — feature components (e.g. organization management)
+- `layouts/` — stateful layout logic
+- `hooks/` — data and domain hooks (e.g. `./hooks/organization`)
+- `schemas/` — Zod schemas (e.g. `./schemas/auth`)
+- `data/` — data access helpers
+
+## Stack
+
+React 19 + TanStack React Query 5 + React Hook Form 7 + Zod + React Router 8. UI from [`@workspace/ui`](../ui).
