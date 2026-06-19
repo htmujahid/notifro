@@ -40,11 +40,11 @@ export const sharedAuthRoutes: RouteObject = {
     { path: "reset-password", element: <ResetPasswordPage /> },
     { path: "verify-email", element: <VerifyEmailPage /> },
     { path: "two-factor", element: <TwoFactorPage /> },
-    { path: "accept-invitation/:invitationId", element: <AcceptInvitationPage /> },
   ],
 }
 
 export const sharedProtectedChildren: RouteObject[] = [
+  { path: "accept-invitation/:invitationId", element: <AcceptInvitationPage /> },
   { path: "notifications", element: <NotificationsPage /> },
   { path: "schedules", element: <SchedulesPage /> },
   { path: "channels", element: <ChannelsPage /> },

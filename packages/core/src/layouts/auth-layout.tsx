@@ -1,5 +1,6 @@
 import { Suspense } from "react"
-import { Outlet } from "react-router"
+import { Navigate, Outlet } from "react-router"
+import { useSession } from "@workspace/app/auth/use-session"
 
 function RendericalLogo({ size = 18 }: { size?: number }) {
   return (
@@ -12,6 +13,20 @@ function RendericalLogo({ size = 18 }: { size?: number }) {
 }
 
 export default function AuthLayout() {
+  const { data: session, isPending } = useSession()
+
+  if (isPending) {
+    return (
+      <div className="flex min-h-svh items-center justify-center">
+        <div className="size-5 animate-spin rounded-full border-2 border-border border-t-foreground" />
+      </div>
+    )
+  }
+
+  if (session) {
+    return <Navigate to="/" replace />
+  }
+
   return (
     <div className="flex h-svh overflow-hidden bg-background">
       {/* Left panel — visible lg+ */}
