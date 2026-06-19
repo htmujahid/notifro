@@ -30,6 +30,7 @@
     "./app/context": "./src/app/context.tsx",
     "./auth/client": "./src/auth/client.ts",
     "./auth/context": "./src/auth/context.tsx",
+    "./auth/deep-link": "./src/auth/deep-link.ts",
     "./auth/use-session": "./src/auth/use-session.ts",
     "./auth/client.web": "./src/auth/client.web.ts",
     "./auth/client.desktop": "./src/auth/client.desktop.ts",

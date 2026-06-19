@@ -4,10 +4,13 @@ import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
 import { useAuth } from "@workspace/app/auth/context"
+import { buildAuthURL } from "@workspace/app/auth/deep-link"
+import { useApp } from "@workspace/app/app/context"
 import { changeEmailSchema, type ChangeEmailValues } from "../../schemas/account"
 
 export function ChangeEmailForm() {
   const auth = useAuth()
+  const { authRedirectURL } = useApp()
 
   const form = useForm<ChangeEmailValues>({
     resolver: zodResolver(changeEmailSchema),
@@ -17,7 +20,7 @@ export function ChangeEmailForm() {
   async function handleSubmit(values: ChangeEmailValues) {
     const { error } = await auth.changeEmail({
       newEmail: values.newEmail,
-      callbackURL: `${window.location.origin}/`,
+      callbackURL: buildAuthURL(authRedirectURL, "/"),
     })
     if (error) {
       form.setError("root", { message: error.message })

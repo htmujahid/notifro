@@ -6,10 +6,13 @@ import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
 import { useAuth } from "@workspace/app/auth/context"
+import { buildAuthURL } from "@workspace/app/auth/deep-link"
+import { useApp } from "@workspace/app/app/context"
 import { forgotPasswordSchema, type ForgotPasswordValues } from "../../schemas/auth"
 
 export function ForgotPasswordForm() {
   const auth = useAuth()
+  const { authRedirectURL } = useApp()
   const navigate = useNavigate()
   const form = useForm<ForgotPasswordValues>({
     resolver: zodResolver(forgotPasswordSchema),
@@ -19,7 +22,7 @@ export function ForgotPasswordForm() {
   async function handleSubmit(values: ForgotPasswordValues) {
     const { error } = await auth.requestPasswordReset({
       email: values.email,
-      redirectTo: `${window.location.origin}/auth/reset-password`,
+      redirectTo: buildAuthURL(authRedirectURL, "/auth/reset-password"),
     })
     if (error) {
       form.setError("root", { message: error.message })

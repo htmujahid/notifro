@@ -9,11 +9,14 @@ import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
 import { useAuth } from "@workspace/app/auth/context"
 import { SESSION_QUERY_KEY } from "@workspace/app/auth/use-session"
+import { buildAuthURL } from "@workspace/app/auth/deep-link"
+import { useApp } from "@workspace/app/app/context"
 import { signInSchema, type SignInValues } from "../../schemas/auth"
 import { GoogleIcon, OrDivider } from "./auth-icons"
 
 export function SignInForm() {
   const auth = useAuth()
+  const { authRedirectURL } = useApp()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [searchParams] = useSearchParams()
@@ -30,7 +33,7 @@ export function SignInForm() {
     try {
       const { error } = await auth.signIn.social({
         provider: "google",
-        callbackURL: `${window.location.origin}${next}`,
+        callbackURL: buildAuthURL(authRedirectURL, next),
       })
       if (error) form.setError("root", { message: error.message })
     } finally {

@@ -9,11 +9,14 @@ import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
 import { useAuth } from "@workspace/app/auth/context"
 import { SESSION_QUERY_KEY } from "@workspace/app/auth/use-session"
+import { buildAuthURL } from "@workspace/app/auth/deep-link"
+import { useApp } from "@workspace/app/app/context"
 import { signUpSchema, type SignUpValues } from "../../schemas/auth"
 import { GoogleIcon, OrDivider } from "./auth-icons"
 
 export function SignUpForm() {
   const auth = useAuth()
+  const { authRedirectURL } = useApp()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [googleLoading, setGoogleLoading] = useState(false)
@@ -28,7 +31,7 @@ export function SignUpForm() {
     try {
       const { error } = await auth.signIn.social({
         provider: "google",
-        callbackURL: `${window.location.origin}/`,
+        callbackURL: buildAuthURL(authRedirectURL, "/"),
       })
       if (error) form.setError("root", { message: error.message })
     } finally {
@@ -41,7 +44,7 @@ export function SignUpForm() {
       name: values.name,
       email: values.email,
       password: values.password,
-      callbackURL: `${window.location.origin}/`,
+      callbackURL: buildAuthURL(authRedirectURL, "/"),
     })
     if (error) {
       form.setError("root", { message: error.message })

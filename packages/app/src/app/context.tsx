@@ -12,6 +12,8 @@ export interface AppContextValue {
   isWeb: boolean
   isDesktop: boolean
   isMobile: boolean
+  /** Base URL used to build absolute auth callback/redirect URLs for this platform. */
+  authRedirectURL: string
 }
 
 const AppContext = createContext<AppContextValue | null>(null)
@@ -19,10 +21,16 @@ const AppContext = createContext<AppContextValue | null>(null)
 export interface AppProviderProps {
   platform: Platform
   authClient: AuthClient
+  /**
+   * Base URL the API server redirects back to after email verification, password
+   * reset, and OAuth. Web passes its frontend origin; native apps pass the
+   * `renderical://` deep-link scheme. See `auth/deep-link.ts`.
+   */
+  authRedirectURL: string
   children: React.ReactNode
 }
 
-export function AppProvider({ platform, authClient, children }: AppProviderProps) {
+export function AppProvider({ platform, authClient, authRedirectURL, children }: AppProviderProps) {
   const value = useMemo<AppContextValue>(
     () => ({
       platform,
@@ -30,8 +38,9 @@ export function AppProvider({ platform, authClient, children }: AppProviderProps
       isDesktop: platform === "desktop",
       isMobile: platform === "android" || platform === "ios",
       isNative: platform !== "web",
+      authRedirectURL,
     }),
-    [platform],
+    [platform, authRedirectURL],
   )
 
   return (

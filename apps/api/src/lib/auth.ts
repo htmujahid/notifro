@@ -10,7 +10,9 @@ export function createAuth(db: D1Database = mockD1) {
   return betterAuth({
     appName: 'Renderical',
     database: db,
-    trustedOrigins: [env.FRONTEND_URL],
+    // Web origin plus the native deep-link scheme so auth callbacks can redirect
+    // back into the Electron / Capacitor apps (see packages/app/auth/deep-link.ts).
+    trustedOrigins: [env.FRONTEND_URL, 'renderical://', 'renderical://**'],
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: true,
