@@ -31,7 +31,17 @@ export const resetPasswordSchema = z
     path: ["confirmPassword"],
   })
 
+export const twoFactorVerifySchema = z.object({
+  code: z.string().min(6, { error: "Code must be at least 6 characters" }),
+})
+
+export const twoFactorPasswordSchema = z.object({
+  password: z.string().min(1, { error: "Password is required" }),
+})
+
 export type SignInValues = z.infer<typeof signInSchema>
 export type SignUpValues = z.infer<typeof signUpSchema>
 export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>
 export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>
+export type TwoFactorVerifyValues = z.infer<typeof twoFactorVerifySchema>
+export type TwoFactorPasswordValues = z.infer<typeof twoFactorPasswordSchema>

@@ -8,8 +8,10 @@ const SignUpPage = lazy(() => import("../pages/auth/sign-up"))
 const ForgotPasswordPage = lazy(() => import("../pages/auth/forgot-password"))
 const ResetPasswordPage = lazy(() => import("../pages/auth/reset-password"))
 const VerifyEmailPage = lazy(() => import("../pages/auth/verify-email"))
+const TwoFactorPage = lazy(() => import("../pages/auth/two-factor"))
 const AccountProfilePage = lazy(() => import("../pages/account/profile"))
 const AccountSecurityPage = lazy(() => import("../pages/account/security"))
+const AccountTwoFactorPage = lazy(() => import("../pages/account/two-factor"))
 
 export const sharedRoutes: RouteObject[] = [
   {
@@ -21,6 +23,7 @@ export const sharedRoutes: RouteObject[] = [
     children: [
       { index: true, element: <AccountProfilePage /> },
       { path: "security", element: <AccountSecurityPage /> },
+      { path: "two-factor", element: <AccountTwoFactorPage /> },
     ],
   },
   {
@@ -32,6 +35,7 @@ export const sharedRoutes: RouteObject[] = [
       { path: "forgot-password", element: <ForgotPasswordPage /> },
       { path: "reset-password", element: <ResetPasswordPage /> },
       { path: "verify-email", element: <VerifyEmailPage /> },
+      { path: "two-factor", element: <TwoFactorPage /> },
     ],
   },
 ]

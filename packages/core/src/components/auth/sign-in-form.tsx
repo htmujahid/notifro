@@ -34,13 +34,16 @@ export function SignInForm() {
   }
 
   async function handleSubmit(values: SignInValues) {
-    const { error } = await auth.signIn.email({
+    const { data, error } = await auth.signIn.email({
       email: values.email,
       password: values.password,
-      callbackURL: "/",
     })
     if (error) {
       form.setError("root", { message: error.message })
+      return
+    }
+    if (data && "twoFactorRedirect" in data && data.twoFactorRedirect) {
+      navigate("/auth/two-factor")
       return
     }
     await queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY })

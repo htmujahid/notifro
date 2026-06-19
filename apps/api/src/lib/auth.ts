@@ -1,12 +1,14 @@
 import { env } from 'cloudflare:workers'
 import { betterAuth } from 'better-auth'
-import { sendVerificationEmail, sendResetPasswordEmail } from '@workspace/mailer'
+import { twoFactor } from 'better-auth/plugins'
+import { sendVerificationEmail, sendResetPasswordEmail, sendTwoFactorOTPEmail } from '@workspace/mailer'
 import { mockD1 } from './mock-db'
 
 const FROM = { email: 'noreply@renderical.com', name: 'Renderical' }
 
 export function createAuth(db: D1Database = mockD1) {
   return betterAuth({
+    appName: 'Renderical',
     database: db,
     emailAndPassword: {
       enabled: true,
@@ -23,6 +25,15 @@ export function createAuth(db: D1Database = mockD1) {
         clientSecret: env.GOOGLE_CLIENT_SECRET,
       },
     },
+    plugins: [
+      twoFactor({
+        otpOptions: {
+          async sendOTP({ user, otp }: { user: { email: string; name?: string | null }; otp: string }) {
+            await sendTwoFactorOTPEmail({ user, otp, from: FROM })
+          },
+        },
+      }),
+    ],
   })
 }
 
