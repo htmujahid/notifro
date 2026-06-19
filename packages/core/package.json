@@ -1,0 +1,41 @@
+{
+  "name": "@workspace/core",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "lint": "eslint",
+    "format": "prettier --write \"**/*.{ts,tsx}\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^3.9.0",
+    "@workspace/ui": "workspace:*",
+    "better-auth": "^1.6.19",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-hook-form": "^7.56.0",
+    "react-router": "^8.0.1",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10",
+    "@types/node": "^24",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^10",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17",
+    "typescript": "~6",
+    "typescript-eslint": "^8"
+  },
+  "exports": {
+    "./auth/schemas": "./src/auth/schemas.ts",
+    "./auth/client": "./src/auth/client.ts",
+    "./auth/client.web": "./src/auth/client.web.ts",
+    "./auth/client.desktop": "./src/auth/client.desktop.ts",
+    "./auth/client.mobile": "./src/auth/client.mobile.ts",
+    "./auth/context": "./src/auth/context.tsx",
+    "./components/*": "./src/components/*.tsx"
+  }
+}

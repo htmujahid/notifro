@@ -9,6 +9,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@workspace/core": "workspace:*",
+    "@workspace/ui": "workspace:*",
     "react-router": "^8.0.1"
   },
   "peerDependencies": {
@@ -32,6 +34,11 @@
     "./routes/android": "./src/routes/android.tsx",
     "./routes/ios": "./src/routes/ios.tsx",
     "./layouts/*": "./src/layouts/*.tsx",
-    "./pages/*": "./src/pages/*.tsx"
+    "./pages/*": "./src/pages/*.tsx",
+    "./pages/sign-in": "./src/pages/sign-in.tsx",
+    "./pages/sign-up": "./src/pages/sign-up.tsx",
+    "./pages/forgot-password": "./src/pages/forgot-password.tsx",
+    "./pages/reset-password": "./src/pages/reset-password.tsx",
+    "./pages/verify-email": "./src/pages/verify-email.tsx"
   }
 }
