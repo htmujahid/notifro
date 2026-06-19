@@ -5,12 +5,13 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy --minify",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
-    "generate": "npx auth@latest generate --config ../../packages/auth/src/index.ts --output migrations/0000_auth_schema.sql --yes"
+    "generate": "npx auth@latest generate --config ./src/lib/auth.ts --output migrations/0000_auth_schema.sql --yes"
   },
   "dependencies": {
     "@hono/zod-openapi": "^1.4.0",
     "@scalar/hono-api-reference": "^0.11.4",
-    "@workspace/auth": "workspace:*",
+    "@workspace/mailer": "workspace:*",
+    "better-auth": "^1.6.19",
     "hono": "^4.12.26"
   },
   "devDependencies": {

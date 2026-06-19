@@ -1,7 +1,10 @@
+import { env } from 'cloudflare:workers'
 import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
 import { cors } from 'hono/cors'
 import { Scalar } from '@scalar/hono-api-reference'
-import { auth } from './lib/auth'
+import { createAuth, auth } from './lib/auth'
+
+const authInstance = createAuth(env.DB)
 
 const app = new OpenAPIHono<{
   Bindings: CloudflareBindings
@@ -23,7 +26,7 @@ app.use('/api/auth/*', (c, next) => {
 })
 
 app.use('*', async (c, next) => {
-  const session = await auth.api.getSession({ headers: c.req.raw.headers })
+  const session = await authInstance.api.getSession({ headers: c.req.raw.headers })
 
   if (!session) {
     c.set('user', null)
@@ -38,7 +41,7 @@ app.use('*', async (c, next) => {
 })
 
 app.on(['POST', 'GET'], '/api/auth/*', (c) => {
-  return auth.handler(c.req.raw)
+  return authInstance.handler(c.req.raw)
 })
 
 app.get('/', (c) => {
