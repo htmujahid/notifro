@@ -4,9 +4,11 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy --minify",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "generate": "npx auth@latest generate --config ../../packages/auth/src/index.ts --output migrations/0000_auth_schema.sql --yes"
   },
   "dependencies": {
+    "@workspace/auth": "workspace:*",
     "hono": "^4.12.26"
   },
   "devDependencies": {
