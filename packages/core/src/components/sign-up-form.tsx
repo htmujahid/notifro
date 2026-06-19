@@ -3,16 +3,19 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller } from "react-hook-form"
 import { useNavigate } from "react-router"
+import { useQueryClient } from "@tanstack/react-query"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
 import { useAuth } from "../auth/context"
+import { SESSION_QUERY_KEY } from "../auth/use-session"
 import { signUpSchema, type SignUpValues } from "../auth/schemas/auth"
 import { GoogleIcon, OrDivider } from "./auth-icons"
 
 export function SignUpForm() {
   const auth = useAuth()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [googleLoading, setGoogleLoading] = useState(false)
 
   const form = useForm<SignUpValues>({
@@ -41,6 +44,7 @@ export function SignUpForm() {
       form.setError("root", { message: error.message })
       return
     }
+    await queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY })
     navigate("/auth/verify-email")
   }
 

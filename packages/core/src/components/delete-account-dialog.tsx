@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router"
+import { useQueryClient } from "@tanstack/react-query"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
@@ -12,10 +13,12 @@ import {
   DialogTitle,
 } from "@workspace/ui/components/dialog"
 import { useAuth } from "../auth/context"
+import { SESSION_QUERY_KEY } from "../auth/use-session"
 
 export function DeleteAccountDialog() {
   const auth = useAuth()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [open, setOpen] = useState(false)
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
@@ -30,6 +33,7 @@ export function DeleteAccountDialog() {
         setError(error.message ?? "An error occurred")
         return
       }
+      queryClient.removeQueries({ queryKey: SESSION_QUERY_KEY })
       setOpen(false)
       navigate("/auth/sign-in")
     } finally {

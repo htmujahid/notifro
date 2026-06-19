@@ -1,6 +1,7 @@
 import { createContext, useContext, useMemo } from "react"
 import { AuthProvider } from "../auth/context"
 import type { AuthClient } from "../auth/client"
+import { QueryProvider } from "./query"
 
 export type Platform = "web" | "desktop" | "android" | "ios"
 
@@ -33,9 +34,11 @@ export function AppProvider({ platform, authClient, children }: AppProviderProps
   )
 
   return (
-    <AppContext.Provider value={value}>
-      <AuthProvider client={authClient}>{children}</AuthProvider>
-    </AppContext.Provider>
+    <QueryProvider>
+      <AppContext.Provider value={value}>
+        <AuthProvider client={authClient}>{children}</AuthProvider>
+      </AppContext.Provider>
+    </QueryProvider>
   )
 }
 

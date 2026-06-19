@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
+    "@tanstack/react-query": "^5.101.0",
     "@workspace/ui": "workspace:*",
     "better-auth": "^1.6.19",
     "react": "^19.2.6",
@@ -37,6 +38,7 @@
     "./auth/client.desktop": "./src/auth/client.desktop.ts",
     "./auth/client.mobile": "./src/auth/client.mobile.ts",
     "./auth/context": "./src/auth/context.tsx",
+    "./auth/use-session": "./src/auth/use-session.ts",
     "./components/*": "./src/components/*.tsx"
   }
 }
