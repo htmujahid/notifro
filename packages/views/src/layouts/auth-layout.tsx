@@ -27,22 +27,22 @@ export default function AuthLayout() {
           <div className="mt-auto mb-auto flex flex-col gap-8">
             <div className="space-y-3">
               <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-                Creative platform
+                Notification infrastructure
               </p>
               <h2 className="text-3xl font-bold tracking-tight text-foreground">
-                Design once,<br />publish everywhere.
+                Schedule once,<br />notify anywhere.
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
-                Placeholder — one workspace to create and ship content across web, mobile, and desktop.
+                One workspace to schedule, deliver, and manage notifications across every channel your users live in.
               </p>
             </div>
 
-            {/* Placeholder feature list */}
+            {/* Feature list */}
             <ul className="space-y-3 text-sm text-muted-foreground">
               {[
-                "Cross-platform: Web, iOS, Android, Desktop",
-                "Real-time collaboration and sync",
-                "One-click publish to any target",
+                "Schedule one-time and recurring notifications",
+                "Snooze, reschedule, and cancel on the fly",
+                "Deliver to in-app, email, Slack, and more",
                 "Powered by Cloudflare Workers",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2">
@@ -58,7 +58,7 @@ export default function AuthLayout() {
           {/* Placeholder quote */}
           <blockquote className="border-t border-border pt-8 space-y-3">
             <p className="text-sm text-muted-foreground leading-relaxed italic">
-              "Placeholder testimonial — Lorem ipsum dolor sit amet, consectetur adipiscing elit. This is where a real customer quote will go."
+              "We replaced three cron jobs and a tangle of integrations with one scheduling layer. Reminders, digests, and alerts now ship from the same place."
             </p>
             <footer className="flex items-center gap-3">
               <div className="size-8 rounded-full bg-muted border border-border" />

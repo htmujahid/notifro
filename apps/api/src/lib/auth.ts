@@ -10,6 +10,7 @@ export function createAuth(db: D1Database = mockD1) {
   return betterAuth({
     appName: 'Renderical',
     database: db,
+    trustedOrigins: [env.FRONTEND_URL],
     emailAndPassword: {
       enabled: true,
       sendVerificationEmail: async ({ user, url }: { user: { email: string; name?: string | null }; url: string }) => {

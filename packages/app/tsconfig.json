@@ -10,7 +10,8 @@
     "noEmit": true,
     "paths": {
       "@workspace/app/*": ["./src/*"],
-      "@workspace/core/*": ["../core/src/*"]
+      "@workspace/core/*": ["../core/src/*"],
+      "@workspace/ui-primitives/*": ["../ui-primitives/src/*"]
     }
   },
   "include": ["."],

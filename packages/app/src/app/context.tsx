@@ -1,4 +1,5 @@
 import { createContext, useContext, useMemo } from "react"
+import { ThemeProvider } from "@workspace/ui-primitives/components/theme-provider"
 import { AuthProvider } from "../auth/context"
 import type { AuthClient } from "../auth/client"
 import { QueryProvider } from "./query"
@@ -34,11 +35,13 @@ export function AppProvider({ platform, authClient, children }: AppProviderProps
   )
 
   return (
-    <QueryProvider>
-      <AppContext.Provider value={value}>
-        <AuthProvider client={authClient}>{children}</AuthProvider>
-      </AppContext.Provider>
-    </QueryProvider>
+    <ThemeProvider>
+      <QueryProvider>
+        <AppContext.Provider value={value}>
+          <AuthProvider client={authClient}>{children}</AuthProvider>
+        </AppContext.Provider>
+      </QueryProvider>
+    </ThemeProvider>
   )
 }
 
