@@ -20,7 +20,7 @@ export function SignUpForm() {
 
   const form = useForm<SignUpValues>({
     resolver: zodResolver(signUpSchema),
-    defaultValues: { name: "", email: "", password: "", confirmPassword: "" },
+    defaultValues: { name: "", email: "", password: "" },
   })
 
   async function handleGoogleSignIn() {
@@ -136,27 +136,7 @@ export function SignUpForm() {
           )}
         />
 
-        <Controller
-          control={form.control}
-          name="confirmPassword"
-          render={({ field, fieldState }) => (
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="confirmPassword">Confirm password</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                autoComplete="new-password"
-                aria-invalid={!!fieldState.error}
-                {...field}
-              />
-              {fieldState.error && (
-                <p className="text-xs text-destructive">{fieldState.error.message}</p>
-              )}
-            </div>
-          )}
-        />
-
-        {form.formState.errors.root && (
+{form.formState.errors.root && (
           <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
             {form.formState.errors.root.message}
           </p>
