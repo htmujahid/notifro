@@ -45,8 +45,9 @@ export function OrgMembersList() {
   }
 
   async function handleRoleChange(memberId: string, role: string) {
-    await auth.organization.updateMemberRole({ memberId, role: role as "admin" | "member" })
+    await auth.organization.updateMemberRole({ memberId, role: role as "owner" | "admin" | "member" })
     await queryClient.invalidateQueries({ queryKey: organizationKeys.members(orgId) })
+    await queryClient.invalidateQueries({ queryKey: organizationKeys.activeMember(orgId) })
   }
 
   if (isLoading) return <p className="text-sm text-muted-foreground">Loading…</p>
@@ -72,6 +73,9 @@ export function OrgMembersList() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
+                    {activeMember?.role === "owner" && (
+                      <SelectItem value="owner">Owner</SelectItem>
+                    )}
                     <SelectItem value="admin">Admin</SelectItem>
                     <SelectItem value="member">Member</SelectItem>
                   </SelectContent>

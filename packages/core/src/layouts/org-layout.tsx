@@ -6,6 +6,7 @@ const NAV_LINKS = [
   { to: "/organization", label: "General", end: true },
   { to: "/organization/members", label: "Members" },
   { to: "/organization/invitations", label: "Invitations" },
+  { to: "/organization/roles", label: "Roles" },
 ]
 
 export default function OrgLayout() {

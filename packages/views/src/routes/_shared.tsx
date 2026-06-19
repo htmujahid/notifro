@@ -27,6 +27,7 @@ const AccountTwoFactorPage = lazy(() => import("../pages/account/two-factor"))
 const OrgGeneralPage = lazy(() => import("../pages/organization/general"))
 const OrgMembersPage = lazy(() => import("../pages/organization/members"))
 const OrgInvitationsPage = lazy(() => import("../pages/organization/invitations"))
+const OrgRolesPage = lazy(() => import("../pages/organization/roles"))
 const AcceptInvitationPage = lazy(() => import("../pages/auth/accept-invitation"))
 
 export const sharedAuthRoutes: RouteObject = {
@@ -61,6 +62,7 @@ export const sharedProtectedChildren: RouteObject[] = [
       { index: true, element: <OrgGeneralPage /> },
       { path: "members", element: <OrgMembersPage /> },
       { path: "invitations", element: <OrgInvitationsPage /> },
+      { path: "roles", element: <OrgRolesPage /> },
     ],
   },
   {
