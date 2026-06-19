@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useNavigate } from "react-router"
+import { useNavigate, useSearchParams } from "react-router"
 import { useQueryClient } from "@tanstack/react-query"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
@@ -17,6 +17,8 @@ export function TwoFactorForm() {
   const auth = useAuth()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const [searchParams] = useSearchParams()
+  const next = searchParams.get("next") ?? "/"
   const [mode, setMode] = useState<Mode>("totp")
   const [otpSent, setOtpSent] = useState(false)
   const [sendingOtp, setSendingOtp] = useState(false)
@@ -56,11 +58,11 @@ export function TwoFactorForm() {
     }
 
     await queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY })
-    navigate("/")
+    navigate(next)
   }
 
-  function switchMode(next: Mode) {
-    setMode(next)
+  function switchMode(mode: Mode) {
+    setMode(mode)
     form.reset()
   }
 

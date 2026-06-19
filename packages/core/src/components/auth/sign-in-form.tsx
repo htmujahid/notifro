@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller } from "react-hook-form"
-import { useNavigate } from "react-router"
+import { useNavigate, useSearchParams } from "react-router"
 import { useQueryClient } from "@tanstack/react-query"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
@@ -16,6 +16,8 @@ export function SignInForm() {
   const auth = useAuth()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const [searchParams] = useSearchParams()
+  const next = searchParams.get("next") ?? "/"
   const [googleLoading, setGoogleLoading] = useState(false)
 
   const form = useForm<SignInValues>({
@@ -26,7 +28,7 @@ export function SignInForm() {
   async function handleGoogleSignIn() {
     setGoogleLoading(true)
     try {
-      const { error } = await auth.signIn.social({ provider: "google", callbackURL: "/" })
+      const { error } = await auth.signIn.social({ provider: "google", callbackURL: next })
       if (error) form.setError("root", { message: error.message })
     } finally {
       setGoogleLoading(false)
@@ -43,11 +45,11 @@ export function SignInForm() {
       return
     }
     if (data && "twoFactorRedirect" in data && data.twoFactorRedirect) {
-      navigate("/auth/two-factor")
+      navigate(`/auth/two-factor?next=${encodeURIComponent(next)}`)
       return
     }
     await queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY })
-    navigate("/")
+    navigate(next)
   }
 
   const busy = form.formState.isSubmitting || googleLoading

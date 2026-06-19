@@ -1,8 +1,9 @@
-import { Navigate, Outlet } from "react-router"
+import { Navigate, Outlet, useLocation } from "react-router"
 import { useSession } from "@workspace/app/auth/use-session"
 
 export function ProtectedRoute() {
   const { data: session, isPending } = useSession()
+  const location = useLocation()
 
   if (isPending) {
     return (
@@ -13,7 +14,8 @@ export function ProtectedRoute() {
   }
 
   if (!session) {
-    return <Navigate to="/auth/sign-in" replace />
+    const next = location.pathname + location.search
+    return <Navigate to={`/auth/sign-in?next=${encodeURIComponent(next)}`} replace />
   }
 
   return <Outlet />
