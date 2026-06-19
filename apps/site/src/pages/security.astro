@@ -1,0 +1,96 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CtaBand from "../components/CtaBand.astro";
+
+const groups = [
+  {
+    title: "Data protection",
+    items: [
+      ["End-to-end encryption", "Encryption in transit and at rest across the platform."],
+      ["PII redaction", "Optional redaction of sensitive fields before storage and logging."],
+      ["Suppression & consent ledger", "Track suppression lists and a verifiable consent record."],
+      ["Data residency", "Choose where data is stored to meet regional requirements."],
+    ],
+  },
+  {
+    title: "Access control",
+    items: [
+      ["Role-based access control", "Granular roles and team management for every action."],
+      ["SSO / SAML", "Enterprise single sign-on with your identity provider."],
+      ["IP allowlisting", "Restrict API and dashboard access to trusted networks."],
+      ["Scope-based OAuth", "Per-account permission introspection and least-privilege scopes."],
+    ],
+  },
+  {
+    title: "Integrity & webhooks",
+    items: [
+      ["Signed webhooks", "Every outbound webhook is cryptographically signed."],
+      ["Replay protection", "Timestamped signatures stop replayed requests."],
+      ["Idempotency keys", "Prevent duplicate sends, even under retries and agent loops."],
+      ["Full audit logs", "Every send — API, UI, or agent — is recorded for compliance."],
+    ],
+  },
+];
+
+const certs = ["SOC 2 Type II", "GDPR", "HIPAA-ready", "CAN-SPAM", "ISO 27001"];
+---
+
+<BaseLayout title="Security & Compliance" description="Encryption, PII redaction, RBAC, SSO, signed webhooks, audit logs, and SOC 2 / HIPAA / GDPR posture with data residency and a self-hosted option.">
+  <section class="hero" style="padding-bottom:40px">
+    <div class="container">
+      <span class="eyebrow">Security & compliance</span>
+      <h1>Trust built into every send</h1>
+      <p class="lead mx-auto">From encryption and PII redaction to scope-based OAuth, audit
+      logs, and a self-hosted option — Renderical is built for compliance-heavy teams.</p>
+      <div class="pill-row" style="justify-content:center;margin-top:24px">
+        {certs.map((c) => <span class="pill">{c}</span>)}
+      </div>
+    </div>
+  </section>
+
+  {groups.map((g, i) => (
+    <section class={i % 2 === 1 ? "band-dark" : ""} style="padding-top:56px;padding-bottom:56px">
+      <div class="container">
+        <h2 style="margin-bottom:28px">{g.title}</h2>
+        <div class="grid grid-2">
+          {g.items.map(([t, d]) => (
+            <div class="card" style={i % 2 === 1 ? "background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.1)" : ""}>
+              <h3 style="font-size:1.05rem">{t}</h3>
+              <p style="margin-bottom:0">{d}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <section>
+    <div class="container">
+      <div class="split">
+        <div>
+          <span class="eyebrow">Deployment</span>
+          <h2>Run it your way</h2>
+          <p>Use the multi-region hosted cloud, or deploy self-hosted / on-prem for full data
+          control. The compose API and stdio MCP server work identically in both.</p>
+          <ul class="checklist" style="margin-top:16px">
+            <li><span class="tick">✓</span><span>Multi-region delivery infrastructure</span></li>
+            <li><span class="tick">✓</span><span>Provider failover for SMTP and push</span></li>
+            <li><span class="tick">✓</span><span>Self-hosted / on-prem deployment option</span></li>
+            <li><span class="tick">✓</span><span>Multi-tenant credential isolation</span></li>
+          </ul>
+        </div>
+        <div>
+          <span class="eyebrow">Reporting</span>
+          <h2>Prove it on demand</h2>
+          <p>Need our SOC 2 report, a DPA, or a security questionnaire completed? Our team
+          turns these around quickly for evaluations and procurement.</p>
+          <div style="margin-top:20px">
+            <a class="btn btn-ghost" href="/contact">Request security docs →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title="Security questions? We have answers." text="Talk to our team about compliance, data residency, and self-hosted deployment." />
+</BaseLayout>

@@ -1,0 +1,50 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../config";
+
+const routes = [
+  ["Sales", "Plans, volume pricing, and enterprise evaluations.", "sales@renderical.com"],
+  ["Support", "Help with integration, delivery, or your account.", "support@renderical.com"],
+  ["Security", "Report a vulnerability or request our SOC 2 / DPA.", "security@renderical.com"],
+];
+---
+
+<BaseLayout title="Contact" description="Get in touch with the Renderical team — sales, support, and security.">
+  <section class="hero" style="padding-bottom:40px">
+    <div class="container">
+      <span class="eyebrow">Contact</span>
+      <h1>Talk to us</h1>
+      <p class="lead mx-auto">Questions about channels, the MCP server, self-hosting, or
+      compliance? We're happy to help.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:24px">
+    <div class="container">
+      <div class="grid grid-3">
+        {routes.map(([t, d, e]) => (
+          <div class="card">
+            <h3>{t}</h3>
+            <p>{d}</p>
+            <a class="btn btn-ghost" href={`mailto:${e}`}>{e}</a>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm">
+    <div class="container-narrow text-center">
+      <div class="card" style="padding:40px">
+        <h2>Start free, no sales call needed</h2>
+        <p class="mx-auto" style="max-width:480px">Create an account and send your first
+        multi-channel notification in minutes. Reach out anytime at
+        <a href={`mailto:${site.email}`}>{site.email}</a>.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href={site.signupUrl}>Start free</a>
+          <a class="btn btn-ghost btn-lg" href="/developers">Read the docs</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

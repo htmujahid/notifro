@@ -1,0 +1,41 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const systems = [
+  ["Compose API", "Operational"],
+  ["MCP server", "Operational"],
+  ["Slack delivery", "Operational"],
+  ["Email / SMTP delivery", "Operational"],
+  ["Push (APNs / FCM)", "Operational"],
+  ["Webhooks & receipts", "Operational"],
+  ["Dashboard & analytics", "Operational"],
+];
+---
+
+<BaseLayout title="Status" description="Renderical system status and uptime.">
+  <section class="hero" style="padding-bottom:32px">
+    <div class="container-narrow">
+      <span class="eyebrow">Status</span>
+      <h1>All systems operational</h1>
+      <p class="lead">Real-time delivery health across every channel.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:8px">
+    <div class="container-narrow">
+      <div class="card" style="padding:8px 24px">
+        {systems.map(([name, state]) => (
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--border)">
+            <span style="font-weight:600">{name}</span>
+            <span style="display:inline-flex;align-items:center;gap:8px;color:var(--green);font-weight:600;font-size:0.9rem">
+              <span style="width:9px;height:9px;border-radius:50%;background:var(--green)"></span>{state}
+            </span>
+          </div>
+        ))}
+      </div>
+      <p class="text-center" style="margin-top:20px;color:var(--text-faint);font-size:0.9rem">
+        99.99% delivery uptime over the trailing 90 days.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

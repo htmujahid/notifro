@@ -1,0 +1,65 @@
+---
+import { site } from "../config";
+const year = 2026;
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col footer-about">
+        <a href="/" class="brand" style="margin-bottom:14px">
+          <span class="brand-mark">R</span>
+          {site.name}
+        </a>
+        <p>{site.tagline} Unified notification infrastructure with a native MCP server for AI agents.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="/features">Features</a></li>
+          <li><a href="/channels">Channels</a></li>
+          <li><a href="/mcp">MCP Server</a></li>
+          <li><a href="/pricing">Pricing</a></li>
+          <li><a href="/changelog">Changelog</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Developers</h4>
+        <ul>
+          <li><a href="/developers">Documentation</a></li>
+          <li><a href="/developers#api">REST & GraphQL API</a></li>
+          <li><a href="/developers#sdks">SDKs & CLI</a></li>
+          <li><a href="/mcp">MCP tools</a></li>
+          <li><a href="/status">Status</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/about">About</a></li>
+          <li><a href="/security">Security</a></li>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="/blog">Blog</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="/privacy">Privacy</a></li>
+          <li><a href="/terms">Terms</a></li>
+          <li><a href="/security">Compliance</a></li>
+          <li><a href="/dpa">DPA</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© {year} {site.name}, Inc. All rights reserved.</span>
+      <span>SOC 2 Type II · GDPR · HIPAA-ready</span>
+    </div>
+  </div>
+</footer>

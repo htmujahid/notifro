@@ -1,0 +1,57 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+const updated = "June 20, 2026";
+---
+
+<BaseLayout title="Terms of Service" description="The terms governing use of Renderical.">
+  <section class="hero" style="padding-bottom:24px">
+    <div class="container-narrow">
+      <span class="eyebrow">Legal</span>
+      <h1>Terms of Service</h1>
+      <p class="lead">Last updated {updated}</p>
+    </div>
+  </section>
+
+  <section style="padding-top:8px">
+    <div class="container-narrow prose">
+      <p>These Terms govern your access to and use of Renderical. By creating an account or using
+      the service, you agree to them. This page is a product template and not legal advice;
+      consult counsel before publishing.</p>
+
+      <h2>Use of the service</h2>
+      <ul>
+        <li>You must comply with applicable law, including anti-spam (CAN-SPAM, CASL) and privacy regulations.</li>
+        <li>You are responsible for obtaining consent from recipients before sending.</li>
+        <li>You may not use the service to send unlawful, abusive, or deceptive content.</li>
+      </ul>
+
+      <h2>Accounts & connected providers</h2>
+      <p>You are responsible for safeguarding your API keys and the OAuth connections you
+      authorize. Scope-based permissions limit what each connection — and any agent acting via
+      the MCP server — can do.</p>
+
+      <h2>Acceptable use & rate limits</h2>
+      <p>We enforce rate limits and idempotency to protect platform integrity. Automated or
+      agent-driven sending must respect these limits and approval gates.</p>
+
+      <h2>Plans, billing & overages</h2>
+      <p>Paid plans are billed per the pricing in effect when you subscribe. Usage above plan
+      limits is billed per notification. Fees are non-refundable except as required by law.</p>
+
+      <h2>Service levels</h2>
+      <p>Enterprise plans may include a Service Level Agreement. Absent an SLA, the service is
+      provided on a commercially reasonable best-effort basis.</p>
+
+      <h2>Disclaimers & liability</h2>
+      <p>The service is provided “as is.” To the maximum extent permitted by law, Renderical
+      disclaims implied warranties and limits liability as set out in your order or agreement.</p>
+
+      <h2>Termination</h2>
+      <p>You may stop using the service at any time. We may suspend or terminate access for
+      violations of these Terms or applicable law.</p>
+
+      <h2>Contact</h2>
+      <p>Questions about these Terms? Email <a href="mailto:legal@renderical.com">legal@renderical.com</a>.</p>
+    </div>
+  </section>
+</BaseLayout>

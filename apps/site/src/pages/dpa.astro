@@ -1,0 +1,47 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+const updated = "June 20, 2026";
+---
+
+<BaseLayout title="Data Processing Addendum" description="Renderical's Data Processing Addendum overview.">
+  <section class="hero" style="padding-bottom:24px">
+    <div class="container-narrow">
+      <span class="eyebrow">Legal</span>
+      <h1>Data Processing Addendum</h1>
+      <p class="lead">Last updated {updated}</p>
+    </div>
+  </section>
+
+  <section style="padding-top:8px">
+    <div class="container-narrow prose">
+      <p>This page summarizes the Data Processing Addendum (“DPA”) that forms part of the
+      agreement between Renderical, Inc. and customers who process personal data through the
+      service. This is a product template and not legal advice; the executable DPA is available
+      on request.</p>
+
+      <h2>Roles</h2>
+      <p>For recipient and message data you send, you are the data controller and Renderical is
+      the data processor, acting on your documented instructions.</p>
+
+      <h2>Processing scope</h2>
+      <ul>
+        <li>Subject matter: delivery, scheduling, and routing of notifications.</li>
+        <li>Duration: for the term of your agreement plus configured retention.</li>
+        <li>Data subjects: your end-users and recipients.</li>
+        <li>Data types: contact identifiers, message content, and engagement events.</li>
+      </ul>
+
+      <h2>Sub-processors</h2>
+      <p>We engage vetted sub-processors for hosting and channel delivery under written terms with
+      equivalent protections. A current list and change-notification process are available on request.</p>
+
+      <h2>Security & transfers</h2>
+      <p>We maintain technical and organizational measures described on our
+      <a href="/security">Security page</a>, and rely on Standard Contractual Clauses and data
+      residency options for international transfers.</p>
+
+      <h2>Requesting the DPA</h2>
+      <p>To execute a DPA, email <a href="mailto:legal@renderical.com">legal@renderical.com</a>.</p>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,152 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CtaBand from "../components/CtaBand.astro";
+
+const groups = [
+  {
+    eyebrow: "Compose & deliver",
+    title: "Single compose API, every channel",
+    items: [
+      ["Unified payload schema", "One body normalized across all channels with automatic per-channel transformation."],
+      ["Rich content", "Text, markdown, buttons, images, attachments, and interactive components."],
+      ["Template engine", "Variables, conditionals, loops, and localization out of the box."],
+      ["Fallback chains", "Try push → email → SMS. Define ordered fallbacks per message."],
+      ["Routing rules", "Route by user, message type, priority, or time of day."],
+      ["Send modes", "Broadcast, targeted, and transactional with rate-aware throttling."],
+    ],
+  },
+  {
+    eyebrow: "Scheduling & timing",
+    title: "Deliver at exactly the right moment",
+    items: [
+      ["Send-at scheduling", "Timezone-aware scheduling down to the recipient's locale."],
+      ["Recurring sends", "Cron-style recurring notifications and digests."],
+      ["Send-time optimization", "Deliver when each recipient is most likely active."],
+      ["Quiet hours & DND", "Per-recipient do-not-disturb windows, honored automatically."],
+      ["Time-window delivery", "Only send between local working hours, e.g. 9am–5pm."],
+      ["Throttle & debounce", "Prevent notification storms with built-in dampening."],
+    ],
+  },
+  {
+    eyebrow: "Reliability",
+    title: "Delivery guarantees you can trust",
+    items: [
+      ["Automatic retries", "Exponential backoff on transient provider failures."],
+      ["Dead-letter queue", "Capture and replay failed messages, never lose one silently."],
+      ["Idempotency keys", "Prevent duplicate sends across retries and agent loops."],
+      ["Status tracking", "Queued, sent, delivered, opened, clicked, failed — end to end."],
+      ["Provider failover", "Swap SMTP/push providers automatically on outage."],
+      ["Bounce handling", "Webhook delivery receipts and automatic bounce processing."],
+    ],
+  },
+  {
+    eyebrow: "Preferences",
+    title: "A preference center your users actually like",
+    items: [
+      ["End-user preference center", "Drop-in per-channel, per-category opt-in/out."],
+      ["Subscription topics", "Organize notifications into categories users can manage."],
+      ["Frequency capping", "Cap how many messages a user receives in a window."],
+      ["Digest bundling", "Roll up N notifications into a single digest."],
+      ["Compliant unsubscribe", "CAN-SPAM and GDPR-compliant opt-out handling."],
+      ["Channel priority", "User-level ordering of which channel to try first."],
+    ],
+  },
+  {
+    eyebrow: "Personalization",
+    title: "Right message, right person",
+    items: [
+      ["Audience segmentation", "Target by user attributes and computed segments."],
+      ["Dynamic content", "Render content from recipient data at send time."],
+      ["A/B testing", "Test message variants and promote winners."],
+      ["Locale & timezone", "Auto-detect and adapt language and timing."],
+    ],
+  },
+  {
+    eyebrow: "Workflow & orchestration",
+    title: "Multi-step journeys, triggered by events",
+    items: [
+      ["Notification sequences", "Build multi-step journeys with delays between steps."],
+      ["Trigger-based automation", "Event → notification flow, no glue code."],
+      ["Conditional branching", "Branch a journey on recipient behavior or data."],
+      ["Webhook ingestion", "Kick off sends from any event source."],
+    ],
+  },
+  {
+    eyebrow: "Analytics & observability",
+    title: "See and prove what shipped",
+    items: [
+      ["Delivery & engagement metrics", "Per-channel delivery, open, and click rates."],
+      ["Funnel & conversion tracking", "Tie notifications to downstream outcomes."],
+      ["Real-time dashboards", "Live delivery health with anomaly alerting."],
+      ["Cost tracking", "Spend per channel and provider, in one view."],
+      ["Audit logs", "Every send, by API, UI, or agent — fully logged."],
+      ["Request inspector", "Detailed API logs to debug any delivery."],
+    ],
+  },
+  {
+    eyebrow: "Templates & content",
+    title: "Manage content like code",
+    items: [
+      ["Visual template builder", "Design with live multi-channel preview."],
+      ["Versioning & rollback", "Every template change is versioned and reversible."],
+      ["Snippet library", "Share reusable components across templates."],
+      ["Brand kit", "Apply logos, colors, and fonts consistently everywhere."],
+    ],
+  },
+];
+
+const aiFeatures = [
+  ["AI-assisted drafting", "Generate and tone-adjust message copy in seconds."],
+  ["Smart channel selection", "Predict the best channel per recipient."],
+  ["Send-time prediction", "Model the optimal moment per individual."],
+  ["Anomaly detection", "Catch engagement drops before they cost you."],
+];
+---
+
+<BaseLayout title="Features" description="Compose-once API, multi-channel delivery, scheduling, scope-based OAuth, preference center, reliability, analytics, and AI — the complete notification platform.">
+  <section class="hero" style="padding-bottom:48px">
+    <div class="container">
+      <span class="eyebrow">Features</span>
+      <h1>One platform for every notification</h1>
+      <p class="lead mx-auto">From compose-once delivery to a preference center, reliability
+      guarantees, and AI — everything teams used to stitch together from five tools.</p>
+    </div>
+  </section>
+
+  {groups.map((g, i) => (
+    <section class={i % 2 === 1 ? "band-dark" : ""} style="padding-top:64px;padding-bottom:64px">
+      <div class="container">
+        <span class="eyebrow">{g.eyebrow}</span>
+        <h2 style="margin-bottom:32px">{g.title}</h2>
+        <div class="grid grid-3">
+          {g.items.map(([t, d]) => (
+            <div class="card">
+              <h3 style="font-size:1.05rem">{t}</h3>
+              <p>{d}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <!-- AI -->
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Smart / AI</span>
+        <h2>Intelligence baked into delivery</h2>
+      </div>
+      <div class="grid grid-4">
+        {aiFeatures.map(([t, d]) => (
+          <div class="card">
+            <h3 style="font-size:1.05rem">{t}</h3>
+            <p>{d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title="Replace your notification stack" />
+</BaseLayout>

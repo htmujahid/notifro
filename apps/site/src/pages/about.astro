@@ -1,0 +1,57 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CtaBand from "../components/CtaBand.astro";
+
+const values = [
+  ["Compose once", "Developers should write a message a single time — not once per channel. Abstraction is the product."],
+  ["Safe by default", "Idempotency, scopes, rate limits, and approval gates are on from day one, not bolted on later."],
+  ["Agent-ready", "Notifications are increasingly sent by AI. We make that safe, scoped, and auditable."],
+  ["Own your data", "Data residency, suppression ledgers, and a self-hosted option keep you in control."],
+];
+---
+
+<BaseLayout title="About" description="Renderical is the unified notification infrastructure that replaces the five-tool stack teams stitch together — built for the agentic era.">
+  <section class="hero" style="padding-bottom:40px">
+    <div class="container">
+      <span class="eyebrow">About</span>
+      <h1>One layer for every notification</h1>
+      <p class="lead mx-auto">Teams stitch together five or more tools to reach users across
+      Slack, email, push, and chat. Renderical replaces that stack with a single compose-once
+      API — and a native MCP server so AI agents can send safely.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:24px">
+    <div class="container-narrow">
+      <p style="font-size:1.1rem">
+        We started Renderical after rebuilding the same notification plumbing at company after
+        company: a Slack integration here, an email service there, a push provider, a preference
+        center nobody wanted to maintain, and brittle glue code holding it all together.
+      </p>
+      <p style="font-size:1.1rem">
+        Renderical normalizes all of it behind one payload. You compose a message once; we
+        transform and deliver it per channel, handle fallback and retries, respect every
+        recipient's preferences, and give your agents a scoped, audited way to send.
+      </p>
+    </div>
+  </section>
+
+  <section class="band-dark">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">What we believe</span>
+        <h2>Principles behind the product</h2>
+      </div>
+      <div class="grid grid-2">
+        {values.map(([t, d]) => (
+          <div class="card" style="background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.1)">
+            <h3>{t}</h3>
+            <p style="margin-bottom:0">{d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title="Build on Renderical" />
+</BaseLayout>

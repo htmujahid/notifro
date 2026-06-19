@@ -1,0 +1,57 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const entries = [
+  {
+    date: "June 2026",
+    tag: "New",
+    title: "Native MCP server (GA)",
+    body: "Compose, schedule, and deliver via MCP tools from Claude and any MCP client — scope-aware, preview-gated, and fully audited. Available hosted (OAuth) and local (stdio).",
+  },
+  {
+    date: "May 2026",
+    tag: "New",
+    title: "Send-time optimization",
+    body: "Deliver when each recipient is most likely active, with per-individual prediction and quiet-hours awareness.",
+  },
+  {
+    date: "April 2026",
+    tag: "Improved",
+    title: "Digest bundling & frequency capping",
+    body: "Roll up N notifications into a single digest and cap how many messages a user receives per window.",
+  },
+  {
+    date: "March 2026",
+    tag: "New",
+    title: "Microsoft Teams & Discord channels",
+    body: "Adaptive cards for Teams and rich embeds for Discord, both rendered from the same compose-once payload.",
+  },
+];
+---
+
+<BaseLayout title="Changelog" description="What's new in Renderical.">
+  <section class="hero" style="padding-bottom:32px">
+    <div class="container-narrow">
+      <span class="eyebrow">Changelog</span>
+      <h1>What's new</h1>
+      <p class="lead">Product updates, new channels, and improvements.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:8px">
+    <div class="container-narrow">
+      <div class="grid" style="gap:18px">
+        {entries.map((e) => (
+          <div class="card">
+            <div style="display:flex;gap:12px;align-items:center;margin-bottom:8px">
+              <span class="pill">{e.date}</span>
+              <span class="pill" style="background:var(--primary-50);color:var(--primary-700);border-color:rgba(91,84,240,0.2)">{e.tag}</span>
+            </div>
+            <h3>{e.title}</h3>
+            <p style="margin-bottom:0">{e.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

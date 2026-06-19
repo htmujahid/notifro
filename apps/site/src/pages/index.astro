@@ -1,17 +1,240 @@
 ---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CtaBand from "../components/CtaBand.astro";
+import { site, channels } from "../config";
 
+const coreFeatures = [
+  {
+    icon: "🧩",
+    title: "Single compose API",
+    text: "One normalized payload, automatically transformed into Slack blocks, HTML email, Teams adaptive cards, Discord embeds, and push payloads.",
+  },
+  {
+    icon: "🔀",
+    title: "Fallback chains",
+    text: "Try push → fall back to email → fall back to SMS. Routing rules by user, message type, priority, or time of day.",
+  },
+  {
+    icon: "🔐",
+    title: "Scope-based OAuth",
+    text: "Connect every provider with granular scopes. Token storage, refresh, rotation, health monitoring, and multi-tenant isolation.",
+  },
+  {
+    icon: "🎛️",
+    title: "Preference center",
+    text: "Drop-in per-channel, per-category opt-in/out. Frequency capping, digest bundling, and CAN-SPAM / GDPR-compliant unsubscribe.",
+  },
+  {
+    icon: "🛡️",
+    title: "Delivery guarantees",
+    text: "Automatic retries with backoff, dead-letter queue, idempotency keys, and full status tracking from queued to clicked.",
+  },
+  {
+    icon: "🤖",
+    title: "Native MCP server",
+    text: "Expose sending, scheduling, and analytics as MCP tools so AI agents act within scope — with preview and approval gates.",
+  },
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <span class="badge"><span class="badge-dot"></span> Now with a native MCP server for AI agents</span>
+      <h1>The <span class="gradient-text">unified notification</span> infrastructure for product teams</h1>
+      <p class="lead">
+        {site.name} normalizes every channel behind one compose-once API. Send to Slack,
+        email, Teams, Discord, push, and in-app — with fallback chains, scope-based OAuth,
+        and a built-in preference center. One integration replaces five.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-lg" href={site.signupUrl}>Start free</a>
+        <a class="btn btn-ghost btn-lg" href="/developers">Read the docs →</a>
+      </div>
+      <p class="hero-note">Free tier · No credit card · Self-hosted option available</p>
+    </div>
+  </section>
+
+  <!-- Trust -->
+  <section class="section-sm">
+    <div class="container">
+      <p class="text-center" style="font-size:0.85rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-faint);margin-bottom:28px">
+        One API for every channel teams ship on
+      </p>
+      <div class="trust">
+        <span>Slack</span><span>Gmail</span><span>Teams</span><span>Discord</span>
+        <span>APNs</span><span>FCM</span><span>Web Push</span><span>Webhooks</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Compose once demo -->
+  <section class="band-dark">
+    <div class="container">
+      <div class="split">
+        <div>
+          <span class="eyebrow">Compose once, transform everywhere</span>
+          <h2>Write the message once. We render it per channel.</h2>
+          <p>
+            A channel-agnostic body with text, markdown, buttons, images, and interactive
+            components. {site.name} transforms it into the native format each destination
+            expects — no per-channel branching in your code.
+          </p>
+          <ul class="checklist" style="margin-top:18px">
+            <li><span class="tick">✓</span><span><b>Template engine</b> with variables, conditionals, loops, and localization</span></li>
+            <li><span class="tick">✓</span><span><b>Rich content</b> — buttons, images, attachments, interactive components</span></li>
+            <li><span class="tick">✓</span><span><b>Live multi-channel preview</b> before a single message ships</span></li>
+          </ul>
+        </div>
+        <div class="split-media">
+          <div class="code">
+            <div class="code-head"><span></span><span></span><span></span></div>
+            <span class="c-com">// One payload → every channel</span><br />
+            <span class="c-key">await</span> renderical.<span class="c-fn">send</span>(&#123;<br />
+            &nbsp;&nbsp;to: user.id,<br />
+            &nbsp;&nbsp;template: <span class="c-str">"invoice.paid"</span>,<br />
+            &nbsp;&nbsp;data: &#123; amount: <span class="c-str">"$240.00"</span> &#125;,<br />
+            &nbsp;&nbsp;channels: [<span class="c-str">"push"</span>, <span class="c-str">"email"</span>, <span class="c-str">"sms"</span>],<br />
+            &nbsp;&nbsp;fallback: <span class="c-key">true</span>, <span class="c-com">// push → email → sms</span><br />
+            &nbsp;&nbsp;idempotencyKey: invoice.id,<br />
+            &#125;);
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core features -->
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Everything in one platform</span>
+        <h2>The infrastructure behind every notification</h2>
+        <p class="lead">Delivery, preferences, OAuth, reliability, and agentic sending — without
+        stitching together a half-dozen vendors.</p>
+      </div>
+      <div class="grid grid-3">
+        {coreFeatures.map((f) => (
+          <div class="card">
+            <div class="card-icon">{f.icon}</div>
+            <h3>{f.title}</h3>
+            <p>{f.text}</p>
+          </div>
+        ))}
+      </div>
+      <div class="text-center" style="margin-top:40px">
+        <a class="btn btn-ghost" href="/features">See all features →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Channels -->
+  <section class="band-dark">
+    <div class="container text-center">
+      <span class="eyebrow">Multi-channel delivery</span>
+      <h2>Connect once. Reach anywhere.</h2>
+      <p class="lead mx-auto" style="margin-bottom:36px">
+        Broadcast, targeted, and transactional sending with rate-aware throttling and
+        timezone-aware scheduling across every channel your users live in.
+      </p>
+      <div class="chips" style="justify-content:center">
+        {channels.map((c) => (
+          <span class="chip" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.14);color:#fff">
+            <span class="dot" style={`background:${c.color}`}></span>{c.name}
+          </span>
+        ))}
+      </div>
+      <div style="margin-top:36px">
+        <a class="btn btn-light" href="/channels">Explore channels →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- MCP highlight -->
+  <section>
+    <div class="container">
+      <div class="split reverse">
+        <div class="split-media">
+          <div class="code">
+            <div class="code-head"><span></span><span></span><span></span></div>
+            <span class="c-com"># Agent calls an MCP tool</span><br />
+            <span class="c-fn">send_notification</span>(<br />
+            &nbsp;&nbsp;recipient=<span class="c-str">"u_8a21"</span>,<br />
+            &nbsp;&nbsp;message=<span class="c-str">"Deploy finished ✅"</span>,<br />
+            &nbsp;&nbsp;prefer=<span class="c-str">"preferred_channel"</span>,<br />
+            &nbsp;&nbsp;fallback=<span class="c-key">True</span>,<br />
+            )<br />
+            <span class="c-com"># → enforced against granted OAuth scopes</span><br />
+            <span class="c-com"># → preview + approval gate before send</span><br />
+            <span class="c-com"># → audited like any API/UI send</span>
+          </div>
+        </div>
+        <div>
+          <span class="eyebrow">MCP server layer</span>
+          <h2>Let AI agents send — safely</h2>
+          <p>
+            {site.name} exposes the entire platform as an MCP server. Claude, IDE assistants,
+            and custom agents can compose, schedule, and deliver notifications in natural
+            language — using your routing and fallback logic underneath.
+          </p>
+          <ul class="checklist" style="margin-top:18px">
+            <li><span class="tick">✓</span><span><b>Scope-aware safety</b> — agents act only within granted OAuth boundaries</span></li>
+            <li><span class="tick">✓</span><span><b>Human-in-the-loop</b> — preview-before-send and approval gates</span></li>
+            <li><span class="tick">✓</span><span><b>Remote &amp; local</b> — hosted OAuth MCP for SaaS, stdio MCP for self-hosted/dev</span></li>
+            <li><span class="tick">✓</span><span><b>Idempotency &amp; rate limits</b> enforced so agent loops never run away</span></li>
+          </ul>
+          <div style="margin-top:24px">
+            <a class="btn btn-primary" href="/mcp">Explore the MCP server →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="band-dark">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">How it works</span>
+        <h2>From event to delivered in four steps</h2>
+      </div>
+      <div class="grid grid-2" style="gap:40px">
+        <div class="steps">
+          <div class="step">
+            <span class="step-num">1</span>
+            <div><h3>Connect your channels</h3><p>Authorize providers with scoped OAuth. Tokens are stored, refreshed, and rotated automatically.</p></div>
+          </div>
+          <div class="step">
+            <span class="step-num">2</span>
+            <div><h3>Build a template</h3><p>Design once in the visual builder with variables and localization. Preview every channel live.</p></div>
+          </div>
+        </div>
+        <div class="steps">
+          <div class="step">
+            <span class="step-num">3</span>
+            <div><h3>Send or schedule</h3><p>Call the API, fire a webhook, or let an agent invoke an MCP tool. Add send-at, quiet hours, and fallback.</p></div>
+          </div>
+          <div class="step">
+            <span class="step-num">4</span>
+            <div><h3>Track & optimize</h3><p>Watch delivery, opens, clicks, and cost per channel. Get alerted on anomalies and bounces.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section>
+    <div class="container">
+      <div class="stats">
+        <div class="stat"><div class="num gradient-text">9+</div><div class="lbl">Channels, one API</div></div>
+        <div class="stat"><div class="num gradient-text">99.99%</div><div class="lbl">Delivery uptime SLA</div></div>
+        <div class="stat"><div class="num gradient-text">8</div><div class="lbl">Native MCP tools</div></div>
+        <div class="stat"><div class="num gradient-text">SOC 2</div><div class="lbl">Type II certified</div></div>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>

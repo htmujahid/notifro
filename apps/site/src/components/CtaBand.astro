@@ -1,0 +1,24 @@
+---
+import { site } from "../config";
+interface Props {
+  title?: string;
+  text?: string;
+}
+const {
+  title = "Stop stitching together 5+ notification tools",
+  text = "Compose once, deliver everywhere, and let your agents send safely. Start free — no credit card required.",
+} = Astro.props;
+---
+
+<section>
+  <div class="container">
+    <div class="cta">
+      <h2>{title}</h2>
+      <p>{text}</p>
+      <div class="hero-actions">
+        <a class="btn btn-white btn-lg" href={site.signupUrl}>Start free</a>
+        <a class="btn btn-light btn-lg" href="/contact">Talk to sales</a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,118 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../config";
+
+const tiers = [
+  {
+    name: "Free",
+    price: "$0",
+    unit: "/mo",
+    blurb: "For side projects and getting started.",
+    cta: "Start free",
+    href: site.signupUrl,
+    featured: false,
+    features: [
+      "10,000 notifications / mo",
+      "All channels & fallback chains",
+      "Preference center",
+      "Local (stdio) MCP server",
+      "Community support",
+    ],
+  },
+  {
+    name: "Growth",
+    price: "$199",
+    unit: "/mo",
+    blurb: "For scaling products and teams.",
+    cta: "Start free trial",
+    href: site.signupUrl,
+    featured: true,
+    features: [
+      "1M notifications / mo",
+      "Scope-based OAuth & connection health",
+      "Hosted MCP server with OAuth",
+      "Journeys, A/B testing & digests",
+      "Analytics, cost tracking & alerting",
+      "RBAC & audit logs",
+      "Email & chat support",
+    ],
+  },
+  {
+    name: "Enterprise",
+    price: "Custom",
+    unit: "",
+    blurb: "For compliance-heavy and high-volume orgs.",
+    cta: "Talk to sales",
+    href: "/contact",
+    featured: false,
+    features: [
+      "Volume pricing & SLAs",
+      "SOC 2 / HIPAA / GDPR, data residency",
+      "SSO/SAML, IP allowlisting",
+      "Multi-region delivery",
+      "Self-hosted / on-prem option",
+      "Dedicated support & onboarding",
+    ],
+  },
+];
+
+const faqs = [
+  ["How is a notification counted?", "One delivered message to one recipient on one channel counts as one notification. Fallbacks only count the channel that actually delivers."],
+  ["Do you have a free tier?", "Yes — 10,000 notifications per month, free forever, with access to every channel and the local MCP server."],
+  ["Can I self-host Renderical?", "Enterprise plans include a self-hosted / on-prem deployment option with the same compose API and stdio MCP server."],
+  ["What about overages?", "We never hard-stop transactional sends. Overages are billed per-notification at your plan's rate, and you can set spend alerts."],
+  ["Is the MCP server included?", "The local stdio MCP server is available on every plan. The hosted, OAuth-authenticated MCP server is included from Growth up."],
+];
+---
+
+<BaseLayout title="Pricing" description="Simple, usage-based pricing. Start free with 10,000 notifications/mo, scale on Growth, or go Enterprise with self-hosting, SSO, and compliance.">
+  <section class="hero" style="padding-bottom:40px">
+    <div class="container">
+      <span class="eyebrow">Pricing</span>
+      <h1>Simple, usage-based pricing</h1>
+      <p class="lead mx-auto">Start free. Scale when you do. One platform price replaces the
+      five tools you're paying for today.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:24px">
+    <div class="container">
+      <div class="price-grid">
+        {tiers.map((t) => (
+          <div class={`card price-card${t.featured ? " featured" : ""}`}>
+            {t.featured && <span class="price-tag-pop">Most popular</span>}
+            <h3>{t.name}</h3>
+            <p style="margin-bottom:0">{t.blurb}</p>
+            <div class="price">{t.price}<small>{t.unit}</small></div>
+            <a class={`btn ${t.featured ? "btn-primary" : "btn-ghost"}`} href={t.href}>{t.cta}</a>
+            <ul class="checklist">
+              {t.features.map((f) => (
+                <li><span class="tick">✓</span><span>{f}</span></li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <p class="text-center" style="margin-top:24px;color:var(--text-faint);font-size:0.9rem">
+        All plans include unlimited channels, templates, and the preference center. Prices in USD.
+      </p>
+    </div>
+  </section>
+
+  <section class="band-dark">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">FAQ</span>
+        <h2>Questions, answered</h2>
+      </div>
+      <div class="faq">
+        {faqs.map(([q, a]) => (
+          <details>
+            <summary>{q}</summary>
+            <p>{a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

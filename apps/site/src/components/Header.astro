@@ -1,0 +1,21 @@
+---
+import { site, nav } from "../config";
+---
+
+<header class="site-header">
+  <div class="container nav">
+    <a href="/" class="brand">
+      <span class="brand-mark">R</span>
+      {site.name}
+    </a>
+    <nav>
+      <ul class="nav-links">
+        {nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+      </ul>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href={site.signinUrl}>Sign in</a>
+      <a class="btn btn-primary" href={site.signupUrl}>Start free</a>
+    </div>
+  </div>
+</header>

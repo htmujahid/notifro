@@ -1,0 +1,37 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../config";
+
+const posts = [
+  ["Why we built a compose-once notification API", "The case against per-channel branching, and how one normalized payload changes how teams ship.", "Engineering"],
+  ["Designing a safe MCP server for agentic sending", "Scope enforcement, preview gates, idempotency, and audit — how agents send without going rogue.", "Product"],
+  ["Fallback chains that actually reach people", "Push → email → SMS done right: timeouts, dedup, and respecting quiet hours.", "Engineering"],
+];
+---
+
+<BaseLayout title="Blog" description="Notes on notifications, delivery, and the agentic era from the Renderical team.">
+  <section class="hero" style="padding-bottom:32px">
+    <div class="container-narrow">
+      <span class="eyebrow">Blog</span>
+      <h1>From the Renderical team</h1>
+      <p class="lead">Notes on notifications, delivery infrastructure, and building for agents.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:8px">
+    <div class="container">
+      <div class="grid grid-3">
+        {posts.map(([t, d, tag]) => (
+          <div class="card">
+            <span class="pill" style="margin-bottom:14px">{tag}</span>
+            <h3 style="font-size:1.1rem;margin-top:10px">{t}</h3>
+            <p style="margin-bottom:0">{d}</p>
+          </div>
+        ))}
+      </div>
+      <p class="text-center" style="margin-top:36px;color:var(--text-faint);font-size:0.9rem">
+        Want updates? Email <a href={`mailto:${site.email}`}>{site.email}</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
