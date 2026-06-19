@@ -1,238 +1,343 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import CtaBand from "../components/CtaBand.astro";
-import { site, channels } from "../config";
+import { Faq } from "../components/Faq";
+import { UseCases } from "../components/UseCases";
+import { site } from "../config";
+import { buttonVariants } from "@workspace/ui/components/button";
+import {
+  Layers,
+  Split,
+  ShieldCheck,
+  SlidersHorizontal,
+  RefreshCw,
+  Bot,
+  Clock,
+  Workflow,
+  BarChart3,
+  Lock,
+  Check,
+  ArrowRight,
+  MessageSquare,
+  Mail,
+  Smartphone,
+  Bell,
+  Globe,
+  Webhook,
+  Users,
+  Gamepad2,
+  MessageCircle,
+  Star,
+  Quote,
+} from "lucide-react";
 
-const coreFeatures = [
-  {
-    icon: "🧩",
-    title: "Single compose API",
-    text: "One normalized payload, automatically transformed into Slack blocks, HTML email, Teams adaptive cards, Discord embeds, and push payloads.",
-  },
-  {
-    icon: "🔀",
-    title: "Fallback chains",
-    text: "Try push → fall back to email → fall back to SMS. Routing rules by user, message type, priority, or time of day.",
-  },
-  {
-    icon: "🔐",
-    title: "Scope-based OAuth",
-    text: "Connect every provider with granular scopes. Token storage, refresh, rotation, health monitoring, and multi-tenant isolation.",
-  },
-  {
-    icon: "🎛️",
-    title: "Preference center",
-    text: "Drop-in per-channel, per-category opt-in/out. Frequency capping, digest bundling, and CAN-SPAM / GDPR-compliant unsubscribe.",
-  },
-  {
-    icon: "🛡️",
-    title: "Delivery guarantees",
-    text: "Automatic retries with backoff, dead-letter queue, idempotency keys, and full status tracking from queued to clicked.",
-  },
-  {
-    icon: "🤖",
-    title: "Native MCP server",
-    text: "Expose sending, scheduling, and analytics as MCP tools so AI agents act within scope — with preview and approval gates.",
-  },
+const channelTiles = [
+  { name: "Slack", icon: MessageSquare },
+  { name: "Email", icon: Mail },
+  { name: "Teams", icon: Users },
+  { name: "Discord", icon: Gamepad2 },
+  { name: "Push", icon: Smartphone },
+  { name: "Web Push", icon: Globe },
+  { name: "In-App", icon: Bell },
+  { name: "Webhooks", icon: Webhook },
+  { name: "SMS", icon: MessageCircle },
+];
+
+const testimonials = [
+  { quote: "We deleted four internal services and a preference center nobody wanted to own. One integration now handles every notification we send.", name: "Platform lead", role: "Growth-stage SaaS" },
+  { quote: "Compose-once was the unlock. Our code stopped caring about channels — we just send, and Renderical figures out the rest.", name: "Staff engineer", role: "Fintech" },
+  { quote: "The MCP server lets our agents notify users safely. Scoped, gated, audited — exactly what we needed to ship it.", name: "Head of AI", role: "Dev tools" },
+];
+
+const faqs = [
+  { q: "What is Renderical?", a: "Unified notification infrastructure. You compose a message once and Renderical transforms and delivers it across every channel — Slack, email, Teams, Discord, push, in-app, webhooks, and SMS." },
+  { q: "How is it different from an email or push service?", a: "Those cover one channel. Renderical normalizes every channel behind one API, adds fallback chains, scope-based OAuth, a preference center, and a native MCP server so a single integration replaces five tools." },
+  { q: "Can AI agents send notifications?", a: "Yes. The native MCP server exposes sending, scheduling, and analytics as tools that agents call — enforced against granted OAuth scopes, with preview and approval gates, idempotency, and full audit logging." },
+  { q: "Can I self-host?", a: "Enterprise plans include a self-hosted / on-prem deployment option, with the same compose API and a local stdio MCP server." },
 ];
 ---
 
 <BaseLayout>
   <!-- Hero -->
-  <section class="hero">
-    <div class="container">
-      <span class="badge"><span class="badge-dot"></span> Now with a native MCP server for AI agents</span>
-      <h1>The <span class="gradient-text">unified notification</span> infrastructure for product teams</h1>
-      <p class="lead">
-        {site.name} normalizes every channel behind one compose-once API. Send to Slack,
-        email, Teams, Discord, push, and in-app — with fallback chains, scope-based OAuth,
-        and a built-in preference center. One integration replaces five.
+  <section class="relative overflow-hidden border-b">
+    <div class="pointer-events-none absolute inset-0 bg-dots mask-radial opacity-60"></div>
+    <div class="pointer-events-none absolute left-1/2 top-0 -z-0 h-72 w-[42rem] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl"></div>
+
+    <div class="relative mx-auto max-w-6xl px-6 pt-20 pb-16 text-center">
+      <a href="/mcp" class="inline-flex items-center gap-2 rounded-full border bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur transition-colors hover:text-foreground">
+        <span class="flex size-4 items-center justify-center rounded-full bg-primary/15 text-primary"><Bot className="size-2.5" /></span>
+        New: native MCP server for AI agents
+        <ArrowRight className="size-3" />
+      </a>
+      <h1 class="mx-auto mt-6 max-w-3xl text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">
+        Send notifications everywhere from <span class="text-primary">one API</span>
+      </h1>
+      <p class="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground text-pretty">
+        {site.name} normalizes every channel behind one compose-once API — Slack, email, Teams,
+        Discord, push, and in-app — with fallback chains, scope-based OAuth, and a built-in
+        preference center. One integration replaces five.
       </p>
-      <div class="hero-actions">
-        <a class="btn btn-primary btn-lg" href={site.signupUrl}>Start free</a>
-        <a class="btn btn-ghost btn-lg" href="/developers">Read the docs →</a>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <a href={site.signupUrl} class={buttonVariants({ size: "lg" })}>Start free</a>
+        <a href="/developers" class={buttonVariants({ variant: "outline", size: "lg" })}>Read the docs</a>
       </div>
-      <p class="hero-note">Free tier · No credit card · Self-hosted option available</p>
+      <p class="mt-4 text-sm text-muted-foreground">Free tier · No credit card · Self-hosted option available</p>
+
+      <!-- Product window mock -->
+      <div class="relative mx-auto mt-16 max-w-4xl text-left">
+        <div class="overflow-hidden rounded-xl border bg-card shadow-2xl shadow-foreground/5">
+          <div class="flex items-center gap-2 border-b bg-muted/40 px-4 py-3">
+            <span class="size-3 rounded-full bg-muted-foreground/20"></span>
+            <span class="size-3 rounded-full bg-muted-foreground/20"></span>
+            <span class="size-3 rounded-full bg-muted-foreground/20"></span>
+            <span class="ml-2 font-mono text-xs text-muted-foreground">renderical · compose</span>
+          </div>
+          <div class="grid gap-0 md:grid-cols-2 md:divide-x">
+            <!-- Compose -->
+            <div class="p-6">
+              <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Compose once</p>
+              <div class="mt-3 rounded-lg border bg-background p-4">
+                <p class="text-sm font-semibold">Your invoice is paid 🎉</p>
+                <p class="mt-1 text-sm text-muted-foreground">Thanks, Maria — your $240.00 payment was received.</p>
+                <span class={`mt-3 ${buttonVariants({ size: "xs" })}`}>View receipt</span>
+              </div>
+              <div class="mt-4 rounded-lg bg-muted/60 p-3 font-mono text-xs text-muted-foreground">
+                template: <span class="text-primary">"invoice.paid"</span><br />
+                channels: <span class="text-foreground">[push, email, sms]</span>
+              </div>
+            </div>
+            <!-- Delivery -->
+            <div class="p-6">
+              <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Delivered, per channel</p>
+              <div class="mt-3 divide-y">
+                {[
+                  [MessageSquare, "Slack", "Delivered", "bg-green-500/10 text-green-600 dark:text-green-500"],
+                  [Mail, "Email", "Opened", "bg-primary/10 text-primary"],
+                  [Smartphone, "Push", "Delivered", "bg-green-500/10 text-green-600 dark:text-green-500"],
+                  [MessageCircle, "SMS", "Fallback ready", "bg-muted text-muted-foreground"],
+                ].map(([Icon, name, status, cls]) => (
+                  <div class="flex items-center justify-between py-3">
+                    <span class="flex items-center gap-2.5 text-sm font-medium">
+                      <span class="flex size-7 items-center justify-center rounded-md border bg-muted/50"><Icon className="size-3.5" /></span>
+                      {name}
+                    </span>
+                    <span class={`rounded-full px-2.5 py-1 text-xs font-medium ${cls}`}>{status}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Trust -->
-  <section class="section-sm">
-    <div class="container">
-      <p class="text-center" style="font-size:0.85rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-faint);margin-bottom:28px">
-        One API for every channel teams ship on
-      </p>
-      <div class="trust">
+  <!-- Trust strip -->
+  <section class="border-b bg-muted/30">
+    <div class="mx-auto max-w-6xl px-6 py-10">
+      <p class="text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">One API for every channel teams ship on</p>
+      <div class="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-base font-semibold text-muted-foreground/70">
         <span>Slack</span><span>Gmail</span><span>Teams</span><span>Discord</span>
         <span>APNs</span><span>FCM</span><span>Web Push</span><span>Webhooks</span>
       </div>
     </div>
   </section>
 
-  <!-- Compose once demo -->
-  <section class="band-dark">
-    <div class="container">
-      <div class="split">
-        <div>
-          <span class="eyebrow">Compose once, transform everywhere</span>
-          <h2>Write the message once. We render it per channel.</h2>
-          <p>
-            A channel-agnostic body with text, markdown, buttons, images, and interactive
-            components. {site.name} transforms it into the native format each destination
-            expects — no per-channel branching in your code.
-          </p>
-          <ul class="checklist" style="margin-top:18px">
-            <li><span class="tick">✓</span><span><b>Template engine</b> with variables, conditionals, loops, and localization</span></li>
-            <li><span class="tick">✓</span><span><b>Rich content</b> — buttons, images, attachments, interactive components</span></li>
-            <li><span class="tick">✓</span><span><b>Live multi-channel preview</b> before a single message ships</span></li>
-          </ul>
-        </div>
-        <div class="split-media">
-          <div class="code">
-            <div class="code-head"><span></span><span></span><span></span></div>
-            <span class="c-com">// One payload → every channel</span><br />
-            <span class="c-key">await</span> renderical.<span class="c-fn">send</span>(&#123;<br />
-            &nbsp;&nbsp;to: user.id,<br />
-            &nbsp;&nbsp;template: <span class="c-str">"invoice.paid"</span>,<br />
-            &nbsp;&nbsp;data: &#123; amount: <span class="c-str">"$240.00"</span> &#125;,<br />
-            &nbsp;&nbsp;channels: [<span class="c-str">"push"</span>, <span class="c-str">"email"</span>, <span class="c-str">"sms"</span>],<br />
-            &nbsp;&nbsp;fallback: <span class="c-key">true</span>, <span class="c-com">// push → email → sms</span><br />
-            &nbsp;&nbsp;idempotencyKey: invoice.id,<br />
-            &#125;);
+  <!-- Bento grid -->
+  <section class="py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mx-auto max-w-2xl text-center">
+        <p class="text-sm font-semibold text-primary">The platform</p>
+        <h2 class="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Everything the five tools did — in one</h2>
+        <p class="mt-3 text-muted-foreground">Delivery, preferences, OAuth, reliability, and agentic sending, behind a single API.</p>
+      </div>
+
+      <div class="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <!-- A: compose once (wide) -->
+        <div class="group rounded-2xl border bg-card p-6 transition hover:border-foreground/20 hover:shadow-md lg:col-span-2">
+          <div class="flex items-center gap-2.5">
+            <span class="flex size-9 items-center justify-center rounded-lg border bg-muted/50"><Layers className="size-5" /></span>
+            <h3 class="font-semibold">Compose once, transform everywhere</h3>
+          </div>
+          <p class="mt-2 max-w-md text-sm text-muted-foreground">One normalized payload, automatically rendered into Slack blocks, HTML email, Teams cards, Discord embeds, and push.</p>
+          <div class="mt-5 flex flex-wrap gap-2">
+            {channelTiles.map((c) => (
+              <span class="inline-flex items-center gap-1.5 rounded-lg border bg-background px-2.5 py-1.5 text-xs font-medium transition group-hover:border-foreground/15">
+                <c.icon className="size-3.5 text-muted-foreground" />{c.name}
+              </span>
+            ))}
           </div>
         </div>
+
+        <!-- B: MCP (tall) -->
+        <div class="group rounded-2xl border bg-card p-6 transition hover:border-foreground/20 hover:shadow-md lg:row-span-2">
+          <div class="flex items-center gap-2.5">
+            <span class="flex size-9 items-center justify-center rounded-lg border bg-muted/50"><Bot className="size-5" /></span>
+            <h3 class="font-semibold">Native MCP server</h3>
+          </div>
+          <p class="mt-2 text-sm text-muted-foreground">Agents compose, schedule, and send — within granted scopes, preview-gated and audited.</p>
+          <div class="mt-5 rounded-lg bg-muted/60 p-4 font-mono text-xs leading-relaxed text-muted-foreground">
+            <span class="text-muted-foreground/60"># agent tool call</span><br />
+            <span class="text-foreground">send_notification</span>(<br />
+            &nbsp;&nbsp;recipient=<span class="text-primary">"u_8a21"</span>,<br />
+            &nbsp;&nbsp;prefer=<span class="text-primary">"preferred"</span>,<br />
+            &nbsp;&nbsp;fallback=<span class="text-foreground">True</span>,<br />
+            )<br /><br />
+            <span class="text-muted-foreground/60"># ✓ scope-checked</span><br />
+            <span class="text-muted-foreground/60"># ✓ approval gate</span><br />
+            <span class="text-muted-foreground/60"># ✓ audited</span>
+          </div>
+          <a href="/mcp" class="mt-5 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline">Explore the MCP server <ArrowRight className="size-3.5" /></a>
+        </div>
+
+        <!-- C: fallback -->
+        <div class="group rounded-2xl border bg-card p-6 transition hover:border-foreground/20 hover:shadow-md">
+          <div class="flex items-center gap-2.5">
+            <span class="flex size-9 items-center justify-center rounded-lg border bg-muted/50"><Split className="size-5" /></span>
+            <h3 class="font-semibold">Fallback chains</h3>
+          </div>
+          <p class="mt-2 text-sm text-muted-foreground">Try the best channel, fall back automatically until one delivers.</p>
+          <div class="mt-4 flex items-center gap-2 text-xs font-medium">
+            <span class="rounded-md border bg-background px-2 py-1">Push</span>
+            <ArrowRight className="size-3.5 text-muted-foreground" />
+            <span class="rounded-md border bg-background px-2 py-1">Email</span>
+            <ArrowRight className="size-3.5 text-muted-foreground" />
+            <span class="rounded-md border bg-background px-2 py-1">SMS</span>
+          </div>
+        </div>
+
+        <!-- D: preferences -->
+        <div class="group rounded-2xl border bg-card p-6 transition hover:border-foreground/20 hover:shadow-md">
+          <div class="flex items-center gap-2.5">
+            <span class="flex size-9 items-center justify-center rounded-lg border bg-muted/50"><SlidersHorizontal className="size-5" /></span>
+            <h3 class="font-semibold">Preference center</h3>
+          </div>
+          <p class="mt-2 text-sm text-muted-foreground">Per-channel opt-in, digests, and compliant unsubscribe.</p>
+          <div class="mt-4 space-y-2.5">
+            {[["Product updates", true], ["Weekly digest", true], ["Marketing", false]].map(([label, on]) => (
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-muted-foreground">{label}</span>
+                <span class={`relative h-5 w-9 rounded-full transition ${on ? "bg-primary" : "bg-muted-foreground/25"}`}>
+                  <span class={`absolute top-0.5 size-4 rounded-full bg-white transition-all ${on ? "right-0.5" : "left-0.5"}`}></span>
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8 text-center">
+        <a href="/features" class={buttonVariants({ variant: "outline" })}>See all features</a>
       </div>
     </div>
   </section>
 
-  <!-- Core features -->
-  <section>
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">Everything in one platform</span>
-        <h2>The infrastructure behind every notification</h2>
-        <p class="lead">Delivery, preferences, OAuth, reliability, and agentic sending — without
-        stitching together a half-dozen vendors.</p>
+  <!-- Use cases (interactive tabs) -->
+  <section class="border-t bg-muted/30 py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mx-auto max-w-2xl text-center">
+        <p class="text-sm font-semibold text-primary">Use cases</p>
+        <h2 class="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Built for every message you send</h2>
+        <p class="mt-3 text-muted-foreground">From OTPs to AI agents — the same compose-once API, routed the way each message needs.</p>
       </div>
-      <div class="grid grid-3">
-        {coreFeatures.map((f) => (
-          <div class="card">
-            <div class="card-icon">{f.icon}</div>
-            <h3>{f.title}</h3>
-            <p>{f.text}</p>
-          </div>
-        ))}
-      </div>
-      <div class="text-center" style="margin-top:40px">
-        <a class="btn btn-ghost" href="/features">See all features →</a>
+      <div class="mt-10">
+        <UseCases client:visible />
       </div>
     </div>
   </section>
 
   <!-- Channels -->
-  <section class="band-dark">
-    <div class="container text-center">
-      <span class="eyebrow">Multi-channel delivery</span>
-      <h2>Connect once. Reach anywhere.</h2>
-      <p class="lead mx-auto" style="margin-bottom:36px">
-        Broadcast, targeted, and transactional sending with rate-aware throttling and
-        timezone-aware scheduling across every channel your users live in.
-      </p>
-      <div class="chips" style="justify-content:center">
-        {channels.map((c) => (
-          <span class="chip" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.14);color:#fff">
-            <span class="dot" style={`background:${c.color}`}></span>{c.name}
-          </span>
+  <section class="py-20">
+    <div class="mx-auto max-w-6xl px-6 text-center">
+      <h2 class="text-3xl font-semibold tracking-tight sm:text-4xl">Connect once. Reach anywhere.</h2>
+      <p class="mx-auto mt-3 max-w-2xl text-muted-foreground">Broadcast, targeted, and transactional sending with rate-aware throttling and timezone-aware scheduling.</p>
+      <div class="mx-auto mt-10 grid max-w-3xl grid-cols-3 gap-3 sm:grid-cols-3 md:grid-cols-3">
+        {channelTiles.map((c) => (
+          <div class="flex flex-col items-center gap-2 rounded-xl border bg-card px-3 py-5 transition hover:border-foreground/20 hover:shadow-sm">
+            <span class="flex size-10 items-center justify-center rounded-lg border bg-muted/50"><c.icon className="size-5" /></span>
+            <span class="text-sm font-medium">{c.name}</span>
+          </div>
         ))}
       </div>
-      <div style="margin-top:36px">
-        <a class="btn btn-light" href="/channels">Explore channels →</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- MCP highlight -->
-  <section>
-    <div class="container">
-      <div class="split reverse">
-        <div class="split-media">
-          <div class="code">
-            <div class="code-head"><span></span><span></span><span></span></div>
-            <span class="c-com"># Agent calls an MCP tool</span><br />
-            <span class="c-fn">send_notification</span>(<br />
-            &nbsp;&nbsp;recipient=<span class="c-str">"u_8a21"</span>,<br />
-            &nbsp;&nbsp;message=<span class="c-str">"Deploy finished ✅"</span>,<br />
-            &nbsp;&nbsp;prefer=<span class="c-str">"preferred_channel"</span>,<br />
-            &nbsp;&nbsp;fallback=<span class="c-key">True</span>,<br />
-            )<br />
-            <span class="c-com"># → enforced against granted OAuth scopes</span><br />
-            <span class="c-com"># → preview + approval gate before send</span><br />
-            <span class="c-com"># → audited like any API/UI send</span>
-          </div>
-        </div>
-        <div>
-          <span class="eyebrow">MCP server layer</span>
-          <h2>Let AI agents send — safely</h2>
-          <p>
-            {site.name} exposes the entire platform as an MCP server. Claude, IDE assistants,
-            and custom agents can compose, schedule, and deliver notifications in natural
-            language — using your routing and fallback logic underneath.
-          </p>
-          <ul class="checklist" style="margin-top:18px">
-            <li><span class="tick">✓</span><span><b>Scope-aware safety</b> — agents act only within granted OAuth boundaries</span></li>
-            <li><span class="tick">✓</span><span><b>Human-in-the-loop</b> — preview-before-send and approval gates</span></li>
-            <li><span class="tick">✓</span><span><b>Remote &amp; local</b> — hosted OAuth MCP for SaaS, stdio MCP for self-hosted/dev</span></li>
-            <li><span class="tick">✓</span><span><b>Idempotency &amp; rate limits</b> enforced so agent loops never run away</span></li>
-          </ul>
-          <div style="margin-top:24px">
-            <a class="btn btn-primary" href="/mcp">Explore the MCP server →</a>
-          </div>
-        </div>
+      <div class="mt-10">
+        <a href="/channels" class={buttonVariants({ variant: "outline" })}>Explore channels</a>
       </div>
     </div>
   </section>
 
   <!-- How it works -->
-  <section class="band-dark">
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">How it works</span>
-        <h2>From event to delivered in four steps</h2>
+  <section class="border-t bg-muted/30 py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mx-auto max-w-2xl text-center">
+        <h2 class="text-3xl font-semibold tracking-tight sm:text-4xl">From event to delivered in four steps</h2>
       </div>
-      <div class="grid grid-2" style="gap:40px">
-        <div class="steps">
-          <div class="step">
-            <span class="step-num">1</span>
-            <div><h3>Connect your channels</h3><p>Authorize providers with scoped OAuth. Tokens are stored, refreshed, and rotated automatically.</p></div>
+      <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {[
+          [Lock, "Connect your channels", "Authorize providers with scoped OAuth. Tokens are stored, refreshed, and rotated automatically."],
+          [Layers, "Build a template", "Design once in the visual builder with variables and localization. Preview every channel live."],
+          [Clock, "Send or schedule", "Call the API, fire a webhook, or let an agent invoke an MCP tool. Add send-at, quiet hours, and fallback."],
+          [BarChart3, "Track & optimize", "Watch delivery, opens, clicks, and cost per channel. Get alerted on anomalies and bounces."],
+        ].map(([Icon, title, text], i) => (
+          <div class="relative rounded-xl border bg-card p-6">
+            <div class="flex items-center gap-3">
+              <span class="flex size-8 items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground">{i + 1}</span>
+              <Icon className="size-5 text-muted-foreground" />
+            </div>
+            <h3 class="mt-4 font-semibold">{title}</h3>
+            <p class="mt-1.5 text-sm text-muted-foreground">{text}</p>
           </div>
-          <div class="step">
-            <span class="step-num">2</span>
-            <div><h3>Build a template</h3><p>Design once in the visual builder with variables and localization. Preview every channel live.</p></div>
-          </div>
-        </div>
-        <div class="steps">
-          <div class="step">
-            <span class="step-num">3</span>
-            <div><h3>Send or schedule</h3><p>Call the API, fire a webhook, or let an agent invoke an MCP tool. Add send-at, quiet hours, and fallback.</p></div>
-          </div>
-          <div class="step">
-            <span class="step-num">4</span>
-            <div><h3>Track & optimize</h3><p>Watch delivery, opens, clicks, and cost per channel. Get alerted on anomalies and bounces.</p></div>
-          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats band -->
+  <section class="py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="rounded-2xl border bg-primary/5 px-6 py-12">
+        <div class="grid gap-8 text-center sm:grid-cols-2 lg:grid-cols-4">
+          {[["9+", "Channels, one API"], ["99.99%", "Delivery uptime SLA"], ["10", "Native MCP tools"], ["SOC 2", "Type II certified"]].map(([num, lbl]) => (
+            <div>
+              <div class="text-4xl font-semibold tracking-tight text-primary">{num}</div>
+              <div class="mt-1 text-sm text-muted-foreground">{lbl}</div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Stats -->
-  <section>
-    <div class="container">
-      <div class="stats">
-        <div class="stat"><div class="num gradient-text">9+</div><div class="lbl">Channels, one API</div></div>
-        <div class="stat"><div class="num gradient-text">99.99%</div><div class="lbl">Delivery uptime SLA</div></div>
-        <div class="stat"><div class="num gradient-text">8</div><div class="lbl">Native MCP tools</div></div>
-        <div class="stat"><div class="num gradient-text">SOC 2</div><div class="lbl">Type II certified</div></div>
+  <!-- Testimonials -->
+  <section class="border-t bg-muted/30 py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mx-auto max-w-2xl text-center">
+        <div class="flex justify-center gap-1 text-primary">
+          {[0, 1, 2, 3, 4].map(() => <Star className="size-4 fill-current" />)}
+        </div>
+        <h2 class="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">Teams ship faster on Renderical</h2>
       </div>
+      <div class="mt-12 grid gap-5 md:grid-cols-3">
+        {testimonials.map((t) => (
+          <figure class="flex flex-col rounded-xl border bg-card p-6">
+            <Quote className="size-6 text-primary/40" />
+            <blockquote class="mt-3 flex-1 text-sm leading-relaxed text-foreground">“{t.quote}”</blockquote>
+            <figcaption class="mt-5 border-t pt-4 text-sm">
+              <span class="font-medium">{t.name}</span>
+              <span class="text-muted-foreground"> · {t.role}</span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mx-auto mb-10 max-w-2xl text-center">
+        <h2 class="text-3xl font-semibold tracking-tight sm:text-4xl">Questions, answered</h2>
+      </div>
+      <Faq items={faqs} client:visible />
     </div>
   </section>
 

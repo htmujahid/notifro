@@ -1,72 +1,75 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
 import CtaBand from "../components/CtaBand.astro";
+import { buttonVariants } from "@workspace/ui/components/button";
+import { Code2, Boxes, Webhook, FlaskConical, Terminal, ScrollText, Check } from "lucide-react";
 
 const dx = [
-  ["REST & GraphQL APIs", "First-class REST and GraphQL, fully typed and documented."],
-  ["SDKs", "Native SDKs for JavaScript/TypeScript, Python, Go, Ruby, and PHP."],
-  ["Webhook ingestion", "Drive sends from any event source with signed webhooks."],
-  ["Sandbox / test mode", "Safe test sends with per-channel message previews."],
-  ["CLI", "Test, preview, and tail logs from your terminal."],
-  ["API logs & inspector", "Detailed request logs to debug any delivery."],
+  { icon: Code2, title: "REST & GraphQL APIs", text: "First-class REST and GraphQL, fully typed and documented." },
+  { icon: Boxes, title: "SDKs", text: "Native SDKs for JavaScript/TypeScript, Python, Go, Ruby, and PHP." },
+  { icon: Webhook, title: "Webhook ingestion", text: "Drive sends from any event source with signed webhooks." },
+  { icon: FlaskConical, title: "Sandbox / test mode", text: "Safe test sends with per-channel message previews." },
+  { icon: Terminal, title: "CLI", text: "Test, preview, and tail logs from your terminal." },
+  { icon: ScrollText, title: "API logs & inspector", text: "Detailed request logs to debug any delivery." },
 ];
 ---
 
 <BaseLayout title="Developers" description="REST & GraphQL APIs, SDKs for major languages, a CLI, webhook ingestion, sandbox mode, and a native MCP server — built for developer experience.">
-  <section class="hero" style="padding-bottom:48px">
-    <div class="container">
-      <span class="eyebrow">Developers</span>
-      <h1>Built for the way you ship</h1>
-      <p class="lead mx-auto">Typed SDKs, REST and GraphQL, a CLI, sandbox mode, and a native
-      MCP server. Send your first notification in under five minutes.</p>
-    </div>
-  </section>
+  <PageHeader
+    eyebrow="Developers"
+    title="Built for the way you ship"
+    lead="Typed SDKs, REST and GraphQL, a CLI, sandbox mode, and a native MCP server. Send your first notification in under five minutes."
+  />
 
   <!-- Quickstart -->
-  <section style="padding-top:24px" id="api">
-    <div class="container">
-      <div class="split">
+  <section class="py-16" id="api">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid items-center gap-12 lg:grid-cols-2">
         <div>
-          <span class="eyebrow">Quickstart</span>
-          <h2>Send in three lines</h2>
-          <p>Install the SDK, set your API key, and call <code>send</code>. Channels, fallback,
-          and idempotency are all part of one payload.</p>
-          <ul class="checklist" style="margin-top:16px">
-            <li><span class="tick">✓</span><span>Idempotency keys to prevent duplicates</span></li>
-            <li><span class="tick">✓</span><span>Per-channel previews in sandbox mode</span></li>
-            <li><span class="tick">✓</span><span>Delivery status via polling or webhooks</span></li>
+          <p class="text-sm font-semibold text-primary">Quickstart</p>
+          <h2 class="mt-2 text-3xl font-semibold tracking-tight">Send in three lines</h2>
+          <p class="mt-4 text-muted-foreground">
+            Install the SDK, set your API key, and call <code class="rounded bg-muted px-1.5 py-0.5 text-sm">send</code>.
+            Channels, fallback, and idempotency are all part of one payload.
+          </p>
+          <ul class="mt-6 space-y-3 text-sm">
+            <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span>Idempotency keys to prevent duplicates</span></li>
+            <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span>Per-channel previews in sandbox mode</span></li>
+            <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span>Delivery status via polling or webhooks</span></li>
           </ul>
         </div>
-        <div class="split-media">
-          <div class="code">
-            <div class="code-head"><span></span><span></span><span></span></div>
-            <span class="c-com">$ npm install @renderical/node</span><br /><br />
-            <span class="c-key">import</span> &#123; Renderical &#125; <span class="c-key">from</span> <span class="c-str">"@renderical/node"</span>;<br />
-            <span class="c-key">const</span> rc = <span class="c-key">new</span> <span class="c-fn">Renderical</span>(process.env.RC_KEY);<br /><br />
-            <span class="c-key">await</span> rc.<span class="c-fn">send</span>(&#123;<br />
-            &nbsp;&nbsp;to: <span class="c-str">"u_8a21"</span>,<br />
-            &nbsp;&nbsp;template: <span class="c-str">"welcome"</span>,<br />
-            &nbsp;&nbsp;channels: [<span class="c-str">"email"</span>, <span class="c-str">"push"</span>],<br />
-            &nbsp;&nbsp;fallback: <span class="c-key">true</span>,<br />
-            &#125;);
-          </div>
+        <div class="rounded-xl border bg-card p-5 font-mono text-sm leading-relaxed shadow-sm">
+          <pre class="overflow-x-auto text-muted-foreground"><code><span class="text-muted-foreground/60">$ npm install @renderical/node</span>
+
+import {'{'} Renderical {'}'} from <span class="text-primary">"@renderical/node"</span>;
+const rc = new <span class="text-foreground">Renderical</span>(process.env.RC_KEY);
+
+await rc.<span class="text-foreground">send</span>({'{'}
+  to: <span class="text-primary">"u_8a21"</span>,
+  template: <span class="text-primary">"welcome"</span>,
+  channels: [<span class="text-primary">"email"</span>, <span class="text-primary">"push"</span>],
+  fallback: <span class="text-foreground">true</span>,
+{'}'});</code></pre>
         </div>
       </div>
     </div>
   </section>
 
   <!-- DX grid -->
-  <section class="band-dark" id="sdks">
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">Developer experience</span>
-        <h2>Everything you need to integrate</h2>
+  <section class="border-t bg-muted/30 py-16" id="sdks">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mx-auto max-w-2xl text-center">
+        <h2 class="text-3xl font-semibold tracking-tight">Everything you need to integrate</h2>
       </div>
-      <div class="grid grid-3">
-        {dx.map(([t, d]) => (
-          <div class="card" style="background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.1)">
-            <h3 style="font-size:1.05rem">{t}</h3>
-            <p style="margin-bottom:0">{d}</p>
+      <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {dx.map((d) => (
+          <div class="rounded-xl border bg-card p-6">
+            <div class="flex size-9 items-center justify-center rounded-lg border bg-muted/50">
+              <d.icon className="size-5" />
+            </div>
+            <h3 class="mt-4 font-semibold">{d.title}</h3>
+            <p class="mt-1.5 text-sm text-muted-foreground">{d.text}</p>
           </div>
         ))}
       </div>
@@ -74,31 +77,30 @@ const dx = [
   </section>
 
   <!-- MCP -->
-  <section>
-    <div class="container">
-      <div class="split reverse">
-        <div class="split-media">
-          <div class="code">
-            <div class="code-head"><span></span><span></span><span></span></div>
-            <span class="c-com">// claude_desktop_config.json</span><br />
-            &#123;<br />
-            &nbsp;&nbsp;<span class="c-key">"mcpServers"</span>: &#123;<br />
-            &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"renderical"</span>: &#123;<br />
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"url"</span>: <span class="c-str">"https://mcp.renderical.com"</span>,<br />
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"auth"</span>: <span class="c-str">"oauth"</span><br />
-            &nbsp;&nbsp;&nbsp;&nbsp;&#125;<br />
-            &nbsp;&nbsp;&#125;<br />
-            &#125;
-          </div>
+  <section class="py-16">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid items-center gap-12 lg:grid-cols-2">
+        <div class="order-2 lg:order-1 rounded-xl border bg-card p-5 font-mono text-sm leading-relaxed shadow-sm">
+          <pre class="overflow-x-auto text-muted-foreground"><code><span class="text-muted-foreground/60">// claude_desktop_config.json</span>
+{'{'}
+  <span class="text-foreground">"mcpServers"</span>: {'{'}
+    <span class="text-foreground">"renderical"</span>: {'{'}
+      <span class="text-foreground">"url"</span>: <span class="text-primary">"https://mcp.renderical.com"</span>,
+      <span class="text-foreground">"auth"</span>: <span class="text-primary">"oauth"</span>
+    {'}'}
+  {'}'}
+{'}'}</code></pre>
         </div>
-        <div>
-          <span class="eyebrow">MCP server</span>
-          <h2>Wire up agents in seconds</h2>
-          <p>Point any MCP client at the hosted server, authenticate with OAuth, and your agent
-          can send, schedule, and query analytics within granted scopes. Prefer local? Run the
-          stdio server for self-hosted and dev.</p>
-          <div style="margin-top:20px">
-            <a class="btn btn-primary" href="/mcp">MCP server details →</a>
+        <div class="order-1 lg:order-2">
+          <p class="text-sm font-semibold text-primary">MCP server</p>
+          <h2 class="mt-2 text-3xl font-semibold tracking-tight">Wire up agents in seconds</h2>
+          <p class="mt-4 text-muted-foreground">
+            Point any MCP client at the hosted server, authenticate with OAuth, and your agent can
+            send, schedule, and query analytics within granted scopes. Prefer local? Run the stdio
+            server for self-hosted and dev.
+          </p>
+          <div class="mt-6">
+            <a href="/mcp" class={buttonVariants({ variant: "outline" })}>MCP server details</a>
           </div>
         </div>
       </div>

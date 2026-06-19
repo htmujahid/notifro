@@ -1,21 +1,24 @@
 ---
 import { site, nav } from "../config";
+import { buttonVariants } from "@workspace/ui/components/button";
 ---
 
-<header class="site-header">
-  <div class="container nav">
-    <a href="/" class="brand">
-      <span class="brand-mark">R</span>
+<header class="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+  <div class="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
+    <a href="/" class="flex items-center gap-2 font-semibold tracking-tight text-foreground">
+      <span class="flex size-6 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">R</span>
       {site.name}
     </a>
-    <nav>
-      <ul class="nav-links">
-        {nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
-      </ul>
+
+    <nav class="hidden items-center gap-7 md:flex">
+      {nav.map((item) => (
+        <a href={item.href} class="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">{item.label}</a>
+      ))}
     </nav>
-    <div class="nav-cta">
-      <a class="btn btn-ghost" href={site.signinUrl}>Sign in</a>
-      <a class="btn btn-primary" href={site.signupUrl}>Start free</a>
+
+    <div class="flex items-center gap-2">
+      <a href={site.signinUrl} class={`${buttonVariants({ variant: "ghost", size: "sm" })} hidden sm:inline-flex`}>Sign in</a>
+      <a href={site.signupUrl} class={buttonVariants({ size: "sm" })}>Get started</a>
     </div>
   </div>
 </header>

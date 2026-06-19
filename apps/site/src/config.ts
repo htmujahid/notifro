@@ -1,15 +1,17 @@
+// Frontend (apps/web) base URL — auth lives under /auth on the web app.
+const FRONTEND_URL = import.meta.env.PUBLIC_FRONTEND_URL ?? "http://localhost:5173";
+
 export const site = {
   name: "Renderical",
   tagline: "Compose once. Deliver everywhere.",
   description:
-    "Renderical is the unified notification infrastructure for product teams. One compose-once API delivers across Slack, email, Teams, Discord, push, and in-app — with fallback chains, scope-based OAuth, a built-in preference center, and a native MCP server for AI agents.",
+    "Renderical is unified notification infrastructure. One compose-once API delivers across Slack, email, Teams, Discord, push, and in-app — with fallback chains, scope-based OAuth, a built-in preference center, and a native MCP server for AI agents.",
   url: "https://renderical.com",
-  // Where the product app lives (sign in / sign up / dashboard).
-  appUrl: "/app",
-  signupUrl: "/app/sign-up",
-  signinUrl: "/app/sign-in",
-  docsUrl: "/developers",
   email: "hello@renderical.com",
+  frontendUrl: FRONTEND_URL,
+  signinUrl: `${FRONTEND_URL}/auth/sign-in`,
+  signupUrl: `${FRONTEND_URL}/auth/sign-up`,
+  docsUrl: "/developers",
 };
 
 export const nav = [
@@ -17,18 +19,17 @@ export const nav = [
   { label: "Channels", href: "/channels" },
   { label: "MCP Server", href: "/mcp" },
   { label: "Developers", href: "/developers" },
-  { label: "Pricing", href: "/pricing" },
   { label: "Security", href: "/security" },
 ];
 
 export const channels = [
-  { name: "Slack", color: "#4a154b", note: "Blocks & interactive" },
-  { name: "Gmail / SMTP", color: "#ea4335", note: "Responsive HTML" },
-  { name: "Microsoft Teams", color: "#6264a7", note: "Adaptive cards" },
-  { name: "Discord", color: "#5865f2", note: "Rich embeds" },
-  { name: "Mobile Push", color: "#34c759", note: "APNs / FCM" },
-  { name: "Web Push", color: "#f59e0b", note: "Service workers" },
-  { name: "In-App Inbox", color: "#5b54f0", note: "Drop-in feed" },
-  { name: "Webhooks", color: "#0ea5e9", note: "Signed & replay-safe" },
-  { name: "SMS", color: "#ec4899", note: "Fallback tier" },
+  { name: "Slack", note: "Block Kit" },
+  { name: "Gmail / SMTP", note: "Responsive HTML" },
+  { name: "Microsoft Teams", note: "Adaptive cards" },
+  { name: "Discord", note: "Rich embeds" },
+  { name: "Mobile Push", note: "APNs / FCM" },
+  { name: "Web Push", note: "Service workers" },
+  { name: "In-App Inbox", note: "Drop-in feed" },
+  { name: "Webhooks", note: "Signed & replay-safe" },
+  { name: "SMS", note: "Fallback tier" },
 ];

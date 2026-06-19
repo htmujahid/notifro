@@ -1,6 +1,10 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
 import CtaBand from "../components/CtaBand.astro";
+import { site } from "../config";
+import { buttonVariants } from "@workspace/ui/components/button";
+import { Brain, ShieldCheck, Hand, Building2, Check } from "lucide-react";
 
 const tools = [
   ["send_notification", "Compose and deliver across one or more channels."],
@@ -13,6 +17,13 @@ const tools = [
   ["create_template", "Build a template with variables and localization."],
   ["render_preview", "Preview a template per channel before sending."],
   ["query_analytics", "Pull engagement, delivery, and cost metrics."],
+];
+
+const standout = [
+  { icon: Brain, title: "Agentic sending", text: "An agent decides what to send, which channel, and when — your routing and fallback logic runs underneath, consistent with API and UI sends." },
+  { icon: ShieldCheck, title: "Scope-aware safety", text: "The server enforces the same scope-based OAuth permissions. Agents act only within the boundaries each connected account has granted." },
+  { icon: Hand, title: "Human-in-the-loop", text: "Preview-before-send and approval-gate tools prevent agents from blasting messages unchecked. Nothing ships without your guardrails." },
+  { icon: Building2, title: "Multi-tenant isolation", text: "Each agent session is bound to the right credentials and tenant, so isolation carries through from the API all the way to the agent." },
 ];
 
 const resources = [
@@ -30,65 +41,41 @@ const prompts = [
 ---
 
 <BaseLayout title="MCP Server" description="Expose your notification infrastructure as an MCP server so AI agents can compose, schedule, and deliver — scope-aware, with preview and approval gates, full audit, and multi-tenant isolation.">
-  <section class="hero" style="padding-bottom:48px">
-    <div class="container">
-      <span class="badge"><span class="badge-dot"></span> Built for the agentic era</span>
-      <h1>Your notification stack, as an <span class="gradient-text">MCP server</span></h1>
-      <p class="lead mx-auto">Let Claude, IDE assistants, and custom agents compose, schedule,
-      and deliver notifications in natural language — using your routing, fallback, and OAuth
-      scopes underneath. No manual API wiring.</p>
-      <div class="hero-actions">
-        <a class="btn btn-primary btn-lg" href="/developers">Connect the server →</a>
-        <a class="btn btn-ghost btn-lg" href="/contact">Talk to us</a>
-      </div>
-    </div>
-  </section>
+  <PageHeader
+    eyebrow="MCP server layer"
+    title="Your notification stack, as an MCP server"
+    lead="Let Claude, IDE assistants, and custom agents compose, schedule, and deliver notifications in natural language — using your routing, fallback, and OAuth scopes underneath. No manual API wiring."
+  />
 
-  <!-- Why it stands out -->
-  <section style="padding-top:32px">
-    <div class="container">
-      <div class="grid grid-2">
-        <div class="card">
-          <div class="card-icon">🧠</div>
-          <h3>Agentic sending</h3>
-          <p>An agent decides what to send, which channel, and when — your routing and fallback
-          logic runs underneath, so behavior stays consistent with API and UI sends.</p>
-        </div>
-        <div class="card">
-          <div class="card-icon">🔒</div>
-          <h3>Scope-aware safety</h3>
-          <p>The MCP server enforces the same scope-based OAuth permissions. Agents can only
-          act within the boundaries each connected account has granted.</p>
-        </div>
-        <div class="card">
-          <div class="card-icon">✋</div>
-          <h3>Human-in-the-loop</h3>
-          <p>Preview-before-send and approval-gate tools prevent agents from blasting messages
-          unchecked. Nothing ships without the guardrails you set.</p>
-        </div>
-        <div class="card">
-          <div class="card-icon">🏢</div>
-          <h3>Multi-tenant isolation</h3>
-          <p>Each agent session is bound to the right credentials and tenant, so isolation
-          carries through from the API all the way to the agent.</p>
-        </div>
+  <!-- Standout -->
+  <section class="py-16">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid gap-5 sm:grid-cols-2">
+        {standout.map((s) => (
+          <div class="rounded-xl border bg-card p-6">
+            <div class="flex size-9 items-center justify-center rounded-lg border bg-muted/50">
+              <s.icon className="size-5" />
+            </div>
+            <h3 class="mt-4 font-semibold">{s.title}</h3>
+            <p class="mt-1.5 text-sm text-muted-foreground">{s.text}</p>
+          </div>
+        ))}
       </div>
     </div>
   </section>
 
   <!-- Tools -->
-  <section class="band-dark">
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">MCP tools</span>
-        <h2>Tools exposed to agents</h2>
-        <p class="lead mx-auto">Every core capability is a first-class tool an agent can call.</p>
+  <section class="border-t bg-muted/30 py-16">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mx-auto max-w-2xl text-center">
+        <h2 class="text-3xl font-semibold tracking-tight">Tools exposed to agents</h2>
+        <p class="mt-3 text-muted-foreground">Every core capability is a first-class tool an agent can call.</p>
       </div>
-      <div class="grid grid-2">
+      <div class="mt-10 grid gap-4 sm:grid-cols-2">
         {tools.map(([name, desc]) => (
-          <div class="card" style="background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.1)">
-            <h3 style="font-family:var(--mono);font-size:0.98rem;color:#c4b5fd">{name}</h3>
-            <p style="margin-bottom:0">{desc}</p>
+          <div class="rounded-xl border bg-card p-5">
+            <code class="text-sm font-semibold text-primary">{name}</code>
+            <p class="mt-1.5 text-sm text-muted-foreground">{desc}</p>
           </div>
         ))}
       </div>
@@ -96,26 +83,26 @@ const prompts = [
   </section>
 
   <!-- Resources & prompts -->
-  <section>
-    <div class="container">
-      <div class="split">
+  <section class="py-16">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid gap-12 lg:grid-cols-2">
         <div>
-          <span class="eyebrow">MCP resources</span>
-          <h2>Read-context for agents</h2>
-          <p>Agents ground their decisions in live context exposed as MCP resources.</p>
-          <ul class="checklist" style="margin-top:16px">
+          <p class="text-sm font-semibold text-primary">MCP resources</p>
+          <h2 class="mt-2 text-2xl font-semibold tracking-tight">Read-context for agents</h2>
+          <p class="mt-3 text-muted-foreground">Agents ground their decisions in live context exposed as MCP resources.</p>
+          <ul class="mt-5 space-y-3 text-sm">
             {resources.map(([t, d]) => (
-              <li><span class="tick">✓</span><span><b>{t}</b> — {d}</span></li>
+              <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span><span class="font-medium text-foreground">{t}</span> — {d}</span></li>
             ))}
           </ul>
         </div>
         <div>
-          <span class="eyebrow">MCP prompts</span>
-          <h2>Reusable workflows</h2>
-          <p>Ship guided, repeatable agent workflows out of the box.</p>
-          <ul class="checklist" style="margin-top:16px">
+          <p class="text-sm font-semibold text-primary">MCP prompts</p>
+          <h2 class="mt-2 text-2xl font-semibold tracking-tight">Reusable workflows</h2>
+          <p class="mt-3 text-muted-foreground">Ship guided, repeatable agent workflows out of the box.</p>
+          <ul class="mt-5 space-y-3 text-sm">
             {prompts.map(([t, d]) => (
-              <li><span class="tick">▷</span><span><b>{t}</b> — {d}</span></li>
+              <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span><span class="font-medium text-foreground">{t}</span> — {d}</span></li>
             ))}
           </ul>
         </div>
@@ -123,29 +110,34 @@ const prompts = [
     </div>
   </section>
 
-  <!-- Deployment notes -->
-  <section class="band-dark">
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">Implementation</span>
-        <h2>Remote and local, with the same guarantees</h2>
+  <!-- Deployment -->
+  <section class="border-t bg-muted/30 py-16">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mx-auto max-w-2xl text-center">
+        <h2 class="text-3xl font-semibold tracking-tight">Remote and local, same guarantees</h2>
       </div>
-      <div class="grid grid-3">
-        <div class="card" style="background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.1)">
-          <h3>Remote MCP</h3>
-          <p>Hosted and OAuth-authenticated for SaaS users — connect from Claude or any MCP client.</p>
+      <div class="mt-10 grid gap-5 sm:grid-cols-3">
+        <div class="rounded-xl border bg-card p-6">
+          <h3 class="font-semibold">Remote MCP</h3>
+          <p class="mt-1.5 text-sm text-muted-foreground">Hosted and OAuth-authenticated for SaaS users — connect from Claude or any MCP client.</p>
         </div>
-        <div class="card" style="background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.1)">
-          <h3>Local / stdio MCP</h3>
-          <p>Run locally for self-hosted and dev setups, with the same per-tool scope enforcement.</p>
+        <div class="rounded-xl border bg-card p-6">
+          <h3 class="font-semibold">Local / stdio MCP</h3>
+          <p class="mt-1.5 text-sm text-muted-foreground">Run locally for self-hosted and dev setups, with the same per-tool scope enforcement.</p>
         </div>
-        <div class="card" style="background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.1)">
-          <h3>Safe by default</h3>
-          <p>Rate limiting and idempotency keys at the MCP layer — agent loops can't duplicate or run away. Every send is audited.</p>
+        <div class="rounded-xl border bg-card p-6">
+          <h3 class="font-semibold">Safe by default</h3>
+          <p class="mt-1.5 text-sm text-muted-foreground">Rate limiting and idempotency at the MCP layer — agent loops can't duplicate or run away. Every send is audited.</p>
         </div>
+      </div>
+      <div class="mt-10 text-center">
+        <a href="/developers" class={buttonVariants()}>Connect the server</a>
       </div>
     </div>
   </section>
 
-  <CtaBand title="Give your agents a safe way to notify" text="Connect the Renderical MCP server and let agents send within the scopes you grant — fully audited, rate-limited, and preview-gated." />
+  <CtaBand
+    title="Give your agents a safe way to notify"
+    text="Connect the Renderical MCP server and let agents send within the scopes you grant — fully audited, rate-limited, and preview-gated."
+  />
 </BaseLayout>

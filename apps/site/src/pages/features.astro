@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
 import CtaBand from "../components/CtaBand.astro";
 
 const groups = [
@@ -43,7 +44,7 @@ const groups = [
     eyebrow: "Preferences",
     title: "A preference center your users actually like",
     items: [
-      ["End-user preference center", "Drop-in per-channel, per-category opt-in/out."],
+      ["Preference center", "Drop-in per-channel, per-category opt-in/out."],
       ["Subscription topics", "Organize notifications into categories users can manage."],
       ["Frequency capping", "Cap how many messages a user receives in a window."],
       ["Digest bundling", "Roll up N notifications into a single digest."],
@@ -75,7 +76,7 @@ const groups = [
     eyebrow: "Analytics & observability",
     title: "See and prove what shipped",
     items: [
-      ["Delivery & engagement metrics", "Per-channel delivery, open, and click rates."],
+      ["Engagement metrics", "Per-channel delivery, open, and click rates."],
       ["Funnel & conversion tracking", "Tie notifications to downstream outcomes."],
       ["Real-time dashboards", "Live delivery health with anomaly alerting."],
       ["Cost tracking", "Spend per channel and provider, in one view."],
@@ -93,60 +94,42 @@ const groups = [
       ["Brand kit", "Apply logos, colors, and fonts consistently everywhere."],
     ],
   },
-];
-
-const aiFeatures = [
-  ["AI-assisted drafting", "Generate and tone-adjust message copy in seconds."],
-  ["Smart channel selection", "Predict the best channel per recipient."],
-  ["Send-time prediction", "Model the optimal moment per individual."],
-  ["Anomaly detection", "Catch engagement drops before they cost you."],
+  {
+    eyebrow: "Smart / AI",
+    title: "Intelligence baked into delivery",
+    items: [
+      ["AI-assisted drafting", "Generate and tone-adjust message copy in seconds."],
+      ["Smart channel selection", "Predict the best channel per recipient."],
+      ["Send-time prediction", "Model the optimal moment per individual."],
+      ["Anomaly detection", "Catch engagement drops before they cost you."],
+    ],
+  },
 ];
 ---
 
 <BaseLayout title="Features" description="Compose-once API, multi-channel delivery, scheduling, scope-based OAuth, preference center, reliability, analytics, and AI — the complete notification platform.">
-  <section class="hero" style="padding-bottom:48px">
-    <div class="container">
-      <span class="eyebrow">Features</span>
-      <h1>One platform for every notification</h1>
-      <p class="lead mx-auto">From compose-once delivery to a preference center, reliability
-      guarantees, and AI — everything teams used to stitch together from five tools.</p>
-    </div>
-  </section>
+  <PageHeader
+    eyebrow="Features"
+    title="One platform for every notification"
+    lead="From compose-once delivery to a preference center, reliability guarantees, and AI — everything teams used to stitch together from five tools."
+  />
 
   {groups.map((g, i) => (
-    <section class={i % 2 === 1 ? "band-dark" : ""} style="padding-top:64px;padding-bottom:64px">
-      <div class="container">
-        <span class="eyebrow">{g.eyebrow}</span>
-        <h2 style="margin-bottom:32px">{g.title}</h2>
-        <div class="grid grid-3">
+    <section class={i % 2 === 1 ? "border-b bg-muted/30 py-16" : "border-b py-16"}>
+      <div class="mx-auto max-w-6xl px-6">
+        <p class="text-sm font-semibold text-primary">{g.eyebrow}</p>
+        <h2 class="mt-2 text-2xl font-semibold tracking-tight">{g.title}</h2>
+        <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {g.items.map(([t, d]) => (
-            <div class="card">
-              <h3 style="font-size:1.05rem">{t}</h3>
-              <p>{d}</p>
+            <div class="rounded-xl border bg-card p-5">
+              <h3 class="font-semibold">{t}</h3>
+              <p class="mt-1.5 text-sm text-muted-foreground">{d}</p>
             </div>
           ))}
         </div>
       </div>
     </section>
   ))}
-
-  <!-- AI -->
-  <section>
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">Smart / AI</span>
-        <h2>Intelligence baked into delivery</h2>
-      </div>
-      <div class="grid grid-4">
-        {aiFeatures.map(([t, d]) => (
-          <div class="card">
-            <h3 style="font-size:1.05rem">{t}</h3>
-            <p>{d}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
 
   <CtaBand title="Replace your notification stack" />
 </BaseLayout>

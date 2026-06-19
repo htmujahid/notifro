@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
 import CtaBand from "../components/CtaBand.astro";
 
 const values = [
@@ -11,24 +12,20 @@ const values = [
 ---
 
 <BaseLayout title="About" description="Renderical is the unified notification infrastructure that replaces the five-tool stack teams stitch together — built for the agentic era.">
-  <section class="hero" style="padding-bottom:40px">
-    <div class="container">
-      <span class="eyebrow">About</span>
-      <h1>One layer for every notification</h1>
-      <p class="lead mx-auto">Teams stitch together five or more tools to reach users across
-      Slack, email, push, and chat. Renderical replaces that stack with a single compose-once
-      API — and a native MCP server so AI agents can send safely.</p>
-    </div>
-  </section>
+  <PageHeader
+    eyebrow="About"
+    title="One layer for every notification"
+    lead="Teams stitch together five or more tools to reach users across Slack, email, push, and chat. Renderical replaces that stack with a single compose-once API — and a native MCP server so AI agents can send safely."
+  />
 
-  <section style="padding-top:24px">
-    <div class="container-narrow">
-      <p style="font-size:1.1rem">
+  <section class="py-16">
+    <div class="mx-auto max-w-2xl px-6">
+      <p class="text-lg text-muted-foreground">
         We started Renderical after rebuilding the same notification plumbing at company after
         company: a Slack integration here, an email service there, a push provider, a preference
         center nobody wanted to maintain, and brittle glue code holding it all together.
       </p>
-      <p style="font-size:1.1rem">
+      <p class="mt-4 text-lg text-muted-foreground">
         Renderical normalizes all of it behind one payload. You compose a message once; we
         transform and deliver it per channel, handle fallback and retries, respect every
         recipient's preferences, and give your agents a scoped, audited way to send.
@@ -36,17 +33,17 @@ const values = [
     </div>
   </section>
 
-  <section class="band-dark">
-    <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">What we believe</span>
-        <h2>Principles behind the product</h2>
+  <section class="border-t bg-muted/30 py-16">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mx-auto max-w-2xl text-center">
+        <p class="text-sm font-semibold text-primary">What we believe</p>
+        <h2 class="mt-2 text-3xl font-semibold tracking-tight">Principles behind the product</h2>
       </div>
-      <div class="grid grid-2">
+      <div class="mt-10 grid gap-5 sm:grid-cols-2">
         {values.map(([t, d]) => (
-          <div class="card" style="background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.1)">
-            <h3>{t}</h3>
-            <p style="margin-bottom:0">{d}</p>
+          <div class="rounded-xl border bg-card p-6">
+            <h3 class="font-semibold">{t}</h3>
+            <p class="mt-1.5 text-sm text-muted-foreground">{d}</p>
           </div>
         ))}
       </div>

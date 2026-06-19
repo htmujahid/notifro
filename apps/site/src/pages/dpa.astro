@@ -1,47 +1,41 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
 const updated = "June 20, 2026";
+const prose =
+  "mx-auto max-w-2xl px-6 py-16 text-muted-foreground [&_h2]:mt-10 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:tracking-tight [&_h2]:text-foreground [&_p]:mt-4 [&_ul]:mt-4 [&_ul]:list-disc [&_ul]:pl-5 [&_li]:mt-2 [&_a]:text-primary [&_a]:underline-offset-4 hover:[&_a]:underline";
 ---
 
 <BaseLayout title="Data Processing Addendum" description="Renderical's Data Processing Addendum overview.">
-  <section class="hero" style="padding-bottom:24px">
-    <div class="container-narrow">
-      <span class="eyebrow">Legal</span>
-      <h1>Data Processing Addendum</h1>
-      <p class="lead">Last updated {updated}</p>
-    </div>
-  </section>
+  <PageHeader eyebrow="Legal" title="Data Processing Addendum" lead={`Last updated ${updated}`} />
 
-  <section style="padding-top:8px">
-    <div class="container-narrow prose">
-      <p>This page summarizes the Data Processing Addendum (“DPA”) that forms part of the
-      agreement between Renderical, Inc. and customers who process personal data through the
-      service. This is a product template and not legal advice; the executable DPA is available
-      on request.</p>
+  <div class={prose}>
+    <p>This page summarizes the Data Processing Addendum (“DPA”) that forms part of the agreement
+    between Renderical, Inc. and customers who process personal data through the service. This is a
+    product template and not legal advice; the executable DPA is available on request.</p>
 
-      <h2>Roles</h2>
-      <p>For recipient and message data you send, you are the data controller and Renderical is
-      the data processor, acting on your documented instructions.</p>
+    <h2>Roles</h2>
+    <p>For recipient and message data you send, you are the data controller and Renderical is the
+    data processor, acting on your documented instructions.</p>
 
-      <h2>Processing scope</h2>
-      <ul>
-        <li>Subject matter: delivery, scheduling, and routing of notifications.</li>
-        <li>Duration: for the term of your agreement plus configured retention.</li>
-        <li>Data subjects: your end-users and recipients.</li>
-        <li>Data types: contact identifiers, message content, and engagement events.</li>
-      </ul>
+    <h2>Processing scope</h2>
+    <ul>
+      <li>Subject matter: delivery, scheduling, and routing of notifications.</li>
+      <li>Duration: for the term of your agreement plus configured retention.</li>
+      <li>Data subjects: your end-users and recipients.</li>
+      <li>Data types: contact identifiers, message content, and engagement events.</li>
+    </ul>
 
-      <h2>Sub-processors</h2>
-      <p>We engage vetted sub-processors for hosting and channel delivery under written terms with
-      equivalent protections. A current list and change-notification process are available on request.</p>
+    <h2>Sub-processors</h2>
+    <p>We engage vetted sub-processors for hosting and channel delivery under written terms with
+    equivalent protections. A current list and change-notification process are available on request.</p>
 
-      <h2>Security & transfers</h2>
-      <p>We maintain technical and organizational measures described on our
-      <a href="/security">Security page</a>, and rely on Standard Contractual Clauses and data
-      residency options for international transfers.</p>
+    <h2>Security & transfers</h2>
+    <p>We maintain technical and organizational measures described on our
+    <a href="/security">Security page</a>, and rely on Standard Contractual Clauses and data
+    residency options for international transfers.</p>
 
-      <h2>Requesting the DPA</h2>
-      <p>To execute a DPA, email <a href="mailto:legal@renderical.com">legal@renderical.com</a>.</p>
-    </div>
-  </section>
+    <h2>Requesting the DPA</h2>
+    <p>To execute a DPA, email <a href="mailto:legal@renderical.com">legal@renderical.com</a>.</p>
+  </div>
 </BaseLayout>

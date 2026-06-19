@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
 import { site } from "../config";
 
 const posts = [
@@ -10,27 +11,21 @@ const posts = [
 ---
 
 <BaseLayout title="Blog" description="Notes on notifications, delivery, and the agentic era from the Renderical team.">
-  <section class="hero" style="padding-bottom:32px">
-    <div class="container-narrow">
-      <span class="eyebrow">Blog</span>
-      <h1>From the Renderical team</h1>
-      <p class="lead">Notes on notifications, delivery infrastructure, and building for agents.</p>
-    </div>
-  </section>
+  <PageHeader eyebrow="Blog" title="From the Renderical team" lead="Notes on notifications, delivery infrastructure, and building for agents." />
 
-  <section style="padding-top:8px">
-    <div class="container">
-      <div class="grid grid-3">
+  <section class="py-16">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {posts.map(([t, d, tag]) => (
-          <div class="card">
-            <span class="pill" style="margin-bottom:14px">{tag}</span>
-            <h3 style="font-size:1.1rem;margin-top:10px">{t}</h3>
-            <p style="margin-bottom:0">{d}</p>
-          </div>
+          <article class="rounded-xl border bg-card p-6">
+            <span class="rounded-md bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">{tag}</span>
+            <h3 class="mt-4 font-semibold">{t}</h3>
+            <p class="mt-1.5 text-sm text-muted-foreground">{d}</p>
+          </article>
         ))}
       </div>
-      <p class="text-center" style="margin-top:36px;color:var(--text-faint);font-size:0.9rem">
-        Want updates? Email <a href={`mailto:${site.email}`}>{site.email}</a>.
+      <p class="mt-10 text-center text-sm text-muted-foreground">
+        Want updates? Email <a href={`mailto:${site.email}`} class="text-primary underline-offset-4 hover:underline">{site.email}</a>.
       </p>
     </div>
   </section>

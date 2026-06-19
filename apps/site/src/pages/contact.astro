@@ -1,6 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
 import { site } from "../config";
+import { buttonVariants } from "@workspace/ui/components/button";
 
 const routes = [
   ["Sales", "Plans, volume pricing, and enterprise evaluations.", "sales@renderical.com"],
@@ -10,40 +12,36 @@ const routes = [
 ---
 
 <BaseLayout title="Contact" description="Get in touch with the Renderical team — sales, support, and security.">
-  <section class="hero" style="padding-bottom:40px">
-    <div class="container">
-      <span class="eyebrow">Contact</span>
-      <h1>Talk to us</h1>
-      <p class="lead mx-auto">Questions about channels, the MCP server, self-hosting, or
-      compliance? We're happy to help.</p>
-    </div>
-  </section>
+  <PageHeader
+    eyebrow="Contact"
+    title="Talk to us"
+    lead="Questions about channels, the MCP server, self-hosting, or compliance? We're happy to help."
+  />
 
-  <section style="padding-top:24px">
-    <div class="container">
-      <div class="grid grid-3">
+  <section class="py-16">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid gap-5 sm:grid-cols-3">
         {routes.map(([t, d, e]) => (
-          <div class="card">
-            <h3>{t}</h3>
-            <p>{d}</p>
-            <a class="btn btn-ghost" href={`mailto:${e}`}>{e}</a>
+          <div class="rounded-xl border bg-card p-6">
+            <h3 class="font-semibold">{t}</h3>
+            <p class="mt-1.5 text-sm text-muted-foreground">{d}</p>
+            <a href={`mailto:${e}`} class={`mt-4 ${buttonVariants({ variant: "outline", size: "sm" })}`}>{e}</a>
           </div>
         ))}
       </div>
     </div>
   </section>
 
-  <section class="section-sm">
-    <div class="container-narrow text-center">
-      <div class="card" style="padding:40px">
-        <h2>Start free, no sales call needed</h2>
-        <p class="mx-auto" style="max-width:480px">Create an account and send your first
-        multi-channel notification in minutes. Reach out anytime at
-        <a href={`mailto:${site.email}`}>{site.email}</a>.</p>
-        <div class="hero-actions">
-          <a class="btn btn-primary btn-lg" href={site.signupUrl}>Start free</a>
-          <a class="btn btn-ghost btn-lg" href="/developers">Read the docs</a>
-        </div>
+  <section class="border-t bg-muted/30 py-16">
+    <div class="mx-auto max-w-2xl px-6 text-center">
+      <h2 class="text-3xl font-semibold tracking-tight">Start free, no sales call needed</h2>
+      <p class="mx-auto mt-3 max-w-md text-muted-foreground">
+        Create an account and send your first multi-channel notification in minutes. Reach out
+        anytime at <a href={`mailto:${site.email}`} class="text-primary underline-offset-4 hover:underline">{site.email}</a>.
+      </p>
+      <div class="mt-7 flex flex-wrap justify-center gap-3">
+        <a href={site.signupUrl} class={buttonVariants({ size: "lg" })}>Start free</a>
+        <a href="/developers" class={buttonVariants({ variant: "outline", size: "lg" })}>Read the docs</a>
       </div>
     </div>
   </section>

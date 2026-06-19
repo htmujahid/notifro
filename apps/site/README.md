@@ -3,6 +3,11 @@
 The public marketing site for **Renderical**, the unified notification infrastructure.
 Built with [Astro](https://astro.build) and deployed on Cloudflare.
 
+It shares the design system with the rest of the monorepo: Tailwind v4 + shadcn theme
+from `@workspace/ui` (imported in `src/styles/app.css`), with the React integration
+enabled so UI components (e.g. the FAQ `Accordion`) can be used directly as Astro islands.
+Auth links point at the web app under `PUBLIC_FRONTEND_URL` (`/auth/sign-in`, `/auth/sign-up`).
+
 ## Pages
 
 | Route          | Purpose                                                       |
@@ -12,7 +17,6 @@ Built with [Astro](https://astro.build) and deployed on Cloudflare.
 | `/channels`    | Supported channels and routing/fallback                       |
 | `/mcp`         | MCP server layer — tools, resources, prompts, safety          |
 | `/developers`  | Quickstart, APIs, SDKs, CLI, and MCP setup                    |
-| `/pricing`     | Plans, comparison, and FAQ                                     |
 | `/security`    | Security & compliance posture                                 |
 | `/about`       | Company and product principles                                |
 | `/contact`     | Sales, support, and security contacts                         |
@@ -25,15 +29,17 @@ Built with [Astro](https://astro.build) and deployed on Cloudflare.
 
 ```
 src/
-  config.ts            # Site metadata, nav, and channel list
+  config.ts            # Site metadata, nav, channels (auth URLs from PUBLIC_FRONTEND_URL)
   layouts/BaseLayout.astro
-  components/          # Header, Footer, CtaBand
-  styles/global.css    # Design system (tokens, components)
+  components/          # Header, Footer, CtaBand, PageHeader (.astro) + Faq (React island)
+  styles/app.css       # Imports @workspace/ui theme + @source for this app
   pages/               # One .astro file per route
+postcss.config.mjs     # Tailwind v4 via @tailwindcss/postcss
 ```
 
-Branding and shared content live in `src/config.ts`; the design system lives in
-`src/styles/global.css`.
+Branding and shared content live in `src/config.ts`. Styling comes from the shared
+`@workspace/ui` shadcn theme — use the same Tailwind utilities and design tokens
+(`bg-card`, `text-muted-foreground`, `bg-primary`, …) as the other apps.
 
 ## Commands
 

@@ -82,7 +82,7 @@ packages/
 ### Marketing site (`apps/site`)
 
 Astro site for Renderical's public pages. Pages: home, features, channels, MCP server,
-developers, pricing, security, about, contact, changelog, status, blog, and legal
+developers, security, about, contact, changelog, status, blog, and legal
 (privacy, terms, DPA).
 
 ```bash

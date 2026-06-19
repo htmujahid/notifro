@@ -1,73 +1,84 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
 import CtaBand from "../components/CtaBand.astro";
+import {
+  MessageSquare,
+  Mail,
+  Users,
+  Gamepad2,
+  Smartphone,
+  Globe,
+  Bell,
+  Webhook,
+  MessageCircle,
+  Check,
+} from "lucide-react";
 
 const channels = [
-  { name: "Slack", color: "#4a154b", icon: "💬", transform: "Block Kit", note: "Interactive blocks, buttons, and threaded updates." },
-  { name: "Gmail / SMTP", color: "#ea4335", icon: "✉️", transform: "Responsive HTML", note: "Branded, responsive HTML email with any SMTP provider." },
-  { name: "Microsoft Teams", color: "#6264a7", icon: "👥", transform: "Adaptive Cards", note: "Rich adaptive cards with actions and inputs." },
-  { name: "Discord", color: "#5865f2", icon: "🎮", transform: "Embeds", note: "Rich embeds, components, and webhook delivery." },
-  { name: "Mobile Push", color: "#34c759", icon: "📱", transform: "APNs / FCM", note: "Native iOS and Android push with rich payloads." },
-  { name: "Web Push", color: "#f59e0b", icon: "🌐", transform: "Service Worker", note: "Browser push via the standard Web Push protocol." },
-  { name: "In-App Inbox", color: "#5b54f0", icon: "🔔", transform: "Drop-in feed", note: "Embeddable notification feed with read state." },
-  { name: "Webhooks", color: "#0ea5e9", icon: "🪝", transform: "Signed JSON", note: "Generic signed webhooks with replay protection." },
-  { name: "SMS", color: "#ec4899", icon: "📨", transform: "Plain text", note: "Reliable fallback tier across major SMS providers." },
+  { name: "Slack", icon: MessageSquare, transform: "Block Kit", note: "Interactive blocks, buttons, and threaded updates." },
+  { name: "Gmail / SMTP", icon: Mail, transform: "Responsive HTML", note: "Branded, responsive HTML email with any SMTP provider." },
+  { name: "Microsoft Teams", icon: Users, transform: "Adaptive Cards", note: "Rich adaptive cards with actions and inputs." },
+  { name: "Discord", icon: Gamepad2, transform: "Embeds", note: "Rich embeds, components, and webhook delivery." },
+  { name: "Mobile Push", icon: Smartphone, transform: "APNs / FCM", note: "Native iOS and Android push with rich payloads." },
+  { name: "Web Push", icon: Globe, transform: "Service Worker", note: "Browser push via the standard Web Push protocol." },
+  { name: "In-App Inbox", icon: Bell, transform: "Drop-in feed", note: "Embeddable notification feed with read state." },
+  { name: "Webhooks", icon: Webhook, transform: "Signed JSON", note: "Generic signed webhooks with replay protection." },
+  { name: "SMS", icon: MessageCircle, transform: "Plain text", note: "Reliable fallback tier across major SMS providers." },
 ];
 ---
 
 <BaseLayout title="Channels" description="Slack, Gmail/SMTP, Microsoft Teams, Discord, mobile & web push, in-app inbox, webhooks, and SMS — one compose-once API, automatically transformed per channel.">
-  <section class="hero" style="padding-bottom:48px">
-    <div class="container">
-      <span class="eyebrow">Channels</span>
-      <h1>Every channel, one integration</h1>
-      <p class="lead mx-auto">Write your message once. {`Renderical`} transforms it into the
-      native format each destination expects and delivers with rate-aware throttling.</p>
-    </div>
-  </section>
+  <PageHeader
+    eyebrow="Channels"
+    title="Every channel, one integration"
+    lead="Write your message once. Renderical transforms it into the native format each destination expects and delivers with rate-aware throttling."
+  />
 
-  <section style="padding-top:24px">
-    <div class="container">
-      <div class="grid grid-3">
+  <section class="py-16">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {channels.map((c) => (
-          <div class="card">
-            <div class="card-icon" style={`background:${c.color}1a;border-color:${c.color}33`}>{c.icon}</div>
-            <h3>{c.name}</h3>
-            <p style="margin-bottom:14px">{c.note}</p>
-            <span class="pill">Renders to {c.transform}</span>
+          <div class="rounded-xl border bg-card p-6">
+            <div class="flex size-9 items-center justify-center rounded-lg border bg-muted/50">
+              <c.icon className="size-5" />
+            </div>
+            <h3 class="mt-4 font-semibold">{c.name}</h3>
+            <p class="mt-1.5 text-sm text-muted-foreground">{c.note}</p>
+            <span class="mt-4 inline-block rounded-md bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">Renders to {c.transform}</span>
           </div>
         ))}
       </div>
     </div>
   </section>
 
-  <section class="band-dark">
-    <div class="container">
-      <div class="split">
+  <section class="border-t bg-muted/30 py-16">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid items-center gap-12 lg:grid-cols-2">
         <div>
-          <span class="eyebrow">Routing & fallback</span>
-          <h2>Smart routing across channels</h2>
-          <p>Define ordered fallback chains and routing rules so the right channel is always
-          tried first — and a backup always catches what doesn't land.</p>
-          <ul class="checklist" style="margin-top:18px">
-            <li><span class="tick">✓</span><span>Fallback chains: <b>push → email → SMS</b></span></li>
-            <li><span class="tick">✓</span><span>Route by <b>user, message type, priority, or time</b></span></li>
-            <li><span class="tick">✓</span><span>Per-recipient <b>channel priority ordering</b></span></li>
-            <li><span class="tick">✓</span><span>Quiet hours, DND windows, and time-window delivery</span></li>
+          <p class="text-sm font-semibold text-primary">Routing & fallback</p>
+          <h2 class="mt-2 text-3xl font-semibold tracking-tight">Smart routing across channels</h2>
+          <p class="mt-4 text-muted-foreground">
+            Define ordered fallback chains and routing rules so the right channel is always tried
+            first — and a backup always catches what doesn't land.
+          </p>
+          <ul class="mt-6 space-y-3 text-sm">
+            <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span>Fallback chains: <span class="font-medium text-foreground">push → email → SMS</span></span></li>
+            <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span>Route by <span class="font-medium text-foreground">user, message type, priority, or time</span></span></li>
+            <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span>Per-recipient <span class="font-medium text-foreground">channel priority ordering</span></span></li>
+            <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span>Quiet hours, DND windows, and time-window delivery</span></li>
           </ul>
         </div>
-        <div class="split-media">
-          <div class="code">
-            <div class="code-head"><span></span><span></span><span></span></div>
-            <span class="c-key">fallback</span>: [<br />
-            &nbsp;&nbsp;&#123; channel: <span class="c-str">"push"</span>, timeout: <span class="c-str">"30s"</span> &#125;,<br />
-            &nbsp;&nbsp;&#123; channel: <span class="c-str">"email"</span>, timeout: <span class="c-str">"10m"</span> &#125;,<br />
-            &nbsp;&nbsp;&#123; channel: <span class="c-str">"sms"</span> &#125;,<br />
-            ],<br />
-            <span class="c-key">rules</span>: [<br />
-            &nbsp;&nbsp;&#123; if: <span class="c-str">"priority == high"</span>,<br />
-            &nbsp;&nbsp;&nbsp;&nbsp;then: <span class="c-str">"slack,push"</span> &#125;,<br />
-            ]
-          </div>
+        <div class="rounded-xl border bg-card p-5 font-mono text-sm leading-relaxed shadow-sm">
+          <pre class="overflow-x-auto text-muted-foreground"><code>fallback: [
+  {'{'} channel: <span class="text-primary">"push"</span>, timeout: <span class="text-primary">"30s"</span> {'}'},
+  {'{'} channel: <span class="text-primary">"email"</span>, timeout: <span class="text-primary">"10m"</span> {'}'},
+  {'{'} channel: <span class="text-primary">"sms"</span> {'}'},
+],
+rules: [
+  {'{'} if: <span class="text-primary">"priority == high"</span>,
+    then: <span class="text-primary">"slack,push"</span> {'}'},
+]</code></pre>
         </div>
       </div>
     </div>
