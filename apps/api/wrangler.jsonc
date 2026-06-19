@@ -11,5 +11,11 @@
       "database_id": "d844dea1-52e5-4cb5-a6e9-26e125e79560",
       "migrations_dir": "migrations"
     }
+  ],
+  "send_email": [
+    {
+      "name": "EMAIL",
+      "remote": true
+    }
   ]
 }
