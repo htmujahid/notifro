@@ -2,9 +2,9 @@ import { ProfileForm } from "@workspace/core/components/account/profile-form"
 
 export default function AccountProfilePage() {
   return (
-    <div className="mx-auto max-w-2xl px-4 py-12">
-      <div className="mb-8">
-        <h1 className="text-2xl font-semibold tracking-tight">Profile</h1>
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-base font-semibold tracking-tight">Profile</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Update your name and profile picture.
         </p>
