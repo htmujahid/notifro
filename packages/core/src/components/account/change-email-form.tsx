@@ -17,7 +17,7 @@ export function ChangeEmailForm() {
   async function handleSubmit(values: ChangeEmailValues) {
     const { error } = await auth.changeEmail({
       newEmail: values.newEmail,
-      callbackURL: "/",
+      callbackURL: `${window.location.origin}/`,
     })
     if (error) {
       form.setError("root", { message: error.message })

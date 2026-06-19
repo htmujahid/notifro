@@ -26,7 +26,10 @@ export function SignUpForm() {
   async function handleGoogleSignIn() {
     setGoogleLoading(true)
     try {
-      const { error } = await auth.signIn.social({ provider: "google", callbackURL: "/" })
+      const { error } = await auth.signIn.social({
+        provider: "google",
+        callbackURL: `${window.location.origin}/`,
+      })
       if (error) form.setError("root", { message: error.message })
     } finally {
       setGoogleLoading(false)
@@ -38,7 +41,7 @@ export function SignUpForm() {
       name: values.name,
       email: values.email,
       password: values.password,
-      callbackURL: "/",
+      callbackURL: `${window.location.origin}/`,
     })
     if (error) {
       form.setError("root", { message: error.message })

@@ -19,7 +19,7 @@ export function ForgotPasswordForm() {
   async function handleSubmit(values: ForgotPasswordValues) {
     const { error } = await auth.requestPasswordReset({
       email: values.email,
-      redirectTo: "/auth/reset-password",
+      redirectTo: `${window.location.origin}/auth/reset-password`,
     })
     if (error) {
       form.setError("root", { message: error.message })
