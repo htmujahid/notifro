@@ -11,13 +11,9 @@ if (started) {
 }
 
 let mainWindow: BrowserWindow | null = null;
-// Holds a deep link received before the window/renderer is ready to receive it.
 let pendingDeepLink: string | null = null;
 
-// Register this app as the handler for `renderical://` links so the OS routes
-// auth callbacks (verify email, reset password, OAuth) back to us.
 if (process.defaultApp && process.argv.length >= 2) {
-  // In dev the app is launched via electron + a script path; pass them along.
   app.setAsDefaultProtocolClient(APP_SCHEME, process.execPath, [path.resolve(process.argv[1])]);
 } else {
   app.setAsDefaultProtocolClient(APP_SCHEME);
@@ -29,12 +25,10 @@ function deliverDeepLink(url: string) {
     mainWindow.focus();
     mainWindow.webContents.send(DEEP_LINK_CHANNEL, url);
   } else {
-    // Stash until the renderer has finished loading.
     pendingDeepLink = url;
   }
 }
 
-/** Pick the first `renderical://…` argument out of an argv list (Windows/Linux). */
 function findDeepLink(argv: string[]): string | null {
   return argv.find((arg) => arg.startsWith(`${APP_SCHEME}://`)) ?? null;
 }
@@ -57,7 +51,6 @@ const createWindow = () => {
     );
   }
 
-  // Flush any deep link that arrived before the renderer was ready.
   mainWindow.webContents.once('did-finish-load', () => {
     if (pendingDeepLink) {
       mainWindow?.webContents.send(DEEP_LINK_CHANNEL, pendingDeepLink);
@@ -69,8 +62,6 @@ const createWindow = () => {
   mainWindow.webContents.openDevTools();
 };
 
-// Only allow a single instance so deep links reach the running window
-// (Windows/Linux deliver the URL as argv to a second launch).
 const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
   app.quit();
@@ -80,16 +71,13 @@ if (!gotTheLock) {
     if (url) deliverDeepLink(url);
   });
 
-  // macOS delivers deep links through this event.
   app.on('open-url', (event, url) => {
     event.preventDefault();
     deliverDeepLink(url);
   });
 
-  // This method will be called when Electron has finished initialization.
   app.on('ready', () => {
     createWindow();
-    // Cold-start deep link on Windows/Linux comes in as a launch argument.
     const url = findDeepLink(process.argv);
     if (url) deliverDeepLink(url);
   });

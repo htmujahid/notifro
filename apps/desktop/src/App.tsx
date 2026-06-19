@@ -10,8 +10,6 @@ const authClient = createDesktopAuthClient(API_URL)
 const router = createHashRouter(routes)
 
 export function App() {
-  // The main process forwards `renderical://…` deep links (auth callbacks)
-  // opened in the system browser. Route them into the in-app router.
   useEffect(() => {
     return window.desktop?.onDeepLink((url) => {
       const path = deepLinkToPath(url)

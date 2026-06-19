@@ -12,8 +12,6 @@ const authClient = createMobileAuthClient(API_URL, Preferences)
 const router = createHashRouter(routes)
 
 export function App() {
-  // `renderical://…` auth callbacks opened in the system browser are delivered
-  // to the app via Capacitor's appUrlOpen event. Route them into the router.
   useEffect(() => {
     const handle = CapacitorApp.addListener("appUrlOpen", ({ url }) => {
       const path = deepLinkToPath(url)
