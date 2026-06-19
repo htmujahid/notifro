@@ -11,7 +11,10 @@
     "sourceMap": true,
     "noEmit": true,
     "moduleResolution": "bundler",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "@workspace/views/*": ["../../packages/views/src/*"]
+    }
   },
   "include": ["electron", "src", "forge.config.ts", "forge.env.d.ts", "vite.*.config.ts"]
 }

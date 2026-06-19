@@ -1,19 +1,13 @@
-import { Capacitor } from "@capacitor/core"
+import { Suspense } from "react"
+import { createHashRouter, RouterProvider } from "react-router"
+import { routes } from "@workspace/views/routes/android"
+
+const router = createHashRouter(routes)
 
 export function App() {
-  const platform = Capacitor.getPlatform()
-  const isNative = Capacitor.isNativePlatform()
-
   return (
-    <main className="app">
-      <h1>Android</h1>
-      <p>Capacitor + React app is running.</p>
-      <dl>
-        <dt>Platform</dt>
-        <dd>{platform}</dd>
-        <dt>Native runtime</dt>
-        <dd>{isNative ? "yes" : "no (web preview)"}</dd>
-      </dl>
-    </main>
+    <Suspense fallback={null}>
+      <RouterProvider router={router} />
+    </Suspense>
   )
 }

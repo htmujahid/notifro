@@ -45,8 +45,10 @@
     "vite": "^5.4.21"
   },
   "dependencies": {
+    "@workspace/views": "workspace:*",
     "electron-squirrel-startup": "^1.0.1",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "react-dom": "^19.2.6",
+    "react-router": "^8.0.1"
   }
 }

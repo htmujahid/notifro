@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import { Suspense } from "react"
+import { createHashRouter, RouterProvider } from "react-router"
+import { routes } from "@workspace/views/routes/desktop"
+
+const router = createHashRouter(routes)
 
 export function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <main>
-      <h1>💖 Hello from React</h1>
-      <p>This component is rendered in the Electron renderer process.</p>
-      <button onClick={() => setCount((c) => c + 1)}>count is {count}</button>
-    </main>
-  );
+    <Suspense fallback={null}>
+      <RouterProvider router={router} />
+    </Suspense>
+  )
 }
