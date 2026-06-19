@@ -106,6 +106,10 @@ export function SearchCommand({
           <CommandSeparator />
 
           <CommandGroup heading="Quick actions">
+            <CommandItem onSelect={() => run("/create")}>
+              <PlusIcon />
+              Create something new
+            </CommandItem>
             <CommandItem onSelect={() => run("/notifications")}>
               <PlusIcon />
               New notification

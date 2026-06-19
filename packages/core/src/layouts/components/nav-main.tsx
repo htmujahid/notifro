@@ -1,6 +1,6 @@
 import * as React from "react"
 import { NavLink } from "react-router"
-import { CirclePlusIcon } from "lucide-react"
+import { CirclePlusIcon, InboxIcon } from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
 import {
   SidebarGroup,
@@ -12,6 +12,7 @@ import {
 
 export function NavMain({
   items,
+  onQuickCreate,
 }: {
   items: {
     title: string
@@ -19,6 +20,7 @@ export function NavMain({
     icon?: React.ReactNode
     end?: boolean
   }[]
+  onQuickCreate?: () => void
 }) {
   return (
     <SidebarGroup>
@@ -27,6 +29,7 @@ export function NavMain({
           <SidebarMenuItem className="flex items-center gap-2">
             <SidebarMenuButton
               tooltip="Quick Create"
+              onClick={onQuickCreate}
               className="min-w-8 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
             >
               <CirclePlusIcon />
@@ -36,8 +39,9 @@ export function NavMain({
               size="icon"
               className="size-8 group-data-[collapsible=icon]:opacity-0"
               variant="outline"
+              render={<NavLink to="/notifications" />}
             >
-              <CirclePlusIcon />
+              <InboxIcon />
               <span className="sr-only">Inbox</span>
             </Button>
           </SidebarMenuItem>

@@ -28,6 +28,7 @@ import { NavDocuments } from "./nav-documents"
 import { NavMain } from "./nav-main"
 import { NavSecondary } from "./nav-secondary"
 import { NavUser } from "./nav-user"
+import { QuickCreateDialog } from "./quick-create-dialog"
 
 const NAV_MAIN = [
   { title: "Dashboard", url: "/", icon: <LayoutDashboardIcon className="size-4" />, end: true },
@@ -63,6 +64,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: session } = useSession()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const [quickCreateOpen, setQuickCreateOpen] = React.useState(false)
 
   const name = session?.user?.name ?? ""
   const email = session?.user?.email ?? ""
@@ -77,34 +79,38 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }
 
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              className="data-[slot=sidebar-menu-button]:p-1.5!"
-              render={<Link to="/" />}
-            >
-              <RendericalLogo className="size-5!" />
-              <span className="text-base font-semibold">Renderical</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
+    <>
+      <Sidebar collapsible="offcanvas" {...props}>
+        <SidebarHeader>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                className="data-[slot=sidebar-menu-button]:p-1.5!"
+                render={<Link to="/" />}
+              >
+                <RendericalLogo className="size-5!" />
+                <span className="text-base font-semibold">Renderical</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
 
-      <SidebarContent>
-        <NavMain items={NAV_MAIN} />
-        <NavDocuments items={NAV_DOCUMENTS} />
-        <NavSecondary items={NAV_SECONDARY} className="mt-auto" />
-      </SidebarContent>
+        <SidebarContent>
+          <NavMain items={NAV_MAIN} onQuickCreate={() => setQuickCreateOpen(true)} />
+          <NavDocuments items={NAV_DOCUMENTS} />
+          <NavSecondary items={NAV_SECONDARY} className="mt-auto" />
+        </SidebarContent>
 
-      <SidebarFooter>
-        <NavUser
-          user={{ name, email, initials }}
-          onSignOut={handleSignOut}
-          onNavigate={navigate}
-        />
-      </SidebarFooter>
-    </Sidebar>
+        <SidebarFooter>
+          <NavUser
+            user={{ name, email, initials }}
+            onSignOut={handleSignOut}
+            onNavigate={navigate}
+          />
+        </SidebarFooter>
+      </Sidebar>
+
+      <QuickCreateDialog open={quickCreateOpen} onOpenChange={setQuickCreateOpen} />
+    </>
   )
 }

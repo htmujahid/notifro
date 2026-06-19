@@ -13,6 +13,7 @@ const TwoFactorPage = lazy(() => import("../pages/auth/two-factor"))
 const NotificationsPage = lazy(() => import("../pages/notifications"))
 const SchedulesPage = lazy(() => import("../pages/schedules"))
 const ChannelsPage = lazy(() => import("../pages/channels"))
+const CreatePage = lazy(() => import("../pages/create"))
 const TemplatesPage = lazy(() => import("../pages/templates"))
 const LogsPage = lazy(() => import("../pages/logs"))
 const AudiencesPage = lazy(() => import("../pages/audiences"))
@@ -40,6 +41,7 @@ export const sharedProtectedChildren: RouteObject[] = [
   { path: "notifications", element: <NotificationsPage /> },
   { path: "schedules", element: <SchedulesPage /> },
   { path: "channels", element: <ChannelsPage /> },
+  { path: "create", element: <CreatePage /> },
   { path: "templates", element: <TemplatesPage /> },
   { path: "logs", element: <LogsPage /> },
   { path: "audiences", element: <AudiencesPage /> },

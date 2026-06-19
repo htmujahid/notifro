@@ -1,5 +1,5 @@
 import { Button } from "@workspace/ui/components/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card"
+import { Card, CardContent } from "@workspace/ui/components/card"
 import { Separator } from "@workspace/ui/components/separator"
 import { CopyIcon, RefreshCwIcon, TrashIcon } from "lucide-react"
 
