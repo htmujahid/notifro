@@ -1,4 +1,4 @@
-import { ProfileForm } from "@workspace/core/components/profile-form"
+import { ProfileForm } from "@workspace/core/components/account/profile-form"
 
 export default function AccountProfilePage() {
   return (

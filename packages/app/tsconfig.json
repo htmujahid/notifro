@@ -9,9 +9,8 @@
     "strict": true,
     "noEmit": true,
     "paths": {
-      "@workspace/views/*": ["./src/*"],
-      "@workspace/core/*": ["../core/src/*"],
-      "@workspace/ui/*": ["../ui/src/*"]
+      "@workspace/app/*": ["./src/*"],
+      "@workspace/core/*": ["../core/src/*"]
     }
   },
   "include": ["."],

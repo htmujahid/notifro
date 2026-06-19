@@ -7,20 +7,20 @@ import { useQueryClient } from "@tanstack/react-query"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
-import { useAuth } from "../auth/context"
-import { SESSION_QUERY_KEY } from "../auth/use-session"
-import { signUpSchema, type SignUpValues } from "../auth/schemas/auth"
+import { useAuth } from "@workspace/app/auth/context"
+import { SESSION_QUERY_KEY } from "@workspace/app/auth/use-session"
+import { signInSchema, type SignInValues } from "../../schemas/auth"
 import { GoogleIcon, OrDivider } from "./auth-icons"
 
-export function SignUpForm() {
+export function SignInForm() {
   const auth = useAuth()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [googleLoading, setGoogleLoading] = useState(false)
 
-  const form = useForm<SignUpValues>({
-    resolver: zodResolver(signUpSchema),
-    defaultValues: { name: "", email: "", password: "", confirmPassword: "" },
+  const form = useForm<SignInValues>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: { email: "", password: "" },
   })
 
   async function handleGoogleSignIn() {
@@ -33,9 +33,8 @@ export function SignUpForm() {
     }
   }
 
-  async function handleSubmit(values: SignUpValues) {
-    const { error } = await auth.signUp.email({
-      name: values.name,
+  async function handleSubmit(values: SignInValues) {
+    const { error } = await auth.signIn.email({
       email: values.email,
       password: values.password,
       callbackURL: "/",
@@ -45,7 +44,7 @@ export function SignUpForm() {
       return
     }
     await queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY })
-    navigate("/auth/verify-email")
+    navigate("/")
   }
 
   const busy = form.formState.isSubmitting || googleLoading
@@ -54,8 +53,8 @@ export function SignUpForm() {
     <div className="flex flex-col gap-6">
       {/* Header */}
       <div className="flex flex-col gap-1 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">Create an account</h1>
-        <p className="text-sm text-muted-foreground">Get started with Renderical for free</p>
+        <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
+        <p className="text-sm text-muted-foreground">Sign in to your Renderical account</p>
       </div>
 
       {/* Google */}
@@ -72,29 +71,8 @@ export function SignUpForm() {
 
       <OrDivider />
 
-      {/* Form */}
+      {/* Email / password form */}
       <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-4">
-        <Controller
-          control={form.control}
-          name="name"
-          render={({ field, fieldState }) => (
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="name">Full name</Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="Jane Doe"
-                autoComplete="name"
-                aria-invalid={!!fieldState.error}
-                {...field}
-              />
-              {fieldState.error && (
-                <p className="text-xs text-destructive">{fieldState.error.message}</p>
-              )}
-            </div>
-          )}
-        />
-
         <Controller
           control={form.control}
           name="email"
@@ -121,31 +99,20 @@ export function SignUpForm() {
           name="password"
           render={({ field, fieldState }) => (
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="password">Password</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <button
+                  type="button"
+                  onClick={() => navigate("/auth/forgot-password")}
+                  className="text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+                >
+                  Forgot password?
+                </button>
+              </div>
               <Input
                 id="password"
                 type="password"
-                autoComplete="new-password"
-                aria-invalid={!!fieldState.error}
-                {...field}
-              />
-              {fieldState.error && (
-                <p className="text-xs text-destructive">{fieldState.error.message}</p>
-              )}
-            </div>
-          )}
-        />
-
-        <Controller
-          control={form.control}
-          name="confirmPassword"
-          render={({ field, fieldState }) => (
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="confirmPassword">Confirm password</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                autoComplete="new-password"
+                autoComplete="current-password"
                 aria-invalid={!!fieldState.error}
                 {...field}
               />
@@ -163,18 +130,18 @@ export function SignUpForm() {
         )}
 
         <Button type="submit" className="w-full" disabled={busy}>
-          {form.formState.isSubmitting ? "Creating account…" : "Create account"}
+          {form.formState.isSubmitting ? "Signing in…" : "Sign in"}
         </Button>
       </form>
 
       <p className="text-center text-sm text-muted-foreground">
-        Already have an account?{" "}
+        Don&apos;t have an account?{" "}
         <button
           type="button"
-          onClick={() => navigate("/auth/sign-in")}
+          onClick={() => navigate("/auth/sign-up")}
           className="font-medium text-foreground underline-offset-4 hover:underline"
         >
-          Sign in
+          Sign up
         </button>
       </p>
     </div>

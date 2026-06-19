@@ -3,8 +3,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
-import { useAuth } from "../auth/context"
-import { changePasswordSchema, type ChangePasswordValues } from "../auth/schemas/account"
+import { useAuth } from "@workspace/app/auth/context"
+import { changePasswordSchema, type ChangePasswordValues } from "../../schemas/account"
 
 export function ChangePasswordForm() {
   const auth = useAuth()

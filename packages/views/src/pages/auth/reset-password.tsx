@@ -1,4 +1,4 @@
-import { ResetPasswordForm } from "@workspace/core/components/reset-password-form"
+import { ResetPasswordForm } from "@workspace/core/components/auth/reset-password-form"
 
 export default function ResetPasswordPage() {
   return <ResetPasswordForm />

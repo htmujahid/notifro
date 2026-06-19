@@ -1,5 +1,5 @@
 {
-  "name": "@workspace/core",
+  "name": "@workspace/app",
   "version": "0.0.0",
   "type": "module",
   "private": true,
@@ -9,15 +9,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@hookform/resolvers": "^3.9.0",
     "@tanstack/react-query": "^5.101.0",
-    "@workspace/app": "workspace:*",
-    "@workspace/ui": "workspace:*",
+    "better-auth": "^1.6.19",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6",
-    "react-hook-form": "^7.56.0",
-    "react-router": "^8.0.1",
-    "zod": "^4.4.3"
+    "react-dom": "^19.2.6"
   },
   "devDependencies": {
     "@eslint/js": "^10",
@@ -31,8 +26,12 @@
     "typescript-eslint": "^8"
   },
   "exports": {
-    "./schemas/auth": "./src/schemas/auth.ts",
-    "./schemas/account": "./src/schemas/account.ts",
-    "./components/*": "./src/components/*.tsx"
+    "./app/context": "./src/app/context.tsx",
+    "./auth/client": "./src/auth/client.ts",
+    "./auth/context": "./src/auth/context.tsx",
+    "./auth/use-session": "./src/auth/use-session.ts",
+    "./auth/client.web": "./src/auth/client.web.ts",
+    "./auth/client.desktop": "./src/auth/client.desktop.ts",
+    "./auth/client.mobile": "./src/auth/client.mobile.ts"
   }
 }

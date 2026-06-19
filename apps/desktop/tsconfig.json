@@ -13,7 +13,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "paths": {
-      "@workspace/core/*": ["../../packages/core/src/*"],
+      "@workspace/app/*": ["../../packages/app/src/*"],
       "@workspace/views/*": ["../../packages/views/src/*"]
     }
   },

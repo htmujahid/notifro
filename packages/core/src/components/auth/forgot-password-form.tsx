@@ -5,8 +5,8 @@ import { useNavigate } from "react-router"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
-import { useAuth } from "../auth/context"
-import { forgotPasswordSchema, type ForgotPasswordValues } from "../auth/schemas/auth"
+import { useAuth } from "@workspace/app/auth/context"
+import { forgotPasswordSchema, type ForgotPasswordValues } from "../../schemas/auth"
 
 export function ForgotPasswordForm() {
   const auth = useAuth()

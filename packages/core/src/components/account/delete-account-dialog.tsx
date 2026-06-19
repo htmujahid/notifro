@@ -12,8 +12,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@workspace/ui/components/dialog"
-import { useAuth } from "../auth/context"
-import { SESSION_QUERY_KEY } from "../auth/use-session"
+import { useAuth } from "@workspace/app/auth/context"
+import { SESSION_QUERY_KEY } from "@workspace/app/auth/use-session"
 
 export function DeleteAccountDialog() {
   const auth = useAuth()

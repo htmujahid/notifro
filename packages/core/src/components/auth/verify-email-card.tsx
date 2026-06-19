@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useSearchParams } from "react-router"
 import { Button } from "@workspace/ui/components/button"
-import { useAuth } from "../auth/context"
+import { useAuth } from "@workspace/app/auth/context"
 
 export function VerifyEmailCard() {
   const auth = useAuth()

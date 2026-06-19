@@ -5,8 +5,8 @@ import { useNavigate, useSearchParams } from "react-router"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
-import { useAuth } from "../auth/context"
-import { resetPasswordSchema, type ResetPasswordValues } from "../auth/schemas/auth"
+import { useAuth } from "@workspace/app/auth/context"
+import { resetPasswordSchema, type ResetPasswordValues } from "../../schemas/auth"
 
 export function ResetPasswordForm() {
   const auth = useAuth()

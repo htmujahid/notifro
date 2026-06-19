@@ -1,7 +1,7 @@
 import { Suspense } from "react"
 import { createHashRouter, RouterProvider } from "react-router"
-import { AppProvider } from "@workspace/core/app/context"
-import { createDesktopAuthClient } from "@workspace/core/auth/client.desktop"
+import { AppProvider } from "@workspace/app/app/context"
+import { createDesktopAuthClient } from "@workspace/app/auth/client.desktop"
 import { routes } from "@workspace/views/routes/desktop"
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8787"

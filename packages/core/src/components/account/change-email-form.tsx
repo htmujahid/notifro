@@ -3,8 +3,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
-import { useAuth } from "../auth/context"
-import { changeEmailSchema, type ChangeEmailValues } from "../auth/schemas/account"
+import { useAuth } from "@workspace/app/auth/context"
+import { changeEmailSchema, type ChangeEmailValues } from "../../schemas/account"
 
 export function ChangeEmailForm() {
   const auth = useAuth()

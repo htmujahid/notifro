@@ -1,8 +1,8 @@
 import { Suspense } from "react"
 import { createHashRouter, RouterProvider } from "react-router"
 import { Preferences } from "@capacitor/preferences"
-import { AppProvider } from "@workspace/core/app/context"
-import { createMobileAuthClient } from "@workspace/core/auth/client.mobile"
+import { AppProvider } from "@workspace/app/app/context"
+import { createMobileAuthClient } from "@workspace/app/auth/client.mobile"
 import { routes } from "@workspace/views/routes/ios"
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8787"

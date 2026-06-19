@@ -5,9 +5,9 @@ import { useQueryClient } from "@tanstack/react-query"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
-import { useAuth } from "../auth/context"
-import { useSession, SESSION_QUERY_KEY } from "../auth/use-session"
-import { updateProfileSchema, type UpdateProfileValues } from "../auth/schemas/account"
+import { useAuth } from "@workspace/app/auth/context"
+import { useSession, SESSION_QUERY_KEY } from "@workspace/app/auth/use-session"
+import { updateProfileSchema, type UpdateProfileValues } from "../../schemas/account"
 
 export function ProfileForm() {
   const auth = useAuth()
