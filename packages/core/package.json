@@ -30,6 +30,7 @@
     "typescript-eslint": "^8"
   },
   "exports": {
+    "./app/context": "./src/app/context.tsx",
     "./auth/schemas": "./src/auth/schemas.ts",
     "./auth/client": "./src/auth/client.ts",
     "./auth/client.web": "./src/auth/client.web.ts",

@@ -28,7 +28,7 @@ importers:
         version: 1.19.11(encoding@0.1.13)(next@16.2.6(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(wrangler@4.102.0(@cloudflare/workers-types@4.20260617.1))
       next:
         specifier: 16.2.6
-        version: 16.2.6(@babel/core@7.29.7)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+        version: 16.2.6(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       react:
         specifier: ^19.1.7
         version: 19.2.6
@@ -75,6 +75,12 @@ importers:
       '@capacitor/core':
         specifier: ^8.4.0
         version: 8.4.0
+      '@capacitor/preferences':
+        specifier: ^8.0.1
+        version: 8.0.1(@capacitor/core@8.4.0)
+      '@workspace/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@workspace/views':
         specifier: workspace:*
         version: link:../../packages/views
@@ -141,7 +147,7 @@ importers:
         version: link:../../packages/mailer
       better-auth:
         specifier: ^1.6.19
-        version: 1.6.19(@cloudflare/workers-types@4.20260617.1)(next@16.2.6(@babel/core@7.29.7)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+        version: 1.6.19(@cloudflare/workers-types@4.20260617.1)(next@16.2.6(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       hono:
         specifier: ^4.12.26
         version: 4.12.26
@@ -152,6 +158,9 @@ importers:
 
   apps/desktop:
     dependencies:
+      '@workspace/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@workspace/views':
         specifier: workspace:*
         version: link:../../packages/views
@@ -243,6 +252,12 @@ importers:
       '@capacitor/ios':
         specifier: ^8.4.0
         version: 8.4.0(@capacitor/core@8.4.0)
+      '@capacitor/preferences':
+        specifier: ^8.0.1
+        version: 8.0.1(@capacitor/core@8.4.0)
+      '@workspace/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@workspace/views':
         specifier: workspace:*
         version: link:../../packages/views
@@ -300,16 +315,19 @@ importers:
     dependencies:
       '@astrojs/cloudflare':
         specifier: ^13.7.0
-        version: 13.7.0(@types/node@24.12.4)(astro@6.4.8(@types/node@24.12.4)(aws4fetch@1.0.20)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.0)(terser@5.48.0)(yaml@2.9.0))(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0)(workerd@1.20260617.1)(wrangler@4.102.0(@cloudflare/workers-types@4.20260617.1))(yaml@2.9.0)
+        version: 13.7.0(@types/node@24.12.4)(astro@6.4.8(@capacitor/preferences@8.0.1(@capacitor/core@8.4.0))(@types/node@24.12.4)(aws4fetch@1.0.20)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.0)(terser@5.48.0)(yaml@2.9.0))(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0)(workerd@1.20260617.1)(wrangler@4.102.0(@cloudflare/workers-types@4.20260617.1))(yaml@2.9.0)
       astro:
         specifier: ^6.4.7
-        version: 6.4.8(@types/node@24.12.4)(aws4fetch@1.0.20)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.0)(terser@5.48.0)(yaml@2.9.0)
+        version: 6.4.8(@capacitor/preferences@8.0.1(@capacitor/core@8.4.0))(@types/node@24.12.4)(aws4fetch@1.0.20)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.0)(terser@5.48.0)(yaml@2.9.0)
       wrangler:
         specifier: ^4.102.0
         version: 4.102.0(@cloudflare/workers-types@4.20260617.1)
 
   apps/web:
     dependencies:
+      '@workspace/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@workspace/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -382,7 +400,7 @@ importers:
         version: link:../ui
       better-auth:
         specifier: ^1.6.19
-        version: 1.6.19(@cloudflare/workers-types@4.20260617.1)(next@16.2.6(@babel/core@7.29.7)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+        version: 1.6.19(@cloudflare/workers-types@4.20260617.1)(next@16.2.6(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       react:
         specifier: ^19.2.6
         version: 19.2.6
@@ -1181,6 +1199,11 @@ packages:
     resolution: {integrity: sha512-tnwstEdbTJ2nHAfoAwnurXgYRscWeLY+IIGdz69o24gN2Crfj9Xc0TWo8L5uFLF1LmpbUywH1IT0U1oHV8c+CA==}
     peerDependencies:
       '@capacitor/core': ^8.4.0
+
+  '@capacitor/preferences@8.0.1':
+    resolution: {integrity: sha512-T6no3ebi79XJCk91U3Jp/liJUwgBdvHR+s6vhvPkPxSuch7z3zx5Rv1bdWM6sWruNx+pViuEGqZvbfCdyBvcHQ==}
+    peerDependencies:
+      '@capacitor/core': '>=8.0.0'
 
   '@capsizecss/unpack@4.0.1':
     resolution: {integrity: sha512-CuNiSqg7+e1cO/GjffyMOm5Tt2jUF9CWHHnvQ/UkqvtkGfHdgwEC0wpmq7fkN3gxwpRnrAN0WzO3vREKmNolMQ==}
@@ -8932,12 +8955,12 @@ snapshots:
       openapi3-ts: 4.6.0
       zod: 4.4.3
 
-  '@astrojs/cloudflare@13.7.0(@types/node@24.12.4)(astro@6.4.8(@types/node@24.12.4)(aws4fetch@1.0.20)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.0)(terser@5.48.0)(yaml@2.9.0))(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0)(workerd@1.20260617.1)(wrangler@4.102.0(@cloudflare/workers-types@4.20260617.1))(yaml@2.9.0)':
+  '@astrojs/cloudflare@13.7.0(@types/node@24.12.4)(astro@6.4.8(@capacitor/preferences@8.0.1(@capacitor/core@8.4.0))(@types/node@24.12.4)(aws4fetch@1.0.20)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.0)(terser@5.48.0)(yaml@2.9.0))(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0)(workerd@1.20260617.1)(wrangler@4.102.0(@cloudflare/workers-types@4.20260617.1))(yaml@2.9.0)':
     dependencies:
       '@astrojs/internal-helpers': 0.10.0
       '@astrojs/underscore-redirects': 1.0.3
       '@cloudflare/vite-plugin': 1.42.0(vite@7.3.5(@types/node@24.12.4)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0)(yaml@2.9.0))(workerd@1.20260617.1)(wrangler@4.102.0(@cloudflare/workers-types@4.20260617.1))
-      astro: 6.4.8(@types/node@24.12.4)(aws4fetch@1.0.20)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.0)(terser@5.48.0)(yaml@2.9.0)
+      astro: 6.4.8(@capacitor/preferences@8.0.1(@capacitor/core@8.4.0))(@types/node@24.12.4)(aws4fetch@1.0.20)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.0)(terser@5.48.0)(yaml@2.9.0)
       piccolore: 0.1.3
       tinyglobby: 0.2.17
       vite: 7.3.5(@types/node@24.12.4)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0)(yaml@2.9.0)
@@ -9864,6 +9887,10 @@ snapshots:
       tslib: 2.8.1
 
   '@capacitor/ios@8.4.0(@capacitor/core@8.4.0)':
+    dependencies:
+      '@capacitor/core': 8.4.0
+
+  '@capacitor/preferences@8.0.1(@capacitor/core@8.4.0)':
     dependencies:
       '@capacitor/core': 8.4.0
 
@@ -11483,7 +11510,7 @@ snapshots:
       cookie: 1.1.1
       esbuild: 0.25.4
       express: 5.2.1
-      next: 16.2.6(@babel/core@7.29.7)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      next: 16.2.6(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       path-to-regexp: 6.3.0
       urlpattern-polyfill: 10.1.0
       yaml: 2.9.0
@@ -11500,7 +11527,7 @@ snapshots:
       comment-json: 4.6.2
       enquirer: 2.4.1
       glob: 12.0.0
-      next: 16.2.6(@babel/core@7.29.7)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      next: 16.2.6(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       ts-tqdm: 0.8.6
       wrangler: 4.102.0(@cloudflare/workers-types@4.20260617.1)
       yargs: 18.0.0
@@ -12947,7 +12974,7 @@ snapshots:
 
   astral-regex@2.0.0: {}
 
-  astro@6.4.8(@types/node@24.12.4)(aws4fetch@1.0.20)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.0)(terser@5.48.0)(yaml@2.9.0):
+  astro@6.4.8(@capacitor/preferences@8.0.1(@capacitor/core@8.4.0))(@types/node@24.12.4)(aws4fetch@1.0.20)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.62.0)(terser@5.48.0)(yaml@2.9.0):
     dependencies:
       '@astrojs/compiler': 4.0.0
       '@astrojs/internal-helpers': 0.10.0
@@ -12997,7 +13024,7 @@ snapshots:
       ultrahtml: 1.6.0
       unifont: 0.7.4
       unist-util-visit: 5.1.0
-      unstorage: 1.17.5(aws4fetch@1.0.20)
+      unstorage: 1.17.5(@capacitor/preferences@8.0.1(@capacitor/core@8.4.0))(aws4fetch@1.0.20)
       vfile: 6.0.3
       vite: 7.3.5(@types/node@24.12.4)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0)(yaml@2.9.0)
       vitefu: 1.1.3(vite@7.3.5(@types/node@24.12.4)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0)(yaml@2.9.0))
@@ -13070,7 +13097,7 @@ snapshots:
 
   baseline-browser-mapping@2.10.32: {}
 
-  better-auth@1.6.19(@cloudflare/workers-types@4.20260617.1)(next@16.2.6(@babel/core@7.29.7)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
+  better-auth@1.6.19(@cloudflare/workers-types@4.20260617.1)(next@16.2.6(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
     dependencies:
       '@better-auth/core': 1.6.19(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.1)(@cloudflare/workers-types@4.20260617.1)(better-call@1.3.6(zod@4.4.3))(jose@6.2.3)(kysely@0.28.17)(nanostores@1.3.0)
       '@better-auth/drizzle-adapter': 1.6.19(@better-auth/core@1.6.19(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.1)(@cloudflare/workers-types@4.20260617.1)(better-call@1.3.6(zod@4.4.3))(jose@6.2.3)(kysely@0.28.17)(nanostores@1.3.0))(@better-auth/utils@0.4.2)
@@ -13090,7 +13117,7 @@ snapshots:
       nanostores: 1.3.0
       zod: 4.4.3
     optionalDependencies:
-      next: 16.2.6(@babel/core@7.29.7)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      next: 16.2.6(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       react: 19.2.6
       react-dom: 19.2.6(react@19.2.6)
     transitivePeerDependencies:
@@ -16075,7 +16102,7 @@ snapshots:
       react: 19.2.6
       react-dom: 19.2.6(react@19.2.6)
 
-  next@16.2.6(@babel/core@7.29.7)(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
+  next@16.2.6(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
     dependencies:
       '@next/env': 16.2.6
       '@swc/helpers': 0.5.15
@@ -16084,7 +16111,7 @@ snapshots:
       postcss: 8.4.31
       react: 19.2.6
       react-dom: 19.2.6(react@19.2.6)
-      styled-jsx: 5.1.6(@babel/core@7.29.7)(react@19.2.6)
+      styled-jsx: 5.1.6(react@19.2.6)
     optionalDependencies:
       '@next/swc-darwin-arm64': 16.2.6
       '@next/swc-darwin-x64': 16.2.6
@@ -17387,12 +17414,10 @@ snapshots:
     dependencies:
       anynum: 1.0.1
 
-  styled-jsx@5.1.6(@babel/core@7.29.7)(react@19.2.6):
+  styled-jsx@5.1.6(react@19.2.6):
     dependencies:
       client-only: 0.0.1
       react: 19.2.6
-    optionalDependencies:
-      '@babel/core': 7.29.7
 
   sumchecker@3.0.1:
     dependencies:
@@ -17780,7 +17805,7 @@ snapshots:
       '@unrs/resolver-binding-win32-ia32-msvc': 1.12.2
       '@unrs/resolver-binding-win32-x64-msvc': 1.12.2
 
-  unstorage@1.17.5(aws4fetch@1.0.20):
+  unstorage@1.17.5(@capacitor/preferences@8.0.1(@capacitor/core@8.4.0))(aws4fetch@1.0.20):
     dependencies:
       anymatch: 3.1.3
       chokidar: 5.0.0
@@ -17791,6 +17816,7 @@ snapshots:
       ofetch: 1.5.1
       ufo: 1.6.4
     optionalDependencies:
+      '@capacitor/preferences': 8.0.1(@capacitor/core@8.4.0)
       aws4fetch: 1.0.20
 
   untildify@4.0.0: {}

@@ -1,13 +1,20 @@
 import { Suspense } from "react"
 import { createHashRouter, RouterProvider } from "react-router"
+import { Preferences } from "@capacitor/preferences"
+import { AppProvider } from "@workspace/core/app/context"
+import { createMobileAuthClient } from "@workspace/core/auth/client.mobile"
 import { routes } from "@workspace/views/routes/android"
 
+const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8787"
+const authClient = createMobileAuthClient(API_URL, Preferences)
 const router = createHashRouter(routes)
 
 export function App() {
   return (
-    <Suspense fallback={null}>
-      <RouterProvider router={router} />
-    </Suspense>
+    <AppProvider platform="android" authClient={authClient}>
+      <Suspense fallback={null}>
+        <RouterProvider router={router} />
+      </Suspense>
+    </AppProvider>
   )
 }

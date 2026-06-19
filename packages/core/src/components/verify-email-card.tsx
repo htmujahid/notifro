@@ -32,7 +32,6 @@ export function VerifyEmailCard() {
         setStatus("success")
       }
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
