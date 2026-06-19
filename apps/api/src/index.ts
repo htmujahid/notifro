@@ -1,8 +1,9 @@
-import { Hono } from 'hono'
+import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
 import { cors } from 'hono/cors'
+import { Scalar } from '@scalar/hono-api-reference'
 import { auth } from './lib/auth'
 
-const app = new Hono<{
+const app = new OpenAPIHono<{
   Bindings: CloudflareBindings
   Variables: {
     user: typeof auth.$Infer.Session.user | null
@@ -43,5 +44,31 @@ app.on(['POST', 'GET'], '/api/auth/*', (c) => {
 app.get('/', (c) => {
   return c.text('Hello Hono!')
 })
+
+const HelloResponseSchema = z.object({
+  message: z.string().openapi({ example: 'Hello, World!' }),
+})
+
+const helloRoute = createRoute({
+  method: 'get',
+  path: '/api/hello',
+  responses: {
+    200: {
+      content: { 'application/json': { schema: HelloResponseSchema } },
+      description: 'Returns a hello message',
+    },
+  },
+})
+
+app.openapi(helloRoute, (c) => {
+  return c.json({ message: 'Hello, World!' })
+})
+
+app.doc('/doc', {
+  openapi: '3.0.0',
+  info: { title: 'Renderical API', version: '1.0.0' },
+})
+
+app.get('/scalar', Scalar({ url: '/doc', title: 'Renderical API' }))
 
 export default app

@@ -8,6 +8,8 @@
     "generate": "npx auth@latest generate --config ../../packages/auth/src/index.ts --output migrations/0000_auth_schema.sql --yes"
   },
   "dependencies": {
+    "@hono/zod-openapi": "^1.4.0",
+    "@scalar/hono-api-reference": "^0.11.4",
     "@workspace/auth": "workspace:*",
     "hono": "^4.12.26"
   },
