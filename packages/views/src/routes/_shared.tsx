@@ -3,11 +3,11 @@ import type { RouteObject } from "react-router"
 
 const AuthLayout = lazy(() => import("../layouts/auth-layout"))
 const NotFoundPage = lazy(() => import("../pages/not-found"))
-const SignInPage = lazy(() => import("../pages/sign-in"))
-const SignUpPage = lazy(() => import("../pages/sign-up"))
-const ForgotPasswordPage = lazy(() => import("../pages/forgot-password"))
-const ResetPasswordPage = lazy(() => import("../pages/reset-password"))
-const VerifyEmailPage = lazy(() => import("../pages/verify-email"))
+const SignInPage = lazy(() => import("../pages/auth/sign-in"))
+const SignUpPage = lazy(() => import("../pages/auth/sign-up"))
+const ForgotPasswordPage = lazy(() => import("../pages/auth/forgot-password"))
+const ResetPasswordPage = lazy(() => import("../pages/auth/reset-password"))
+const VerifyEmailPage = lazy(() => import("../pages/auth/verify-email"))
 
 export const sharedRoutes: RouteObject[] = [
   {
@@ -15,6 +15,7 @@ export const sharedRoutes: RouteObject[] = [
     element: <NotFoundPage />,
   },
   {
+    path: "auth",
     element: <AuthLayout />,
     children: [
       { path: "sign-in", element: <SignInPage /> },

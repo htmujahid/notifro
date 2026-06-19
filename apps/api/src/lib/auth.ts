@@ -1,3 +1,4 @@
+import { env } from 'cloudflare:workers'
 import { betterAuth } from 'better-auth'
 import { sendVerificationEmail, sendResetPasswordEmail } from '@workspace/mailer'
 import { mockD1 } from './mock-db'
@@ -14,6 +15,12 @@ export function createAuth(db: D1Database = mockD1) {
       },
       sendResetPassword: async ({ user, url }: { user: { email: string; name?: string | null }; url: string }) => {
         await sendResetPasswordEmail({ user, url, from: FROM })
+      },
+    },
+    socialProviders: {
+      google: {
+        clientId: env.GOOGLE_CLIENT_ID,
+        clientSecret: env.GOOGLE_CLIENT_SECRET,
       },
     },
   })

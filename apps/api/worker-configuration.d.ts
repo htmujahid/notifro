@@ -7,6 +7,8 @@ interface __BaseEnv_CloudflareBindings {
 	BETTER_AUTH_URL: string;
 	BETTER_AUTH_SECRET: string;
 	FRONTEND_URL: string;
+	GOOGLE_CLIENT_ID: string;
+	GOOGLE_CLIENT_SECRET: string;
 }
 declare namespace Cloudflare {
 	interface GlobalProps {
