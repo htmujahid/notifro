@@ -13,11 +13,19 @@ export function createAuth(db: D1Database = mockD1) {
     trustedOrigins: [env.FRONTEND_URL],
     emailAndPassword: {
       enabled: true,
+      requireEmailVerification: true,
       sendVerificationEmail: async ({ user, url }: { user: { email: string; name?: string | null }; url: string }) => {
         await sendVerificationEmail({ user, url, from: FROM })
       },
       sendResetPassword: async ({ user, url }: { user: { email: string; name?: string | null }; url: string }) => {
         await sendResetPasswordEmail({ user, url, from: FROM })
+      },
+    },
+    emailVerification: {
+      sendOnSignIn: true,
+      autoSignInAfterVerification: true,
+      sendVerificationEmail: async ({ user, url }: { user: { email: string; name?: string | null }; url: string }) => {
+        await sendVerificationEmail({ user, url, from: FROM })
       },
     },
     socialProviders: {
