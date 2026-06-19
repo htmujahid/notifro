@@ -18,7 +18,7 @@ export function App() {
   }, [])
 
   return (
-    <AppProvider platform="desktop" authClient={authClient} authRedirectURL={NATIVE_REDIRECT_URL}>
+    <AppProvider platform="desktop" authClient={authClient} appBaseURL={NATIVE_REDIRECT_URL}>
       <Suspense fallback={null}>
         <RouterProvider router={router} />
       </Suspense>

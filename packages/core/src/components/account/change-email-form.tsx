@@ -10,7 +10,7 @@ import { changeEmailSchema, type ChangeEmailValues } from "../../schemas/account
 
 export function ChangeEmailForm() {
   const auth = useAuth()
-  const { authRedirectURL } = useApp()
+  const { appBaseURL } = useApp()
 
   const form = useForm<ChangeEmailValues>({
     resolver: zodResolver(changeEmailSchema),
@@ -20,7 +20,7 @@ export function ChangeEmailForm() {
   async function handleSubmit(values: ChangeEmailValues) {
     const { error } = await auth.changeEmail({
       newEmail: values.newEmail,
-      callbackURL: buildAuthURL(authRedirectURL, "/"),
+      callbackURL: buildAuthURL(appBaseURL, "/"),
     })
     if (error) {
       form.setError("root", { message: error.message })

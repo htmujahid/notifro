@@ -16,7 +16,7 @@ import { GoogleIcon, OrDivider } from "./auth-icons"
 
 export function SignInForm() {
   const auth = useAuth()
-  const { authRedirectURL } = useApp()
+  const { appBaseURL } = useApp()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [searchParams] = useSearchParams()
@@ -33,7 +33,7 @@ export function SignInForm() {
     try {
       const { error } = await auth.signIn.social({
         provider: "google",
-        callbackURL: buildAuthURL(authRedirectURL, next),
+        callbackURL: buildAuthURL(appBaseURL, next),
       })
       if (error) form.setError("root", { message: error.message })
     } finally {

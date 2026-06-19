@@ -12,7 +12,7 @@ export interface AppContextValue {
   isWeb: boolean
   isDesktop: boolean
   isMobile: boolean
-  authRedirectURL: string
+  appBaseURL: string
 }
 
 const AppContext = createContext<AppContextValue | null>(null)
@@ -20,11 +20,11 @@ const AppContext = createContext<AppContextValue | null>(null)
 export interface AppProviderProps {
   platform: Platform
   authClient: AuthClient
-  authRedirectURL: string
+  appBaseURL: string
   children: React.ReactNode
 }
 
-export function AppProvider({ platform, authClient, authRedirectURL, children }: AppProviderProps) {
+export function AppProvider({ platform, authClient, appBaseURL, children }: AppProviderProps) {
   const value = useMemo<AppContextValue>(
     () => ({
       platform,
@@ -32,9 +32,9 @@ export function AppProvider({ platform, authClient, authRedirectURL, children }:
       isDesktop: platform === "desktop",
       isMobile: platform === "android" || platform === "ios",
       isNative: platform !== "web",
-      authRedirectURL,
+      appBaseURL,
     }),
-    [platform, authRedirectURL],
+    [platform, appBaseURL],
   )
 
   return (

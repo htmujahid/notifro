@@ -12,7 +12,7 @@ import { forgotPasswordSchema, type ForgotPasswordValues } from "../../schemas/a
 
 export function ForgotPasswordForm() {
   const auth = useAuth()
-  const { authRedirectURL } = useApp()
+  const { appBaseURL } = useApp()
   const navigate = useNavigate()
   const form = useForm<ForgotPasswordValues>({
     resolver: zodResolver(forgotPasswordSchema),
@@ -22,7 +22,7 @@ export function ForgotPasswordForm() {
   async function handleSubmit(values: ForgotPasswordValues) {
     const { error } = await auth.requestPasswordReset({
       email: values.email,
-      redirectTo: buildAuthURL(authRedirectURL, "/auth/reset-password"),
+      redirectTo: buildAuthURL(appBaseURL, "/auth/reset-password"),
     })
     if (error) {
       form.setError("root", { message: error.message })
