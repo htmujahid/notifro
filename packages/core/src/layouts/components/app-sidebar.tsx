@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Link, useNavigate } from "react-router"
+import { useNavigate } from "react-router"
 import { useQueryClient } from "@tanstack/react-query"
 import { useAuth } from "@workspace/app/auth/context"
 import { useSession, SESSION_QUERY_KEY } from "@workspace/app/auth/use-session"
@@ -20,15 +20,13 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@workspace/ui/components/sidebar"
 import { NavDocuments } from "./nav-documents"
 import { NavMain } from "./nav-main"
 import { NavSecondary } from "./nav-secondary"
 import { NavUser } from "./nav-user"
 import { QuickCreateDialog } from "./quick-create-dialog"
+import { OrgSwitcher } from "./org-switcher"
 
 const NAV_MAIN = [
   { title: "Dashboard", url: "/", icon: <LayoutDashboardIcon className="size-4" />, end: true },
@@ -48,16 +46,6 @@ const NAV_DOCUMENTS = [
   { name: "Audiences", url: "/audiences", icon: <UsersIcon className="size-4" /> },
   { name: "Analytics", url: "/analytics", icon: <BarChart3Icon className="size-4" /> },
 ]
-
-function RendericalLogo({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
-      <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M2 17l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const auth = useAuth()
@@ -82,17 +70,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <>
       <Sidebar collapsible="offcanvas" {...props}>
         <SidebarHeader>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                className="data-[slot=sidebar-menu-button]:p-1.5!"
-                render={<Link to="/" />}
-              >
-                <RendericalLogo className="size-5!" />
-                <span className="text-base font-semibold">Renderical</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
+          <OrgSwitcher />
         </SidebarHeader>
 
         <SidebarContent>

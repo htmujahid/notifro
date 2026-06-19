@@ -35,6 +35,9 @@
     "./schemas/auth": "./src/schemas/auth.ts",
     "./schemas/account": "./src/schemas/account.ts",
     "./components/*": "./src/components/*.tsx",
-    "./layouts/*": "./src/layouts/*.tsx"
+    "./layouts/*": "./src/layouts/*.tsx",
+    "./hooks/organization": "./src/hooks/organization.ts",
+    "./components/organization/org-settings-panel": "./src/components/organization/org-settings-panel.tsx",
+    "./components/organization/accept-invitation-card": "./src/components/organization/accept-invitation-card.tsx"
   }
 }
