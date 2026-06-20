@@ -11,6 +11,7 @@
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
     "@tanstack/react-query": "^5.101.0",
+    "@workspace/api-client": "workspace:*",
     "@workspace/app": "workspace:*",
     "@workspace/ui": "workspace:*",
     "react": "^19.2.6",
@@ -37,6 +38,7 @@
     "./components/*": "./src/components/*.tsx",
     "./layouts/*": "./src/layouts/*.tsx",
     "./hooks/organization": "./src/hooks/organization.ts",
+    "./hooks/hello": "./src/hooks/hello.ts",
     "./components/organization/org-settings-panel": "./src/components/organization/org-settings-panel.tsx",
     "./components/organization/accept-invitation-card": "./src/components/organization/accept-invitation-card.tsx"
   }

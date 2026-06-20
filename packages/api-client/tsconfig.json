@@ -9,10 +9,7 @@
     "strict": true,
     "noEmit": true,
     "paths": {
-      "@workspace/core/*": ["./src/*"],
-      "@workspace/api-client/*": ["../api-client/src/*"],
-      "@workspace/app/*": ["../app/src/*"],
-      "@workspace/ui/*": ["../ui/src/*"]
+      "@workspace/api-client/*": ["./src/*"]
     }
   },
   "include": ["."],

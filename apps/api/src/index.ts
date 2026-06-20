@@ -25,11 +25,11 @@ app.use('*', async (c, next) => {
   await next()
 })
 
-app.use('/api/auth/*', (c, next) => {
+app.use('/api/*', (c, next) => {
   return cors({
     origin: c.env.FRONTEND_URL,
     allowHeaders: ['Content-Type', 'Authorization'],
-    allowMethods: ['POST', 'GET', 'OPTIONS'],
+    allowMethods: ['POST', 'GET', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
     exposeHeaders: ['Content-Length'],
     maxAge: 600,
     credentials: true,

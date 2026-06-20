@@ -13,6 +13,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "paths": {
+      "@workspace/api-client/*": ["../../packages/api-client/src/*"],
       "@workspace/app/*": ["../../packages/app/src/*"],
       "@workspace/views/*": ["../../packages/views/src/*"]
     }

@@ -3,6 +3,8 @@ import { ThemeProvider } from "@workspace/ui-primitives/components/theme-provide
 import { AuthProvider } from "../auth/context"
 import type { AuthClient } from "../auth/client"
 import { QueryProvider } from "./query"
+import { createApiClient } from "@workspace/api-client/client"
+import { ApiClientProvider } from "@workspace/api-client/context"
 
 export type Platform = "web" | "desktop" | "android" | "ios"
 
@@ -20,11 +22,12 @@ const AppContext = createContext<AppContextValue | null>(null)
 export interface AppProviderProps {
   platform: Platform
   authClient: AuthClient
+  apiBaseURL: string
   appBaseURL: string
   children: React.ReactNode
 }
 
-export function AppProvider({ platform, authClient, appBaseURL, children }: AppProviderProps) {
+export function AppProvider({ platform, authClient, apiBaseURL, appBaseURL, children }: AppProviderProps) {
   const value = useMemo<AppContextValue>(
     () => ({
       platform,
@@ -37,11 +40,15 @@ export function AppProvider({ platform, authClient, appBaseURL, children }: AppP
     [platform, appBaseURL],
   )
 
+  const apiClient = useMemo(() => createApiClient(apiBaseURL), [apiBaseURL])
+
   return (
     <ThemeProvider>
       <QueryProvider>
         <AppContext.Provider value={value}>
-          <AuthProvider client={authClient}>{children}</AuthProvider>
+          <ApiClientProvider client={apiClient}>
+            <AuthProvider client={authClient}>{children}</AuthProvider>
+          </ApiClientProvider>
         </AppContext.Provider>
       </QueryProvider>
     </ThemeProvider>

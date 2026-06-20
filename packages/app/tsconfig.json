@@ -10,6 +10,7 @@
     "noEmit": true,
     "paths": {
       "@workspace/app/*": ["./src/*"],
+      "@workspace/api-client/*": ["../api-client/src/*"],
       "@workspace/core/*": ["../core/src/*"],
       "@workspace/ui-primitives/*": ["../ui-primitives/src/*"]
     }

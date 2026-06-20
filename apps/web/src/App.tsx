@@ -11,7 +11,7 @@ const router = createBrowserRouter(routes)
 
 export function App() {
   return (
-    <AppProvider platform="web" authClient={authClient} appBaseURL={FRONTEND_URL}>
+    <AppProvider platform="web" authClient={authClient} apiBaseURL={API_URL} appBaseURL={FRONTEND_URL}>
       <Suspense fallback={null}>
         <RouterProvider router={router} />
       </Suspense>
