@@ -1,11 +1,9 @@
 import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
-import { requireOrg } from '../middleware/auth'
+import { requireAuth } from '../middleware/auth'
 import { listQuerySchema, applyListQuery } from '../lib/list-query'
 import { Errors, validationHook } from '../lib/errors'
 import { getAdapter } from '../channels/registry'
 import { ComposePayloadSchema } from '../compose/schema'
-import { maybeRefreshGmailCredentials, decryptGmailCredentials } from '../channels/email-oauth'
-import type { EmailProvider } from '../channels/email'
 import type { AppEnv } from '../lib/types'
 import type { ChannelType } from '../channels/types'
 
@@ -17,7 +15,7 @@ const DEFAULT_SORT = { key: 'createdAt', order: 'desc' as const }
 
 const DeliveryDtoSchema = z.object({
   id: z.string(),
-  organizationId: z.string(),
+  userId: z.string(),
   notificationId: z.string(),
   channel: z.string(),
   recipient: z.string(),
@@ -31,8 +29,7 @@ const DeliveryDtoSchema = z.object({
 
 const NotificationDtoSchema = z.object({
   id: z.string(),
-  organizationId: z.string(),
-  createdByUserId: z.string().nullable(),
+  userId: z.string(),
   payload: z.string(),
   subject: z.string().nullable(),
   channels: z.string(),
@@ -110,11 +107,12 @@ async function resolveRecipientEmail(
 }
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
-router.use('*', requireOrg)
+router.use('*', requireAuth)
 
 router.openapi(sendRoute, async (c) => {
   const payload = c.req.valid('json')
-  const { org, db } = c.var
+  const { db } = c.var
+  const userId = c.var.user!.id
 
   const channels = payload.channels ?? ['email']
   const ts = now()
@@ -126,8 +124,7 @@ router.openapi(sendRoute, async (c) => {
     .insertInto('notification')
     .values({
       id: notifId,
-      organizationId: org.id,
-      createdByUserId: c.var.user?.id ?? null,
+      userId,
       payload: JSON.stringify(payload),
       subject,
       channels: JSON.stringify(channels),
@@ -140,7 +137,7 @@ router.openapi(sendRoute, async (c) => {
 
   const deliveries: Array<{
     id: string
-    organizationId: string
+    userId: string
     notificationId: string
     channel: string
     recipient: string
@@ -161,7 +158,7 @@ router.openapi(sendRoute, async (c) => {
         .insertInto('delivery')
         .values({
           id: deliveryId,
-          organizationId: org.id,
+          userId,
           notificationId: notifId,
           channel,
           recipient: '',
@@ -175,7 +172,7 @@ router.openapi(sendRoute, async (c) => {
         .execute()
       deliveries.push({
         id: deliveryId,
-        organizationId: org.id,
+        userId,
         notificationId: notifId,
         channel,
         recipient: '',
@@ -191,13 +188,18 @@ router.openapi(sendRoute, async (c) => {
 
     const recipientAddr = (await resolveRecipientEmail(db, payload.recipient as { type: string; email?: string; userId?: string })) ?? ''
 
-    const conn = await db
+    const connRow = await db
       .selectFrom('connection')
-      .where('organizationId', '=', org.id)
+      .where('userId', '=', userId)
       .where('type', '=', channel)
       .where('status', '=', 'active')
       .selectAll()
       .executeTakeFirst()
+
+    const syntheticInApp = channel === 'in_app'
+      ? { id: 'in_app', userId, type: 'in_app', name: 'In-app', status: 'active', config: '{}', credentials: null, scopes: '[]', health: null, createdAt: ts, updatedAt: ts }
+      : null
+    const conn = connRow ?? syntheticInApp
 
     if (!conn) {
       const deliveryId = newId()
@@ -206,7 +208,7 @@ router.openapi(sendRoute, async (c) => {
         .insertInto('delivery')
         .values({
           id: deliveryId,
-          organizationId: org.id,
+          userId,
           notificationId: notifId,
           channel,
           recipient: recipientAddr,
@@ -220,7 +222,7 @@ router.openapi(sendRoute, async (c) => {
         .execute()
       deliveries.push({
         id: deliveryId,
-        organizationId: org.id,
+        userId,
         notificationId: notifId,
         channel,
         recipient: recipientAddr,
@@ -239,16 +241,9 @@ router.openapi(sendRoute, async (c) => {
     let deliveryError: string | null = null
 
     try {
-      let activeConn = conn as import('../channels/types').Connection
-      let provider = adapter.transform(payload, { connection: activeConn }) as Record<string, unknown>
-
-      if (channel === 'email') {
-        activeConn = await maybeRefreshGmailCredentials(db, c.env, activeConn)
-        const creds = await decryptGmailCredentials(activeConn, c.env.CONNECTION_ENC_KEY)
-        provider = { ...provider, accessToken: creds.access_token, fromEmail: creds.email } as Record<string, unknown>
-      }
-
-      const result = await adapter.send(provider as unknown as EmailProvider, activeConn)
+      const activeConn = conn as import('../channels/types').Connection
+      const provider = adapter.transform(payload, { connection: activeConn })
+      const result = await adapter.send(provider as any, activeConn, { db: c.var.db, notificationId: notifId })
       providerMessageId = result.providerMessageId
       deliveryStatus = result.ok ? 'delivered' : 'failed'
       if (!result.ok) deliveryError = result.error ?? 'Unknown send error'
@@ -262,7 +257,7 @@ router.openapi(sendRoute, async (c) => {
       .insertInto('delivery')
       .values({
         id: deliveryId,
-        organizationId: org.id,
+        userId,
         notificationId: notifId,
         channel,
         recipient: recipientAddr,
@@ -276,7 +271,7 @@ router.openapi(sendRoute, async (c) => {
       .execute()
     deliveries.push({
       id: deliveryId,
-      organizationId: org.id,
+      userId,
       notificationId: notifId,
       channel,
       recipient: recipientAddr,
@@ -302,7 +297,7 @@ router.openapi(sendRoute, async (c) => {
   const notification = await db
     .selectFrom('notification')
     .where('id', '=', notifId)
-    .where('organizationId', '=', org.id)
+    .where('userId', '=', userId)
     .selectAll()
     .executeTakeFirstOrThrow()
 
@@ -311,9 +306,10 @@ router.openapi(sendRoute, async (c) => {
 
 router.openapi(listRoute, async (c) => {
   const parsed = c.req.valid('query')
+  const userId = c.var.user!.id
   const baseQuery = c.var.db
     .selectFrom('notification')
-    .where('organizationId', '=', c.var.org.id)
+    .where('userId', '=', userId)
     .selectAll()
 
   const { qb, getPage } = applyListQuery(baseQuery, parsed, {
@@ -330,11 +326,12 @@ router.openapi(listRoute, async (c) => {
 
 router.openapi(detailRoute, async (c) => {
   const { id } = c.req.param()
+  const userId = c.var.user!.id
 
   const notification = await c.var.db
     .selectFrom('notification')
     .where('id', '=', id)
-    .where('organizationId', '=', c.var.org.id)
+    .where('userId', '=', userId)
     .selectAll()
     .executeTakeFirst()
 
@@ -343,7 +340,7 @@ router.openapi(detailRoute, async (c) => {
   const deliveries = await c.var.db
     .selectFrom('delivery')
     .where('notificationId', '=', id)
-    .where('organizationId', '=', c.var.org.id)
+    .where('userId', '=', userId)
     .selectAll()
     .execute()
 

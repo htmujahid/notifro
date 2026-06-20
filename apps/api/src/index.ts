@@ -8,8 +8,9 @@ import type { AppEnv } from './lib/types'
 import templateRouter from './routes/_template'
 import connectionsRouter from './routes/connections'
 import notificationsRouter from './routes/notifications'
-import emailOauthRouter from './routes/email-oauth'
+import inboxRouter from './routes/inbox'
 import './channels/email'
+import './channels/in-app'
 
 const app = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 
@@ -81,7 +82,7 @@ app.openapi(helloRoute, (c) => {
 })
 
 const DbHealthResponseSchema = z.object({
-  organizationCount: z.number().openapi({ example: 1 }),
+  userCount: z.number().openapi({ example: 1 }),
 })
 
 const dbHealthRoute = createRoute({
@@ -90,23 +91,23 @@ const dbHealthRoute = createRoute({
   responses: {
     200: {
       content: { 'application/json': { schema: DbHealthResponseSchema } },
-      description: 'Returns organization count via Kysely to verify D1 dialect wiring',
+      description: 'Returns user count via Kysely to verify D1 dialect wiring',
     },
   },
 })
 
 app.openapi(dbHealthRoute, async (c) => {
   const result = await c.var.db
-    .selectFrom('organization')
+    .selectFrom('user')
     .select(c.var.db.fn.countAll<number>().as('n'))
     .executeTakeFirstOrThrow()
-  return c.json({ organizationCount: Number(result.n) })
+  return c.json({ userCount: Number(result.n) })
 })
 
 app.route('/api', templateRouter)
 app.route('/api', connectionsRouter)
-app.route('/api', emailOauthRouter)
 app.route('/api', notificationsRouter)
+app.route('/api', inboxRouter)
 
 app.doc('/doc', {
   openapi: '3.0.0',

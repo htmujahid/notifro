@@ -1,23 +1,19 @@
 export type ChannelType =
   | 'email'
   | 'webhook'
-  | 'slack'
-  | 'discord'
-  | 'teams'
   | 'web_push'
-  | 'mobile_push'
   | 'sms'
+  | 'whatsapp'
+  | 'telegram'
   | 'in_app'
 
 export const CHANNEL_TYPES: ChannelType[] = [
   'email',
   'webhook',
-  'slack',
-  'discord',
-  'teams',
   'web_push',
-  'mobile_push',
   'sms',
+  'whatsapp',
+  'telegram',
   'in_app',
 ]
 
@@ -32,7 +28,7 @@ export const CONNECTION_STATUSES: ConnectionStatus[] = [
 
 export interface Connection {
   id: string
-  organizationId: string
+  userId: string
   type: ChannelType
   name: string
   status: ConnectionStatus

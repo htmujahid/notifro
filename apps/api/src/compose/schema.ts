@@ -3,12 +3,10 @@ import { z } from '@hono/zod-openapi'
 const CHANNEL_TYPE_VALUES = [
   'email',
   'webhook',
-  'slack',
-  'discord',
-  'teams',
   'web_push',
-  'mobile_push',
   'sms',
+  'whatsapp',
+  'telegram',
   'in_app',
 ] as const
 

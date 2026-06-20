@@ -26,7 +26,7 @@ import { NavMain } from "./nav-main"
 import { NavSecondary } from "./nav-secondary"
 import { NavUser } from "./nav-user"
 import { QuickCreateDialog } from "./quick-create-dialog"
-import { OrgSwitcher } from "./org-switcher"
+import { RendericalWordmark } from "../../components/renderical-logo"
 
 const NAV_MAIN = [
   { title: "Dashboard", url: "/", icon: <LayoutDashboardIcon className="size-4" />, end: true },
@@ -70,7 +70,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <>
       <Sidebar collapsible="offcanvas" {...props}>
         <SidebarHeader>
-          <OrgSwitcher />
+          <div className="flex h-12 items-center px-4">
+            <RendericalWordmark />
+          </div>
         </SidebarHeader>
 
         <SidebarContent>

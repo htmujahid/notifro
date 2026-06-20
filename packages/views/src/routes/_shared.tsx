@@ -3,7 +3,6 @@ import type { RouteObject } from "react-router"
 
 const AuthLayout = lazy(() => import("@workspace/core/layouts/auth-layout"))
 const AccountLayout = lazy(() => import("@workspace/core/layouts/account-layout"))
-const OrgLayout = lazy(() => import("@workspace/core/layouts/org-layout"))
 const NotFoundPage = lazy(() => import("../pages/not-found"))
 const SignInPage = lazy(() => import("../pages/auth/sign-in"))
 const SignUpPage = lazy(() => import("../pages/auth/sign-up"))
@@ -24,11 +23,6 @@ const HelpPage = lazy(() => import("../pages/help"))
 const AccountProfilePage = lazy(() => import("../pages/account/profile"))
 const AccountSecurityPage = lazy(() => import("../pages/account/security"))
 const AccountTwoFactorPage = lazy(() => import("../pages/account/two-factor"))
-const OrgGeneralPage = lazy(() => import("../pages/organization/general"))
-const OrgMembersPage = lazy(() => import("../pages/organization/members"))
-const OrgInvitationsPage = lazy(() => import("../pages/organization/invitations"))
-const OrgRolesPage = lazy(() => import("../pages/organization/roles"))
-const AcceptInvitationPage = lazy(() => import("../pages/auth/accept-invitation"))
 
 export const sharedAuthRoutes: RouteObject = {
   path: "auth",
@@ -44,7 +38,6 @@ export const sharedAuthRoutes: RouteObject = {
 }
 
 export const sharedProtectedChildren: RouteObject[] = [
-  { path: "accept-invitation/:invitationId", element: <AcceptInvitationPage /> },
   { path: "notifications", element: <NotificationsPage /> },
   { path: "schedules", element: <SchedulesPage /> },
   { path: "channels", element: <ChannelsPage /> },
@@ -55,16 +48,6 @@ export const sharedProtectedChildren: RouteObject[] = [
   { path: "analytics", element: <AnalyticsPage /> },
   { path: "settings", element: <SettingsPage /> },
   { path: "help", element: <HelpPage /> },
-  {
-    path: "organization",
-    element: <OrgLayout />,
-    children: [
-      { index: true, element: <OrgGeneralPage /> },
-      { path: "members", element: <OrgMembersPage /> },
-      { path: "invitations", element: <OrgInvitationsPage /> },
-      { path: "roles", element: <OrgRolesPage /> },
-    ],
-  },
   {
     path: "account",
     element: <AccountLayout />,

@@ -1,20 +1,13 @@
 import { Button } from "@workspace/ui/components/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@workspace/ui/components/card"
-import { MailIcon, MessageSquareIcon, WebhookIcon, BellIcon, CheckIcon, PlusIcon, SettingsIcon } from "lucide-react"
+import { MailIcon, WebhookIcon, BellIcon, MessageSquareIcon, PhoneIcon, CheckIcon, PlusIcon, SettingsIcon } from "lucide-react"
 import { useConnections } from "@workspace/core/hooks/connections"
-import { useApiClient } from "@workspace/api-client/context"
 
-const CHANNEL_META: Record<string, { name: string; description: string; icon: React.ComponentType<{ className?: string }>; connectPath?: string }> = {
+const CHANNEL_META: Record<string, { name: string; description: string; icon: React.ComponentType<{ className?: string }> }> = {
   email: {
     name: "Email",
-    description: "Send notifications via your Gmail account. Connects with Google OAuth.",
+    description: "Send notifications via Cloudflare Email. No OAuth required — always available.",
     icon: MailIcon,
-    connectPath: "/api/connections/email/oauth/start",
-  },
-  slack: {
-    name: "Slack",
-    description: "Post messages and alerts directly to your Slack workspace channels.",
-    icon: MessageSquareIcon,
   },
   webhook: {
     name: "Webhook",
@@ -22,19 +15,38 @@ const CHANNEL_META: Record<string, { name: string; description: string; icon: Re
     icon: WebhookIcon,
   },
   web_push: {
-    name: "Push",
-    description: "Native push notifications for web and mobile apps via Web Push API.",
+    name: "Web Push",
+    description: "Native push notifications for web apps via the Web Push API.",
+    icon: BellIcon,
+  },
+  sms: {
+    name: "SMS",
+    description: "Send text messages via Twilio to any phone number worldwide.",
+    icon: PhoneIcon,
+  },
+  whatsapp: {
+    name: "WhatsApp",
+    description: "Send WhatsApp messages via Twilio — reuses your SMS connection credentials.",
+    icon: MessageSquareIcon,
+  },
+  telegram: {
+    name: "Telegram",
+    description: "Send messages via a Telegram Bot to any chat or channel.",
+    icon: MessageSquareIcon,
+  },
+  in_app: {
+    name: "In-App",
+    description: "Real-time in-app notifications delivered to your frontend via WebSocket or polling.",
     icon: BellIcon,
   },
 }
 
 export default function ChannelsPage() {
   const { data, isLoading } = useConnections({ limit: 50 })
-  const apiClient = useApiClient()
 
   const connections = data?.pages.flatMap((p) => p.data) ?? []
 
-  const channelTypes = ["email", "slack", "webhook", "web_push"] as const
+  const channelTypes = ["email", "webhook", "web_push", "sms", "whatsapp", "telegram", "in_app"] as const
 
   return (
     <div className="flex flex-col gap-6">
@@ -64,11 +76,10 @@ export default function ChannelsPage() {
           {channelTypes.map((type) => {
             const meta = CHANNEL_META[type]
             if (!meta) return null
-            const { name, description, icon: Icon, connectPath } = meta
+            const { name, description, icon: Icon } = meta
             const conn = connections.find((c) => c.type === type)
-            const connected = conn?.status === "active"
-            const detail = conn ? conn.name : "Not configured"
-            const connectHref = connectPath ? `${apiClient.baseURL}${connectPath}` : undefined
+            const connected = type === "email" ? true : conn?.status === "active"
+            const detail = type === "email" ? "Cloudflare Email binding" : conn ? conn.name : "Not configured"
 
             return (
               <Card key={type} size="sm">
@@ -109,11 +120,6 @@ export default function ChannelsPage() {
                     size="sm"
                     variant={connected ? "outline" : "default"}
                     className="w-full"
-                    onClick={() => {
-                      if (!connected && connectHref) {
-                        window.location.href = connectHref
-                      }
-                    }}
                   >
                     {connected ? "Manage" : "Connect"}
                   </Button>

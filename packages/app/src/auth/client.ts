@@ -1,5 +1,5 @@
 import { createAuthClient } from "better-auth/client"
-import { twoFactorClient, organizationClient } from "better-auth/client/plugins"
+import { twoFactorClient } from "better-auth/client/plugins"
 import type { BetterAuthClientOptions } from "better-auth/client"
 
 export type { BetterAuthClientOptions }
@@ -11,7 +11,7 @@ export function createBaseAuthClient(
   return createAuthClient({
     baseURL,
     ...options,
-    plugins: [twoFactorClient(), organizationClient()],
+    plugins: [twoFactorClient()],
   })
 }
 

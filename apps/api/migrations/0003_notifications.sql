@@ -1,7 +1,6 @@
 CREATE TABLE "notification" (
   "id" text not null primary key,
-  "organizationId" text not null references "organization"("id") on delete cascade,
-  "createdByUserId" text references "user"("id"),
+  "userId" text not null references "user"("id") on delete cascade,
   "payload" text not null,
   "subject" text,
   "channels" text not null,
@@ -10,12 +9,12 @@ CREATE TABLE "notification" (
   "createdAt" text not null,
   "updatedAt" text not null
 );
-CREATE INDEX "notification_org_createdAt_idx" ON "notification" ("organizationId", "createdAt", "id");
-CREATE INDEX "notification_org_status_idx" ON "notification" ("organizationId", "status");
+CREATE INDEX "notification_user_createdAt_idx" ON "notification" ("userId", "createdAt", "id");
+CREATE INDEX "notification_user_status_idx" ON "notification" ("userId", "status");
 
 CREATE TABLE "delivery" (
   "id" text not null primary key,
-  "organizationId" text not null references "organization"("id") on delete cascade,
+  "userId" text not null references "user"("id") on delete cascade,
   "notificationId" text not null references "notification"("id") on delete cascade,
   "channel" text not null,
   "recipient" text not null,
@@ -27,4 +26,4 @@ CREATE TABLE "delivery" (
   "updatedAt" text not null
 );
 CREATE INDEX "delivery_notificationId_idx" ON "delivery" ("notificationId");
-CREATE INDEX "delivery_org_status_idx" ON "delivery" ("organizationId", "status");
+CREATE INDEX "delivery_user_status_idx" ON "delivery" ("userId", "status");

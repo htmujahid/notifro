@@ -4,7 +4,7 @@ import type { ListParams, ListResponse } from "@workspace/api-client/types"
 
 export interface Connection {
   id: string
-  organizationId: string
+  userId: string
   type: string
   name: string
   status: string

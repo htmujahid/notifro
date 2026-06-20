@@ -3,10 +3,6 @@ export interface Timestamps {
   updatedAt: string
 }
 
-export interface OrgScoped {
-  organizationId: string
-}
-
 export interface UserTable {
   id: string
   name: string
@@ -15,24 +11,9 @@ export interface UserTable {
   image: string | null
 }
 
-export interface OrganizationTable {
-  id: string
-  name: string
-  slug: string | null
-  createdAt: string
-}
-
-export interface MemberTable {
-  id: string
-  organizationId: string
-  userId: string
-  role: string
-  createdAt: string
-}
-
 export interface ConnectionTable {
   id: string
-  organizationId: string
+  userId: string
   type: string
   name: string
   status: string
@@ -46,8 +27,7 @@ export interface ConnectionTable {
 
 export interface NotificationTable {
   id: string
-  organizationId: string
-  createdByUserId: string | null
+  userId: string
   payload: string
   subject: string | null
   channels: string
@@ -59,7 +39,7 @@ export interface NotificationTable {
 
 export interface DeliveryTable {
   id: string
-  organizationId: string
+  userId: string
   notificationId: string
   channel: string
   recipient: string
@@ -71,11 +51,25 @@ export interface DeliveryTable {
   updatedAt: string
 }
 
+export interface InboxMessageTable {
+  id: string
+  userId: string
+  notificationId: string | null
+  deliveryId: string | null
+  title: string
+  body: string | null
+  icon: string | null
+  url: string | null
+  seenAt: string | null
+  readAt: string | null
+  createdAt: string
+  updatedAt: string
+}
+
 export interface DB {
   user: UserTable
-  organization: OrganizationTable
-  member: MemberTable
   connection: ConnectionTable
   notification: NotificationTable
   delivery: DeliveryTable
+  inbox_message: InboxMessageTable
 }

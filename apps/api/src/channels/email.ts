@@ -2,18 +2,21 @@ import type { ChannelAdapter } from './adapter'
 import type { ComposePayload, Connection } from './types'
 import { registerAdapter } from './registry'
 import { registerTransform } from '../compose/transform'
-import { buildRfc2822Email, sendGmailMessage } from './email-oauth'
+import { sendNotificationEmail } from '@workspace/mailer'
 
 export interface EmailProvider {
   to: string
   subject: string
   html: string
   text: string
-  accessToken: string
-  fromEmail: string
+  from: string
 }
 
-interface EmailConfig {}
+interface EmailConfig {
+  from?: string
+}
+
+const DEFAULT_FROM = { email: 'noreply@renderical.com', name: 'Renderical' }
 
 function esc(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -70,19 +73,6 @@ function renderText(payload: ComposePayload): string {
   return parts.join('\n\n')
 }
 
-function buildProvider(payload: ComposePayload): Omit<EmailProvider, 'accessToken' | 'fromEmail'> {
-  const { recipient } = payload
-  let to = ''
-  if (recipient.type === 'contact' && recipient.email) to = recipient.email
-  if (!to) throw new Error('Email recipient requires contact.email')
-  return {
-    to,
-    subject: payload.content.subject ?? payload.content.title ?? '(no subject)',
-    html: renderHtml(payload),
-    text: renderText(payload),
-  }
-}
-
 const emailAdapter: ChannelAdapter<EmailConfig, EmailProvider> = {
   type: 'email',
 
@@ -90,24 +80,39 @@ const emailAdapter: ChannelAdapter<EmailConfig, EmailProvider> = {
     return (input ?? {}) as EmailConfig
   },
 
-  transform(payload, _ctx): EmailProvider {
-    return { ...buildProvider(payload), accessToken: '', fromEmail: '' }
+  transform(payload, ctx): EmailProvider {
+    const { recipient } = payload
+    let to = ''
+    if (recipient.type === 'contact' && recipient.email) to = recipient.email
+    if (!to) throw new Error('Email recipient requires contact.email')
+
+    let fromEmail = DEFAULT_FROM.email
+    if (ctx?.connection) {
+      try {
+        const cfg = JSON.parse(ctx.connection.config) as EmailConfig
+        if (cfg.from) fromEmail = cfg.from
+      } catch {}
+    }
+
+    return {
+      to,
+      subject: payload.content.subject ?? payload.content.title ?? '(no subject)',
+      html: renderHtml(payload),
+      text: renderText(payload),
+      from: fromEmail,
+    }
   },
 
-  async send(provider, _conn) {
-    if (!provider.accessToken) {
-      return { providerMessageId: null, ok: false, error: 'No Gmail access token — connect Gmail first' }
-    }
+  async send(provider, _conn, _ctx) {
     try {
-      const raw = buildRfc2822Email({
-        from: provider.fromEmail,
+      await sendNotificationEmail({
         to: provider.to,
+        from: { email: provider.from, name: DEFAULT_FROM.name },
         subject: provider.subject,
         html: provider.html,
         text: provider.text,
       })
-      const { id } = await sendGmailMessage(provider.accessToken, raw)
-      return { providerMessageId: id, ok: true }
+      return { providerMessageId: null, ok: true }
     } catch (err) {
       return { providerMessageId: null, ok: false, error: err instanceof Error ? err.message : String(err) }
     }
@@ -116,7 +121,7 @@ const emailAdapter: ChannelAdapter<EmailConfig, EmailProvider> = {
   async healthCheck(_conn) {
     return {
       ok: true,
-      message: 'Connection record exists — live token check requires the encryption key (M15)',
+      message: 'Cloudflare Email binding is used — no connection credentials required',
       checkedAt: new Date().toISOString(),
     }
   },

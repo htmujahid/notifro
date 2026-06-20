@@ -1,5 +1,5 @@
 import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
-import { requireOrg, requireRole } from '../middleware/auth'
+import { requireAuth } from '../middleware/auth'
 import { listQuerySchema, applyListQuery } from '../lib/list-query'
 import { Errors, validationHook } from '../lib/errors'
 import type { AppEnv } from '../lib/types'
@@ -50,13 +50,14 @@ const createRoute_ = createRoute({
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 
-router.use('*', requireOrg)
+router.use('*', requireAuth)
 
 router.openapi(listRoute, async (c) => {
   const parsed = c.req.valid('query')
+  const userId = c.var.user!.id
   const baseQuery = c.var.db
-    .selectFrom('organization')
-    .where('id', '=', c.var.org.id)
+    .selectFrom('user')
+    .where('id', '=', userId)
     .selectAll()
 
   const { qb, getPage } = applyListQuery(baseQuery, parsed, {
@@ -69,8 +70,6 @@ router.openapi(listRoute, async (c) => {
   const page = getPage(rows as Record<string, unknown>[])
   return c.json({ data: page.data as z.infer<typeof ExampleItemSchema>[], nextCursor: page.nextCursor })
 })
-
-router.use('/example', requireRole('owner', 'admin'))
 
 router.openapi(createRoute_, async (c) => {
   const body = c.req.valid('json')

@@ -4,7 +4,7 @@ import type { ListParams, ListResponse, ComposePayload } from "@workspace/api-cl
 
 export interface Delivery {
   id: string
-  organizationId: string
+  userId: string
   notificationId: string
   channel: string
   recipient: string
@@ -18,8 +18,7 @@ export interface Delivery {
 
 export interface Notification {
   id: string
-  organizationId: string
-  createdByUserId: string | null
+  userId: string
   subject: string | null
   channels: string
   mode: string
