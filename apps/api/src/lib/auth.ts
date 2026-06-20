@@ -4,6 +4,7 @@ import { twoFactor, organization } from 'better-auth/plugins'
 import { sendVerificationEmail, sendResetPasswordEmail, sendTwoFactorOTPEmail, sendInvitationEmail } from '@workspace/mailer'
 import { mockD1 } from './mock-db'
 import { kvSecondaryStorage } from './kv-storage'
+import { ac, roles } from './organization'
 
 const FROM = { email: 'noreply@renderical.com', name: 'Renderical' }
 
@@ -79,6 +80,8 @@ export function createAuth(db: D1Database = mockD1) {
         },
       }),
       organization({
+        ac,
+        roles,
         sendInvitationEmail: async ({ id, email, inviter, organization: org }) => {
           const url = `${env.FRONTEND_URL}/auth/accept-invitation/${id}`
           await sendInvitationEmail({
@@ -95,3 +98,4 @@ export function createAuth(db: D1Database = mockD1) {
 }
 
 export const auth = createAuth()
+export const authInstance = createAuth(env.DB)

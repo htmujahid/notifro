@@ -1,21 +1,24 @@
-import { env } from 'cloudflare:workers'
 import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
 import { cors } from 'hono/cors'
 import { Scalar } from '@scalar/hono-api-reference'
-import { createAuth, auth } from './lib/auth'
+import { authInstance } from './lib/auth'
 import { db } from './db/client'
-import type { AppDB } from './db/client'
+import { ApiError, validationHook } from './lib/errors'
+import type { AppEnv } from './lib/types'
+import templateRouter from './routes/_template'
 
-const authInstance = createAuth(env.DB)
+const app = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 
-const app = new OpenAPIHono<{
-  Bindings: CloudflareBindings
-  Variables: {
-    user: typeof auth.$Infer.Session.user | null
-    session: typeof auth.$Infer.Session.session | null
-    db: AppDB
+app.onError((err, c) => {
+  if (err instanceof ApiError) {
+    return c.json(
+      { error: { code: err.code, message: err.message, ...(err.details ? { details: err.details } : {}) } },
+      err.httpStatus as 400 | 401 | 403 | 404 | 422 | 500,
+    )
   }
-}>()
+  console.error(err)
+  return c.json({ error: { code: 'internal_error', message: 'Internal server error' } }, 500)
+})
 
 app.use('*', async (c, next) => {
   c.set('db', db(c.env.DB))
@@ -35,14 +38,12 @@ app.use('/api/auth/*', (c, next) => {
 
 app.use('*', async (c, next) => {
   const session = await authInstance.api.getSession({ headers: c.req.raw.headers })
-
   if (!session) {
     c.set('user', null)
     c.set('session', null)
     await next()
     return
   }
-
   c.set('user', session.user)
   c.set('session', session.session)
   await next()
@@ -97,6 +98,8 @@ app.openapi(dbHealthRoute, async (c) => {
     .executeTakeFirstOrThrow()
   return c.json({ organizationCount: Number(result.n) })
 })
+
+app.route('/api', templateRouter)
 
 app.doc('/doc', {
   openapi: '3.0.0',

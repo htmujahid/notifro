@@ -1,0 +1,81 @@
+import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
+import { requireOrg, requireRole } from '../middleware/auth'
+import { listQuerySchema, applyListQuery } from '../lib/list-query'
+import { Errors, validationHook } from '../lib/errors'
+import type { AppEnv } from '../lib/types'
+
+const SORTABLE = {
+  createdAt: 'createdAt',
+  name: 'name',
+}
+
+const FILTERABLE = {
+  name: { column: 'name', schema: z.string(), operator: 'like' as const },
+}
+
+const DEFAULT_SORT = { key: 'createdAt', order: 'desc' as const }
+
+const ExampleItemSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  createdAt: z.string(),
+})
+
+const ListResponseSchema = z.object({
+  data: z.array(ExampleItemSchema),
+  nextCursor: z.string().nullable(),
+})
+
+const listRoute = createRoute({
+  method: 'get',
+  path: '/example',
+  request: { query: listQuerySchema({ sortable: SORTABLE, filterable: FILTERABLE, defaultSort: DEFAULT_SORT }) },
+  responses: {
+    200: { content: { 'application/json': { schema: ListResponseSchema } }, description: 'Paginated list' },
+  },
+})
+
+const CreateBodySchema = z.object({
+  name: z.string().min(1),
+})
+
+const createRoute_ = createRoute({
+  method: 'post',
+  path: '/example',
+  request: { body: { content: { 'application/json': { schema: CreateBodySchema } } } },
+  responses: {
+    201: { content: { 'application/json': { schema: ExampleItemSchema } }, description: 'Created' },
+  },
+})
+
+const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
+
+router.use('*', requireOrg)
+
+router.openapi(listRoute, async (c) => {
+  const parsed = c.req.valid('query')
+  const baseQuery = c.var.db
+    .selectFrom('organization')
+    .where('id', '=', c.var.org.id)
+    .selectAll()
+
+  const { qb, getPage } = applyListQuery(baseQuery, parsed, {
+    sortable: SORTABLE,
+    filterable: FILTERABLE,
+    defaultSort: DEFAULT_SORT,
+  })
+
+  const rows = await qb.execute()
+  const page = getPage(rows as Record<string, unknown>[])
+  return c.json({ data: page.data as z.infer<typeof ExampleItemSchema>[], nextCursor: page.nextCursor })
+})
+
+router.use('/example', requireRole('owner', 'admin'))
+
+router.openapi(createRoute_, async (c) => {
+  const body = c.req.valid('json')
+  if (!body.name) throw Errors.badRequest('Name is required')
+  return c.json({ id: 'stub', name: body.name, createdAt: new Date().toISOString() }, 201)
+})
+
+export default router
