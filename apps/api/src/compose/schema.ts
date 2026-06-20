@@ -7,6 +7,7 @@ const CHANNEL_TYPE_VALUES = [
   'sms',
   'whatsapp',
   'telegram',
+  'slack',
   'in_app',
 ] as const
 

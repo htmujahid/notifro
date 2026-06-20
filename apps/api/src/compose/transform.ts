@@ -19,6 +19,7 @@ const stubTransforms: Record<ChannelType, ChannelTransform> = {
   sms: (_, _ctx) => notImplemented('sms'),
   whatsapp: (_, _ctx) => notImplemented('whatsapp'),
   telegram: (_, _ctx) => notImplemented('telegram'),
+  slack: (_, _ctx) => notImplemented('slack'),
   webhook: (payload) => payload as unknown,
   in_app: (payload) => payload as unknown,
 }

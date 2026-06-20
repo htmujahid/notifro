@@ -37,6 +37,11 @@ const CHANNEL_META: Record<string, { name: string; description: string; icon: Re
     description: "Send messages via a Telegram Bot to any chat or channel.",
     icon: MessageSquareIcon,
   },
+  slack: {
+    name: "Slack",
+    description: "Post Block Kit messages to a Slack channel via a bot token. No OAuth required.",
+    icon: MessageSquareIcon,
+  },
   in_app: {
     name: "In-App",
     description: "Real-time in-app notifications delivered to your frontend via WebSocket or polling.",
@@ -52,7 +57,7 @@ export default function ChannelsPage() {
   const connections = data?.pages.flatMap((p) => p.data) ?? []
   const webhooks = webhookData?.pages.flatMap((p) => p.data) ?? []
 
-  const channelTypes = ["email", "webhook", "web_push", "sms", "whatsapp", "telegram", "in_app"] as const
+  const channelTypes = ["email", "webhook", "web_push", "sms", "whatsapp", "telegram", "slack", "in_app"] as const
 
   return (
     <div className="flex flex-col gap-6">
