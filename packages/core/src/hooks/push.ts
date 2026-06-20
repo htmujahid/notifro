@@ -59,7 +59,7 @@ export function usePushRegistration(): UsePushRegistrationResult {
       setPermission(perm as PushPermission)
       if (perm !== "granted") return
 
-      const { publicKey } = await client.get<{ publicKey: string }>("/push/vapid-public-key")
+      const { publicKey } = await client.get<{ publicKey: string }>("/api/push/vapid-public-key")
 
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
@@ -67,7 +67,7 @@ export function usePushRegistration(): UsePushRegistrationResult {
       })
 
       const json = sub.toJSON()
-      await client.post("/push/subscribe", {
+      await client.post("/api/push/subscribe", {
         endpoint: json.endpoint!,
         keys: { p256dh: json.keys!.p256dh!, auth: json.keys!.auth! },
         userAgent: navigator.userAgent,
@@ -86,7 +86,7 @@ export function usePushRegistration(): UsePushRegistrationResult {
       const reg = await navigator.serviceWorker.ready
       const sub = await reg.pushManager.getSubscription()
       if (sub) {
-        await client.post("/push/unsubscribe", { endpoint: sub.endpoint })
+        await client.post("/api/push/unsubscribe", { endpoint: sub.endpoint })
         await sub.unsubscribe()
       }
       setSubscribed(false)

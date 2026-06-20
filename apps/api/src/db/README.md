@@ -8,15 +8,15 @@ DDL lives in `apps/api/migrations/*.sql` (wrangler). Kysely is the typed **query
 2. Add the corresponding interface to `DB` in `schema.ts`
 3. Apply locally: `pnpm db:migrate`
 
-## Tenant convention
+## Ownership convention
 
 Every product table must have:
 
 ```sql
-organizationId text not null references organization(id) on delete cascade
+userId text not null references user(id) on delete cascade
 ```
 
-Never trust a client-supplied org id — always derive it from `session.activeOrganizationId`.
+Never trust a client-supplied user id — always derive it from `c.var.user!.id` (set by `requireAuth`).
 
 ## Timestamps
 
@@ -27,7 +27,7 @@ createdAt text not null,  -- ISO 8601
 updatedAt text not null
 ```
 
-Use `OrgScoped` and `Timestamps` interface fragments in `schema.ts` by spreading them into table interfaces.
+Use the `Timestamps` interface fragment in `schema.ts` by spreading it into table interfaces, and give each product table a `userId: string` field.
 
 ## ID generation
 
@@ -39,15 +39,15 @@ Use `generateId()` from `better-auth` (already imported in `auth.ts`), or `crypt
 import { db } from './db/client'
 
 // in a Hono handler:
-const orgs = await db(c.env.DB)
-  .selectFrom('organization')
+const users = await db(c.env.DB)
+  .selectFrom('user')
   .select(['id', 'name'])
   .execute()
 
 // per-request helper (set in middleware):
 const result = await c.var.db
-  .selectFrom('member')
-  .where('organizationId', '=', c.var.session!.activeOrganizationId!)
+  .selectFrom('connection')
+  .where('userId', '=', c.var.user!.id)
   .selectAll()
   .execute()
 ```

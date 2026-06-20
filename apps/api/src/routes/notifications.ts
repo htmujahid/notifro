@@ -186,7 +186,10 @@ router.openapi(sendRoute, async (c) => {
       continue
     }
 
-    const recipientAddr = (await resolveRecipientEmail(db, payload.recipient as { type: string; email?: string; userId?: string })) ?? ''
+    const recipientAddr =
+      channel === 'sms' || channel === 'whatsapp'
+        ? (payload.recipient as { phone?: string }).phone ?? ''
+        : (await resolveRecipientEmail(db, payload.recipient as { type: string; email?: string; userId?: string })) ?? ''
 
     const connRow = await db
       .selectFrom('connection')
@@ -197,7 +200,9 @@ router.openapi(sendRoute, async (c) => {
       .executeTakeFirst()
 
     const synthetic =
-      channel === 'in_app'
+      channel === 'email'
+        ? { id: 'email', userId, type: 'email' as const, name: 'Email', status: 'active' as const, config: '{}', credentials: null, scopes: '[]', health: null, createdAt: ts, updatedAt: ts }
+        : channel === 'in_app'
         ? { id: 'in_app', userId, type: 'in_app' as const, name: 'In-app', status: 'active' as const, config: '{}', credentials: null, scopes: '[]', health: null, createdAt: ts, updatedAt: ts }
         : channel === 'web_push'
           ? { id: 'web_push', userId, type: 'web_push' as const, name: 'Web Push', status: 'active' as const, config: '{}', credentials: null, scopes: '[]', health: null, createdAt: ts, updatedAt: ts }
@@ -289,9 +294,8 @@ router.openapi(sendRoute, async (c) => {
     })
   }
 
-  const allOk = deliveries.every((d) => d.status === 'delivered' || d.status === 'sent')
   const anyFailed = deliveries.some((d) => d.status === 'failed')
-  const finalStatus = allOk ? 'completed' : anyFailed && deliveries.length === channels.length ? 'failed' : 'completed'
+  const finalStatus = anyFailed ? 'failed' : 'completed'
 
   await db
     .updateTable('notification')

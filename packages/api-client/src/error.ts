@@ -1,6 +1,5 @@
 export type ApiErrorCode =
   | "unauthenticated"
-  | "no_active_org"
   | "forbidden"
   | "not_found"
   | "validation_error"

@@ -16,6 +16,9 @@ import {
   XCircleIcon,
 } from "lucide-react"
 import { useSendNotification, type NotificationWithDeliveries } from "@workspace/core/hooks/notifications"
+import { useConnections } from "@workspace/core/hooks/connections"
+import { useWebhooks } from "@workspace/core/hooks/webhooks"
+import type { ChannelType } from "@workspace/api-client/types"
 
 const CREATE_OPTIONS = [
   {
@@ -24,7 +27,7 @@ const CREATE_OPTIONS = [
     icon: BellIcon,
     action: "compose" as const,
     cta: "New notification",
-    bullets: ["Choose email, Slack, push, or webhook", "Target an audience or a single recipient", "Deliver immediately or at a set time"],
+    bullets: ["Pick any connected channel", "Target a single recipient", "Deliver immediately"],
   },
   {
     title: "Schedule",
@@ -55,35 +58,98 @@ const CREATE_OPTIONS = [
   },
 ]
 
+const ALL_CHANNELS: { type: ChannelType; label: string }[] = [
+  { type: "email", label: "Email" },
+  { type: "in_app", label: "In-App" },
+  { type: "web_push", label: "Web Push" },
+  { type: "webhook", label: "Webhook" },
+  { type: "sms", label: "SMS" },
+  { type: "whatsapp", label: "WhatsApp" },
+  { type: "telegram", label: "Telegram" },
+  { type: "slack", label: "Slack" },
+  { type: "discord", label: "Discord" },
+  { type: "teams", label: "Teams" },
+  { type: "mobile_push", label: "Mobile Push" },
+]
+
 export default function CreatePage() {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [to, setTo] = useState("")
+  const [phone, setPhone] = useState("")
   const [subject, setSubject] = useState("")
   const [body, setBody] = useState("")
+  const [selected, setSelected] = useState<Set<ChannelType>>(new Set(["email"]))
   const [result, setResult] = useState<NotificationWithDeliveries | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const send = useSendNotification()
+  const { data: connData } = useConnections({ limit: 50 })
+  const { data: webhookData } = useWebhooks({ limit: 100 })
+
+  const activeTypes = new Set(
+    (connData?.pages.flatMap((p) => p.data) ?? []).filter((c) => c.status === "active").map((c) => c.type),
+  )
+  const hasEnabledWebhook = (webhookData?.pages.flatMap((p) => p.data) ?? []).some((w) => w.enabled)
+
+  const available = ALL_CHANNELS.filter(({ type }) => {
+    if (type === "email" || type === "in_app" || type === "web_push") return true
+    if (type === "webhook") return hasEnabledWebhook
+    return activeTypes.has(type)
+  })
+
+  const needsEmail = selected.has("email")
+  const needsPhone = selected.has("sms") || selected.has("whatsapp")
 
   function handleOpen() {
     setOpen(true)
     setResult(null)
+    setError(null)
     setTo("")
+    setPhone("")
     setSubject("")
     setBody("")
+    setSelected(new Set(["email"]))
+  }
+
+  function toggle(type: ChannelType) {
+    setSelected((prev) => {
+      const next = new Set(prev)
+      if (next.has(type)) next.delete(type)
+      else next.add(type)
+      return next
+    })
   }
 
   async function handleSend(e: React.FormEvent) {
     e.preventDefault()
-    const data = await send.mutateAsync({
-      content: {
-        subject,
-        body: { text: body },
-      },
-      recipient: { type: "contact", email: to },
-      channels: ["email"],
-    })
-    setResult(data)
+    setError(null)
+    if (selected.size === 0) {
+      setError("Select at least one channel.")
+      return
+    }
+    if (needsEmail && !to.trim()) {
+      setError("Enter a recipient email for the Email channel.")
+      return
+    }
+    if (needsPhone && !phone.trim()) {
+      setError("Enter a recipient phone number for SMS/WhatsApp.")
+      return
+    }
+    try {
+      const data = await send.mutateAsync({
+        content: { subject, title: subject, body: { text: body } },
+        recipient: {
+          type: "contact",
+          ...(to.trim() ? { email: to.trim() } : {}),
+          ...(phone.trim() ? { phone: phone.trim() } : {}),
+        },
+        channels: [...selected],
+      })
+      setResult(data)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Send failed")
+    }
   }
 
   return (
@@ -137,7 +203,7 @@ export default function CreatePage() {
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-h-[85vh] max-w-md overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Send notification</DialogTitle>
           </DialogHeader>
@@ -148,13 +214,13 @@ export default function CreatePage() {
               <div className="flex flex-col gap-2">
                 {result.deliveries.map((d) => (
                   <div key={d.id} className="flex items-center gap-2 rounded-lg border p-3 text-sm">
-                    {d.status === "delivered" || d.status === "sent" ? (
+                    {d.status === "delivered" ? (
                       <CheckCircleIcon className="size-4 shrink-0 text-green-600" />
                     ) : (
                       <XCircleIcon className="size-4 shrink-0 text-destructive" />
                     )}
                     <div className="flex flex-col">
-                      <span className="font-medium capitalize">{d.channel}</span>
+                      <span className="font-medium capitalize">{d.channel.replace("_", " ")}</span>
                       <span className="text-xs text-muted-foreground">
                         {d.status}{d.error ? ` — ${d.error}` : ""}
                       </span>
@@ -167,42 +233,54 @@ export default function CreatePage() {
           ) : (
             <form onSubmit={handleSend} className="flex flex-col gap-4">
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="to">Recipient email</Label>
-                <Input
-                  id="to"
-                  type="email"
-                  placeholder="user@example.com"
-                  value={to}
-                  onChange={(e) => setTo(e.target.value)}
-                  required
-                />
+                <Label>Channels</Label>
+                <div className="flex flex-wrap gap-2">
+                  {available.map(({ type, label }) => {
+                    const on = selected.has(type)
+                    return (
+                      <button
+                        key={type}
+                        type="button"
+                        onClick={() => toggle(type)}
+                        className={
+                          "rounded-full border px-3 py-1 text-xs transition-colors " +
+                          (on
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-border bg-card text-muted-foreground hover:bg-muted")
+                        }
+                      >
+                        {label}
+                      </button>
+                    )
+                  })}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Only connected channels are shown. Add more on the Channels page.
+                </p>
               </div>
+
+              {needsEmail && (
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="to">Recipient email</Label>
+                  <Input id="to" type="email" placeholder="user@example.com" value={to} onChange={(e) => setTo(e.target.value)} />
+                </div>
+              )}
+              {needsPhone && (
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="phone">Recipient phone</Label>
+                  <Input id="phone" placeholder="+15551234567" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                </div>
+              )}
+
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="subject">Subject</Label>
-                <Input
-                  id="subject"
-                  placeholder="Notification subject"
-                  value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
-                  required
-                />
+                <Label htmlFor="subject">Subject / title</Label>
+                <Input id="subject" placeholder="Notification subject" value={subject} onChange={(e) => setSubject(e.target.value)} required />
               </div>
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="body">Message</Label>
-                <Textarea
-                  id="body"
-                  placeholder="Write your message…"
-                  rows={4}
-                  value={body}
-                  onChange={(e) => setBody(e.target.value)}
-                  required
-                />
+                <Textarea id="body" placeholder="Write your message…" rows={4} value={body} onChange={(e) => setBody(e.target.value)} required />
               </div>
-              {send.isError && (
-                <p className="text-xs text-destructive">
-                  {send.error instanceof Error ? send.error.message : "Send failed"}
-                </p>
-              )}
+              {error && <p className="text-xs text-destructive">{error}</p>}
               <div className="flex gap-2">
                 <Button type="button" variant="outline" className="flex-1" onClick={() => setOpen(false)}>
                   Cancel

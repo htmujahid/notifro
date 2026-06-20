@@ -18,7 +18,7 @@ const OPTIONS = [
     title: "Notification",
     description: "Send a one-off notification to a channel or audience.",
     icon: BellIcon,
-    url: "/notifications",
+    url: "/create",
   },
   {
     title: "Schedule",

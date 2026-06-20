@@ -7,14 +7,14 @@ The **stateful logic layer**. Forms, data fetching, mutations, validation, and f
 Core sits between app-wide logic and the presentation layer:
 
 - It builds on [`@workspace/app`](../app) for universal concerns (auth, context).
-- It owns **stateful logic** — React Query data fetching/caching, React Hook Form state, Zod schemas, organization management.
+- It owns **stateful logic** — React Query data fetching/caching, React Hook Form state, and Zod schemas. The app is user-scoped; there are no organization features.
 - Its only consumer downstream is [`@workspace/views`](../views): core supplies the state and handlers, views render them. Core does **not** do raw presentation, and views do **not** own state.
 
 ## What's here
 
-- `components/` — feature components (e.g. organization management)
+- `components/` — feature components
 - `layouts/` — stateful layout logic
-- `hooks/` — data and domain hooks (e.g. `./hooks/organization`)
+- `hooks/` — data and domain hooks (e.g. `./hooks/inbox`)
 - `schemas/` — Zod schemas (e.g. `./schemas/auth`)
 - `data/` — data access helpers
 

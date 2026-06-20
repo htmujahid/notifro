@@ -26,6 +26,8 @@ export type ChannelType =
   | 'web_push'
   | 'mobile_push'
   | 'sms'
+  | 'whatsapp'
+  | 'telegram'
   | 'in_app'
 
 type ButtonProps = {
