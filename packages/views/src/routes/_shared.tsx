@@ -20,6 +20,7 @@ const AudiencesPage = lazy(() => import("../pages/audiences"))
 const AnalyticsPage = lazy(() => import("../pages/analytics"))
 const SettingsPage = lazy(() => import("../pages/settings"))
 const HelpPage = lazy(() => import("../pages/help"))
+const OnboardingPage = lazy(() => import("../pages/onboarding"))
 const AccountProfilePage = lazy(() => import("../pages/account/profile"))
 const AccountSecurityPage = lazy(() => import("../pages/account/security"))
 const AccountTwoFactorPage = lazy(() => import("../pages/account/two-factor"))
@@ -48,6 +49,7 @@ export const sharedProtectedChildren: RouteObject[] = [
   { path: "analytics", element: <AnalyticsPage /> },
   { path: "settings", element: <SettingsPage /> },
   { path: "help", element: <HelpPage /> },
+  { path: "onboarding", element: <OnboardingPage /> },
   {
     path: "account",
     element: <AccountLayout />,

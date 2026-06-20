@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Button } from "@workspace/ui/components/button"
 import { PlusIcon, CalendarXIcon, PauseIcon, PlayIcon, Trash2Icon } from "lucide-react"
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from "@workspace/ui/components/empty"
 
 const SCHEDULES = [
   {
@@ -84,10 +85,16 @@ export default function SchedulesPage() {
       </div>
 
       {schedules.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <CalendarXIcon className="mb-3 size-8 text-muted-foreground/50" />
-          <p className="text-sm text-muted-foreground">No schedules yet.</p>
-        </div>
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon"><CalendarXIcon /></EmptyMedia>
+            <EmptyTitle>No schedules yet</EmptyTitle>
+            <EmptyDescription>Set up recurring notifications on a cron schedule to automate your outbound messages.</EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button size="sm" className="gap-1.5"><PlusIcon className="size-4" />New schedule</Button>
+          </EmptyContent>
+        </Empty>
       ) : (
         <div className="flex flex-col gap-3">
           {schedules.map((s) => (

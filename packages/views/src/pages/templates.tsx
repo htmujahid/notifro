@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Button } from "@workspace/ui/components/button"
 import { PlusIcon, FileTextIcon, MailIcon, BellIcon, MessageSquareIcon, WebhookIcon } from "lucide-react"
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from "@workspace/ui/components/empty"
 
 const CHANNEL_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   Email: MailIcon,
@@ -47,10 +48,16 @@ export default function TemplatesPage() {
       </div>
 
       {templates.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <FileTextIcon className="mb-3 size-8 text-muted-foreground/50" />
-          <p className="text-sm text-muted-foreground">No templates yet.</p>
-        </div>
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon"><FileTextIcon /></EmptyMedia>
+            <EmptyTitle>No templates yet</EmptyTitle>
+            <EmptyDescription>Create reusable message templates to keep your notifications consistent across channels.</EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button size="sm" className="gap-1.5"><PlusIcon className="size-4" />New template</Button>
+          </EmptyContent>
+        </Empty>
       ) : (
         <div className="overflow-hidden rounded-xl ring-1 ring-foreground/10">
           <table className="w-full text-sm">

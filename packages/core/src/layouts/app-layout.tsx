@@ -1,6 +1,7 @@
 import { Suspense, useState } from "react"
 import { Outlet } from "react-router"
 import { SidebarInset, SidebarProvider } from "@workspace/ui/components/sidebar"
+import { Toaster } from "@workspace/ui/components/sonner"
 import { AppSidebar } from "./components/app-sidebar"
 import { SearchCommand } from "./components/search-command"
 import { SiteHeader } from "./components/site-header"
@@ -27,6 +28,7 @@ export default function AppLayout() {
         </div>
       </SidebarInset>
       <SearchCommand open={searchOpen} onOpenChange={setSearchOpen} />
+      <Toaster />
     </SidebarProvider>
   )
 }

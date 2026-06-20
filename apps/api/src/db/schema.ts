@@ -66,10 +66,19 @@ export interface InboxMessageTable {
   updatedAt: string
 }
 
+export interface OnboardingStateTable {
+  userId: string
+  completedSteps: string
+  dismissed: number
+  createdAt: string
+  updatedAt: string
+}
+
 export interface DB {
   user: UserTable
   connection: ConnectionTable
   notification: NotificationTable
   delivery: DeliveryTable
   inbox_message: InboxMessageTable
+  onboarding_state: OnboardingStateTable
 }

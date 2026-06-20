@@ -9,6 +9,7 @@ import templateRouter from './routes/_template'
 import connectionsRouter from './routes/connections'
 import notificationsRouter from './routes/notifications'
 import inboxRouter from './routes/inbox'
+import overviewRouter from './routes/overview'
 import './channels/email'
 import './channels/in-app'
 
@@ -108,6 +109,7 @@ app.route('/api', templateRouter)
 app.route('/api', connectionsRouter)
 app.route('/api', notificationsRouter)
 app.route('/api', inboxRouter)
+app.route('/api', overviewRouter)
 
 app.doc('/doc', {
   openapi: '3.0.0',

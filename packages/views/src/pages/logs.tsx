@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { ScrollIcon, RefreshCwIcon } from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from "@workspace/ui/components/empty"
 
 const ALL_LOGS = [
   { id: "log_01", notification: "Weekly digest", channel: "Email", recipient: "all-users@group", status: "delivered", duration: "312ms", timestamp: "Jun 19, 09:00:04" },
@@ -63,10 +64,13 @@ export default function LogsPage() {
       </div>
 
       {filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <ScrollIcon className="mb-3 size-8 text-muted-foreground/50" />
-          <p className="text-sm text-muted-foreground">No {activeTab.toLowerCase()} entries.</p>
-        </div>
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon"><ScrollIcon /></EmptyMedia>
+            <EmptyTitle>No {activeTab.toLowerCase()} entries</EmptyTitle>
+            <EmptyDescription>Delivery logs will appear here once you start sending notifications.</EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       ) : (
         <div className="overflow-hidden rounded-xl ring-1 ring-foreground/10">
           <table className="w-full text-sm">

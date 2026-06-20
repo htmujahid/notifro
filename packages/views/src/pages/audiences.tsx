@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Button } from "@workspace/ui/components/button"
 import { PlusIcon, UsersIcon, TagIcon } from "lucide-react"
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from "@workspace/ui/components/empty"
 
 const ALL_AUDIENCES = [
   { id: 1, name: "All users", description: "Every registered user in the system", size: 12_480, tags: ["global"], lastUpdated: "Jun 19, 2026" },
@@ -41,10 +42,16 @@ export default function AudiencesPage() {
       </div>
 
       {audiences.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <UsersIcon className="mb-3 size-8 text-muted-foreground/50" />
-          <p className="text-sm text-muted-foreground">No audiences yet.</p>
-        </div>
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon"><UsersIcon /></EmptyMedia>
+            <EmptyTitle>No audiences yet</EmptyTitle>
+            <EmptyDescription>Create audience segments to target groups of recipients for your notifications.</EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button size="sm" className="gap-1.5"><PlusIcon className="size-4" />New audience</Button>
+          </EmptyContent>
+        </Empty>
       ) : (
         <div className="overflow-hidden rounded-xl ring-1 ring-foreground/10">
           <table className="w-full text-sm">
