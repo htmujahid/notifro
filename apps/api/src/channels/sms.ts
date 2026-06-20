@@ -1,0 +1,111 @@
+import type { ChannelAdapter } from './adapter'
+import type { ComposePayload, Connection } from './types'
+import { registerAdapter } from './registry'
+import { registerTransform } from '../compose/transform'
+import { decrypt } from '../lib/crypto'
+
+export interface SmsProvider {
+  to: string
+  body: string
+  from: string
+}
+
+interface SmsConfig {
+  from?: string
+}
+
+interface SmsCredentials {
+  accountSid: string
+  authToken: string
+}
+
+function buildBody(payload: ComposePayload): string {
+  const { content } = payload
+  if (content.body.text) return content.body.text
+  const title = content.title ?? content.subject ?? ''
+  const md = content.body.markdown ?? ''
+  return [title, md].filter(Boolean).join(': ').trim()
+}
+
+const smsAdapter: ChannelAdapter<SmsConfig, SmsProvider> = {
+  type: 'sms',
+
+  validateConfig(input) {
+    return (input ?? {}) as SmsConfig
+  },
+
+  transform(payload, { connection }): SmsProvider {
+    const recipient = payload.recipient as { type: string; phone?: string }
+    const phone = recipient.type === 'contact' && recipient.phone ? recipient.phone : ''
+    if (!phone) throw new Error('SMS recipient requires contact.phone')
+
+    let from = ''
+    try {
+      const cfg = JSON.parse(connection.config) as SmsConfig
+      if (cfg.from) from = cfg.from
+    } catch {}
+
+    return {
+      to: phone,
+      body: buildBody(payload).slice(0, 1600),
+      from,
+    }
+  },
+
+  async send(provider, conn, ctx) {
+    const encKey = ctx.env?.CONNECTION_ENC_KEY
+    if (!encKey) return { providerMessageId: null, ok: false, error: 'CONNECTION_ENC_KEY not configured' }
+    if (!conn.credentials) {
+      return { providerMessageId: null, ok: false, error: 'No Twilio credentials — add accountSid and authToken' }
+    }
+    if (!provider.from) {
+      return { providerMessageId: null, ok: false, error: 'No Twilio from-number — set config.from on the connection' }
+    }
+
+    let creds: SmsCredentials
+    try {
+      creds = JSON.parse(await decrypt(conn.credentials, encKey)) as SmsCredentials
+    } catch {
+      return { providerMessageId: null, ok: false, error: 'Failed to decrypt Twilio credentials' }
+    }
+    if (!creds.accountSid || !creds.authToken) {
+      return { providerMessageId: null, ok: false, error: 'Twilio credentials missing accountSid or authToken' }
+    }
+
+    try {
+      const url = `https://api.twilio.com/2010-04-01/Accounts/${creds.accountSid}/Messages.json`
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          Authorization: `Basic ${btoa(`${creds.accountSid}:${creds.authToken}`)}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({ To: provider.to, From: provider.from, Body: provider.body }),
+      })
+
+      if (!res.ok) {
+        let message = `Twilio error ${res.status}`
+        try {
+          const err = (await res.json()) as { message?: string }
+          if (err.message) message = err.message
+        } catch {}
+        return { providerMessageId: null, ok: false, error: message }
+      }
+
+      const data = (await res.json()) as { sid: string }
+      return { providerMessageId: data.sid, ok: true }
+    } catch (err) {
+      return { providerMessageId: null, ok: false, error: err instanceof Error ? err.message : String(err) }
+    }
+  },
+
+  async healthCheck(conn) {
+    if (!conn.credentials) {
+      return { ok: false, message: 'No credentials — add accountSid and authToken', checkedAt: new Date().toISOString() }
+    }
+    return { ok: true, message: 'Credentials present', checkedAt: new Date().toISOString() }
+  },
+}
+
+registerAdapter(smsAdapter)
+registerTransform('sms', (payload, ctx) => smsAdapter.transform(payload, ctx as { connection: Connection }))
