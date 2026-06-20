@@ -1,16 +1,7 @@
 import { Suspense } from "react"
 import { Navigate, Outlet } from "react-router"
 import { useSession } from "@workspace/app/auth/use-session"
-
-function RendericalLogo({ size = 18 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M2 17l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
+import { RendericalMark } from "../components/renderical-logo"
 
 export default function AuthLayout() {
   const { data: session, isPending } = useSession()
@@ -34,7 +25,7 @@ export default function AuthLayout() {
         <div className="flex flex-col h-full px-10 xl:px-14 py-10">
           {/* Brand */}
           <div className="flex items-center gap-2 text-foreground">
-            <RendericalLogo />
+            <RendericalMark className="size-[18px]" />
             <span className="font-semibold tracking-tight text-sm">Renderical</span>
           </div>
 
@@ -90,7 +81,7 @@ export default function AuthLayout() {
       <main className="flex flex-1 flex-col overflow-y-auto">
         {/* Mobile brand bar */}
         <div className="flex shrink-0 items-center gap-2 border-b border-border px-6 py-4 lg:hidden">
-          <RendericalLogo />
+          <RendericalMark className="size-[18px]" />
           <span className="text-sm font-semibold tracking-tight">Renderical</span>
         </div>
 

@@ -12,6 +12,11 @@ export const site = {
   signinUrl: `${FRONTEND_URL}/auth/sign-in`,
   signupUrl: `${FRONTEND_URL}/auth/sign-up`,
   docsUrl: "/developers",
+  // --- SEO / social ---
+  ogImage: "/og.png", // 1200×630, resolved to an absolute URL in BaseLayout
+  twitter: "@renderical", // Twitter/X handle for twitter:site & twitter:creator
+  locale: "en_US",
+  themeColor: "#FFFFFF",
 };
 
 export const nav = [

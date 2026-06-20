@@ -20,16 +20,7 @@ import {
   useSidebar,
 } from "@workspace/ui/components/sidebar"
 import { CreateOrgDialog } from "../../components/organization/create-org-dialog"
-
-function RendericalLogo({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}>
-      <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M2 17l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
+import { RendericalMark } from "../../components/renderical-logo"
 
 export function OrgSwitcher() {
   const auth = useAuth()
@@ -62,7 +53,7 @@ export function OrgSwitcher() {
               }
             >
               <div className="flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground shrink-0">
-                <RendericalLogo className="size-4!" />
+                <RendericalMark className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{displayName}</span>

@@ -7,26 +7,99 @@ import { site } from "../config";
 interface Props {
   title?: string;
   description?: string;
+  /** Page-specific OG/Twitter image (absolute or root-relative). Defaults to the site OG image. */
+  image?: string;
+  /** og:type — "website" (default) or "article" for blog/changelog posts. */
+  type?: "website" | "article";
+  /** Set true to keep a page out of search indexes (e.g. thank-you / utility pages). */
+  noindex?: boolean;
+  /** Extra JSON-LD object injected as a <script type="application/ld+json">. */
+  schema?: Record<string, unknown>;
 }
 
-const { title, description = site.description } = Astro.props;
+const {
+  title,
+  description = site.description,
+  image = site.ogImage,
+  type = "website",
+  noindex = false,
+  schema,
+} = Astro.props;
+
 const fullTitle = title ? `${title} · ${site.name}` : `${site.name} — ${site.tagline}`;
+// Canonical + absolute asset URLs, resolved against `site` in astro.config.mjs.
+const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).toString();
+const ogImage = new URL(image, Astro.site ?? site.url).toString();
+
+// Sitewide structured data: the organization + the website (with sitelinks search box hook).
+const orgSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: site.name,
+  url: site.url,
+  logo: new URL("/icon-512.png", site.url).toString(),
+  description: site.description,
+  email: site.email,
+  sameAs: [`https://twitter.com/${site.twitter.replace("@", "")}`],
+};
+const siteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: site.name,
+  url: site.url,
+};
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
+
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {
+      noindex ? (
+        <meta name="robots" content="noindex, nofollow" />
+      ) : (
+        <meta name="robots" content="index, follow, max-image-preview:large" />
+      )
+    }
+
+    <!-- Icons / PWA -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content={site.themeColor} />
+
+    <!-- Open Graph -->
+    <meta property="og:site_name" content={site.name} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${site.name} — ${site.tagline}`} />
+    <meta property="og:locale" content={site.locale} />
+
+    <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content={site.twitter} />
+    <meta name="twitter:creator" content={site.twitter} />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={`${site.name} — ${site.tagline}`} />
+
+    <!-- Structured data -->
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(orgSchema)} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(siteSchema)} />
+    {schema && <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />}
   </head>
   <body class="min-h-svh antialiased">
     <Header />
@@ -36,3 +109,4 @@ const fullTitle = title ? `${title} · ${site.name}` : `${site.name} — ${site.
     <Footer />
   </body>
 </html>
+</content>

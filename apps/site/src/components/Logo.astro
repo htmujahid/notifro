@@ -1,0 +1,13 @@
+---
+// The Renderical brand mark — the stacked-layers glyph in a primary tile.
+// Matches the app shell, favicons, app icons, and OG image.
+interface Props { class?: string }
+const { class: className = "" } = Astro.props;
+---
+<span class={`flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground ${className}`}>
+  <svg viewBox="0 0 24 24" fill="none" class="size-3.5" aria-hidden="true">
+    <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M2 17l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+</span>
