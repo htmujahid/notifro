@@ -3,6 +3,7 @@ import { betterAuth, generateId } from 'better-auth'
 import { twoFactor, organization } from 'better-auth/plugins'
 import { sendVerificationEmail, sendResetPasswordEmail, sendTwoFactorOTPEmail, sendInvitationEmail } from '@workspace/mailer'
 import { mockD1 } from './mock-db'
+import { kvSecondaryStorage } from './kv-storage'
 
 const FROM = { email: 'noreply@renderical.com', name: 'Renderical' }
 
@@ -10,6 +11,17 @@ export function createAuth(db: D1Database = mockD1) {
   return betterAuth({
     appName: 'Renderical',
     database: db,
+    // Store sessions and rate-limit counters in KV instead of D1. Sessions are
+    // read on every request, so keeping them in KV avoids a D1 round-trip each
+    // time.
+    secondaryStorage: kvSecondaryStorage(env.KV),
+    rateLimit: {
+      enabled: true,
+      storage: 'secondary-storage',
+      // KV's minimum TTL is 60s, so use a 60s window: max 100 requests / minute.
+      window: 60,
+      max: 100,
+    },
     trustedOrigins: [env.FRONTEND_URL, 'renderical://', 'renderical://**'],
     emailAndPassword: {
       enabled: true,

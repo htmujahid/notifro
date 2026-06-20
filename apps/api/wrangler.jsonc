@@ -12,6 +12,12 @@
       "migrations_dir": "migrations"
     }
   ],
+  "kv_namespaces": [
+    {
+      "binding": "KV",
+      "id": "<run: wrangler kv namespace create renderical-auth>"
+    }
+  ],
   "send_email": [
     {
       "name": "EMAIL",
