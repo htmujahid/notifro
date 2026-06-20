@@ -3,13 +3,19 @@ import { requireAuth } from '../middleware/auth'
 import { listQuerySchema, applyListQuery } from '../lib/list-query'
 import { Errors, validationHook } from '../lib/errors'
 import { getAdapter } from '../channels/registry'
+import { resolveSendConnection } from '../channels/resolve'
 import { ComposePayloadSchema } from '../compose/schema'
 import type { AppEnv } from '../lib/types'
 import type { ChannelType } from '../channels/types'
+import type { DeliveryQueueMessage } from '../queue/consumer'
 
 const SORTABLE = { createdAt: 'createdAt', status: 'status' }
 const FILTERABLE = {
-  status: { column: 'status', schema: z.enum(['processing', 'completed', 'failed']), operator: 'eq' as const },
+  status: {
+    column: 'status',
+    schema: z.enum(['queued', 'processing', 'completed', 'failed']),
+    operator: 'eq' as const,
+  },
 }
 const DEFAULT_SORT = { key: 'createdAt', order: 'desc' as const }
 
@@ -23,6 +29,8 @@ const DeliveryDtoSchema = z.object({
   providerMessageId: z.string().nullable(),
   error: z.string().nullable(),
   attempts: z.number(),
+  nextRetryAt: z.string().nullable(),
+  lastError: z.string().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
 })
@@ -55,7 +63,7 @@ const sendRoute = createRoute({
   responses: {
     200: {
       content: { 'application/json': { schema: NotificationWithDeliveriesSchema } },
-      description: 'Notification sent',
+      description: 'Notification enqueued',
     },
   },
 })
@@ -90,21 +98,27 @@ function now(): string {
   return new Date().toISOString()
 }
 
-async function resolveRecipientEmail(
+async function resolveRecipientAddress(
   db: ReturnType<(typeof import('../db/client'))['db']>,
-  recipient: { type: string; email?: string; userId?: string },
-): Promise<string | null> {
-  if (recipient.type === 'contact' && recipient.email) return recipient.email
+  channel: string,
+  recipient: Record<string, unknown>,
+): Promise<string> {
+  if (channel === 'sms' || channel === 'whatsapp') {
+    return (recipient.phone as string | undefined) ?? ''
+  }
+  if (recipient.type === 'contact' && recipient.email) return recipient.email as string
   if (recipient.type === 'user' && recipient.userId) {
     const user = await db
       .selectFrom('user')
-      .where('id', '=', recipient.userId)
+      .where('id', '=', recipient.userId as string)
       .select('email')
       .executeTakeFirst()
-    return user?.email ?? null
+    return user?.email ?? ''
   }
-  return null
+  return ''
 }
+
+const IDEMPOTENCY_TTL_MS = 24 * 60 * 60 * 1000
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use('*', requireAuth)
@@ -113,11 +127,39 @@ router.openapi(sendRoute, async (c) => {
   const payload = c.req.valid('json')
   const { db } = c.var
   const userId = c.var.user!.id
+  const ts = now()
+
+  if (payload.idempotencyKey) {
+    const existing = await db
+      .selectFrom('idempotency_key')
+      .where('userId', '=', userId)
+      .where('key', '=', payload.idempotencyKey)
+      .where('expiresAt', '>', ts)
+      .selectAll()
+      .executeTakeFirst()
+
+    if (existing) {
+      const notification = await db
+        .selectFrom('notification')
+        .where('id', '=', existing.notificationId)
+        .where('userId', '=', userId)
+        .selectAll()
+        .executeTakeFirst()
+
+      if (notification) {
+        const deliveries = await db
+          .selectFrom('delivery')
+          .where('notificationId', '=', existing.notificationId)
+          .where('userId', '=', userId)
+          .selectAll()
+          .execute()
+        return c.json({ ...(notification as typeof notification), deliveries })
+      }
+    }
+  }
 
   const channels = payload.channels ?? ['email']
-  const ts = now()
   const notifId = newId()
-
   const subject = payload.content.subject ?? payload.content.title ?? null
 
   await db
@@ -129,13 +171,13 @@ router.openapi(sendRoute, async (c) => {
       subject,
       channels: JSON.stringify(channels),
       mode: 'transactional',
-      status: 'processing',
+      status: 'queued',
       createdAt: ts,
       updatedAt: ts,
     })
     .execute()
 
-  const deliveries: Array<{
+  type DeliveryRow = {
     id: string
     userId: string
     notificationId: string
@@ -145,15 +187,20 @@ router.openapi(sendRoute, async (c) => {
     providerMessageId: string | null
     error: string | null
     attempts: number
+    nextRetryAt: string | null
+    lastError: string | null
     createdAt: string
     updatedAt: string
-  }> = []
+  }
+
+  const deliveries: DeliveryRow[] = []
 
   for (const channel of channels) {
     const adapter = getAdapter(channel as ChannelType)
+    const dts = now()
+    const deliveryId = newId()
+
     if (!adapter) {
-      const deliveryId = newId()
-      const dts = now()
       await db
         .insertInto('delivery')
         .values({
@@ -166,6 +213,8 @@ router.openapi(sendRoute, async (c) => {
           providerMessageId: null,
           error: `No adapter registered for channel: ${channel}`,
           attempts: 1,
+          nextRetryAt: null,
+          lastError: `No adapter registered for channel: ${channel}`,
           createdAt: dts,
           updatedAt: dts,
         })
@@ -180,40 +229,18 @@ router.openapi(sendRoute, async (c) => {
         providerMessageId: null,
         error: `No adapter registered for channel: ${channel}`,
         attempts: 1,
+        nextRetryAt: null,
+        lastError: `No adapter registered for channel: ${channel}`,
         createdAt: dts,
         updatedAt: dts,
       })
       continue
     }
 
-    const recipientAddr =
-      channel === 'sms' || channel === 'whatsapp'
-        ? (payload.recipient as { phone?: string }).phone ?? ''
-        : (await resolveRecipientEmail(db, payload.recipient as { type: string; email?: string; userId?: string })) ?? ''
-
-    const connRow = await db
-      .selectFrom('connection')
-      .where('userId', '=', userId)
-      .where('type', '=', channel)
-      .where('status', '=', 'active')
-      .selectAll()
-      .executeTakeFirst()
-
-    const synthetic =
-      channel === 'email'
-        ? { id: 'email', userId, type: 'email' as const, name: 'Email', status: 'active' as const, config: '{}', credentials: null, scopes: '[]', health: null, createdAt: ts, updatedAt: ts }
-        : channel === 'in_app'
-        ? { id: 'in_app', userId, type: 'in_app' as const, name: 'In-app', status: 'active' as const, config: '{}', credentials: null, scopes: '[]', health: null, createdAt: ts, updatedAt: ts }
-        : channel === 'web_push'
-          ? { id: 'web_push', userId, type: 'web_push' as const, name: 'Web Push', status: 'active' as const, config: '{}', credentials: null, scopes: '[]', health: null, createdAt: ts, updatedAt: ts }
-          : channel === 'webhook'
-            ? { id: 'webhook', userId, type: 'webhook' as const, name: 'Webhook', status: 'active' as const, config: '{}', credentials: null, scopes: '[]', health: null, createdAt: ts, updatedAt: ts }
-            : null
-    const conn = connRow ?? synthetic
+    const conn = await resolveSendConnection(db, userId, channel as ChannelType, dts)
+    const recipientAddr = await resolveRecipientAddress(db, channel, payload.recipient as Record<string, unknown>)
 
     if (!conn) {
-      const deliveryId = newId()
-      const dts = now()
       await db
         .insertInto('delivery')
         .values({
@@ -226,6 +253,8 @@ router.openapi(sendRoute, async (c) => {
           providerMessageId: null,
           error: `No active ${channel} connection — connect via Channels page first`,
           attempts: 1,
+          nextRetryAt: null,
+          lastError: `No active ${channel} connection — connect via Channels page first`,
           createdAt: dts,
           updatedAt: dts,
         })
@@ -240,29 +269,14 @@ router.openapi(sendRoute, async (c) => {
         providerMessageId: null,
         error: `No active ${channel} connection — connect via Channels page first`,
         attempts: 1,
+        nextRetryAt: null,
+        lastError: `No active ${channel} connection — connect via Channels page first`,
         createdAt: dts,
         updatedAt: dts,
       })
       continue
     }
 
-    let deliveryStatus = 'failed'
-    let providerMessageId: string | null = null
-    let deliveryError: string | null = null
-
-    try {
-      const activeConn = conn as import('../channels/types').Connection
-      const provider = adapter.transform(payload, { connection: activeConn })
-      const result = await adapter.send(provider as any, activeConn, { db: c.var.db, notificationId: notifId, env: c.env })
-      providerMessageId = result.providerMessageId
-      deliveryStatus = result.ok ? 'delivered' : 'failed'
-      if (!result.ok) deliveryError = result.error ?? 'Unknown send error'
-    } catch (err) {
-      deliveryError = err instanceof Error ? err.message : String(err)
-    }
-
-    const deliveryId = newId()
-    const dts = now()
     await db
       .insertInto('delivery')
       .values({
@@ -271,37 +285,56 @@ router.openapi(sendRoute, async (c) => {
         notificationId: notifId,
         channel,
         recipient: recipientAddr,
-        status: deliveryStatus,
-        providerMessageId,
-        error: deliveryError,
-        attempts: 1,
+        status: 'queued',
+        providerMessageId: null,
+        error: null,
+        attempts: 0,
+        nextRetryAt: null,
+        lastError: null,
         createdAt: dts,
         updatedAt: dts,
       })
       .execute()
+
+    const queueMsg: DeliveryQueueMessage = {
+      deliveryId,
+      notificationId: notifId,
+      userId,
+      channel,
+    }
+    await c.env.DELIVERY_Q.send(queueMsg)
+
     deliveries.push({
       id: deliveryId,
       userId,
       notificationId: notifId,
       channel,
       recipient: recipientAddr,
-      status: deliveryStatus,
-      providerMessageId,
-      error: deliveryError,
-      attempts: 1,
+      status: 'queued',
+      providerMessageId: null,
+      error: null,
+      attempts: 0,
+      nextRetryAt: null,
+      lastError: null,
       createdAt: dts,
       updatedAt: dts,
     })
   }
 
-  const anyFailed = deliveries.some((d) => d.status === 'failed')
-  const finalStatus = anyFailed ? 'failed' : 'completed'
-
-  await db
-    .updateTable('notification')
-    .set({ status: finalStatus, updatedAt: now() })
-    .where('id', '=', notifId)
-    .execute()
+  if (payload.idempotencyKey) {
+    const expiresAt = new Date(Date.now() + IDEMPOTENCY_TTL_MS).toISOString()
+    await db
+      .insertInto('idempotency_key')
+      .values({
+        userId,
+        key: payload.idempotencyKey,
+        notificationId: notifId,
+        expiresAt,
+        createdAt: ts,
+      })
+      .onConflict((oc) => oc.doNothing())
+      .execute()
+  }
 
   const notification = await db
     .selectFrom('notification')

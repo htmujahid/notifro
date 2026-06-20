@@ -23,5 +23,14 @@
       "name": "EMAIL",
       "remote": true
     }
-  ]
+  ],
+  "queues": {
+    "producers": [
+      { "binding": "DELIVERY_Q", "queue": "delivery-queue" }
+    ],
+    "consumers": [
+      { "queue": "delivery-queue", "max_retries": 5, "dead_letter_queue": "delivery-dlq" },
+      { "queue": "delivery-dlq" }
+    ]
+  }
 }

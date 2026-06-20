@@ -13,6 +13,8 @@ import overviewRouter from './routes/overview'
 import pushRouter from './routes/push'
 import webhooksRouter from './routes/webhooks'
 import devicesRouter from './routes/devices'
+import deliveriesRouter from './routes/deliveries'
+import { handleDeliveryQueue } from './queue/consumer'
 import './channels/email'
 import './channels/in-app'
 import './channels/web-push/adapter'
@@ -125,6 +127,7 @@ app.route('/api', overviewRouter)
 app.route('/api', pushRouter)
 app.route('/api', webhooksRouter)
 app.route('/api', devicesRouter)
+app.route('/api', deliveriesRouter)
 
 app.doc('/doc', {
   openapi: '3.0.0',
@@ -133,4 +136,9 @@ app.doc('/doc', {
 
 app.get('/scalar', Scalar({ url: '/doc', title: 'Renderical API' }))
 
-export default app
+export default {
+  fetch: app.fetch.bind(app),
+  async queue(batch: MessageBatch<import('./queue/consumer').DeliveryQueueMessage>, env: CloudflareBindings) {
+    await handleDeliveryQueue(batch, env)
+  },
+}

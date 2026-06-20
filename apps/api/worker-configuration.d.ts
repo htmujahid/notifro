@@ -5,6 +5,7 @@ interface __BaseEnv_CloudflareBindings {
 	KV: KVNamespace;
 	DB: D1Database;
 	EMAIL: SendEmail;
+	DELIVERY_Q: Queue;
 	FRONTEND_URL: string;
 	BETTER_AUTH_SECRET: string;
 	BETTER_AUTH_URL: string;

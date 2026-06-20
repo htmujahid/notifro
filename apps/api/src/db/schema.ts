@@ -49,8 +49,33 @@ export interface DeliveryTable {
   providerMessageId: string | null
   error: string | null
   attempts: number
+  nextRetryAt: string | null
+  lastError: string | null
   createdAt: string
   updatedAt: string
+}
+
+export interface IdempotencyKeyTable {
+  userId: string
+  key: string
+  notificationId: string
+  expiresAt: string
+  createdAt: string
+}
+
+export interface DeadLetterTable {
+  id: string
+  userId: string
+  deliveryId: string
+  notificationId: string
+  channel: string
+  reason: string
+  errorCode: string | null
+  payload: string
+  error: string
+  attempts: number
+  failedAt: string
+  createdAt: string
 }
 
 export interface InboxMessageTable {
@@ -121,4 +146,6 @@ export interface DB {
   push_subscription: PushSubscriptionTable
   webhook_endpoint: WebhookEndpointTable
   device_token: DeviceTokenTable
+  idempotency_key: IdempotencyKeyTable
+  dead_letter: DeadLetterTable
 }
