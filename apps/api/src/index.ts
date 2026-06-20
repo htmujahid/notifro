@@ -11,9 +11,11 @@ import notificationsRouter from './routes/notifications'
 import inboxRouter from './routes/inbox'
 import overviewRouter from './routes/overview'
 import pushRouter from './routes/push'
+import webhooksRouter from './routes/webhooks'
 import './channels/email'
 import './channels/in-app'
 import './channels/web-push/adapter'
+import './channels/webhook/adapter'
 
 const app = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 
@@ -113,6 +115,7 @@ app.route('/api', notificationsRouter)
 app.route('/api', inboxRouter)
 app.route('/api', overviewRouter)
 app.route('/api', pushRouter)
+app.route('/api', webhooksRouter)
 
 app.doc('/doc', {
   openapi: '3.0.0',

@@ -4,7 +4,7 @@ import type { AppDB } from '../db/client'
 export interface SendContext {
   db: AppDB
   notificationId?: string
-  env?: Pick<CloudflareBindings, 'VAPID_PUBLIC_KEY' | 'VAPID_PRIVATE_KEY' | 'VAPID_SUBJECT'>
+  env?: Pick<CloudflareBindings, 'VAPID_PUBLIC_KEY' | 'VAPID_PRIVATE_KEY' | 'VAPID_SUBJECT' | 'CONNECTION_ENC_KEY'>
 }
 
 export interface ChannelAdapter<Config = unknown, Provider = unknown> {

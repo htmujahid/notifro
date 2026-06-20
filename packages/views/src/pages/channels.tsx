@@ -3,6 +3,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@work
 import { MailIcon, WebhookIcon, BellIcon, MessageSquareIcon, PhoneIcon, CheckIcon, PlusIcon, SettingsIcon } from "lucide-react"
 import { useConnections } from "@workspace/core/hooks/connections"
 import { usePushRegistration } from "@workspace/core/hooks/push"
+import { useWebhooks } from "@workspace/core/hooks/webhooks"
+import { WebhookManager } from "../components/webhook-manager"
 
 const CHANNEL_META: Record<string, { name: string; description: string; icon: React.ComponentType<{ className?: string }> }> = {
   email: {
@@ -45,8 +47,10 @@ const CHANNEL_META: Record<string, { name: string; description: string; icon: Re
 export default function ChannelsPage() {
   const { data, isLoading } = useConnections({ limit: 50 })
   const push = usePushRegistration()
+  const { data: webhookData } = useWebhooks({ limit: 100 })
 
   const connections = data?.pages.flatMap((p) => p.data) ?? []
+  const webhooks = webhookData?.pages.flatMap((p) => p.data) ?? []
 
   const channelTypes = ["email", "webhook", "web_push", "sms", "whatsapp", "telegram", "in_app"] as const
 
@@ -87,12 +91,31 @@ export default function ChannelsPage() {
             let actionVariant: "default" | "outline" | "destructive"
             let onAction: (() => void) | undefined
             let actionDisabled = false
+            let actionNode: React.ReactNode = null
 
             if (type === "email") {
               connected = true
               detail = "Cloudflare Email binding"
               actionLabel = "Manage"
               actionVariant = "outline"
+            } else if (type === "webhook") {
+              const enabledCount = webhooks.filter((w) => w.enabled).length
+              connected = enabledCount > 0
+              detail =
+                webhooks.length === 0
+                  ? "No endpoints configured"
+                  : `${webhooks.length} endpoint${webhooks.length === 1 ? "" : "s"} · ${enabledCount} enabled`
+              actionLabel = webhooks.length > 0 ? "Manage" : "Add endpoint"
+              actionVariant = connected ? "outline" : "default"
+              actionNode = (
+                <WebhookManager
+                  trigger={
+                    <Button size="sm" variant={actionVariant} className="w-full">
+                      {actionLabel}
+                    </Button>
+                  }
+                />
+              )
             } else if (type === "web_push") {
               connected = push.subscribed
               detail = !push.supported
@@ -152,15 +175,17 @@ export default function ChannelsPage() {
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span>{detail}</span>
                   </div>
-                  <Button
-                    size="sm"
-                    variant={actionVariant}
-                    className="w-full"
-                    onClick={onAction}
-                    disabled={actionDisabled}
-                  >
-                    {actionLabel}
-                  </Button>
+                  {actionNode ?? (
+                    <Button
+                      size="sm"
+                      variant={actionVariant}
+                      className="w-full"
+                      onClick={onAction}
+                      disabled={actionDisabled}
+                    >
+                      {actionLabel}
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             )

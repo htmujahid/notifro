@@ -85,6 +85,19 @@ export interface PushSubscriptionTable {
   updatedAt: string
 }
 
+export interface WebhookEndpointTable {
+  id: string
+  userId: string
+  url: string
+  secret: string
+  secretLast4: string
+  headers: string | null
+  description: string | null
+  enabled: number
+  createdAt: string
+  updatedAt: string
+}
+
 export interface DB {
   user: UserTable
   connection: ConnectionTable
@@ -93,4 +106,5 @@ export interface DB {
   inbox_message: InboxMessageTable
   onboarding_state: OnboardingStateTable
   push_subscription: PushSubscriptionTable
+  webhook_endpoint: WebhookEndpointTable
 }

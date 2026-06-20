@@ -201,7 +201,9 @@ router.openapi(sendRoute, async (c) => {
         ? { id: 'in_app', userId, type: 'in_app' as const, name: 'In-app', status: 'active' as const, config: '{}', credentials: null, scopes: '[]', health: null, createdAt: ts, updatedAt: ts }
         : channel === 'web_push'
           ? { id: 'web_push', userId, type: 'web_push' as const, name: 'Web Push', status: 'active' as const, config: '{}', credentials: null, scopes: '[]', health: null, createdAt: ts, updatedAt: ts }
-          : null
+          : channel === 'webhook'
+            ? { id: 'webhook', userId, type: 'webhook' as const, name: 'Webhook', status: 'active' as const, config: '{}', credentials: null, scopes: '[]', health: null, createdAt: ts, updatedAt: ts }
+            : null
     const conn = connRow ?? synthetic
 
     if (!conn) {
