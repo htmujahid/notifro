@@ -30,8 +30,23 @@ export interface MemberTable {
   createdAt: string
 }
 
+export interface ConnectionTable {
+  id: string
+  organizationId: string
+  type: string
+  name: string
+  status: string
+  config: string
+  credentials: string | null
+  scopes: string
+  health: string | null
+  createdAt: string
+  updatedAt: string
+}
+
 export interface DB {
   user: UserTable
   organization: OrganizationTable
   member: MemberTable
+  connection: ConnectionTable
 }

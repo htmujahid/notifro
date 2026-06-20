@@ -4,3 +4,4 @@ BETTER_AUTH_URL=http://localhost:8787 # Base URL of your app
 GOOGLE_CLIENT_ID=your-google-client-id
 GOOGLE_CLIENT_SECRET=your-google-client-secret
 EMAIL_LOG_ONLY=true # Set to true to log emails to console instead of sending (local dev only)
+CONNECTION_ENC_KEY= # 32-byte AES-GCM key, base64-encoded. Generate: openssl rand -base64 32

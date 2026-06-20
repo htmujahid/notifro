@@ -11,6 +11,7 @@ interface __BaseEnv_CloudflareBindings {
 	GOOGLE_CLIENT_ID: string;
 	GOOGLE_CLIENT_SECRET: string;
 	EMAIL_LOG_ONLY: string;
+	CONNECTION_ENC_KEY: string;
 }
 declare namespace Cloudflare {
 	interface GlobalProps {

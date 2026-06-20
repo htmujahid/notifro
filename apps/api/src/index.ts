@@ -6,6 +6,7 @@ import { db } from './db/client'
 import { ApiError, validationHook } from './lib/errors'
 import type { AppEnv } from './lib/types'
 import templateRouter from './routes/_template'
+import connectionsRouter from './routes/connections'
 
 const app = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 
@@ -100,6 +101,7 @@ app.openapi(dbHealthRoute, async (c) => {
 })
 
 app.route('/api', templateRouter)
+app.route('/api', connectionsRouter)
 
 app.doc('/doc', {
   openapi: '3.0.0',
