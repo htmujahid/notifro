@@ -10,6 +10,7 @@ const CHANNEL_TYPE_VALUES = [
   'slack',
   'discord',
   'teams',
+  'mobile_push',
   'in_app',
 ] as const
 

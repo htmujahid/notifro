@@ -12,6 +12,7 @@ import inboxRouter from './routes/inbox'
 import overviewRouter from './routes/overview'
 import pushRouter from './routes/push'
 import webhooksRouter from './routes/webhooks'
+import devicesRouter from './routes/devices'
 import './channels/email'
 import './channels/in-app'
 import './channels/web-push/adapter'
@@ -22,6 +23,7 @@ import './channels/telegram'
 import './channels/slack'
 import './channels/discord'
 import './channels/teams'
+import './channels/mobile-push/adapter'
 
 const app = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 
@@ -122,6 +124,7 @@ app.route('/api', inboxRouter)
 app.route('/api', overviewRouter)
 app.route('/api', pushRouter)
 app.route('/api', webhooksRouter)
+app.route('/api', devicesRouter)
 
 app.doc('/doc', {
   openapi: '3.0.0',

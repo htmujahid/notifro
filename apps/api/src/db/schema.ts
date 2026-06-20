@@ -85,6 +85,17 @@ export interface PushSubscriptionTable {
   updatedAt: string
 }
 
+export interface DeviceTokenTable {
+  id: string
+  userId: string
+  platform: string
+  token: string
+  active: number
+  lastSeenAt: string | null
+  createdAt: string
+  updatedAt: string
+}
+
 export interface WebhookEndpointTable {
   id: string
   userId: string
@@ -107,4 +118,5 @@ export interface DB {
   onboarding_state: OnboardingStateTable
   push_subscription: PushSubscriptionTable
   webhook_endpoint: WebhookEndpointTable
+  device_token: DeviceTokenTable
 }

@@ -1,6 +1,6 @@
 import { Button } from "@workspace/ui/components/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@workspace/ui/components/card"
-import { MailIcon, WebhookIcon, BellIcon, MessageSquareIcon, PhoneIcon, CheckIcon, PlusIcon, SettingsIcon } from "lucide-react"
+import { MailIcon, WebhookIcon, BellIcon, MessageSquareIcon, PhoneIcon, SmartphoneIcon, CheckIcon, PlusIcon, SettingsIcon } from "lucide-react"
 import { useConnections } from "@workspace/core/hooks/connections"
 import { usePushRegistration } from "@workspace/core/hooks/push"
 import { useWebhooks } from "@workspace/core/hooks/webhooks"
@@ -52,6 +52,11 @@ const CHANNEL_META: Record<string, { name: string; description: string; icon: Re
     description: "Post Adaptive Cards to a Teams channel via a connector/workflow webhook URL. No OAuth required.",
     icon: MessageSquareIcon,
   },
+  mobile_push: {
+    name: "Mobile Push",
+    description: "Native iOS & Android push via APNs and FCM. Devices register their token automatically.",
+    icon: SmartphoneIcon,
+  },
   in_app: {
     name: "In-App",
     description: "Real-time in-app notifications delivered to your frontend via WebSocket or polling.",
@@ -67,7 +72,7 @@ export default function ChannelsPage() {
   const connections = data?.pages.flatMap((p) => p.data) ?? []
   const webhooks = webhookData?.pages.flatMap((p) => p.data) ?? []
 
-  const channelTypes = ["email", "webhook", "web_push", "sms", "whatsapp", "telegram", "slack", "discord", "teams", "in_app"] as const
+  const channelTypes = ["email", "webhook", "web_push", "sms", "whatsapp", "telegram", "slack", "discord", "teams", "mobile_push", "in_app"] as const
 
   return (
     <div className="flex flex-col gap-6">

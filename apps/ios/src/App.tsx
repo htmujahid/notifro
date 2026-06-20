@@ -5,10 +5,13 @@ import { Preferences } from "@capacitor/preferences"
 import { AppProvider } from "@workspace/app/app/context"
 import { createMobileAuthClient } from "@workspace/app/auth/client.mobile"
 import { NATIVE_REDIRECT_URL, deepLinkToPath } from "@workspace/app/auth/deep-link"
+import { createApiClient } from "@workspace/api-client/client"
+import { registerForPush } from "@workspace/mobile-shared/push"
 import { routes } from "@workspace/views/routes/ios"
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8787"
 const authClient = createMobileAuthClient(API_URL, Preferences)
+const apiClient = createApiClient(API_URL)
 const router = createHashRouter(routes)
 
 export function App() {
@@ -17,6 +20,7 @@ export function App() {
       const path = deepLinkToPath(url)
       if (path) router.navigate(path)
     })
+    void registerForPush(apiClient, "ios").catch(() => {})
     return () => {
       handle.then((listener) => listener.remove())
     }
