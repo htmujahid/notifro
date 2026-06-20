@@ -6,6 +6,8 @@ export type ChannelType =
   | 'whatsapp'
   | 'telegram'
   | 'slack'
+  | 'discord'
+  | 'teams'
   | 'in_app'
 
 export const CHANNEL_TYPES: ChannelType[] = [
@@ -16,6 +18,8 @@ export const CHANNEL_TYPES: ChannelType[] = [
   'whatsapp',
   'telegram',
   'slack',
+  'discord',
+  'teams',
   'in_app',
 ]
 

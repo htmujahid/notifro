@@ -42,6 +42,16 @@ const CHANNEL_META: Record<string, { name: string; description: string; icon: Re
     description: "Post Block Kit messages to a Slack channel via a bot token. No OAuth required.",
     icon: MessageSquareIcon,
   },
+  discord: {
+    name: "Discord",
+    description: "Post rich embeds to a Discord channel via an incoming webhook URL. No OAuth required.",
+    icon: MessageSquareIcon,
+  },
+  teams: {
+    name: "Microsoft Teams",
+    description: "Post Adaptive Cards to a Teams channel via a connector/workflow webhook URL. No OAuth required.",
+    icon: MessageSquareIcon,
+  },
   in_app: {
     name: "In-App",
     description: "Real-time in-app notifications delivered to your frontend via WebSocket or polling.",
@@ -57,7 +67,7 @@ export default function ChannelsPage() {
   const connections = data?.pages.flatMap((p) => p.data) ?? []
   const webhooks = webhookData?.pages.flatMap((p) => p.data) ?? []
 
-  const channelTypes = ["email", "webhook", "web_push", "sms", "whatsapp", "telegram", "slack", "in_app"] as const
+  const channelTypes = ["email", "webhook", "web_push", "sms", "whatsapp", "telegram", "slack", "discord", "teams", "in_app"] as const
 
   return (
     <div className="flex flex-col gap-6">

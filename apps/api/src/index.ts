@@ -20,6 +20,8 @@ import './channels/sms'
 import './channels/whatsapp'
 import './channels/telegram'
 import './channels/slack'
+import './channels/discord'
+import './channels/teams'
 
 const app = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 
