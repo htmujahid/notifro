@@ -7,11 +7,10 @@ import { decrypt } from '../lib/crypto'
 export interface SmsProvider {
   to: string
   body: string
-  from: string
 }
 
 interface SmsConfig {
-  from?: string
+  [key: string]: unknown
 }
 
 interface SmsCredentials {
@@ -34,21 +33,14 @@ const smsAdapter: ChannelAdapter<SmsConfig, SmsProvider> = {
     return (input ?? {}) as SmsConfig
   },
 
-  transform(payload, { connection }): SmsProvider {
+  transform(payload, _ctx): SmsProvider {
     const recipient = payload.recipient as { type: string; phone?: string }
     const phone = recipient.type === 'contact' && recipient.phone ? recipient.phone : ''
     if (!phone) throw new Error('SMS recipient requires contact.phone')
 
-    let from = ''
-    try {
-      const cfg = JSON.parse(connection.config) as SmsConfig
-      if (cfg.from) from = cfg.from
-    } catch {}
-
     return {
       to: phone,
       body: buildBody(payload).slice(0, 1600),
-      from,
     }
   },
 
@@ -58,9 +50,12 @@ const smsAdapter: ChannelAdapter<SmsConfig, SmsProvider> = {
     if (!conn.credentials) {
       return { providerMessageId: null, ok: false, error: 'No Twilio credentials — add accountSid and authToken' }
     }
-    if (!provider.from) {
-      return { providerMessageId: null, ok: false, error: 'No Twilio from-number — set config.from on the connection' }
+
+    const user = await ctx.db.selectFrom('user').where('id', '=', conn.userId).select(['phoneNumber', 'phoneNumberVerified']).executeTakeFirst()
+    if (!user?.phoneNumber || !user.phoneNumberVerified) {
+      return { providerMessageId: null, ok: false, error: 'No verified phone number on account — verify your phone number in account settings' }
     }
+    const from = user.phoneNumber
 
     let creds: SmsCredentials
     try {
@@ -80,7 +75,7 @@ const smsAdapter: ChannelAdapter<SmsConfig, SmsProvider> = {
           Authorization: `Basic ${btoa(`${creds.accountSid}:${creds.authToken}`)}`,
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: new URLSearchParams({ To: provider.to, From: provider.from, Body: provider.body }),
+        body: new URLSearchParams({ To: provider.to, From: from, Body: provider.body }),
       })
 
       if (!res.ok) {

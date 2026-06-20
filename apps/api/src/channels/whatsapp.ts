@@ -7,11 +7,10 @@ import { decrypt } from '../lib/crypto'
 export interface WhatsAppProvider {
   to: string
   body: string
-  from: string
 }
 
 interface WhatsAppConfig {
-  from?: string
+  [key: string]: unknown
 }
 
 interface WhatsAppCredentials {
@@ -38,21 +37,14 @@ const whatsappAdapter: ChannelAdapter<WhatsAppConfig, WhatsAppProvider> = {
     return (input ?? {}) as WhatsAppConfig
   },
 
-  transform(payload, { connection }): WhatsAppProvider {
+  transform(payload, _ctx): WhatsAppProvider {
     const recipient = payload.recipient as { type: string; phone?: string }
     const phone = recipient.type === 'contact' && recipient.phone ? recipient.phone : ''
     if (!phone) throw new Error('WhatsApp recipient requires contact.phone')
 
-    let from = ''
-    try {
-      const cfg = JSON.parse(connection.config) as WhatsAppConfig
-      if (cfg.from) from = cfg.from
-    } catch {}
-
     return {
       to: withWhatsAppPrefix(phone),
       body: buildBody(payload).slice(0, 1600),
-      from: from ? withWhatsAppPrefix(from) : '',
     }
   },
 
@@ -62,9 +54,12 @@ const whatsappAdapter: ChannelAdapter<WhatsAppConfig, WhatsAppProvider> = {
     if (!conn.credentials) {
       return { providerMessageId: null, ok: false, error: 'No Twilio credentials — add accountSid and authToken' }
     }
-    if (!provider.from) {
-      return { providerMessageId: null, ok: false, error: 'No Twilio from-number — set config.from on the connection' }
+
+    const user = await ctx.db.selectFrom('user').where('id', '=', conn.userId).select(['phoneNumber', 'phoneNumberVerified']).executeTakeFirst()
+    if (!user?.phoneNumber || !user.phoneNumberVerified) {
+      return { providerMessageId: null, ok: false, error: 'No verified phone number on account — verify your phone number in account settings' }
     }
+    const from = withWhatsAppPrefix(user.phoneNumber)
 
     let creds: WhatsAppCredentials
     try {
@@ -84,7 +79,7 @@ const whatsappAdapter: ChannelAdapter<WhatsAppConfig, WhatsAppProvider> = {
           Authorization: `Basic ${btoa(`${creds.accountSid}:${creds.authToken}`)}`,
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: new URLSearchParams({ To: provider.to, From: provider.from, Body: provider.body }),
+        body: new URLSearchParams({ To: provider.to, From: from, Body: provider.body }),
       })
 
       if (!res.ok) {
@@ -112,6 +107,4 @@ const whatsappAdapter: ChannelAdapter<WhatsAppConfig, WhatsAppProvider> = {
 }
 
 registerAdapter(whatsappAdapter)
-registerTransform('whatsapp', (payload, ctx) =>
-  whatsappAdapter.transform(payload, ctx as { connection: Connection }),
-)
+registerTransform('whatsapp', (payload, ctx) => whatsappAdapter.transform(payload, ctx as { connection: Connection }))

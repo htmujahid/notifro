@@ -15,6 +15,9 @@ interface __BaseEnv_CloudflareBindings {
 	VAPID_PUBLIC_KEY: string;
 	VAPID_PRIVATE_KEY: string;
 	VAPID_SUBJECT: string;
+	TWILIO_ACCOUNT_SID: string;
+	TWILIO_AUTH_TOKEN: string;
+	TWILIO_FROM_NUMBER: string;
 }
 declare namespace Cloudflare {
 	interface GlobalProps {

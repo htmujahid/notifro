@@ -13,7 +13,7 @@ export interface EmailProvider {
 }
 
 interface EmailConfig {
-  from?: string
+  [key: string]: unknown
 }
 
 const DEFAULT_FROM = { email: 'noreply@renderical.com', name: 'Renderical' }
@@ -80,34 +80,36 @@ const emailAdapter: ChannelAdapter<EmailConfig, EmailProvider> = {
     return (input ?? {}) as EmailConfig
   },
 
-  transform(payload, ctx): EmailProvider {
+  transform(payload, _ctx): EmailProvider {
     const { recipient } = payload
     let to = ''
     if (recipient.type === 'contact' && recipient.email) to = recipient.email
     if (!to) throw new Error('Email recipient requires contact.email')
-
-    let fromEmail = DEFAULT_FROM.email
-    if (ctx?.connection) {
-      try {
-        const cfg = JSON.parse(ctx.connection.config) as EmailConfig
-        if (cfg.from) fromEmail = cfg.from
-      } catch {}
-    }
 
     return {
       to,
       subject: payload.content.subject ?? payload.content.title ?? '(no subject)',
       html: renderHtml(payload),
       text: renderText(payload),
-      from: fromEmail,
+      from: DEFAULT_FROM.email,
     }
   },
 
-  async send(provider, _conn, _ctx) {
+  async send(provider, conn, ctx) {
+    let fromEmail = DEFAULT_FROM.email
+    let fromName = DEFAULT_FROM.name
+    try {
+      const user = await ctx.db.selectFrom('user').where('id', '=', conn.userId).select(['email', 'name']).executeTakeFirst()
+      if (user?.email) {
+        fromEmail = user.email
+        fromName = user.name || DEFAULT_FROM.name
+      }
+    } catch {}
+
     try {
       await sendNotificationEmail({
         to: provider.to,
-        from: { email: provider.from, name: DEFAULT_FROM.name },
+        from: { email: fromEmail, name: fromName },
         subject: provider.subject,
         html: provider.html,
         text: provider.text,

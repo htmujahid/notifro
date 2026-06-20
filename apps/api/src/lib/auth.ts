@@ -1,6 +1,6 @@
 import { env } from 'cloudflare:workers'
 import { betterAuth } from 'better-auth'
-import { twoFactor } from 'better-auth/plugins'
+import { twoFactor, phoneNumber } from 'better-auth/plugins'
 import { sendVerificationEmail, sendResetPasswordEmail, sendTwoFactorOTPEmail } from '@workspace/mailer'
 import { mockD1 } from './mock-db'
 import { kvSecondaryStorage } from './kv-storage'
@@ -49,6 +49,24 @@ export function createAuth(db: D1Database = mockD1) {
             await sendTwoFactorOTPEmail({ user, otp, from: FROM })
           },
         },
+      }),
+      phoneNumber({
+        sendOTP: async ({ phoneNumber: to, code }) => {
+          const sid = env.TWILIO_ACCOUNT_SID
+          const token = env.TWILIO_AUTH_TOKEN
+          const from = env.TWILIO_FROM_NUMBER
+          if (!sid || !token || !from) return
+          await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
+            method: 'POST',
+            headers: {
+              Authorization: `Basic ${btoa(`${sid}:${token}`)}`,
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({ To: to, From: from, Body: `Your Renderical verification code: ${code}` }),
+          })
+        },
+        otpLength: 6,
+        expiresIn: 300,
       }),
     ],
   })

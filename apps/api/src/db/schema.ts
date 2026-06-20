@@ -9,6 +9,8 @@ export interface UserTable {
   email: string
   emailVerified: number
   image: string | null
+  phoneNumber: string | null
+  phoneNumberVerified: number
 }
 
 export interface ConnectionTable {
