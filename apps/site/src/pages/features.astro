@@ -1,135 +1,419 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import PageHeader from "../components/PageHeader.astro";
 import CtaBand from "../components/CtaBand.astro";
+import { buttonVariants } from "@workspace/ui/components/button";
+import {
+  Layers,
+  Clock,
+  Split,
+  RefreshCw,
+  SlidersHorizontal,
+  Workflow,
+  BarChart3,
+  FlaskConical,
+  FileText,
+  Sparkles,
+  Bot,
+  Check,
+  ArrowRight,
+  MessageSquare,
+  Mail,
+  Smartphone,
+  Globe,
+  Bell,
+  Webhook,
+  Users,
+  Gamepad2,
+  MessageCircle,
+  ShieldCheck,
+  History,
+  Zap,
+  GitBranch,
+} from "lucide-react";
 
-const groups = [
-  {
-    eyebrow: "Compose & deliver",
-    title: "Single compose API, every channel",
-    items: [
-      ["Unified payload schema", "One body normalized across all channels with automatic per-channel transformation."],
-      ["Rich content", "Text, markdown, buttons, images, attachments, and interactive components."],
-      ["Template engine", "Variables, conditionals, loops, and localization out of the box."],
-      ["Fallback chains", "Try push → email → SMS. Define ordered fallbacks per message."],
-      ["Routing rules", "Route by user, message type, priority, or time of day."],
-      ["Send modes", "Broadcast, targeted, and transactional with rate-aware throttling."],
-    ],
-  },
-  {
-    eyebrow: "Scheduling & timing",
-    title: "Deliver at exactly the right moment",
-    items: [
-      ["Send-at scheduling", "Timezone-aware scheduling down to the recipient's locale."],
-      ["Recurring sends", "Cron-style recurring notifications and digests."],
-      ["Send-time optimization", "Deliver when each recipient is most likely active."],
-      ["Quiet hours & DND", "Per-recipient do-not-disturb windows, honored automatically."],
-      ["Time-window delivery", "Only send between local working hours, e.g. 9am–5pm."],
-      ["Throttle & debounce", "Prevent notification storms with built-in dampening."],
-    ],
-  },
-  {
-    eyebrow: "Reliability",
-    title: "Delivery guarantees you can trust",
-    items: [
-      ["Automatic retries", "Exponential backoff on transient provider failures."],
-      ["Dead-letter queue", "Capture and replay failed messages, never lose one silently."],
-      ["Idempotency keys", "Prevent duplicate sends across retries and agent loops."],
-      ["Status tracking", "Queued, sent, delivered, opened, clicked, failed — end to end."],
-      ["Provider failover", "Swap SMTP/push providers automatically on outage."],
-      ["Bounce handling", "Webhook delivery receipts and automatic bounce processing."],
-    ],
-  },
-  {
-    eyebrow: "Preferences",
-    title: "A preference center your users actually like",
-    items: [
-      ["Preference center", "Drop-in per-channel, per-category opt-in/out."],
-      ["Subscription topics", "Organize notifications into categories users can manage."],
-      ["Frequency capping", "Cap how many messages a user receives in a window."],
-      ["Digest bundling", "Roll up N notifications into a single digest."],
-      ["Compliant unsubscribe", "CAN-SPAM and GDPR-compliant opt-out handling."],
-      ["Channel priority", "User-level ordering of which channel to try first."],
-    ],
-  },
-  {
-    eyebrow: "Personalization",
-    title: "Right message, right person",
-    items: [
-      ["Audience segmentation", "Target by user attributes and computed segments."],
-      ["Dynamic content", "Render content from recipient data at send time."],
-      ["A/B testing", "Test message variants and promote winners."],
-      ["Locale & timezone", "Auto-detect and adapt language and timing."],
-    ],
-  },
-  {
-    eyebrow: "Workflow & orchestration",
-    title: "Multi-step journeys, triggered by events",
-    items: [
-      ["Notification sequences", "Build multi-step journeys with delays between steps."],
-      ["Trigger-based automation", "Event → notification flow, no glue code."],
-      ["Conditional branching", "Branch a journey on recipient behavior or data."],
-      ["Webhook ingestion", "Kick off sends from any event source."],
-    ],
-  },
-  {
-    eyebrow: "Analytics & observability",
-    title: "See and prove what shipped",
-    items: [
-      ["Engagement metrics", "Per-channel delivery, open, and click rates."],
-      ["Funnel & conversion tracking", "Tie notifications to downstream outcomes."],
-      ["Real-time dashboards", "Live delivery health with anomaly alerting."],
-      ["Cost tracking", "Spend per channel and provider, in one view."],
-      ["Audit logs", "Every send, by API, UI, or agent — fully logged."],
-      ["Request inspector", "Detailed API logs to debug any delivery."],
-    ],
-  },
-  {
-    eyebrow: "Templates & content",
-    title: "Manage content like code",
-    items: [
-      ["Visual template builder", "Design with live multi-channel preview."],
-      ["Versioning & rollback", "Every template change is versioned and reversible."],
-      ["Snippet library", "Share reusable components across templates."],
-      ["Brand kit", "Apply logos, colors, and fonts consistently everywhere."],
-    ],
-  },
-  {
-    eyebrow: "Smart / AI",
-    title: "Intelligence baked into delivery",
-    items: [
-      ["AI-assisted drafting", "Generate and tone-adjust message copy in seconds."],
-      ["Smart channel selection", "Predict the best channel per recipient."],
-      ["Send-time prediction", "Model the optimal moment per individual."],
-      ["Anomaly detection", "Catch engagement drops before they cost you."],
-    ],
-  },
+const channelTiles = [
+  { name: "Slack", icon: MessageSquare, to: "Block Kit" },
+  { name: "Email", icon: Mail, to: "Responsive HTML" },
+  { name: "Teams", icon: Users, to: "Adaptive cards" },
+  { name: "Discord", icon: Gamepad2, to: "Rich embeds" },
+  { name: "Push", icon: Smartphone, to: "APNs / FCM" },
+  { name: "Web Push", icon: Globe, to: "Service worker" },
+  { name: "In-App", icon: Bell, to: "Drop-in feed" },
+  { name: "Webhooks", icon: Webhook, to: "Signed JSON" },
 ];
+
+const pipeline = ["Queued", "Sent", "Delivered", "Opened", "Clicked"];
+const bars = [38, 62, 50, 78, 55, 88, 70, 64];
 ---
 
 <BaseLayout title="Features" description="Compose-once API, multi-channel delivery, scheduling, scope-based OAuth, preference center, reliability, analytics, and AI — the complete notification platform.">
-  <PageHeader
-    eyebrow="Features"
-    title="One platform for every notification"
-    lead="From compose-once delivery to a preference center, reliability guarantees, and AI — everything teams used to stitch together from five tools."
-  />
+  <!-- Header -->
+  <section class="relative overflow-hidden border-b">
+    <div class="pointer-events-none absolute inset-0 bg-dots mask-radial opacity-60"></div>
+    <div class="pointer-events-none absolute left-1/2 top-0 h-64 w-[40rem] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl"></div>
+    <div class="relative mx-auto max-w-6xl px-6 py-20 text-center">
+      <p class="text-sm font-semibold text-primary">Features</p>
+      <h1 class="mx-auto mt-2 max-w-3xl text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+        Everything you need to send — and nothing you'd stitch together yourself
+      </h1>
+      <p class="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground text-pretty">
+        Compose once and deliver everywhere, with scheduling, reliability, a preference center,
+        journeys, analytics, and AI built in. Here's how each piece works.
+      </p>
+      <div class="mt-7 flex flex-wrap justify-center gap-2">
+        {["Compose API", "9+ channels", "Fallback chains", "Preference center", "MCP server", "SOC 2"].map((p) => (
+          <span class="rounded-full border bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">{p}</span>
+        ))}
+      </div>
+    </div>
+  </section>
 
-  {groups.map((g, i) => (
-    <section class={i % 2 === 1 ? "border-b bg-muted/30 py-16" : "border-b py-16"}>
-      <div class="mx-auto max-w-6xl px-6">
-        <p class="text-sm font-semibold text-primary">{g.eyebrow}</p>
-        <h2 class="mt-2 text-2xl font-semibold tracking-tight">{g.title}</h2>
-        <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {g.items.map(([t, d]) => (
-            <div class="rounded-xl border bg-card p-5">
-              <h3 class="font-semibold">{t}</h3>
-              <p class="mt-1.5 text-sm text-muted-foreground">{d}</p>
+  <!-- 1. Compose once -->
+  <section class="border-b py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid items-center gap-12 lg:grid-cols-2">
+        <div>
+          <span class="inline-flex items-center gap-2 rounded-lg border bg-muted/50 px-2.5 py-1 text-xs font-semibold text-muted-foreground"><Layers className="size-3.5" /> Compose & deliver</span>
+          <h2 class="mt-4 text-3xl font-semibold tracking-tight">Write the message once. We render it per channel.</h2>
+          <p class="mt-3 text-muted-foreground">One channel-agnostic payload, automatically transformed into the native format each destination expects — no per-channel branching in your code.</p>
+          <ul class="mt-6 grid gap-3 text-sm sm:grid-cols-2">
+            {[
+              "Unified payload schema",
+              "Rich content & interactive components",
+              "Template engine: variables, loops, i18n",
+              "Broadcast, targeted & transactional modes",
+            ].map((t) => (
+              <li class="flex gap-2.5"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span class="text-muted-foreground">{t}</span></li>
+            ))}
+          </ul>
+        </div>
+        <!-- delivery board mock -->
+        <div class="overflow-hidden rounded-xl border bg-card shadow-sm">
+          <div class="flex items-center gap-2 border-b bg-muted/40 px-4 py-3">
+            <span class="size-2.5 rounded-full bg-muted-foreground/20"></span>
+            <span class="size-2.5 rounded-full bg-muted-foreground/20"></span>
+            <span class="size-2.5 rounded-full bg-muted-foreground/20"></span>
+            <span class="ml-2 font-mono text-xs text-muted-foreground">renderical.send()</span>
+          </div>
+          <div class="p-5">
+            <div class="rounded-lg bg-muted/60 p-3 font-mono text-xs text-muted-foreground">
+              template: <span class="text-primary">"invoice.paid"</span> · channels: <span class="text-foreground">[push, email, sms]</span>
             </div>
-          ))}
+            <div class="mt-4 divide-y">
+              {[
+                [MessageSquare, "Slack", "Delivered", "bg-green-500/10 text-green-600 dark:text-green-500"],
+                [Mail, "Email", "Opened", "bg-primary/10 text-primary"],
+                [Smartphone, "Push", "Delivered", "bg-green-500/10 text-green-600 dark:text-green-500"],
+                [MessageCircle, "SMS", "Fallback ready", "bg-muted text-muted-foreground"],
+              ].map(([Icon, name, status, cls]) => (
+                <div class="flex items-center justify-between py-2.5">
+                  <span class="flex items-center gap-2.5 text-sm font-medium"><span class="flex size-7 items-center justify-center rounded-md border bg-muted/50"><Icon className="size-3.5" /></span>{name}</span>
+                  <span class={`rounded-full px-2.5 py-1 text-xs font-medium ${cls}`}>{status}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
-    </section>
-  ))}
+    </div>
+  </section>
+
+  <!-- 2. Multi-channel -->
+  <section class="border-b bg-muted/30 py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mx-auto max-w-2xl text-center">
+        <span class="inline-flex items-center gap-2 rounded-lg border bg-background px-2.5 py-1 text-xs font-semibold text-muted-foreground"><Globe className="size-3.5" /> Multi-channel delivery</span>
+        <h2 class="mt-4 text-3xl font-semibold tracking-tight">One payload, every destination</h2>
+        <p class="mt-3 text-muted-foreground">Connect a channel once; Renderical handles the transform and rate-aware throttling.</p>
+      </div>
+      <div class="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {channelTiles.map((c) => (
+          <div class="rounded-xl border bg-card p-4 transition hover:border-foreground/20">
+            <span class="flex size-9 items-center justify-center rounded-lg border bg-muted/50"><c.icon className="size-5" /></span>
+            <p class="mt-3 text-sm font-medium">{c.name}</p>
+            <p class="text-xs text-muted-foreground">→ {c.to}</p>
+          </div>
+        ))}
+      </div>
+      <p class="mt-6 text-center text-sm text-muted-foreground">…plus SMS as a fallback tier. <a href="/channels" class="font-medium text-primary hover:underline">See all channels →</a></p>
+    </div>
+  </section>
+
+  <!-- 3. Scheduling -->
+  <section class="border-b py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid items-center gap-12 lg:grid-cols-2">
+        <!-- schedule mock -->
+        <div class="order-2 lg:order-1 rounded-xl border bg-card p-6">
+          <div class="flex items-center justify-between">
+            <span class="flex items-center gap-2 text-sm font-medium"><Clock className="size-4 text-primary" /> Send window · local time</span>
+            <span class="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">Optimized 9:24 AM</span>
+          </div>
+          <!-- 24h bar with quiet hours shaded -->
+          <div class="relative mt-5 h-2.5 rounded-full bg-muted">
+            <div class="absolute inset-y-0 left-0 w-[34%] rounded-l-full bg-foreground/15"></div>
+            <div class="absolute inset-y-0 right-0 w-[12%] rounded-r-full bg-foreground/15"></div>
+            <div class="absolute inset-y-0 left-[39%] w-[2px] rounded bg-primary"></div>
+          </div>
+          <div class="mt-2 flex justify-between text-[11px] text-muted-foreground">
+            <span>12 AM</span><span>9 AM</span><span>5 PM</span><span>12 AM</span>
+          </div>
+          <p class="mt-2 text-xs text-muted-foreground">Shaded = quiet hours / DND (never sent). Marker = predicted best moment.</p>
+          <div class="mt-5 grid grid-cols-3 gap-3 text-center text-xs">
+            <div class="rounded-lg border bg-muted/40 p-3"><div class="font-semibold text-foreground">Send-at</div>timezone-aware</div>
+            <div class="rounded-lg border bg-muted/40 p-3"><div class="font-semibold text-foreground">Recurring</div>cron-style</div>
+            <div class="rounded-lg border bg-muted/40 p-3"><div class="font-semibold text-foreground">Throttle</div>debounce storms</div>
+          </div>
+        </div>
+        <div class="order-1 lg:order-2">
+          <span class="inline-flex items-center gap-2 rounded-lg border bg-muted/50 px-2.5 py-1 text-xs font-semibold text-muted-foreground"><Clock className="size-3.5" /> Scheduling & timing</span>
+          <h2 class="mt-4 text-3xl font-semibold tracking-tight">Deliver at exactly the right moment</h2>
+          <p class="mt-3 text-muted-foreground">Respect each recipient's timezone, quiet hours, and the moment they're most likely to engage.</p>
+          <ul class="mt-6 grid gap-3 text-sm sm:grid-cols-2">
+            {["Send-at with timezone awareness", "Recurring / cron-style sends", "Send-time optimization", "Quiet hours & DND windows", "Time-window delivery (9–5)", "Throttle & debounce"].map((t) => (
+              <li class="flex gap-2.5"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span class="text-muted-foreground">{t}</span></li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Reliability -->
+  <section class="border-b bg-muted/30 py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mx-auto max-w-2xl text-center">
+        <span class="inline-flex items-center gap-2 rounded-lg border bg-background px-2.5 py-1 text-xs font-semibold text-muted-foreground"><RefreshCw className="size-3.5" /> Reliability & guarantees</span>
+        <h2 class="mt-4 text-3xl font-semibold tracking-tight">Nothing fails silently</h2>
+        <p class="mt-3 text-muted-foreground">Track every message end to end, retry the flaky ones, and never lose the rest.</p>
+      </div>
+      <!-- status pipeline -->
+      <div class="mx-auto mt-10 flex max-w-3xl flex-wrap items-center justify-center gap-2 rounded-xl border bg-card p-5 sm:flex-nowrap">
+        {pipeline.map((step, i) => (
+          <>
+            <span class="flex items-center gap-1.5 rounded-full border bg-background px-3 py-1.5 text-xs font-medium">
+              <span class="flex size-4 items-center justify-center rounded-full bg-green-500/15 text-green-600 dark:text-green-500"><Check className="size-3" /></span>{step}
+            </span>
+            {i < pipeline.length - 1 && <ArrowRight className="hidden size-4 shrink-0 text-muted-foreground sm:block" />}
+          </>
+        ))}
+      </div>
+      <div class="mt-6 grid gap-4 md:grid-cols-3">
+        {[
+          [RefreshCw, "Automatic retries", "Exponential backoff on transient provider failures, with provider failover when one is down."],
+          [Webhook, "Dead-letter queue", "Failed messages are captured and replayable — plus delivery receipts and bounce handling."],
+          [ShieldCheck, "Idempotency keys", "Prevent duplicate sends across retries and runaway agent loops."],
+        ].map(([Icon, t, d]) => (
+          <div class="rounded-xl border bg-card p-5">
+            <span class="flex size-9 items-center justify-center rounded-lg border bg-muted/50"><Icon className="size-5" /></span>
+            <h3 class="mt-3 font-semibold">{t}</h3>
+            <p class="mt-1.5 text-sm text-muted-foreground">{d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Preferences -->
+  <section class="border-b py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid items-center gap-12 lg:grid-cols-2">
+        <div>
+          <span class="inline-flex items-center gap-2 rounded-lg border bg-muted/50 px-2.5 py-1 text-xs font-semibold text-muted-foreground"><SlidersHorizontal className="size-3.5" /> Preferences & subscriptions</span>
+          <h2 class="mt-4 text-3xl font-semibold tracking-tight">A preference center your users — and legal team — like</h2>
+          <p class="mt-3 text-muted-foreground">Drop-in, per-channel and per-category controls with capping, digests, and compliant unsubscribe.</p>
+          <ul class="mt-6 grid gap-3 text-sm sm:grid-cols-2">
+            {["Per-channel / per-category opt-in", "Subscription topics", "Frequency capping", "Digest bundling", "CAN-SPAM / GDPR unsubscribe", "Channel priority ordering"].map((t) => (
+              <li class="flex gap-2.5"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span class="text-muted-foreground">{t}</span></li>
+            ))}
+          </ul>
+        </div>
+        <!-- preference mock -->
+        <div class="rounded-xl border bg-card p-6">
+          <p class="text-sm font-semibold">Notification preferences</p>
+          <p class="text-xs text-muted-foreground">Maria · maria@acme.com</p>
+          <div class="mt-4 space-y-3">
+            {[["Product updates", true], ["Weekly digest", true], ["Security alerts", true], ["Marketing", false]].map(([label, on]) => (
+              <div class="flex items-center justify-between rounded-lg border bg-muted/30 px-3 py-2.5 text-sm">
+                <span class={on ? "" : "text-muted-foreground"}>{label}</span>
+                <span class={`relative h-5 w-9 rounded-full transition ${on ? "bg-primary" : "bg-muted-foreground/25"}`}>
+                  <span class={`absolute top-0.5 size-4 rounded-full bg-white transition-all ${on ? "right-0.5" : "left-0.5"}`}></span>
+                </span>
+              </div>
+            ))}
+          </div>
+          <div class="mt-4 flex items-center justify-between rounded-lg bg-primary/5 px-3 py-2 text-xs text-muted-foreground">
+            <span>Frequency cap</span><span class="font-medium text-foreground">Max 3 / day · digest the rest</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Workflows -->
+  <section class="border-b bg-muted/30 py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid items-center gap-12 lg:grid-cols-2">
+        <!-- journey mock -->
+        <div class="order-2 lg:order-1 rounded-xl border bg-card p-6">
+          <div class="space-y-0">
+            {[
+              [Zap, "Trigger", "user.signed_up", "bg-primary/10 text-primary"],
+              [Clock, "Wait", "1 day", "bg-muted text-muted-foreground"],
+              [GitBranch, "Branch", "opened welcome email?", "bg-muted text-muted-foreground"],
+              [Mail, "Send", "onboarding tip · best channel", "bg-green-500/10 text-green-600 dark:text-green-500"],
+            ].map(([Icon, kind, detail, cls], i) => (
+              <div class="flex gap-3">
+                <div class="flex flex-col items-center">
+                  <span class={`flex size-8 items-center justify-center rounded-lg ${cls}`}><Icon className="size-4" /></span>
+                  {i < 3 && <span class="my-1 h-6 w-px bg-border"></span>}
+                </div>
+                <div class="pb-1 pt-1">
+                  <p class="text-sm font-medium">{kind}</p>
+                  <p class="font-mono text-xs text-muted-foreground">{detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div class="order-1 lg:order-2">
+          <span class="inline-flex items-center gap-2 rounded-lg border bg-background px-2.5 py-1 text-xs font-semibold text-muted-foreground"><Workflow className="size-3.5" /> Workflow & orchestration</span>
+          <h2 class="mt-4 text-3xl font-semibold tracking-tight">Multi-step journeys, triggered by events</h2>
+          <p class="mt-3 text-muted-foreground">Turn an event into a sequence — with delays, branches, and fallback — without writing glue code.</p>
+          <ul class="mt-6 grid gap-3 text-sm sm:grid-cols-2">
+            {["Notification sequences", "Trigger-based automation", "Conditional branching & delays", "Webhook ingestion"].map((t) => (
+              <li class="flex gap-2.5"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span class="text-muted-foreground">{t}</span></li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Analytics -->
+  <section class="border-b py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid items-center gap-12 lg:grid-cols-2">
+        <div>
+          <span class="inline-flex items-center gap-2 rounded-lg border bg-muted/50 px-2.5 py-1 text-xs font-semibold text-muted-foreground"><BarChart3 className="size-3.5" /> Analytics & observability</span>
+          <h2 class="mt-4 text-3xl font-semibold tracking-tight">See and prove what shipped</h2>
+          <p class="mt-3 text-muted-foreground">Delivery, engagement, conversion, and cost — in real time, with audit logs for every send.</p>
+          <ul class="mt-6 grid gap-3 text-sm sm:grid-cols-2">
+            {["Per-channel engagement metrics", "Funnel & conversion tracking", "Real-time dashboards & alerting", "Cost tracking per provider", "Audit logs (API/UI/agent)", "Request inspector"].map((t) => (
+              <li class="flex gap-2.5"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span class="text-muted-foreground">{t}</span></li>
+            ))}
+          </ul>
+        </div>
+        <!-- analytics mock -->
+        <div class="rounded-xl border bg-card p-6">
+          <div class="grid grid-cols-3 gap-3 text-center">
+            {[["1.2M", "Delivered"], ["48%", "Open rate"], ["$0.92", "Cost / 1k"]].map(([n, l]) => (
+              <div class="rounded-lg border bg-muted/30 p-3">
+                <div class="text-xl font-semibold tracking-tight">{n}</div>
+                <div class="text-xs text-muted-foreground">{l}</div>
+              </div>
+            ))}
+          </div>
+          <div class="mt-5 flex h-28 items-end gap-1.5">
+            {bars.map((h) => (
+              <div class="flex-1 rounded-t bg-primary/70" style={`height:${h}%`}></div>
+            ))}
+          </div>
+          <p class="mt-2 text-center text-xs text-muted-foreground">Deliveries · last 8 days</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. Personalization + Templates (two rich cards) -->
+  <section class="border-b bg-muted/30 py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid gap-5 md:grid-cols-2">
+        <!-- A/B -->
+        <div class="rounded-xl border bg-card p-6">
+          <span class="inline-flex items-center gap-2 rounded-lg border bg-background px-2.5 py-1 text-xs font-semibold text-muted-foreground"><FlaskConical className="size-3.5" /> Personalization & targeting</span>
+          <h3 class="mt-4 text-xl font-semibold tracking-tight">Right message, right person</h3>
+          <p class="mt-2 text-sm text-muted-foreground">Segment audiences, render dynamic content, and let the winner win.</p>
+          <div class="mt-4 grid grid-cols-2 gap-3">
+            <div class="rounded-lg border bg-muted/30 p-3">
+              <p class="text-xs text-muted-foreground">Variant A</p>
+              <p class="mt-1 text-lg font-semibold">42%</p>
+            </div>
+            <div class="rounded-lg border border-primary/40 bg-primary/5 p-3">
+              <p class="flex items-center gap-1 text-xs text-primary">Variant B · winner</p>
+              <p class="mt-1 text-lg font-semibold text-primary">51%</p>
+            </div>
+          </div>
+          <ul class="mt-4 space-y-2 text-sm">
+            {["Audience segmentation", "Dynamic content", "Locale & timezone auto-detect"].map((t) => (
+              <li class="flex gap-2.5"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span class="text-muted-foreground">{t}</span></li>
+            ))}
+          </ul>
+        </div>
+        <!-- Templates -->
+        <div class="rounded-xl border bg-card p-6">
+          <span class="inline-flex items-center gap-2 rounded-lg border bg-background px-2.5 py-1 text-xs font-semibold text-muted-foreground"><FileText className="size-3.5" /> Templates & content</span>
+          <h3 class="mt-4 text-xl font-semibold tracking-tight">Manage content like code</h3>
+          <p class="mt-2 text-sm text-muted-foreground">Visual builder, live multi-channel preview, and versioned rollbacks.</p>
+          <div class="mt-4 space-y-2">
+            {[["v3", "current", true], ["v2", "2 days ago", false], ["v1", "1 week ago", false]].map(([v, when, cur]) => (
+              <div class="flex items-center justify-between rounded-lg border bg-muted/30 px-3 py-2 text-sm">
+                <span class="flex items-center gap-2"><History className="size-3.5 text-muted-foreground" /><span class="font-mono">{v}</span><span class="text-xs text-muted-foreground">{when}</span></span>
+                {cur
+                  ? <span class="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">live</span>
+                  : <span class="text-xs text-muted-foreground">roll back</span>}
+              </div>
+            ))}
+          </div>
+          <ul class="mt-4 space-y-2 text-sm">
+            {["Snippet library", "Brand kit across channels"].map((t) => (
+              <li class="flex gap-2.5"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span class="text-muted-foreground">{t}</span></li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. AI -->
+  <section class="border-b py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mx-auto max-w-2xl text-center">
+        <span class="inline-flex items-center gap-2 rounded-lg border bg-muted/50 px-2.5 py-1 text-xs font-semibold text-muted-foreground"><Sparkles className="size-3.5" /> Smart / AI</span>
+        <h2 class="mt-4 text-3xl font-semibold tracking-tight">Intelligence baked into delivery</h2>
+      </div>
+      <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {[
+          [Sparkles, "AI-assisted drafting", "Generate and tone-adjust copy in seconds."],
+          [Globe, "Smart channel selection", "Predict the best channel per recipient."],
+          [Clock, "Send-time prediction", "Model the optimal moment per person."],
+          [BarChart3, "Anomaly detection", "Catch engagement drops before they cost you."],
+        ].map(([Icon, t, d]) => (
+          <div class="rounded-xl border bg-card p-5 transition hover:border-foreground/20">
+            <span class="flex size-9 items-center justify-center rounded-lg border bg-muted/50"><Icon className="size-5" /></span>
+            <h3 class="mt-3 font-semibold">{t}</h3>
+            <p class="mt-1.5 text-sm text-muted-foreground">{d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- MCP teaser -->
+  <section class="py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="flex flex-col items-center justify-between gap-6 rounded-2xl border bg-primary/5 p-8 text-center sm:flex-row sm:text-left">
+        <div class="flex items-start gap-4">
+          <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground"><Bot className="size-6" /></span>
+          <div>
+            <h2 class="text-xl font-semibold tracking-tight">And it's all available to AI agents</h2>
+            <p class="mt-1 text-sm text-muted-foreground">Every feature here is exposed through the native MCP server — scope-aware, preview-gated, and audited.</p>
+          </div>
+        </div>
+        <a href="/mcp" class={buttonVariants()}>Explore the MCP server</a>
+      </div>
+    </div>
+  </section>
 
   <CtaBand title="Replace your notification stack" />
 </BaseLayout>

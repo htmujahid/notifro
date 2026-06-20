@@ -1,101 +1,289 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import PageHeader from "../components/PageHeader.astro";
 import CtaBand from "../components/CtaBand.astro";
 import { buttonVariants } from "@workspace/ui/components/button";
-import { Check } from "lucide-react";
+import {
+  ShieldCheck,
+  Lock,
+  EyeOff,
+  KeyRound,
+  Users,
+  Webhook,
+  ScrollText,
+  Server,
+  Globe,
+  BadgeCheck,
+  FileCheck,
+  Check,
+  Fingerprint,
+  Building2,
+  Clock,
+  ArrowRight,
+} from "lucide-react";
 
-const groups = [
-  {
-    title: "Data protection",
-    items: [
-      ["End-to-end encryption", "Encryption in transit and at rest across the platform."],
-      ["PII redaction", "Optional redaction of sensitive fields before storage and logging."],
-      ["Suppression & consent ledger", "Track suppression lists and a verifiable consent record."],
-      ["Data residency", "Choose where data is stored to meet regional requirements."],
-    ],
-  },
-  {
-    title: "Access control",
-    items: [
-      ["Role-based access control", "Granular roles and team management for every action."],
-      ["SSO / SAML", "Enterprise single sign-on with your identity provider."],
-      ["IP allowlisting", "Restrict API and dashboard access to trusted networks."],
-      ["Scope-based OAuth", "Per-account permission introspection and least-privilege scopes."],
-    ],
-  },
-  {
-    title: "Integrity & webhooks",
-    items: [
-      ["Signed webhooks", "Every outbound webhook is cryptographically signed."],
-      ["Replay protection", "Timestamped signatures stop replayed requests."],
-      ["Idempotency keys", "Prevent duplicate sends, even under retries and agent loops."],
-      ["Full audit logs", "Every send — API, UI, or agent — is recorded for compliance."],
-    ],
-  },
+const certs = [
+  { name: "SOC 2 Type II", note: "Audited annually" },
+  { name: "GDPR", note: "EU data subjects" },
+  { name: "HIPAA-ready", note: "BAA available" },
+  { name: "ISO 27001", note: "ISMS aligned" },
+  { name: "CAN-SPAM", note: "Built-in compliance" },
 ];
 
-const certs = ["SOC 2 Type II", "GDPR", "HIPAA-ready", "CAN-SPAM", "ISO 27001"];
+const matrix = [
+  ["Send notifications", true, true, false],
+  ["Manage templates", true, true, false],
+  ["View analytics", true, true, true],
+  ["Manage members & billing", true, false, false],
+];
+
+const auditFeed = [
+  ["agent", "send_notification", "scoped · approved", "2m ago"],
+  ["maria@acme.com", "template.update", "v2 → v3", "1h ago"],
+  ["api", "connection.reauth", "slack workspace", "3h ago"],
+  ["system", "webhook.signed", "delivery receipt", "5h ago"],
+];
+
+const docs = [
+  ["SOC 2 Type II report", "Under NDA, on request"],
+  ["Data Processing Addendum", "Sign before go-live"],
+  ["Penetration test summary", "Latest third-party test"],
+  ["Security questionnaire", "We complete yours"],
+];
 ---
 
 <BaseLayout title="Security & Compliance" description="Encryption, PII redaction, RBAC, SSO, signed webhooks, audit logs, and SOC 2 / HIPAA / GDPR posture with data residency and a self-hosted option.">
-  <PageHeader
-    eyebrow="Security & compliance"
-    title="Trust built into every send"
-    lead="From encryption and PII redaction to scope-based OAuth, audit logs, and a self-hosted option — Renderical is built for compliance-heavy teams."
-  />
-
-  <section class="border-b py-8">
-    <div class="mx-auto flex max-w-6xl flex-wrap justify-center gap-3 px-6">
-      {certs.map((c) => (
-        <span class="rounded-full border bg-card px-4 py-1.5 text-sm font-medium text-muted-foreground">{c}</span>
-      ))}
+  <!-- Header -->
+  <section class="relative overflow-hidden border-b">
+    <div class="pointer-events-none absolute inset-0 bg-dots mask-radial opacity-60"></div>
+    <div class="pointer-events-none absolute left-1/2 top-0 h-64 w-[40rem] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl"></div>
+    <div class="relative mx-auto max-w-6xl px-6 py-20 text-center">
+      <span class="inline-flex items-center gap-2 rounded-full border bg-background/70 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
+        <ShieldCheck className="size-3.5 text-primary" /> Security & compliance
+      </span>
+      <h1 class="mx-auto mt-5 max-w-3xl text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+        Trust built into every send
+      </h1>
+      <p class="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground text-pretty">
+        From encryption and PII redaction to scope-based OAuth, signed webhooks, and a self-hosted
+        option — Renderical is built for compliance-heavy teams. Here's exactly how.
+      </p>
     </div>
   </section>
 
-  {groups.map((g, i) => (
-    <section class={i % 2 === 1 ? "border-b bg-muted/30 py-14" : "border-b py-14"}>
-      <div class="mx-auto max-w-6xl px-6">
-        <h2 class="text-2xl font-semibold tracking-tight">{g.title}</h2>
-        <div class="mt-8 grid gap-5 sm:grid-cols-2">
-          {g.items.map(([t, d]) => (
-            <div class="rounded-xl border bg-card p-5">
-              <h3 class="font-semibold">{t}</h3>
-              <p class="mt-1.5 text-sm text-muted-foreground">{d}</p>
+  <!-- Certifications -->
+  <section class="border-b py-16">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mx-auto max-w-2xl text-center">
+        <span class="inline-flex items-center gap-2 rounded-lg border bg-muted/50 px-2.5 py-1 text-xs font-semibold text-muted-foreground"><BadgeCheck className="size-3.5" /> Certifications</span>
+        <h2 class="mt-4 text-3xl font-semibold tracking-tight">Audited, attested, and ready for review</h2>
+      </div>
+      <div class="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        {certs.map((c) => (
+          <div class="rounded-xl border bg-card p-5 text-center">
+            <span class="mx-auto flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary"><BadgeCheck className="size-5" /></span>
+            <p class="mt-3 text-sm font-semibold">{c.name}</p>
+            <p class="text-xs text-muted-foreground">{c.note}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Data protection -->
+  <section class="border-b py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid items-center gap-12 lg:grid-cols-2">
+        <div>
+          <span class="inline-flex items-center gap-2 rounded-lg border bg-muted/50 px-2.5 py-1 text-xs font-semibold text-muted-foreground"><Lock className="size-3.5" /> Data protection</span>
+          <h2 class="mt-4 text-3xl font-semibold tracking-tight">Your data, encrypted and minimized</h2>
+          <p class="mt-3 text-muted-foreground">Encryption everywhere, optional PII redaction before anything is stored or logged, and a verifiable consent trail.</p>
+          <ul class="mt-6 grid gap-3 text-sm sm:grid-cols-2">
+            {[
+              "Encryption in transit & at rest",
+              "PII redaction before storage/logs",
+              "Suppression list & consent ledger",
+              "Data residency by region",
+            ].map((t) => (
+              <li class="flex gap-2.5"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span class="text-muted-foreground">{t}</span></li>
+            ))}
+          </ul>
+        </div>
+        <!-- redaction mock -->
+        <div class="overflow-hidden rounded-xl border bg-card">
+          <div class="flex items-center justify-between border-b bg-muted/40 px-4 py-3">
+            <span class="font-mono text-xs text-muted-foreground">stored payload</span>
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-2.5 py-1 text-xs font-medium text-green-600 dark:text-green-500"><Lock className="size-3" /> Encrypted at rest</span>
+          </div>
+          <div class="space-y-2.5 p-5 font-mono text-xs">
+            {[
+              ["name", "Maria G.", false],
+              ["email", "ma•••••@acme.com", true],
+              ["card", "•••• •••• •••• 4242", true],
+              ["phone", "+1 ••• ••• 0142", true],
+              ["template", "invoice.paid", false],
+            ].map(([k, v, redacted]) => (
+              <div class="flex items-center justify-between gap-3">
+                <span class="text-muted-foreground">{k}:</span>
+                <span class="flex items-center gap-2">
+                  <span class={redacted ? "text-foreground" : "text-foreground"}>{v}</span>
+                  {redacted && <span class="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"><EyeOff className="size-2.5" /> redacted</span>}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Access control -->
+  <section class="border-b bg-muted/30 py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid items-center gap-12 lg:grid-cols-2">
+        <!-- permission matrix -->
+        <div class="order-2 lg:order-1 overflow-hidden rounded-xl border bg-card text-sm">
+          <div class="grid grid-cols-[1.6fr_repeat(3,1fr)] border-b bg-muted/40 px-4 py-2.5 text-xs font-medium text-muted-foreground">
+            <span>Permission</span>
+            <span class="text-center">Admin</span>
+            <span class="text-center">Dev</span>
+            <span class="text-center">Viewer</span>
+          </div>
+          {matrix.map(([label, ...cells], i) => (
+            <div class={`grid grid-cols-[1.6fr_repeat(3,1fr)] items-center px-4 py-3 ${i < matrix.length - 1 ? "border-b" : ""}`}>
+              <span class="font-medium">{label}</span>
+              {cells.map((on) => (
+                <span class="flex justify-center">
+                  {on
+                    ? <Check className="size-4 text-primary" />
+                    : <span class="text-muted-foreground/40">—</span>}
+                </span>
+              ))}
             </div>
           ))}
         </div>
-      </div>
-    </section>
-  ))}
-
-  <section class="py-16">
-    <div class="mx-auto max-w-6xl px-6">
-      <div class="grid gap-12 lg:grid-cols-2">
-        <div>
-          <p class="text-sm font-semibold text-primary">Deployment</p>
-          <h2 class="mt-2 text-2xl font-semibold tracking-tight">Run it your way</h2>
-          <p class="mt-3 text-muted-foreground">
-            Use the multi-region hosted cloud, or deploy self-hosted / on-prem for full data
-            control. The compose API and stdio MCP server work identically in both.
-          </p>
-          <ul class="mt-5 space-y-3 text-sm">
-            <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span>Multi-region delivery infrastructure</span></li>
-            <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span>Provider failover for SMTP and push</span></li>
-            <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span>Self-hosted / on-prem deployment option</span></li>
-            <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span>Multi-tenant credential isolation</span></li>
+        <div class="order-1 lg:order-2">
+          <span class="inline-flex items-center gap-2 rounded-lg border bg-background px-2.5 py-1 text-xs font-semibold text-muted-foreground"><KeyRound className="size-3.5" /> Access control</span>
+          <h2 class="mt-4 text-3xl font-semibold tracking-tight">Least privilege, end to end</h2>
+          <p class="mt-3 text-muted-foreground">Granular roles for your team, SSO for your org, and scope-based OAuth that limits what every connection — and every agent — can do.</p>
+          <ul class="mt-6 grid gap-3 text-sm sm:grid-cols-2">
+            {["Role-based access control", "SSO / SAML", "IP allowlisting", "Scope-based OAuth introspection"].map((t) => (
+              <li class="flex gap-2.5"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span class="text-muted-foreground">{t}</span></li>
+            ))}
           </ul>
-        </div>
-        <div>
-          <p class="text-sm font-semibold text-primary">Reporting</p>
-          <h2 class="mt-2 text-2xl font-semibold tracking-tight">Prove it on demand</h2>
-          <p class="mt-3 text-muted-foreground">
-            Need our SOC 2 report, a DPA, or a security questionnaire completed? Our team turns
-            these around quickly for evaluations and procurement.
-          </p>
-          <div class="mt-6">
-            <a href="/contact" class={buttonVariants({ variant: "outline" })}>Request security docs</a>
+          <div class="mt-5 flex flex-wrap items-center gap-2">
+            <span class="text-xs text-muted-foreground">SSO with</span>
+            {["Okta", "Google", "Azure AD", "OneLogin"].map((p) => (
+              <span class="rounded-md border bg-card px-2.5 py-1 text-xs font-medium">{p}</span>
+            ))}
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Integrity & audit -->
+  <section class="border-b py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mx-auto max-w-2xl text-center">
+        <span class="inline-flex items-center gap-2 rounded-lg border bg-muted/50 px-2.5 py-1 text-xs font-semibold text-muted-foreground"><Fingerprint className="size-3.5" /> Integrity & auditability</span>
+        <h2 class="mt-4 text-3xl font-semibold tracking-tight">Provable, tamper-evident, fully logged</h2>
+        <p class="mt-3 text-muted-foreground">Signed webhooks with replay protection, idempotency on every send, and an audit trail that covers API, UI, and agent activity alike.</p>
+      </div>
+      <div class="mt-10 grid gap-5 lg:grid-cols-2">
+        <!-- signed webhook -->
+        <div class="overflow-hidden rounded-xl border bg-card">
+          <div class="flex items-center justify-between border-b bg-muted/40 px-4 py-3">
+            <span class="flex items-center gap-2 text-sm font-medium"><Webhook className="size-4 text-primary" /> Signed webhook</span>
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-2.5 py-1 text-xs font-medium text-green-600 dark:text-green-500"><Check className="size-3" /> Verified</span>
+          </div>
+          <div class="space-y-1 p-5 font-mono text-xs text-muted-foreground">
+            <div><span class="text-foreground">POST</span> /webhooks/delivery</div>
+            <div>X-Renderical-Signature: <span class="text-primary">t=1718,v1=9f86d0…</span></div>
+            <div>X-Renderical-Timestamp: <span class="text-foreground">1718900000</span></div>
+            <div class="pt-2 text-muted-foreground/70">// replay window: 5 min · idempotent</div>
+          </div>
+        </div>
+        <!-- audit feed -->
+        <div class="overflow-hidden rounded-xl border bg-card">
+          <div class="flex items-center gap-2 border-b bg-muted/40 px-4 py-3 text-sm font-medium"><ScrollText className="size-4 text-primary" /> Audit log</div>
+          <div class="divide-y">
+            {auditFeed.map(([actor, action, detail, when]) => (
+              <div class="flex items-center justify-between gap-3 px-4 py-2.5 text-sm">
+                <span class="flex min-w-0 items-center gap-2">
+                  <code class="rounded bg-muted px-1.5 py-0.5 text-xs">{actor}</code>
+                  <span class="truncate font-medium">{action}</span>
+                  <span class="hidden truncate text-xs text-muted-foreground sm:inline">{detail}</span>
+                </span>
+                <span class="flex shrink-0 items-center gap-1 text-xs text-muted-foreground"><Clock className="size-3" />{when}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Deployment -->
+  <section class="border-b bg-muted/30 py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mx-auto max-w-2xl text-center">
+        <span class="inline-flex items-center gap-2 rounded-lg border bg-background px-2.5 py-1 text-xs font-semibold text-muted-foreground"><Server className="size-3.5" /> Deployment</span>
+        <h2 class="mt-4 text-3xl font-semibold tracking-tight">Run it your way</h2>
+        <p class="mt-3 text-muted-foreground">The same compose API and stdio MCP server, hosted or on your own infrastructure.</p>
+      </div>
+      <div class="mt-10 grid gap-5 md:grid-cols-2">
+        <div class="rounded-xl border bg-card p-6">
+          <div class="flex items-center gap-2.5">
+            <span class="flex size-9 items-center justify-center rounded-lg border bg-muted/50"><Globe className="size-5" /></span>
+            <h3 class="font-semibold">Multi-region cloud</h3>
+          </div>
+          <ul class="mt-4 space-y-2.5 text-sm">
+            {["Multi-region delivery infrastructure", "Provider failover for SMTP & push", "Multi-tenant credential isolation"].map((t) => (
+              <li class="flex gap-2.5"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span class="text-muted-foreground">{t}</span></li>
+            ))}
+          </ul>
+          <div class="mt-4 flex gap-2">
+            {["US", "EU", "APAC"].map((r) => (
+              <span class="rounded-md border bg-background px-2.5 py-1 text-xs font-medium">{r}</span>
+            ))}
+          </div>
+        </div>
+        <div class="rounded-xl border bg-card p-6">
+          <div class="flex items-center gap-2.5">
+            <span class="flex size-9 items-center justify-center rounded-lg border bg-muted/50"><Building2 className="size-5" /></span>
+            <h3 class="font-semibold">Self-hosted / on-prem</h3>
+          </div>
+          <ul class="mt-4 space-y-2.5 text-sm">
+            {["Full data control in your VPC", "Local stdio MCP server", "Air-gapped & data-residency friendly"].map((t) => (
+              <li class="flex gap-2.5"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span class="text-muted-foreground">{t}</span></li>
+            ))}
+          </ul>
+          <span class="mt-4 inline-block rounded-md bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">Enterprise</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust center / docs -->
+  <section class="py-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid items-center gap-10 lg:grid-cols-[1fr_1.4fr]">
+        <div>
+          <span class="inline-flex items-center gap-2 rounded-lg border bg-muted/50 px-2.5 py-1 text-xs font-semibold text-muted-foreground"><FileCheck className="size-3.5" /> Trust center</span>
+          <h2 class="mt-4 text-3xl font-semibold tracking-tight">Prove it on demand</h2>
+          <p class="mt-3 text-muted-foreground">Need our SOC 2 report, a DPA, or a completed security questionnaire? Our team turns these around quickly for evaluations and procurement.</p>
+          <a href="/contact" class={`mt-6 ${buttonVariants()}`}>Request security docs</a>
+        </div>
+        <div class="grid gap-3 sm:grid-cols-2">
+          {docs.map(([t, d]) => (
+            <a href="/contact" class="group flex items-start gap-3 rounded-xl border bg-card p-5 transition hover:border-foreground/20">
+              <span class="flex size-9 shrink-0 items-center justify-center rounded-lg border bg-muted/50"><FileCheck className="size-5" /></span>
+              <span>
+                <span class="flex items-center gap-1 font-medium">{t}<ArrowRight className="size-3.5 -translate-x-1 text-muted-foreground opacity-0 transition group-hover:translate-x-0 group-hover:opacity-100" /></span>
+                <span class="text-sm text-muted-foreground">{d}</span>
+              </span>
+            </a>
+          ))}
         </div>
       </div>
     </div>

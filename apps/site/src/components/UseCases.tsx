@@ -112,7 +112,7 @@ export function UseCases() {
               </ul>
             </div>
 
-            <div className="rounded-xl border bg-card p-4 shadow-sm">
+            <div className="rounded-xl border bg-card p-4">
               <div className="flex items-center gap-2 border-b px-1 pb-3">
                 <span className="size-2.5 rounded-full bg-muted-foreground/20" />
                 <span className="size-2.5 rounded-full bg-muted-foreground/20" />
