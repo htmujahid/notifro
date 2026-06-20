@@ -63,4 +63,4 @@ export interface HealthResult {
   checkedAt: string
 }
 
-export type ComposePayload = unknown
+export type { ComposePayload } from '../compose/schema'

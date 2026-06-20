@@ -14,3 +14,73 @@ export interface ListResponse<T> {
 export interface ApiResponse<T> {
   data: T
 }
+
+export type Priority = 'low' | 'normal' | 'high' | 'urgent'
+
+export type ChannelType =
+  | 'email'
+  | 'webhook'
+  | 'slack'
+  | 'discord'
+  | 'teams'
+  | 'web_push'
+  | 'mobile_push'
+  | 'sms'
+  | 'in_app'
+
+type ButtonProps = {
+  label: string
+  url?: string
+  action?: string
+  style?: 'primary' | 'secondary' | 'danger'
+}
+
+export type ContentBlock =
+  | { type: 'text'; text: string; markdown?: string }
+  | { type: 'heading'; text: string; level?: number }
+  | { type: 'image'; url: string; alt?: string; title?: string }
+  | { type: 'divider' }
+  | ({ type: 'button' } & ButtonProps)
+  | { type: 'button_group'; buttons: ButtonProps[] }
+  | { type: 'fields'; fields: Array<{ key: string; value: string }> }
+
+export type Recipient =
+  | { type: 'user'; userId: string }
+  | {
+      type: 'contact'
+      email?: string
+      phone?: string
+      slackUserId?: string
+      discordUserId?: string
+      teamsUserId?: string
+      deviceToken?: string
+      pushSubscription?: Record<string, unknown>
+    }
+  | { type: 'segment'; segmentId: string }
+
+export interface ComposePayload {
+  schemaVersion?: '1'
+  content: {
+    title?: string
+    subject?: string
+    body: { text?: string; markdown?: string }
+    blocks?: ContentBlock[]
+    attachments?: Array<{
+      filename: string
+      contentType: string
+      url?: string
+      contentBase64?: string
+    }>
+  }
+  metadata?: {
+    category?: string
+    priority?: Priority
+    tags?: string[]
+    data?: Record<string, unknown>
+  }
+  idempotencyKey?: string
+  recipient: Recipient
+  channels?: ChannelType[]
+  localeHint?: string
+  timezoneHint?: string
+}
