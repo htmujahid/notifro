@@ -29,7 +29,7 @@ const CHANNEL_META: Record<string, { name: string; description: string; icon: Re
   },
   whatsapp: {
     name: "WhatsApp",
-    description: "Send WhatsApp messages via Twilio — reuses your SMS connection credentials.",
+    description: "Send WhatsApp messages via Twilio using a whatsapp: sender number.",
     icon: MessageSquareIcon,
   },
   telegram: {

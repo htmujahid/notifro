@@ -17,6 +17,7 @@ import './channels/in-app'
 import './channels/web-push/adapter'
 import './channels/webhook/adapter'
 import './channels/sms'
+import './channels/whatsapp'
 
 const app = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 
