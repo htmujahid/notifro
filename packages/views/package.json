@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@workspace/api-client": "workspace:*",
     "@workspace/core": "workspace:*",
     "@workspace/ui": "workspace:*",
     "lucide-react": "^1.21.0",

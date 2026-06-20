@@ -1,5 +1,4 @@
 import {
-  BadgeCheckIcon,
   ChevronsUpDownIcon,
   LogOutIcon,
   ShieldIcon,

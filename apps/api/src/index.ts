@@ -7,6 +7,9 @@ import { ApiError, validationHook } from './lib/errors'
 import type { AppEnv } from './lib/types'
 import templateRouter from './routes/_template'
 import connectionsRouter from './routes/connections'
+import notificationsRouter from './routes/notifications'
+import emailOauthRouter from './routes/email-oauth'
+import './channels/email'
 
 const app = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 
@@ -102,6 +105,8 @@ app.openapi(dbHealthRoute, async (c) => {
 
 app.route('/api', templateRouter)
 app.route('/api', connectionsRouter)
+app.route('/api', emailOauthRouter)
+app.route('/api', notificationsRouter)
 
 app.doc('/doc', {
   openapi: '3.0.0',

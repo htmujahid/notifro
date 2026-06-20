@@ -31,6 +31,7 @@ async function parseError(res: Response): Promise<never> {
 }
 
 export interface ApiClient {
+  baseURL: string
   get<T>(path: string, params?: ListParams): Promise<T>
   post<T>(path: string, body?: unknown): Promise<T>
   patch<T>(path: string, body?: unknown): Promise<T>
@@ -67,6 +68,7 @@ export function createApiClient(baseURL: string): ApiClient {
   }
 
   return {
+    baseURL: base,
     get: <T>(path: string, params?: ListParams) => request<T>("GET", path, undefined, params),
     post: <T>(path: string, body?: unknown) => request<T>("POST", path, body),
     patch: <T>(path: string, body?: unknown) => request<T>("PATCH", path, body),

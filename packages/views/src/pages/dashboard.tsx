@@ -1,4 +1,3 @@
-import { Badge } from "@workspace/ui/components/badge"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@workspace/ui/components/card"
 import { BellIcon, CheckCircleIcon, CalendarIcon, RadioIcon } from "lucide-react"
 

@@ -40,6 +40,7 @@
     "./hooks/organization": "./src/hooks/organization.ts",
     "./hooks/hello": "./src/hooks/hello.ts",
     "./hooks/connections": "./src/hooks/connections.ts",
+    "./hooks/notifications": "./src/hooks/notifications.ts",
     "./components/organization/org-settings-panel": "./src/components/organization/org-settings-panel.tsx",
     "./components/organization/accept-invitation-card": "./src/components/organization/accept-invitation-card.tsx"
   }

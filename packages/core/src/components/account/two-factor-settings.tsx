@@ -11,7 +11,6 @@ import { useSession, SESSION_QUERY_KEY } from "@workspace/app/auth/use-session"
 import { twoFactorPasswordSchema, twoFactorVerifySchema, type TwoFactorPasswordValues, type TwoFactorVerifyValues } from "../../schemas/auth"
 
 type EnableStep = "idle" | "password" | "setup" | "verify" | "backup-codes"
-type DisableStep = "idle" | "password"
 type BackupStep = "idle" | "password" | "codes"
 
 interface SetupData {

@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Button } from "@workspace/ui/components/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card"
+import { Card, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card"
 import { ChevronDownIcon, BookOpenIcon, MessageCircleIcon, FileTextIcon, VideoIcon } from "lucide-react"
 
 const FAQS = [

@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-query"
+import { useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-query"
 import { useApiClient } from "@workspace/api-client/context"
 import type { ListParams, ListResponse } from "@workspace/api-client/types"
 
