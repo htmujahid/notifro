@@ -2,17 +2,22 @@
   "name": "api",
   "type": "module",
   "scripts": {
+    "typecheck": "tsc --noEmit",
     "dev": "wrangler dev",
     "deploy": "wrangler deploy --minify",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
-    "generate": "npx auth@latest generate --config ./src/lib/auth.ts --output migrations/0000_auth_schema.sql --yes"
+    "generate": "npx auth@latest generate --config ./src/lib/auth.ts --output migrations/0000_auth_schema.sql --yes",
+    "db:migrate": "wrangler d1 migrations apply DB --local",
+    "db:migrate:remote": "wrangler d1 migrations apply DB --remote"
   },
   "dependencies": {
     "@hono/zod-openapi": "^1.4.0",
     "@scalar/hono-api-reference": "^0.11.4",
     "@workspace/mailer": "workspace:*",
     "better-auth": "^1.6.19",
-    "hono": "^4.12.26"
+    "hono": "^4.12.26",
+    "kysely": "^0.29.2",
+    "kysely-d1": "^0.4.0"
   },
   "devDependencies": {
     "wrangler": "^4.4.0"
