@@ -19,7 +19,7 @@ import {
   useDeleteConnection,
   useConnectionHealth,
   type Connection,
-} from "@workspace/core/hooks/connections"
+} from "../../hooks/connections"
 
 type FieldGroup = "config" | "credentials"
 
