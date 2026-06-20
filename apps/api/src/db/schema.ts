@@ -74,6 +74,17 @@ export interface OnboardingStateTable {
   updatedAt: string
 }
 
+export interface PushSubscriptionTable {
+  id: string
+  userId: string
+  endpoint: string
+  p256dh: string
+  auth: string
+  userAgent: string | null
+  createdAt: string
+  updatedAt: string
+}
+
 export interface DB {
   user: UserTable
   connection: ConnectionTable
@@ -81,4 +92,5 @@ export interface DB {
   delivery: DeliveryTable
   inbox_message: InboxMessageTable
   onboarding_state: OnboardingStateTable
+  push_subscription: PushSubscriptionTable
 }

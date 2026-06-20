@@ -41,6 +41,7 @@
     "./hooks/connections": "./src/hooks/connections.ts",
     "./hooks/notifications": "./src/hooks/notifications.ts",
     "./hooks/inbox": "./src/hooks/inbox.ts",
-    "./hooks/overview": "./src/hooks/overview.ts"
+    "./hooks/overview": "./src/hooks/overview.ts",
+    "./hooks/push": "./src/hooks/push.ts"
   }
 }

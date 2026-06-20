@@ -2,6 +2,7 @@ import { Button } from "@workspace/ui/components/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@workspace/ui/components/card"
 import { MailIcon, WebhookIcon, BellIcon, MessageSquareIcon, PhoneIcon, CheckIcon, PlusIcon, SettingsIcon } from "lucide-react"
 import { useConnections } from "@workspace/core/hooks/connections"
+import { usePushRegistration } from "@workspace/core/hooks/push"
 
 const CHANNEL_META: Record<string, { name: string; description: string; icon: React.ComponentType<{ className?: string }> }> = {
   email: {
@@ -43,6 +44,7 @@ const CHANNEL_META: Record<string, { name: string; description: string; icon: Re
 
 export default function ChannelsPage() {
   const { data, isLoading } = useConnections({ limit: 50 })
+  const push = usePushRegistration()
 
   const connections = data?.pages.flatMap((p) => p.data) ?? []
 
@@ -78,8 +80,42 @@ export default function ChannelsPage() {
             if (!meta) return null
             const { name, description, icon: Icon } = meta
             const conn = connections.find((c) => c.type === type)
-            const connected = type === "email" ? true : conn?.status === "active"
-            const detail = type === "email" ? "Cloudflare Email binding" : conn ? conn.name : "Not configured"
+
+            let connected: boolean
+            let detail: string
+            let actionLabel: string
+            let actionVariant: "default" | "outline" | "destructive"
+            let onAction: (() => void) | undefined
+            let actionDisabled = false
+
+            if (type === "email") {
+              connected = true
+              detail = "Cloudflare Email binding"
+              actionLabel = "Manage"
+              actionVariant = "outline"
+            } else if (type === "web_push") {
+              connected = push.subscribed
+              detail = !push.supported
+                ? "Not supported in this browser"
+                : push.permission === "denied"
+                  ? "Permission denied — enable in browser settings"
+                  : push.subscribed
+                    ? "Browser notifications active"
+                    : "Click to enable browser notifications"
+              actionLabel = push.loading
+                ? "..."
+                : push.subscribed
+                  ? "Disable"
+                  : "Enable"
+              actionVariant = push.subscribed ? "outline" : "default"
+              onAction = push.subscribed ? push.disable : push.enable
+              actionDisabled = !push.supported || push.permission === "denied" || push.loading
+            } else {
+              connected = conn?.status === "active"
+              detail = conn ? conn.name : "Not configured"
+              actionLabel = connected ? "Manage" : "Connect"
+              actionVariant = connected ? "outline" : "default"
+            }
 
             return (
               <Card key={type} size="sm">
@@ -118,10 +154,12 @@ export default function ChannelsPage() {
                   </div>
                   <Button
                     size="sm"
-                    variant={connected ? "outline" : "default"}
+                    variant={actionVariant}
                     className="w-full"
+                    onClick={onAction}
+                    disabled={actionDisabled}
                   >
-                    {connected ? "Manage" : "Connect"}
+                    {actionLabel}
                   </Button>
                 </CardContent>
               </Card>

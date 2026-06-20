@@ -196,10 +196,13 @@ router.openapi(sendRoute, async (c) => {
       .selectAll()
       .executeTakeFirst()
 
-    const syntheticInApp = channel === 'in_app'
-      ? { id: 'in_app', userId, type: 'in_app', name: 'In-app', status: 'active', config: '{}', credentials: null, scopes: '[]', health: null, createdAt: ts, updatedAt: ts }
-      : null
-    const conn = connRow ?? syntheticInApp
+    const synthetic =
+      channel === 'in_app'
+        ? { id: 'in_app', userId, type: 'in_app' as const, name: 'In-app', status: 'active' as const, config: '{}', credentials: null, scopes: '[]', health: null, createdAt: ts, updatedAt: ts }
+        : channel === 'web_push'
+          ? { id: 'web_push', userId, type: 'web_push' as const, name: 'Web Push', status: 'active' as const, config: '{}', credentials: null, scopes: '[]', health: null, createdAt: ts, updatedAt: ts }
+          : null
+    const conn = connRow ?? synthetic
 
     if (!conn) {
       const deliveryId = newId()
@@ -243,7 +246,7 @@ router.openapi(sendRoute, async (c) => {
     try {
       const activeConn = conn as import('../channels/types').Connection
       const provider = adapter.transform(payload, { connection: activeConn })
-      const result = await adapter.send(provider as any, activeConn, { db: c.var.db, notificationId: notifId })
+      const result = await adapter.send(provider as any, activeConn, { db: c.var.db, notificationId: notifId, env: c.env })
       providerMessageId = result.providerMessageId
       deliveryStatus = result.ok ? 'delivered' : 'failed'
       if (!result.ok) deliveryError = result.error ?? 'Unknown send error'

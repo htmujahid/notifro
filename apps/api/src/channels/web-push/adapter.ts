@@ -1,0 +1,102 @@
+import type { ChannelAdapter } from '../adapter'
+import type { ComposePayload } from '../types'
+import { registerAdapter } from '../registry'
+import { registerTransform } from '../../compose/transform'
+import { buildVapidHeaders } from './vapid'
+import { encryptWebPushPayload } from './encrypt'
+
+export interface WebPushProvider {
+  userId: string
+  title: string
+  body: string | null
+  icon: string | null
+  url: string | null
+}
+
+const webPushAdapter: ChannelAdapter<Record<string, never>, WebPushProvider> = {
+  type: 'web_push',
+
+  validateConfig(_input) {
+    return {}
+  },
+
+  transform(payload: ComposePayload, { connection }): WebPushProvider {
+    const recipient = payload.recipient as { type: string; userId?: string }
+    const userId = recipient.type === 'user' && recipient.userId ? recipient.userId : connection.userId
+    const title = payload.content.subject ?? payload.content.title ?? 'New notification'
+    const body = payload.content.body?.text ?? null
+    return { userId, title, body, icon: null, url: null }
+  },
+
+  async send(provider, _conn, ctx) {
+    if (!ctx.env?.VAPID_PUBLIC_KEY || !ctx.env?.VAPID_PRIVATE_KEY) {
+      return { providerMessageId: null, ok: false, error: 'VAPID keys not configured' }
+    }
+
+    const { VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT } = ctx.env
+    const subject = VAPID_SUBJECT ?? 'mailto:admin@renderical.com'
+
+    const subscriptions = await ctx.db
+      .selectFrom('push_subscription')
+      .where('userId', '=', provider.userId)
+      .selectAll()
+      .execute()
+
+    if (subscriptions.length === 0) {
+      return { providerMessageId: null, ok: false, error: 'No push subscriptions for user' }
+    }
+
+    const notifPayload = JSON.stringify({
+      title: provider.title,
+      body: provider.body ?? undefined,
+      icon: provider.icon ?? undefined,
+      url: provider.url ?? undefined,
+    })
+
+    let anyOk = false
+    const errors: string[] = []
+
+    for (const sub of subscriptions) {
+      try {
+        const encrypted = await encryptWebPushPayload(sub.p256dh, sub.auth, notifPayload)
+        const vapidHeaders = await buildVapidHeaders(sub.endpoint, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, subject)
+
+        const res = await fetch(sub.endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/octet-stream',
+            'Content-Encoding': 'aes128gcm',
+            TTL: '86400',
+            ...vapidHeaders,
+          },
+          body: encrypted,
+        })
+
+        if (res.status === 404 || res.status === 410) {
+          await ctx.db.deleteFrom('push_subscription').where('id', '=', sub.id).execute()
+          continue
+        }
+
+        if (res.ok || res.status === 201) {
+          anyOk = true
+        } else {
+          errors.push(`${sub.endpoint}: HTTP ${res.status}`)
+        }
+      } catch (err) {
+        errors.push(err instanceof Error ? err.message : String(err))
+      }
+    }
+
+    if (anyOk) return { providerMessageId: null, ok: true }
+    return { providerMessageId: null, ok: false, error: errors.join('; ') || 'All push sends failed' }
+  },
+
+  async healthCheck(_conn) {
+    return { ok: true, message: 'Web push — check VAPID keys are configured', checkedAt: new Date().toISOString() }
+  },
+}
+
+registerAdapter(webPushAdapter)
+registerTransform('web_push', (payload, ctx) =>
+  webPushAdapter.transform(payload, ctx as { connection: import('../types').Connection }),
+)

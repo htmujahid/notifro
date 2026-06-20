@@ -12,6 +12,9 @@ interface __BaseEnv_CloudflareBindings {
 	GOOGLE_CLIENT_SECRET: string;
 	EMAIL_LOG_ONLY: string;
 	CONNECTION_ENC_KEY: string;
+	VAPID_PUBLIC_KEY: string;
+	VAPID_PRIVATE_KEY: string;
+	VAPID_SUBJECT: string;
 }
 declare namespace Cloudflare {
 	interface GlobalProps {
