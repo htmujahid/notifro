@@ -243,6 +243,34 @@ export interface ChannelPriority {
   updatedAt: string
 }
 
+export interface ChainStep {
+  channel: string
+  connectionId?: string
+  waitForDeliveryMs: number
+  successOn: ('delivered' | 'opened' | 'clicked')[]
+}
+
+export interface FallbackChain {
+  id: string
+  userId: string
+  name: string
+  steps: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface RoutingRule {
+  id: string
+  userId: string
+  priority: number
+  enabled: number
+  match: string
+  targetChainId: string | null
+  targetChannel: string | null
+  createdAt: string
+  updatedAt: string
+}
+
 export interface PreferenceCenter {
   recipientId: string
   topics: Array<{

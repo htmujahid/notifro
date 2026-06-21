@@ -2,6 +2,7 @@ import { db } from '../db/client'
 import { getAdapter } from '../channels/registry'
 import { resolveSendConnection } from '../channels/resolve'
 import { renderTemplate } from '../lib/render-template'
+import { escalateChain } from '../lib/routing'
 import type { ChannelType } from '../channels/types'
 
 export interface DeliveryQueueMessage {
@@ -9,6 +10,7 @@ export interface DeliveryQueueMessage {
   notificationId: string
   userId: string
   channel: string
+  escalationCheck?: boolean
 }
 
 const MAX_ATTEMPTS = 5
@@ -92,7 +94,7 @@ async function processDelivery(
   msg: Message<DeliveryQueueMessage>,
   env: CloudflareBindings,
 ): Promise<void> {
-  const { deliveryId, notificationId, userId, channel } = msg.body
+  const { deliveryId, notificationId, userId, channel, escalationCheck } = msg.body
   const database = db(env.DB)
   const ts = new Date().toISOString()
 
@@ -102,7 +104,38 @@ async function processDelivery(
     .selectAll()
     .executeTakeFirst()
 
-  if (!delivery || delivery.status === 'delivered' || delivery.status === 'dead') {
+  if (!delivery) {
+    msg.ack()
+    return
+  }
+
+  if (escalationCheck) {
+    if (delivery.chainId && delivery.chainStepIndex !== null) {
+      const chain = await database
+        .selectFrom('fallback_chain')
+        .where('id', '=', delivery.chainId)
+        .selectAll()
+        .executeTakeFirst()
+      if (chain) {
+        const steps = JSON.parse(chain.steps) as import('../lib/routing').ChainStep[]
+        const step = steps[delivery.chainStepIndex]
+        if (step) {
+          const successOnSet = new Set(step.successOn)
+          const succeeded =
+            (successOnSet.has('delivered') && delivery.deliveredAt !== null) ||
+            (successOnSet.has('opened') && delivery.openedAt !== null) ||
+            (successOnSet.has('clicked') && delivery.clickedAt !== null)
+          if (!succeeded) {
+            await escalateChain(database, env, deliveryId, notificationId, userId, delivery.chainId, delivery.chainStepIndex, ts)
+          }
+        }
+      }
+    }
+    msg.ack()
+    return
+  }
+
+  if (delivery.status === 'delivered' || delivery.status === 'dead') {
     msg.ack()
     return
   }
@@ -185,9 +218,31 @@ async function processDelivery(
       .set({ status: 'delivered', providerMessageId, attempts, lastError: null, nextRetryAt: null, deliveredAt: ts, updatedAt: ts })
       .where('id', '=', deliveryId)
       .execute()
-    const deliveryRow = await database.selectFrom('delivery').where('id', '=', deliveryId).select('userId').executeTakeFirst()
+    const deliveryRow = await database.selectFrom('delivery').where('id', '=', deliveryId).selectAll().executeTakeFirst()
     if (deliveryRow) {
       await database.insertInto('delivery_event').values({ id: crypto.randomUUID(), deliveryId, userId: deliveryRow.userId, type: 'delivered', at: ts, meta: '{}' }).execute()
+
+      if (deliveryRow.chainId && deliveryRow.chainStepIndex !== null) {
+        const chain = await database
+          .selectFrom('fallback_chain')
+          .where('id', '=', deliveryRow.chainId)
+          .selectAll()
+          .executeTakeFirst()
+        if (chain) {
+          const steps = JSON.parse(chain.steps) as import('../lib/routing').ChainStep[]
+          const step = steps[deliveryRow.chainStepIndex]
+          if (step) {
+            const successOnSet = new Set(step.successOn)
+            if (!successOnSet.has('delivered') && step.waitForDeliveryMs > 0) {
+              const delaySeconds = Math.ceil(step.waitForDeliveryMs / 1000)
+              await env.DELIVERY_Q.send(
+                { deliveryId, notificationId, userId, channel, escalationCheck: true },
+                { delaySeconds },
+              )
+            }
+          }
+        }
+      }
     }
     await updateNotificationStatus(database, notificationId, ts)
     msg.ack()
@@ -212,6 +267,11 @@ async function processDelivery(
   }
 
   await moveToDeadLetter(database, { ...delivery, attempts }, notification.payload, sendError ?? 'Send failed', ts)
+
+  if (delivery.chainId && delivery.chainStepIndex !== null) {
+    await escalateChain(database, env, deliveryId, notificationId, userId, delivery.chainId, delivery.chainStepIndex, ts)
+  }
+
   await updateNotificationStatus(database, notificationId, ts)
   msg.ack()
 }

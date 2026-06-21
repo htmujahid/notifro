@@ -9,6 +9,7 @@ import { resolveTemplate, renderTemplate } from '../lib/render-template'
 import { localToUtc } from '../scheduling/utils'
 import { resolveSegment } from '../lib/segment-resolver'
 import { resolvePreferences } from '../lib/resolve-preferences'
+import { resolveRoute } from '../lib/routing'
 import type { AppEnv } from '../lib/types'
 import type { ChannelType } from '../channels/types'
 import type { DeliveryQueueMessage } from '../queue/consumer'
@@ -21,6 +22,7 @@ const SendRequestSchema = ComposePayloadSchema.extend({
   templateData: z.record(z.string(), z.unknown()).optional(),
   templateLocale: z.string().optional(),
   topicKey: z.string().optional(),
+  chainId: z.string().optional(),
 }).refine(
   (v) => v.content !== undefined || v.templateId !== undefined || v.templateSlug !== undefined,
   { message: 'Either content or templateId/templateSlug is required' },
@@ -249,7 +251,37 @@ router.openapi(sendRoute, async (c) => {
     return c.json({ id: scheduledId, sendAt: sendAtUtc, status: 'pending' as const, scheduled: true as const }, 202) as any
   }
 
-  const channels = payload.channels ?? ['email']
+  let resolvedChainId: string | null = null
+  let resolvedChainSteps: import('../lib/routing').ChainStep[] | null = null
+
+  if (!isSegmentSend) {
+    const explicitChainId = (rawPayload as { chainId?: string }).chainId
+    if (explicitChainId) {
+      const chain = await db
+        .selectFrom('fallback_chain')
+        .where('id', '=', explicitChainId)
+        .where('userId', '=', userId)
+        .selectAll()
+        .executeTakeFirst()
+      if (chain) {
+        resolvedChainId = chain.id
+        resolvedChainSteps = JSON.parse(chain.steps) as import('../lib/routing').ChainStep[]
+      }
+    } else {
+      const notificationInput = {
+        priority: (payload.metadata as { priority?: string } | undefined)?.priority,
+      }
+      const routeResult = await resolveRoute(db, userId, notificationInput)
+      if (routeResult?.type === 'chain') {
+        resolvedChainId = routeResult.chainId
+        resolvedChainSteps = routeResult.steps
+      }
+    }
+  }
+
+  const channels = resolvedChainSteps
+    ? [resolvedChainSteps[0]!.channel]
+    : payload.channels ?? ['email']
 
   const notifId = newId()
   const subject = payload.content?.subject ?? payload.content?.title ?? null
@@ -290,6 +322,9 @@ router.openapi(sendRoute, async (c) => {
     bouncedAt: string | null
     recipientId: string | null
     variantId: string | null
+    chainId: string | null
+    chainStepIndex: number | null
+    escalatedFromDeliveryId: string | null
     createdAt: string
     updatedAt: string
   }
@@ -410,6 +445,9 @@ router.openapi(sendRoute, async (c) => {
           bouncedAt: null,
           recipientId: recip.id,
           variantId: null,
+          chainId: null,
+          chainStepIndex: null,
+          escalatedFromDeliveryId: null,
           createdAt: dts,
           updatedAt: dts,
         })
@@ -485,6 +523,9 @@ router.openapi(sendRoute, async (c) => {
             bouncedAt: null,
             recipientId: null,
             variantId: null,
+            chainId: null,
+            chainStepIndex: null,
+            escalatedFromDeliveryId: null,
             createdAt: dts,
             updatedAt: dts,
           })
@@ -533,6 +574,9 @@ router.openapi(sendRoute, async (c) => {
           bouncedAt: null,
           recipientId: null,
           variantId: null,
+          chainId: null,
+          chainStepIndex: null,
+          escalatedFromDeliveryId: null,
           createdAt: dts,
           updatedAt: dts,
         })
@@ -582,6 +626,9 @@ router.openapi(sendRoute, async (c) => {
           bouncedAt: null,
           recipientId: null,
           variantId: null,
+          chainId: null,
+          chainStepIndex: null,
+          escalatedFromDeliveryId: null,
           createdAt: dts,
           updatedAt: dts,
         })
@@ -607,6 +654,9 @@ router.openapi(sendRoute, async (c) => {
           clickedAt: null,
           bouncedAt: null,
           recipientId: nonSegmentRecipientId,
+          chainId: resolvedChainId,
+          chainStepIndex: resolvedChainId ? 0 : null,
+          escalatedFromDeliveryId: null,
           createdAt: dts,
           updatedAt: dts,
         })
@@ -638,6 +688,9 @@ router.openapi(sendRoute, async (c) => {
         bouncedAt: null,
         recipientId: nonSegmentRecipientId,
         variantId: null,
+        chainId: resolvedChainId,
+        chainStepIndex: resolvedChainId ? 0 : null,
+        escalatedFromDeliveryId: null,
         createdAt: dts,
         updatedAt: dts,
       })

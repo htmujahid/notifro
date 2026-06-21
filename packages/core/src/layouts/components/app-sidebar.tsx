@@ -11,6 +11,7 @@ import {
   FileTextIcon,
   LayoutDashboardIcon,
   RadioIcon,
+  RouteIcon,
   ScrollIcon,
   Settings2Icon,
   UsersIcon,
@@ -45,6 +46,7 @@ const NAV_DOCUMENTS = [
   { name: "Logs", url: "/logs", icon: <ScrollIcon className="size-4" /> },
   { name: "Audiences", url: "/audiences", icon: <UsersIcon className="size-4" /> },
   { name: "Analytics", url: "/analytics", icon: <BarChart3Icon className="size-4" /> },
+  { name: "Routing", url: "/routing", icon: <RouteIcon className="size-4" /> },
 ]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

@@ -75,6 +75,30 @@ export interface DeliveryTable {
   bouncedAt: string | null
   recipientId: ColumnType<string | null, string | null | undefined, string | null>
   variantId: ColumnType<string | null, string | null | undefined, string | null>
+  chainId: ColumnType<string | null, string | null | undefined, string | null>
+  chainStepIndex: ColumnType<number | null, number | null | undefined, number | null>
+  escalatedFromDeliveryId: ColumnType<string | null, string | null | undefined, string | null>
+  createdAt: string
+  updatedAt: string
+}
+
+export interface FallbackChainTable {
+  id: string
+  userId: string
+  name: string
+  steps: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface RoutingRuleTable {
+  id: string
+  userId: string
+  priority: number
+  enabled: number
+  match: string
+  targetChainId: string | null
+  targetChannel: string | null
   createdAt: string
   updatedAt: string
 }
@@ -320,4 +344,6 @@ export interface DB {
   topic: TopicTable
   preference: PreferenceTable
   channel_priority: ChannelPriorityTable
+  fallback_chain: FallbackChainTable
+  routing_rule: RoutingRuleTable
 }
