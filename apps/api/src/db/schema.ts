@@ -329,6 +329,42 @@ export interface RateLimitRuleTable {
   updatedAt: string
 }
 
+export interface ApikeyTable {
+  id: string
+  configId: string
+  name: string | null
+  start: string | null
+  referenceId: string
+  prefix: string | null
+  key: string
+  refillInterval: number | null
+  refillAmount: number | null
+  lastRefillAt: string | null
+  enabled: number
+  rateLimitEnabled: number
+  rateLimitTimeWindow: number | null
+  rateLimitMax: number | null
+  requestCount: number
+  remaining: number | null
+  lastRequest: string | null
+  expiresAt: string | null
+  createdAt: string
+  updatedAt: string
+  permissions: string | null
+  metadata: string | null
+}
+
+export interface ApiRequestLogTable {
+  id: string
+  userId: string
+  apiKeyId: string | null
+  method: string
+  path: string
+  status: number
+  latencyMs: number | null
+  createdAt: string
+}
+
 export interface DB {
   user: UserTable
   connection: ConnectionTable
@@ -357,4 +393,6 @@ export interface DB {
   fallback_chain: FallbackChainTable
   routing_rule: RoutingRuleTable
   rate_limit_rule: RateLimitRuleTable
+  apikey: ApikeyTable
+  api_request_log: ApiRequestLogTable
 }

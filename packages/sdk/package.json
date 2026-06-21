@@ -1,0 +1,27 @@
+{
+  "name": "@workspace/sdk",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "generate": "openapi-typescript http://localhost:8787/doc -o src/generated.ts",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@workspace/api-client": "workspace:*"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10",
+    "@types/node": "^24",
+    "eslint": "^10",
+    "globals": "^17",
+    "openapi-typescript": "^7",
+    "typescript": "~6",
+    "typescript-eslint": "^8"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts"
+  }
+}

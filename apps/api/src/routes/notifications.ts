@@ -11,6 +11,7 @@ import { resolveSegment } from '../lib/segment-resolver'
 import { resolvePreferences } from '../lib/resolve-preferences'
 import { checkRateLimit } from '../lib/rate-limit'
 import { resolveRoute } from '../lib/routing'
+import { getTransform } from '../compose/transform'
 import type { AppEnv } from '../lib/types'
 import type { ChannelType } from '../channels/types'
 import type { DeliveryQueueMessage } from '../queue/consumer'
@@ -213,6 +214,107 @@ router.openapi(sendRoute, async (c) => {
         return c.json({ ...(notification as typeof notification), deliveries })
       }
     }
+  }
+
+  if (c.var.sandboxMode) {
+    const sandboxChannels = payload.channels ?? ['email']
+    const previews: Record<string, unknown> = {}
+    const sandboxDeliveries: DeliveryRow[] = []
+    const sandboxNotifId = newId()
+    const sandboxTs = now()
+
+    await db
+      .insertInto('notification')
+      .values({
+        id: sandboxNotifId,
+        userId,
+        payload: JSON.stringify(payload),
+        subject: payload.content?.subject ?? payload.content?.title ?? null,
+        channels: JSON.stringify(sandboxChannels),
+        mode: 'sandbox',
+        status: 'test',
+        templateId: resolvedTemplateId,
+        templateData: resolvedTemplateId && rawPayload.templateData ? JSON.stringify(rawPayload.templateData) : null,
+        createdAt: sandboxTs,
+        updatedAt: sandboxTs,
+      })
+      .execute()
+
+    for (const channel of sandboxChannels) {
+      try {
+        const transform = getTransform(channel as ChannelType)
+        previews[channel] = transform(payload, { connection: null })
+      } catch {
+        previews[channel] = null
+      }
+
+      const dts = now()
+      const deliveryId = newId()
+      const recipientAddr = await resolveRecipientAddress(db, channel, payload.recipient as Record<string, unknown>)
+
+      await db
+        .insertInto('delivery')
+        .values({
+          id: deliveryId,
+          userId,
+          notificationId: sandboxNotifId,
+          channel,
+          recipient: recipientAddr,
+          status: 'test',
+          providerMessageId: null,
+          error: JSON.stringify(previews[channel]),
+          attempts: 0,
+          nextRetryAt: null,
+          lastError: null,
+          deliveredAt: null,
+          openedAt: null,
+          clickedAt: null,
+          bouncedAt: null,
+          recipientId: null,
+          variantId: null,
+          chainId: null,
+          chainStepIndex: null,
+          escalatedFromDeliveryId: null,
+          createdAt: dts,
+          updatedAt: dts,
+        })
+        .execute()
+
+      sandboxDeliveries.push({
+        id: deliveryId,
+        userId,
+        notificationId: sandboxNotifId,
+        channel,
+        recipient: recipientAddr,
+        status: 'test',
+        providerMessageId: null,
+        error: JSON.stringify(previews[channel]),
+        attempts: 0,
+        nextRetryAt: null,
+        lastError: null,
+        deliveredAt: null,
+        openedAt: null,
+        clickedAt: null,
+        bouncedAt: null,
+        recipientId: null,
+        variantId: null,
+        chainId: null,
+        chainStepIndex: null,
+        escalatedFromDeliveryId: null,
+        createdAt: dts,
+        updatedAt: dts,
+      })
+    }
+
+    const sandboxNotif = await db
+      .selectFrom('notification')
+      .where('id', '=', sandboxNotifId)
+      .where('userId', '=', userId)
+      .selectAll()
+      .executeTakeFirstOrThrow()
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return c.json({ ...(sandboxNotif as typeof sandboxNotif), deliveries: sandboxDeliveries, sandboxMode: true, previews }) as any
   }
 
   if (payload.sendAt || payload.sendAtLocal) {

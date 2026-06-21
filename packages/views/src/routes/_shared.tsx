@@ -28,6 +28,7 @@ const AccountTwoFactorPage = lazy(() => import("../pages/account/two-factor"))
 const PreferencesPage = lazy(() => import("../pages/preferences"))
 const UnsubscribePage = lazy(() => import("../pages/unsubscribe"))
 const RoutingPage = lazy(() => import("../pages/routing"))
+const DevelopersPage = lazy(() => import("../pages/developers"))
 
 export const sharedAuthRoutes: RouteObject = {
   path: "auth",
@@ -53,6 +54,7 @@ export const sharedProtectedChildren: RouteObject[] = [
   { path: "audiences", element: <AudiencesPage /> },
   { path: "analytics", element: <AnalyticsPage /> },
   { path: "routing", element: <RoutingPage /> },
+  { path: "developers", element: <DevelopersPage /> },
   { path: "settings", element: <SettingsPage /> },
   { path: "help", element: <HelpPage /> },
   { path: "onboarding", element: <OnboardingPage /> },

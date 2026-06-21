@@ -30,6 +30,8 @@ import preferencesRouter from './routes/preferences'
 import routingRouter from './routes/routing'
 import chainsRouter from './routes/chains'
 import rateLimitsRouter from './routes/rate-limits'
+import keysRouter from './routes/keys'
+import requestLogRouter from './routes/request-log'
 import { handleDeliveryQueue } from './queue/consumer'
 import { handleScheduledSweep } from './scheduling/sweep'
 import './channels/email'
@@ -65,7 +67,7 @@ app.use('*', async (c, next) => {
 app.use('/api/*', (c, next) => {
   return cors({
     origin: c.env.FRONTEND_URL,
-    allowHeaders: ['Content-Type', 'Authorization'],
+    allowHeaders: ['Content-Type', 'Authorization', 'X-API-Key', 'X-Renderical-Sandbox'],
     allowMethods: ['POST', 'GET', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
     exposeHeaders: ['Content-Length'],
     maxAge: 600,
@@ -74,16 +76,69 @@ app.use('/api/*', (c, next) => {
 })
 
 app.use('*', async (c, next) => {
+  c.set('sandboxMode', false)
+  c.set('apiKeyId', null)
+
+  const authHeader = c.req.header('Authorization')
+  const apiKeyHeader = c.req.header('X-API-Key')
+  const rawKey = apiKeyHeader ?? (authHeader?.startsWith('Bearer rk_') ? authHeader.slice(7) : null)
+
+  if (rawKey?.startsWith('rk_')) {
+    const verified = await authInstance.api.verifyApiKey({ body: { key: rawKey } })
+    if (verified.valid && verified.key) {
+      const apiKey = verified.key
+      const dbUser = await c.var.db
+        .selectFrom('user')
+        .where('id', '=', apiKey.referenceId)
+        .selectAll()
+        .executeTakeFirst()
+      if (dbUser) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        c.set('user', dbUser as any)
+        c.set('session', null)
+        const meta = apiKey.metadata as { mode?: string } | null
+        c.set('sandboxMode', meta?.mode === 'test' || c.req.header('X-Renderical-Sandbox') === 'true')
+        c.set('apiKeyId', apiKey.id)
+        await next()
+        return
+      }
+    }
+  }
+
+  c.set('sandboxMode', c.req.header('X-Renderical-Sandbox') === 'true')
+
   const session = await authInstance.api.getSession({ headers: c.req.raw.headers })
   if (!session) {
     c.set('user', null)
     c.set('session', null)
-    await next()
-    return
+  } else {
+    c.set('user', session.user)
+    c.set('session', session.session)
   }
-  c.set('user', session.user)
-  c.set('session', session.session)
   await next()
+})
+
+app.use('/api/*', async (c, next) => {
+  const start = Date.now()
+  await next()
+  const userId = c.var.user?.id
+  if (userId && !c.req.path.includes('/api/request-log') && !c.req.path.includes('/api/auth/')) {
+    const ms = Date.now() - start
+    c.var.db
+      .insertInto('api_request_log')
+      .values({
+        id: crypto.randomUUID(),
+        userId,
+        apiKeyId: c.var.apiKeyId,
+        method: c.req.method,
+        path: new URL(c.req.url).pathname,
+        status: c.res.status,
+        latencyMs: ms,
+        createdAt: new Date().toISOString(),
+      })
+      .execute()
+      .catch(() => {})
+  }
 })
 
 app.on(['POST', 'GET'], '/api/auth/*', (c) => {
@@ -161,6 +216,8 @@ app.route('/api', preferencesRouter)
 app.route('/api', routingRouter)
 app.route('/api', chainsRouter)
 app.route('/api', rateLimitsRouter)
+app.route('/api', keysRouter)
+app.route('/api', requestLogRouter)
 app.doc('/doc', {
   openapi: '3.0.0',
   info: { title: 'Renderical API', version: '1.0.0' },

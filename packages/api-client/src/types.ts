@@ -293,3 +293,31 @@ export interface PreferenceCenter {
   }>
   globalOptOut: string[]
 }
+
+export interface ApiKey {
+  id: string
+  referenceId: string
+  name: string | null
+  start: string | null
+  prefix: string | null
+  enabled: boolean
+  metadata: { mode?: 'live' | 'test'; [key: string]: unknown } | null
+  lastRequest: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ApiKeyWithSecret extends ApiKey {
+  key: string
+}
+
+export interface ApiRequestLog {
+  id: string
+  userId: string
+  apiKeyId: string | null
+  method: string
+  path: string
+  status: number
+  latencyMs: number | null
+  createdAt: string
+}

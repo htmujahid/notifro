@@ -7,13 +7,19 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "turbo format",
-    "typecheck": "turbo typecheck"
+    "typecheck": "turbo typecheck",
+    "sdk:generate": "pnpm --filter @workspace/sdk run generate"
   },
   "devDependencies": {
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "turbo": "^2.9.15",
     "typescript": "~6"
+  },
+  "pnpm": {
+    "overrides": {
+      "@better-auth/core": "1.6.20"
+    }
   },
   "packageManager": "pnpm@10.33.4",
   "engines": {

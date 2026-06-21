@@ -1,6 +1,7 @@
 import { env } from 'cloudflare:workers'
 import { betterAuth } from 'better-auth'
 import { twoFactor, phoneNumber } from 'better-auth/plugins'
+import { apiKey } from '@better-auth/api-key'
 import { sendVerificationEmail, sendResetPasswordEmail, sendTwoFactorOTPEmail } from '@workspace/mailer'
 import { mockD1 } from './mock-db'
 import { kvSecondaryStorage } from './kv-storage'
@@ -67,6 +68,11 @@ export function createAuth(db: D1Database = mockD1) {
         },
         otpLength: 6,
         expiresIn: 300,
+      }),
+      apiKey({
+        defaultPrefix: 'rk_',
+        enableMetadata: true,
+        rateLimit: { enabled: false },
       }),
     ],
   })
