@@ -48,7 +48,6 @@
     "./hooks/schedules": "./src/hooks/schedules.ts",
     "./hooks/templates": "./src/hooks/templates.ts",
     "./hooks/audiences": "./src/hooks/audiences.ts",
-    "./hooks/preferences": "./src/hooks/preferences.ts",
-    "./hooks/throttling": "./src/hooks/throttling.ts"
+    "./hooks/preferences": "./src/hooks/preferences.ts"
   }
 }

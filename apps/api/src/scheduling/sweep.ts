@@ -1,7 +1,6 @@
 import { db } from '../db/client'
 import { getAdapter } from '../channels/registry'
 import { resolveSendConnection } from '../channels/resolve'
-import { flushDueDigests } from '../lib/digest'
 import type { ChannelType } from '../channels/types'
 import type { DeliveryQueueMessage } from '../queue/consumer'
 import { isInQuietHours, isInDeliveryWindow, nextAllowedTime, nextWindowStart } from './utils'
@@ -187,5 +186,4 @@ export async function handleScheduledSweep(env: CloudflareBindings): Promise<voi
       .execute()
   }
 
-  await flushDueDigests(database, env, ts)
 }
