@@ -89,9 +89,7 @@ export function createRendericalClient(options: RendericalClientOptions) {
       })
     },
 
-    listDeliveries(
-      params?: Record<string, string | number>
-    ): Promise<
+    listDeliveries(params?: Record<string, string | number>): Promise<
       ListResponse<{
         id: string
         channel: string

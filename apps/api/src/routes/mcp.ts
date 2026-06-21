@@ -165,12 +165,10 @@ router.openapi(upsertGateRoute, async (c) => {
       updatedAt: ts,
     })
     .onConflict((oc) =>
-      oc
-        .columns(["userId", "tool"])
-        .doUpdateSet({
-          requiresApproval: body.requiresApproval ? 1 : 0,
-          updatedAt: ts,
-        })
+      oc.columns(["userId", "tool"]).doUpdateSet({
+        requiresApproval: body.requiresApproval ? 1 : 0,
+        updatedAt: ts,
+      })
     )
     .execute()
 
