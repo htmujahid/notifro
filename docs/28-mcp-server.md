@@ -1,6 +1,6 @@
-# Milestone 29 — MCP server (remote HTTP + local stdio)
+# Milestone 28 — MCP server (remote HTTP + local stdio)
 
-**Phase:** 8 · **Depends on:** M10, M28 (developer tools) · **Status:** Done
+**Phase:** 8 · **Depends on:** M10, M27 (developer tools) · **Status:** Done
 
 ## Goal
 Expose the platform to AI agents over the Model Context Protocol: tools to send/schedule/inspect
@@ -13,7 +13,7 @@ Agents are a first-class way to operate notification infrastructure. MCP makes e
 by an LLM, while approval gates keep destructive/sending actions under human control.
 
 ## Current state
-- M28 (developer tools) added API keys + request logging; the remote MCP endpoint authenticates with the same keys.
+- M27 (developer tools) added API keys + request logging; the remote MCP endpoint authenticates with the same keys.
 - M10 send pipeline and the template/analytics routes already exist for the tools to call.
 
 ## Scope (in)

@@ -25,8 +25,8 @@ milestones are **Done**; these are reference docs for future changes, not a buil
 - **Frontend packages**: `@renderical/views` (pages/routes), `@renderical/core` (hooks/components/layouts),
   `@renderical/api-client` (typed client + shared types). UI from `@renderical/ui` (shadcn-generated — never
   edit `packages/ui/src/components/`).
-- **Channels**: 11 registered adapters in `apps/api/src/channels/` (`email | webhook | web_push | sms |
-  whatsapp | telegram | slack | discord | teams | mobile_push | in_app`), self-registering via `index.ts`
+- **Channels**: 10 registered adapters in `apps/api/src/channels/` (`email | webhook | web_push | sms |
+  whatsapp | telegram | slack | discord | teams | in_app`), self-registering via `index.ts`
   imports.
 - **API conventions**: `@hono/zod-openapi` routes with `defaultHook: validationHook`; `Errors.*` helpers;
   `listQuerySchema`/`applyListQuery` for list endpoints (`{data, nextCursor}`, keyset cursor, limit cap 100,
@@ -68,19 +68,18 @@ milestones are **Done**; these are reference docs for future changes, not a buil
 | 17 | Telegram channel (Bot API)                         | 3     | M08, M09, M10         | Done   |
 | 18 | Slack channel (bot token + Block Kit)              | 3     | M08, M09, M10         | Done   |
 | 19 | Discord & Teams channels (webhook URLs)            | 3     | M08, M09, M10, M14    | Done   |
-| 20 | Mobile push (APNs / FCM)                           | 3     | M08, M09, M10         | Done   |
-| 21 | Delivery queue: retries, backoff, DLQ, idempotency | 4     | M10                   | Done   |
-| 22 | Delivery receipts, open/click, bounce              | 4     | M21                   | Done   |
-| 23 | Scheduling, timezones, quiet hours                 | 5     | M21                   | Done   |
-| 24 | Recurring/cron sends                               | 5     | M23                   | Done   |
-| 25 | Template engine (vars, conditionals, loops, i18n)  | 6     | M09                   | Done   |
-| 26 | Template management UI (builder, versioning)       | 6     | M25                   | Done   |
-| 27 | KV-backed rate limiting                            | 7     | M21, M05–M07          | Done   |
-| 28 | Developer tools: API keys, SDK, CLI                | 8     | M10, M06              | Done   |
-| 29 | MCP server (remote HTTP + local stdio)             | 8     | M10, M28              | Done   |
-| 30 | Analytics dashboards                               | 9     | M22                   | Done   |
-| 31 | Audit log, suppression & consent ledger            | 9     | M22                   | Done   |
-| 32 | Provider failover & health checks                  | 10    | M21                   | Done   |
+| 20 | Delivery queue: retries, backoff, DLQ, idempotency | 4     | M10                   | Done   |
+| 21 | Delivery receipts, open/click, bounce              | 4     | M20                   | Done   |
+| 22 | Scheduling, timezones, quiet hours                 | 5     | M20                   | Done   |
+| 23 | Recurring/cron sends                               | 5     | M22                   | Done   |
+| 24 | Template engine (vars, conditionals, loops, i18n)  | 6     | M09                   | Done   |
+| 25 | Template management UI (builder, versioning)       | 6     | M24                   | Done   |
+| 26 | KV-backed rate limiting                            | 7     | M20, M05–M07          | Done   |
+| 27 | Developer tools: API keys, SDK, CLI                | 8     | M10, M06              | Done   |
+| 28 | MCP server (remote HTTP + local stdio)             | 8     | M10, M27              | Done   |
+| 29 | Analytics dashboards                               | 9     | M21                   | Done   |
+| 30 | Audit log, suppression & consent ledger            | 9     | M21                   | Done   |
+| 31 | Provider failover & health checks                  | 10    | M20                   | Done   |
 
 ## Phase map
 
@@ -88,14 +87,14 @@ milestones are **Done**; these are reference docs for future changes, not a buil
 - **Phase 0 — Foundations**: 05–07 (data layer, API conventions, typed client)
 - **Phase 1 — Core send loop**: 08–11 (channels, compose, email, inbox)
 - **Phase 2 — Activation**: 12 (onboarding + dashboard)
-- **Phase 3 — Channels**: 13–20 (web push, webhook, SMS, WhatsApp, Telegram, Slack, Discord/Teams, mobile push)
-- **Phase 4 — Reliability**: 21–22 (queue, receipts)
-- **Phase 5 — Scheduling**: 23–24 (scheduling, recurring)
-- **Phase 6 — Templates**: 25–26 (engine, UI)
-- **Phase 7 — Controls**: 27 (rate limiting)
-- **Phase 8 — Developer platform**: 28–29 (API keys/SDK/CLI, MCP)
-- **Phase 9 — Observability**: 30–31 (analytics, audit/compliance)
-- **Phase 10 — Ops**: 32 (failover/health)
+- **Phase 3 — Channels**: 13–19 (web push, webhook, SMS, WhatsApp, Telegram, Slack, Discord/Teams)
+- **Phase 4 — Reliability**: 20–21 (queue, receipts)
+- **Phase 5 — Scheduling**: 22–23 (scheduling, recurring)
+- **Phase 6 — Templates**: 24–25 (engine, UI)
+- **Phase 7 — Controls**: 26 (rate limiting)
+- **Phase 8 — Developer platform**: 27–28 (API keys/SDK/CLI, MCP)
+- **Phase 9 — Observability**: 29–30 (analytics, audit/compliance)
+- **Phase 10 — Ops**: 31 (failover/health)
 
 ## Milestone file template
 

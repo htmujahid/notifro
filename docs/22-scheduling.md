@@ -1,19 +1,19 @@
-# Milestone 23 — Scheduling, timezones, quiet hours & time-window delivery
+# Milestone 22 — Scheduling, timezones, quiet hours & time-window delivery
 
-**Phase:** 5 · **Depends on:** M21 · **Status:** Done
+**Phase:** 5 · **Depends on:** M20 · **Status:** Done
 
 ## Goal
 Let callers schedule sends for a future time with recipient-timezone awareness, enforce per-recipient
 quiet hours / do-not-disturb, and restrict delivery to time windows (e.g. only 9am–5pm local) — with a
-durable scheduler that enqueues due messages onto the M21 delivery queue.
+durable scheduler that enqueues due messages onto the M20 delivery queue.
 
 ## Why it matters
 Transactional sends fire now; reminders and digests must fire later, in the recipient's local
 time, without waking people at 3am. Scheduling + quiet hours are table-stakes for a notification platform
-and a prerequisite for recurring sends (M24).
+and a prerequisite for recurring sends (M23).
 
 ## Current state
-- M21 delivers via a Cloudflare Queue; `POST /api/notifications` enqueues immediately.
+- M20 delivers via a Cloudflare Queue; `POST /api/notifications` enqueues immediately.
 - The compose schema (M09) can carry scheduling hints; no scheduling storage or scheduler exists.
 - No recipient timezone or quiet-hours data is stored yet.
 
@@ -22,7 +22,7 @@ and a prerequisite for recurring sends (M24).
   per-recipient local time, status `pending|enqueued|cancelled`). `POST /api/notifications` with a
   `sendAt`/`scheduleFor` creates a scheduled row instead of enqueuing immediately.
 - **Scheduler**: a Durable Object alarm per upcoming message **or** a `scheduled_message` table swept by a
-  Cron Trigger (every minute) that enqueues all rows now due onto the M21 queue. Document the chosen
+  Cron Trigger (every minute) that enqueues all rows now due onto the M20 queue. Document the chosen
   approach; DO-alarms scale better for precise per-message timing, Cron sweep is simpler — recommend the
   Cron sweep first, DO alarms as an optimization.
 - **Timezone awareness**: store recipient timezone (IANA, e.g. `America/New_York`) on a recipient profile;
@@ -34,7 +34,7 @@ and a prerequisite for recurring sends (M24).
   until inside the window.
 
 ## Out of scope (deferred)
-- Recurring/cron definitions → M24.
+- Recurring/cron definitions → M23.
 
 ## Data model
 - `scheduled_message`: org-scoped, `payload` (json), `sendAt` (UTC), `status`, `channel`, `createdAt`,
@@ -66,9 +66,9 @@ and a prerequisite for recurring sends (M24).
 
 ## Implementation steps
 1. Add the `scheduled_message` + recipient timezone/quiet-hours columns; add a wrangler D1 migration (apply: `wrangler d1 migrations apply DB --local`) and extend the Kysely `DB` interface (M05).
-2. Branch `POST /api/notifications`: if scheduled, persist a `scheduled_message`; else go straight to the M21 producer.
+2. Branch `POST /api/notifications`: if scheduled, persist a `scheduled_message`; else go straight to the M20 producer.
 3. Add a Cron Trigger (`[triggers] crons = ["* * * * *"]`) + scheduled handler that selects due rows,
-   applies quiet-hours/time-window deferral, and enqueues the rest onto the M21 queue (mark `enqueued`).
+   applies quiet-hours/time-window deferral, and enqueues the rest onto the M20 queue (mark `enqueued`).
 4. Implement TZ resolution + quiet-hours/time-window logic in a shared `scheduling/` module.
 5. Wire the Schedules page and the compose scheduler UI; add `useSchedules()` hook (M07 convention).
 6. (Optional) Add a Durable Object alarm path for sub-minute precision on high-priority scheduled sends.

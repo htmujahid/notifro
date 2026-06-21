@@ -33,7 +33,7 @@ Every milestone from M10 onward needs a consistent, typed way to call non-auth e
 
 ## Out of scope (deferred)
 - Concrete resource hooks (notifications, channels…) → their own milestones.
-- API-key / bearer auth → M31.
+- API-key / bearer auth → M30.
 
 ## Data model
 None.

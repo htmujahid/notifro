@@ -9,8 +9,8 @@ push service — recorded as a `delivery` like every other channel.
 
 ## Why it matters
 Web push reaches users when the dashboard tab is closed, with no app store and no third-party provider
-bill. It also establishes the device-subscription model and the VAPID signing primitives that mobile
-push (M20) and routing/fallback (M29) build on.
+bill. It also establishes the device-subscription model and the VAPID signing primitives that
+routing/fallback (M28) builds on.
 
 ## Current state
 - `notification` + `delivery` + `ChannelAdapter` exist (M10); the in-app inbox (M11) already resolves
@@ -33,9 +33,8 @@ push (M20) and routing/fallback (M29) build on.
   prune subscriptions that return `404`/`410` (expired).
 
 ## Out of scope (deferred)
-- Mobile push (APNs / FCM) → M20.
 - Rich/action buttons in the push payload beyond title/body/icon/url → revisit with M09 rich content.
-- Quiet hours / DND gating → M23; preference opt-out → M28.
+- Quiet hours / DND gating → M22; preference opt-out → M27.
 
 ## Data model
 ```sql
@@ -113,4 +112,4 @@ Session + `requireAuth` (M06); subscriptions are scoped to `session.user.id`.
 - Service worker scope/caching: register `sw.js` at the site root so it controls the whole app; bump a
   version constant to force updates.
 - Per-recipient fan-out (one POST per subscription) can be slow inline — fine now, moves behind the
-  queue in M21 with no schema change.
+  queue in M20 with no schema change.

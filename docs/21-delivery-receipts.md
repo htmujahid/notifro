@@ -1,6 +1,6 @@
-# Milestone 22 — Delivery receipts, open/click tracking & bounce handling
+# Milestone 21 — Delivery receipts, open/click tracking & bounce handling
 
-**Phase:** 4 · **Depends on:** M21 · **Status:** Done
+**Phase:** 4 · **Depends on:** M20 · **Status:** Done
 
 ## Goal
 Extend the delivery lifecycle beyond `sent` to `delivered`/`opened`/`clicked`: add an email open pixel and
@@ -13,7 +13,7 @@ power the platform's analytics (M33) and compliance (suppression, M34).
 Without receipts, delivery status is a half-truth.
 
 ## Current state
-- M21 runs delivery on a queue and records `queued→retrying→sent|failed|dead`.
+- M20 runs delivery on a queue and records `queued→retrying→sent|failed|dead`.
 - The `delivery` table (M10) has provider message ids and timestamps but no engagement columns.
 - No public callback/pixel endpoints exist yet.
 
@@ -39,7 +39,7 @@ Without receipts, delivery status is a half-truth.
 - `delivery` (M10): add `deliveredAt?`, `openedAt?`, `clickedAt?`, `bouncedAt?`.
 - `delivery_event`: `deliveryId`, `type` (`delivered|opened|clicked|bounced|complained`), `at`, `meta` (json).
 - M06 list-query: index the new engagement timestamp columns so they back the engagement-state filters on
-  the deliveries lists (M21/M34) — e.g. `(userId, deliveredAt)`, `(userId, openedAt)`,
+  the deliveries lists (M20/M34) — e.g. `(userId, deliveredAt)`, `(userId, openedAt)`,
   `(userId, clickedAt)`, `(userId, bouncedAt)` — and index `delivery_event (deliveryId, type)`.
 - Signed-token strategy: HMAC over `deliveryId`+`type` using a Worker secret (no DB row needed) or a
   `tracking_token` table if you prefer revocable tokens.
@@ -50,7 +50,7 @@ Without receipts, delivery status is a half-truth.
 - `POST /webhooks/:provider` — provider receipt ingestion (verify provider signature; no session auth).
 - Engagement fields appear in `GET /api/notifications/:id` and `GET /api/deliveries/:id`.
 - **List query (M06 contract)** — this milestone adds engagement state, not a new list endpoint. Any
-  deliveries list defined elsewhere (M21 `GET /api/deliveries/dead`, M34 logs) **extends its M06
+  deliveries list defined elsewhere (M20 `GET /api/deliveries/dead`, M34 logs) **extends its M06
   `filterable` allow-list** with engagement-state `eq` filters (`delivered`, `opened`, `clicked`,
   `bounced`) resolved against the new lifecycle columns/`delivery_event` history, AND-ed with the
   mandatory `userId` scope and parameter-bound like every other filter. No new sortable keys or
@@ -75,11 +75,11 @@ Without receipts, delivery status is a half-truth.
 - [x] A provider bounce webhook (signature-verified) flips the delivery to `bounced` and fires `suppress()`.
 - [x] Tracking tokens are signed/opaque — tampering or guessing ids fails verification.
 - [x] The delivery timeline reflects sent → delivered → opened → clicked accurately.
-- [x] The deliveries lists (M21/M34) expose engagement-state filters (`delivered`/`opened`/`clicked`/
+- [x] The deliveries lists (M20/M34) expose engagement-state filters (`delivered`/`opened`/`clicked`/
       `bounced` as `eq`), backed by indexed engagement timestamp columns and AND-ed with the org scope.
 
 ## Risks & notes
-- Privacy/GDPR: open/click tracking is sensitive; make it per-message opt-out and document it (ties to M28/M34).
+- Privacy/GDPR: open/click tracking is sensitive; make it per-message opt-out and document it (ties to M27/M34).
 - Webhook endpoints are unauthenticated by design — they **must** verify provider signatures and be
   idempotent (providers retry receipts).
 - Don't leak recipient identity in tracking URLs; always go through signed tokens.

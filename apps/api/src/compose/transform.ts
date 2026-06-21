@@ -22,7 +22,6 @@ const stubTransforms: Record<ChannelType, ChannelTransform> = {
   slack: (_, _ctx) => notImplemented("slack"),
   discord: (_, _ctx) => notImplemented("discord"),
   teams: (_, _ctx) => notImplemented("teams"),
-  mobile_push: (_, _ctx) => notImplemented("mobile_push"),
   webhook: (payload) => payload as unknown,
   in_app: (payload) => payload as unknown,
 }

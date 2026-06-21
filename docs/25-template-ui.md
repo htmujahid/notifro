@@ -1,10 +1,10 @@
-# Milestone 26 — Template management UI: builder, versioning/rollback, snippets, brand kit
+# Milestone 25 — Template management UI: builder, versioning/rollback, snippets, brand kit
 
-**Phase:** 6 · **Depends on:** M25 · **Status:** Done
+**Phase:** 6 · **Depends on:** M24 · **Status:** Done
 
 ## Goal
 Make `templates.tsx` real: a visual template builder with **live multi-channel preview**, full template
-CRUD wired to the M25 API, template **versioning with rollback**, a shared **snippet/component library**,
+CRUD wired to the M24 API, template **versioning with rollback**, a shared **snippet/component library**,
 and an org **brand kit** (logo, colors, fonts) that the channel transforms apply automatically.
 
 ## Why it matters
@@ -13,7 +13,7 @@ template, see exactly how it lands in email vs. Slack, save a version, and roll 
 touching code. The brand kit guarantees consistent branding across every channel from one place.
 
 ## Current state
-- **M25** shipped the `template` table, the `@renderical/templating` render engine, template CRUD routes,
+- **M24** shipped the `template` table, the `@renderical/templating` render engine, template CRUD routes,
   and `POST /api/templates/:id/render` (render-without-send) plus an `@renderical/api-client` helper.
 - **M09** transforms turn a unified-compose payload into channel-final output (email HTML, Slack Block
   Kit, etc.) — these power the per-channel preview here.
@@ -25,7 +25,7 @@ touching code. The brand kit guarantees consistent branding across every channel
 
 ## Scope (in)
 - **CRUD wiring**: replace the mock data in `templates.tsx` with real list/create/edit/delete via
-  `@renderical/core` hooks calling the M25 endpoints through `@renderical/api-client`.
+  `@renderical/core` hooks calling the M24 endpoints through `@renderical/api-client`.
 - **Visual builder**: an editor view (`/templates/:id`) with the M09 content blocks (text, markdown,
   buttons, images) editable per channel, plus a raw/expression mode for `{{variables}}`.
 - **Live multi-channel preview**: a side panel that calls `POST /api/templates/:id/render` with sample
@@ -39,13 +39,13 @@ touching code. The brand kit guarantees consistent branding across every channel
   M09/M10–M11, M13–M15 transforms read it so branding is applied at render/transform time across channels.
 
 ## Out of scope (deferred)
-- The render engine internals → **M25**.
+- The render engine internals → **M24**.
 - A/B variant management → deferred (not built; A/B testing is out of scope).
 - AI drafting / tone adjustment in the editor → **deferred (not built)**.
 - Send-time digest templating → **out of scope (digests not built)**.
 
 ## Data model
-Wrangler D1 SQL migration (extends M25):
+Wrangler D1 SQL migration (extends M24):
 ```sql
 -- apps/api/migrations/NNNN_template_ui_schema.sql
 CREATE TABLE "template_version" (
@@ -114,7 +114,7 @@ All routes: `requireAuth`, user-scoped (M06).
 - `POST   /api/templates/:id/versions/:version/restore` — restore (creates a new top version).
 - `GET/POST/PATCH/DELETE /api/snippets` — snippet CRUD.
 - `GET    /api/brand-kit` · `PUT /api/brand-kit` — read/update the org brand kit.
-- (Reuses M25 `GET/POST/PATCH/DELETE /api/templates` and `POST /api/templates/:id/render`.)
+- (Reuses M24 `GET/POST/PATCH/DELETE /api/templates` and `POST /api/templates/:id/render`.)
 
 ## Frontend
 - `packages/views/src/pages/templates.tsx` — list view wired to real data (replace mock array).

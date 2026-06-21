@@ -4,7 +4,7 @@
 
 Renderical normalizes every channel behind a single compose-once API. Write a message once
 and Renderical transforms and delivers it across Slack, email, Microsoft Teams, Discord,
-mobile/web push, in-app inbox, webhooks, and SMS — with fallback chains, scope-based OAuth,
+web push, in-app inbox, webhooks, and SMS — with fallback chains, scope-based OAuth,
 a built-in preference center, and a **native MCP server** so AI agents can send safely. One
 integration replaces the five tools teams stitch together today.
 
@@ -16,7 +16,7 @@ integration replaces the five tools teams stitch together today.
   template engine with variables, conditionals, loops, and localization.
 - **Fallback chains** — try push → fall back to email → fall back to SMS, with routing rules
   by user, message type, priority, or time.
-- **Multi-channel delivery** — Slack, Gmail/SMTP, Teams, Discord, APNs/FCM, web push, in-app
+- **Multi-channel delivery** — Slack, Gmail/SMTP, Teams, Discord, web push, in-app
   inbox, generic webhooks, and SMS. Broadcast, targeted, and transactional modes with
   rate-aware throttling.
 - **Scheduling & timing** — send-at with timezone awareness, recurring/cron sends, send-time
@@ -75,7 +75,7 @@ apps/
   ios       → iOS app
   android   → Android app
 packages/
-  analytics, app, auth, core, i18n, mailer, mobile-shared,
+  analytics, app, auth, core, i18n, mailer,
   payments, ui, ui-primitives, views
 ```
 

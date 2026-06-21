@@ -89,7 +89,6 @@ const ALL_CHANNELS: { type: ChannelType; label: string }[] = [
   { type: "slack", label: "Slack" },
   { type: "discord", label: "Discord" },
   { type: "teams", label: "Teams" },
-  { type: "mobile_push", label: "Mobile Push" },
 ]
 
 export function CreateView() {

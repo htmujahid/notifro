@@ -33,13 +33,13 @@ M08 connection lifecycle applies where relevant; for email the connection row re
   - better-auth organization plugin removed from `apps/api/src/lib/auth.ts`.
   - `requireAuth` is the only auth middleware on all product routes.
   - All product tables use `userId` FK (no `organizationId`).
-  - 7 channel types: `email | webhook | web_push | sms | whatsapp | telegram | in_app` (extended to 11 by M18–M20: + slack, discord, teams, mobile_push).
+  - 7 channel types: `email | webhook | web_push | sms | whatsapp | telegram | in_app` (extended to 10 by M18–M19: + slack, discord, teams).
 
 ## Out of scope (deferred)
-- Queueing, retries, idempotency → M21.
-- Open/click/bounce receipts → M22.
+- Queueing, retries, idempotency → M20.
+- Open/click/bounce receipts → M21.
 - Non-email channels → M11, M13–M17.
-- Scheduling → M23.
+- Scheduling → M22.
 
 ## Data model
 Wrangler D1 migration (`apps/api/migrations/0003_notifications.sql`):
@@ -141,5 +141,5 @@ All endpoints scoped to `c.var.user!.id`; cross-user reads are impossible.
 ## Risks & notes
 - Set `EMAIL_LOG_ONLY=true` in `.dev.vars` for local dev to log emails instead of attempting CF binding send.
 - `delivered` is **optimistic** — set on successful CF binding hand-off. True delivery/bounce state
-  arrives in M22.
+  arrives in M21.
 - Store the full compose `payload` JSON for audit/replay.

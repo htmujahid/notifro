@@ -20,7 +20,6 @@
    - [Analytics & Tracking](#analytics--tracking)
    - [Inbox (In-App Messages)](#inbox-in-app-messages)
    - [Web Push Subscriptions](#web-push-subscriptions)
-   - [Mobile Device Tokens](#mobile-device-tokens)
    - [Brand Kit](#brand-kit)
    - [Rate Limits](#rate-limits)
    - [API Request Logging](#api-request-logging)
@@ -36,13 +35,12 @@
 10. [packages/templating — Template Engine](#packagestemplating--template-engine)
 11. [packages/api-client — Frontend API Client](#packagesapi-client--frontend-api-client)
 12. [packages/ui — UI Primitives (shadcn)](#packagesui--ui-primitives-shadcn)
-13. [packages/mobile-shared — Mobile Push Utils](#packagesmobile-shared--mobile-push-utils)
-14. [apps/web — Web App](#appsweb--web-app)
-15. [apps/desktop — Electron Desktop App](#appsdesktop--electron-desktop-app)
-16. [apps/ios & apps/android — Capacitor Mobile Apps](#appsios--appsandroid--capacitor-mobile-apps)
-17. [apps/site — Marketing Site (Astro)](#appssite--marketing-site-astro)
-18. [Database Schema Summary](#database-schema-summary)
-19. [API Route Index](#api-route-index)
+13. [apps/web — Web App](#appsweb--web-app)
+14. [apps/desktop — Electron Desktop App](#appsdesktop--electron-desktop-app)
+15. [apps/ios & apps/android — Capacitor Mobile Apps](#appsios--appsandroid--capacitor-mobile-apps)
+16. [apps/site — Marketing Site (Astro)](#appssite--marketing-site-astro)
+17. [Database Schema Summary](#database-schema-summary)
+18. [API Route Index](#api-route-index)
 
 ---
 
@@ -69,7 +67,6 @@ renderical/
     ├── templating/   # Mustache-style template engine
     ├── ui/           # shadcn-generated UI primitives
     ├── ui-primitives/# Theme provider
-    ├── mobile-shared/# Mobile push registration helper
     └── i18n/         # Internationalisation stubs
 ```
 
@@ -119,9 +116,6 @@ All adapters are registered into a global registry (`channels/registry.ts`) at s
 | Discord | `channels/discord.ts` | Discord Webhook |
 | Microsoft Teams | `channels/teams.ts` | Teams Incoming Webhook |
 | Web Push | `channels/web-push/adapter.ts` | VAPID push; encrypted with `web-push/encrypt.ts` |
-| Mobile Push (APNS) | `channels/mobile-push/apns.ts` | Apple APNs (JWT auth) |
-| Mobile Push (FCM) | `channels/mobile-push/fcm.ts` | Firebase Cloud Messaging |
-| Mobile Push (adapter) | `channels/mobile-push/adapter.ts` | Routes by device platform |
 | Webhook | `channels/webhook/adapter.ts` | HTTP POST; HMAC-SHA256 signed (`webhook/sign.ts`) |
 | In-App | `channels/in-app.ts` | Writes to `inbox_message` table |
 
@@ -159,7 +153,7 @@ ComposePayload {
 
 **Recipient types:**
 - `user` — owner's own user account (email auto-resolved)
-- `contact` — ad-hoc address (email, phone, slackUserId, discordUserId, teamsUserId, deviceToken, pushSubscription)
+- `contact` — ad-hoc address (email, phone, slackUserId, discordUserId, teamsUserId, pushSubscription)
 
 **Send flow** (`routes/notifications.ts`):
 1. Parse + validate `ComposePayload`
@@ -322,21 +316,6 @@ Files: `apps/api/src/channels/in-app.ts`, `apps/api/src/routes/inbox.ts`
 **Encryption** (`channels/web-push/encrypt.ts`): AES-GCM payload encryption per the Web Push spec. VAPID JWT signed with P-256 key (`channels/web-push/vapid.ts`).
 
 Files: `apps/api/src/channels/web-push/`, `apps/api/src/routes/push.ts`
-
----
-
-### Mobile Device Tokens
-
-**Device tokens** (`device_token` table):
-- `platform` (ios / android), `token`, `active`, `lastSeenAt`
-- Routes: `POST /api/devices`, `DELETE /api/devices/:id`, `GET /api/devices`
-
-**Mobile Push flow:**
-- APNS (`channels/mobile-push/apns.ts`): JWT-based authentication with P-8 key
-- FCM (`channels/mobile-push/fcm.ts`): HTTP v1 API with service account auth
-- Adapter selects APNS or FCM based on device platform
-
-Files: `apps/api/src/channels/mobile-push/`, `apps/api/src/routes/devices.ts`
 
 ---
 
@@ -739,12 +718,6 @@ Utility: `lib/utils.ts` — `cn()` (class merging).
 
 ---
 
-## packages/mobile-shared — Mobile Push Utils
-
-`packages/mobile-shared/src/push.ts` — helper for registering a Capacitor device token with the Renderical API after a successful FCM/APNS registration on the device.
-
----
-
 ## apps/web — Web App
 
 Vite + React SPA.
@@ -808,7 +781,6 @@ Astro + Cloudflare Pages.
 | `idempotency_key` | Deduplication keys (24h TTL) |
 | `inbox_message` | In-app inbox messages |
 | `push_subscription` | Browser Web Push subscriptions (VAPID) |
-| `device_token` | Mobile push tokens (iOS/Android) |
 | `webhook_endpoint` | Outbound webhook endpoints with HMAC secret |
 | `scheduled_message` | One-time scheduled notifications |
 | `recurring_send` | Cron-based recurring sends |
@@ -853,7 +825,6 @@ All routes prefixed `/api` unless noted.
 | `GET` | `/api/push/vapid-public-key` | VAPID public key |
 | `POST` | `/api/push/subscribe` | Register push subscription |
 | `DELETE` | `/api/push/unsubscribe` | Remove push subscription |
-| `GET/POST/DELETE` | `/api/devices` | Mobile device token CRUD |
 | `GET/POST/PATCH/DELETE` | `/api/webhooks` | Outbound webhook endpoint CRUD |
 | `POST` | `/api/webhooks/:id/test` | Send test event to webhook |
 | `GET/POST/DELETE` | `/api/schedules` | One-time schedule CRUD |

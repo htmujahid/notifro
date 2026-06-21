@@ -20,17 +20,17 @@ consumer branch rather than re-plumbing infrastructure.
 - **Worker config** (`apps/api/wrangler.jsonc`): `compatibility_flags: ["nodejs_compat"]`; bindings:
   - `DB` — D1 database `renderical`, `migrations_dir: migrations`
   - `KV` — better-auth secondary storage (sessions, rate-limit counters)
-  - `RATE_LIMIT_KV` — app-level rate limiting (M30)
+  - `RATE_LIMIT_KV` — app-level rate limiting (M29)
   - `EMAIL` — Cloudflare `send_email` binding (M02)
   - `DELIVERY_Q` producer + a `delivery-queue` consumer (`max_retries: 5`, DLQ `delivery-dlq`) + a
-    `delivery-dlq` consumer (M21)
-  - cron trigger `* * * * *` → scheduled sweep (M23+)
+    `delivery-dlq` consumer (M20)
+  - cron trigger `* * * * *` → scheduled sweep (M22+)
 - **Hono + OpenAPI**: `OpenAPIHono<AppEnv>` app in `src/index.ts`; OpenAPI schema at `/doc`, Scalar API
   reference at `/scalar`.
-- **Worker entrypoints**: default export with `fetch` (Hono), `queue` (delivery consumer, M21), and
-  `scheduled` (sweep, M23) handlers.
+- **Worker entrypoints**: default export with `fetch` (Hono), `queue` (delivery consumer, M20), and
+  `scheduled` (sweep, M22) handlers.
 - **Cross-cutting middleware**: CORS (credentials + custom headers), per-request DB client on `c.var.db`,
-  auth/session population (M03), and the request placeholder for later logging (M31).
+  auth/session population (M03), and the request placeholder for later logging (M30).
 - **Type generation**: `wrangler types` → `worker-configuration.d.ts` (`CloudflareBindings`); `AppEnv`
   context type in `src/lib/types.ts`.
 
@@ -45,7 +45,7 @@ consumer branch rather than re-plumbing infrastructure.
    `db:migrate`, `db:migrate:remote`).
 2. `src/index.ts`: `OpenAPIHono<AppEnv>`, CORS, `/doc` + `/scalar`, the per-request DB middleware.
 3. `src/lib/types.ts`: `AppEnv` with `Variables` (`user`, `session`, `db`, plus fields added later).
-4. Wire the `queue` and `scheduled` exports (handlers filled in by M21 / M23).
+4. Wire the `queue` and `scheduled` exports (handlers filled in by M20 / M22).
 5. `wrangler types` to generate `worker-configuration.d.ts`.
 
 ## Acceptance criteria
@@ -57,4 +57,4 @@ consumer branch rather than re-plumbing infrastructure.
 ## Risks & notes
 - API conventions (error model, list-query contract, `requireAuth`) are formalized in M06; this milestone
   only establishes the scaffold + bindings.
-- The queue consumer and scheduled sweep are wired here but only do real work from M21 / M23 onward.
+- The queue consumer and scheduled sweep are wired here but only do real work from M20 / M22 onward.

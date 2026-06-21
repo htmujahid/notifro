@@ -17,7 +17,6 @@ import chainsRouter from "./chains"
 import complianceRouter from "./compliance"
 import connectionsRouter from "./connections"
 import deliveriesRouter from "./deliveries"
-import devicesRouter from "./devices"
 import eventsRouter from "./events"
 import inboxRouter from "./inbox"
 import journeysRouter from "./journeys"
@@ -159,7 +158,6 @@ export function registerRoutes(app: OpenAPIHono<AppEnv>) {
   app.route("/api", overviewRouter)
   app.route("/api", pushRouter)
   app.route("/api", webhooksRouter)
-  app.route("/api", devicesRouter)
   app.route("/api", deliveriesRouter)
   app.route("/t", trackingRouter)
   app.route("/webhooks", receiptsRouter)

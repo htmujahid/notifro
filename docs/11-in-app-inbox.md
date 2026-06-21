@@ -32,8 +32,8 @@ recipient-resolution path (notification → per-user message) that push and emai
 
 ## Out of scope (deferred)
 - Real-time push of new messages (WebSocket/SSE) → polling only this milestone; WS deferred.
-- Browser/native push delivery → M13 (web push), M20 (mobile).
-- Per-user opt-out / preference center → M28.
+- Browser/native push delivery → M13 (web push).
+- Per-user opt-out / preference center → M27.
 
 ## Data model
 Wrangler D1 migration (`apps/api/migrations/NNNN_inbox.sql`):

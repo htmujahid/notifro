@@ -120,7 +120,7 @@ import './channels/telegram'
 
 ### 3 · Credential decryption pattern
 
-Both Telegram and SMS need `CONNECTION_ENC_KEY` inside `adapter.send()`. The cleanest approach (to avoid passing env into adapters) is to have the notifications route decrypt credentials and merge them into the provider before calling `adapter.send()`. This is a pattern to establish in M21 (delivery queue) or as a pre-processing step in the send route.
+Both Telegram and SMS need `CONNECTION_ENC_KEY` inside `adapter.send()`. The cleanest approach (to avoid passing env into adapters) is to have the notifications route decrypt credentials and merge them into the provider before calling `adapter.send()`. This is a pattern to establish in M20 (delivery queue) or as a pre-processing step in the send route.
 
 ---
 

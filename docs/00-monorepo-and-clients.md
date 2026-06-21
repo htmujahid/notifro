@@ -31,7 +31,7 @@ mobile. The monorepo is the substrate the whole product is built on.
   - `apps/web` — Vite SPA (React 19), deployed to Cloudflare; imports `@renderical/views/routes/web`.
   - `apps/desktop` — Electron + electron-forge; imports `routes/desktop`.
   - `apps/ios` / `apps/android` — Capacitor 8 + Vite; import `routes/ios` / `routes/android`; use
-    `@renderical/mobile-shared` for native bridges + Capacitor Preferences storage.
+    Capacitor Preferences storage for native bridges.
   - `apps/admin` — Next.js 16 (opennextjs-cloudflare).
   - `apps/site` — Astro marketing site (Cloudflare adapter).
 - **Placeholder packages** (README-only, reserved): `auth`, `analytics`, `payments`.

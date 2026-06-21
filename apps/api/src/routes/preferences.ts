@@ -458,7 +458,7 @@ publicRouter.openapi(prefCenterGetRoute, async (c) => {
   const ALL_CHANNELS = [
     "email",
     "sms",
-    "push",
+    "web_push",
     "in_app",
     "slack",
     "discord",
@@ -579,7 +579,6 @@ publicRouter.openapi(unsubscribePostRoute, async (c) => {
   const ALL_CHANNELS = [
     "email",
     "sms",
-    "push",
     "in_app",
     "slack",
     "discord",
@@ -587,7 +586,6 @@ publicRouter.openapi(unsubscribePostRoute, async (c) => {
     "telegram",
     "whatsapp",
     "web_push",
-    "mobile_push",
     "webhook",
   ]
 

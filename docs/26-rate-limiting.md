@@ -1,6 +1,6 @@
-# Milestone 27 — KV-backed rate limiting
+# Milestone 26 — KV-backed rate limiting
 
-**Phase:** 7 · **Depends on:** M21, M05–M07 · **Status:** Done
+**Phase:** 7 · **Depends on:** M20, M05–M07 · **Status:** Done
 
 ## Goal
 Cap how many notifications a user sends per channel per rolling window, enforced cheaply at send time with a
@@ -11,7 +11,7 @@ A buggy integration or misconfigured schedule can fan out thousands of sends. A 
 rate limit protects provider quotas, cost, and sender reputation without a heavyweight counting store.
 
 ## Current state
-- M21 runs delivery async on `DELIVERY_Q`; `notifications.ts` already gates each delivery on the suppression list (M31).
+- M20 runs delivery async on `DELIVERY_Q`; `notifications.ts` already gates each delivery on the suppression list (M30).
 - No throttling primitive exists (the earlier frequency-cap/digest milestone was reverted as out of scope).
 
 ## Scope (in)

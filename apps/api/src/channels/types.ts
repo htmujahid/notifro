@@ -8,7 +8,6 @@ export type ChannelType =
   | "slack"
   | "discord"
   | "teams"
-  | "mobile_push"
   | "in_app"
 
 export const CHANNEL_TYPES: ChannelType[] = [
@@ -21,7 +20,6 @@ export const CHANNEL_TYPES: ChannelType[] = [
   "slack",
   "discord",
   "teams",
-  "mobile_push",
   "in_app",
 ]
 

@@ -52,7 +52,7 @@ connection.config = { cardVersion?: string }   // default "1.5"
 
 - `validateConfig` — passthrough `{ username?, avatarUrl? }`.
 - `transform` — unified payload → Discord `embeds[]`: title/description from heading + text/markdown (Discord markdown subset), `fields` from `fields` blocks, `image`/`thumbnail` from images, buttons → links in the embed description (Discord components need a bot — keep to embeds), top-level `content` plain fallback.
-- `send` — decrypt `credentials.webhookUrl`; POST JSON `{ content, embeds, username?, avatar_url? }` with `AbortSignal.timeout`. Discord returns `204` (or message JSON with `?wait=true`); 2xx → delivered, capture `id` as `providerMessageId` when present; non-2xx → failed with status + body (handle `429` `retry_after` as a failed delivery now; M21 retry honors it later).
+- `send` — decrypt `credentials.webhookUrl`; POST JSON `{ content, embeds, username?, avatar_url? }` with `AbortSignal.timeout`. Discord returns `204` (or message JSON with `?wait=true`); 2xx → delivered, capture `id` as `providerMessageId` when present; non-2xx → failed with status + body (handle `429` `retry_after` as a failed delivery now; M20 retry honors it later).
 
 ### 3 · `apps/api/src/channels/teams.ts`
 
@@ -81,6 +81,6 @@ No new routes — connections CRUD + the notifications send path handle both onc
 ## Risks & notes
 
 - Teams is migrating Office 365 connectors → Power Automate Workflows webhooks; accept both URL shapes. Target Adaptive Card `1.5`.
-- Discord rate-limits webhooks (`429` + `retry_after`) — surface as a failed delivery now; M21 backoff honors `retry_after`.
+- Discord rate-limits webhooks (`429` + `retry_after`) — surface as a failed delivery now; M20 backoff honors `retry_after`.
 - Markdown differs per platform (Discord subset vs Adaptive Card TextBlock) — keep each `transform` self-contained; don't share a converter blindly.
 - Webhook/connector URLs are secrets — stored encrypted in `credentials`, never returned to the client (redacted like all credentials).

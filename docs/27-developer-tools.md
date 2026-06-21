@@ -1,4 +1,4 @@
-# Milestone 28 — Developer tools: API keys, SDK & CLI
+# Milestone 27 — Developer tools: API keys, SDK & CLI
 
 **Phase:** 8 · **Depends on:** M10, M06 · **Status:** Done
 
@@ -74,4 +74,4 @@ Kysely `ApiRequestLogTable` added to `DB`. `Variables` already carry `sandboxMod
 - Keys are managed by the better-auth `apiKey` plugin (M04), not a hand-rolled table — creation/verification
   goes through `authInstance.api`. The earlier custom `api_key` table (migration 0024) is superseded.
 - Request logging is best-effort (fire-and-forget) so it never blocks the response.
-- MCP (M32) builds on these keys for remote tool auth.
+- MCP (M31) builds on these keys for remote tool auth.

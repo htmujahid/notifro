@@ -1,4 +1,4 @@
-# Milestone 25 — Template engine (variables, conditionals, loops, localization)
+# Milestone 24 — Template engine (variables, conditionals, loops, localization)
 
 **Phase:** 6 · **Depends on:** M09 · **Status:** Done
 
@@ -11,7 +11,7 @@ pipeline so a notification can say "render template X with data Y" instead of ca
 ## Why it matters
 Teams author a message once and reuse it across thousands of sends with different recipient data and
 languages. Without server-side templating, every caller hand-builds payloads and localization is
-impossible. This is the content backbone for the visual builder (M26), preferences (M28),
+impossible. This is the content backbone for the visual builder (M25), preferences (M27),
 and journeys (M35).
 
 ## Current state
@@ -19,7 +19,7 @@ and journeys (M35).
   payload (text/markdown/buttons/images/blocks) that each channel adapter (M10–M11, M13–M15) transforms.
 - A send creates one `notification` row → many `delivery` rows (**M10** pipeline).
 - `packages/views/src/pages/templates.tsx` is a **mock-only** page (hardcoded data, local `useState`,
-  no API). It is wired for real in **M26**, not here.
+  no API). It is wired for real in **M25**, not here.
 - `@renderical/i18n` is a **placeholder** (README only, no `package.json`) — this milestone gives it its
   first concrete job (locale resolution + ICU-style formatting helpers).
 - DB access is the typed Kysely client `db(env.DB)` over D1 (**M05**); routes use `requireAuth` + user-scope conventions (**M06**).
@@ -44,7 +44,7 @@ and journeys (M35).
   the template, and reject renders with missing required variables (configurable strict/loose).
 
 ## Out of scope (deferred)
-- Visual builder, live preview UI, versioning/rollback, snippets, brand kit → **M26**.
+- Visual builder, live preview UI, versioning/rollback, snippets, brand kit → **M25**.
 - A/B variants of a template → deferred (not built; A/B testing is out of scope).
 - AI-assisted drafting/tone → **deferred (not built)**.
 
@@ -94,8 +94,8 @@ All routes user-scoped, `requireAuth` (M06).
 - `GET    /api/templates` — list (paginated).
   - **List query (M06 contract):** default sort `updatedAt desc`; keyset cursor on `(updatedAt, id)`.
     - Sortable allow-list: `name` → `name`, `updatedAt` → `updatedAt`, `createdAt` → `createdAt`.
-    - Filterable allow-list (from the M25 model): `q` (free-text on `name`/`slug`/`description`),
-      `defaultLocale` (eq). (A `status` draft/published or per-channel filter is **not** in the M25
+    - Filterable allow-list (from the M24 model): `q` (free-text on `name`/`slug`/`description`),
+      `defaultLocale` (eq). (A `status` draft/published or per-channel filter is **not** in the M24
       `template` model — adding it would require a new column; deferred.)
     - AND-ed with the mandatory `userId` scope; unknown sort/filter key or operator → `422`;
       malformed cursor → `422`.
@@ -104,12 +104,12 @@ All routes user-scoped, `requireAuth` (M06).
 - `PATCH  /api/templates/:id` — update.
 - `DELETE /api/templates/:id` — delete.
 - `POST   /api/templates/:id/render` — body `{ data, locale? }` → returns the resolved unified-compose
-  payload (used by previews in M26 and for debugging). Does **not** send.
+  payload (used by previews in M25 and for debugging). Does **not** send.
 - Send route (M10) extended: `POST /api/notifications` accepts `{ templateId|templateSlug, data, locale? }`.
 
 ## Frontend
-None in this milestone (engine + API only). The Templates page is wired in **M26**. Optionally expose a
-`renderTemplate(id, data)` helper in the M07 api-client so M26 can build on it.
+None in this milestone (engine + API only). The Templates page is wired in **M25**. Optionally expose a
+`renderTemplate(id, data)` helper in the M07 api-client so M25 can build on it.
 
 ## Implementation steps
 1. Create `packages/templating` (`@renderical/templating`): pure TS, no Cloudflare deps so it runs in the

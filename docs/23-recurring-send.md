@@ -1,20 +1,20 @@
-# Milestone 24 — Recurring/cron sends
+# Milestone 23 — Recurring/cron sends
 
-**Phase:** 5 · **Depends on:** M23 · **Status:** Done
+**Phase:** 5 · **Depends on:** M22 · **Status:** Done
 
 ## Goal
-Add recurring/cron-style notification definitions that the M23 scheduler expands into concrete sends on a schedule.
+Add recurring/cron-style notification definitions that the M22 scheduler expands into concrete sends on a schedule.
 
 ## Why it matters
 Digests, weekly summaries, and reminders need to repeat on a schedule without re-creating them each time.
 
 ## Current state
-- M23 added `scheduled_message`, recipient timezones, quiet hours, and a Cron-sweep scheduler that enqueues due messages onto the M21 queue.
+- M22 added `scheduled_message`, recipient timezones, quiet hours, and a Cron-sweep scheduler that enqueues due messages onto the M20 queue.
 - No recurring definitions exist yet.
 
 ## Scope (in)
 - **Recurring definitions**: a `recurring_send` table (user-scoped, compose payload/template ref, cron expression + timezone, `nextRunAt`, `enabled`, `lastRunAt`).
-- **Expansion**: extend the M23 Cron sweep to also evaluate `recurring_send` rows whose `nextRunAt` is due, materialize a concrete `scheduled_message`/send for this occurrence, then compute the next `nextRunAt`.
+- **Expansion**: extend the M22 Cron sweep to also evaluate `recurring_send` rows whose `nextRunAt` is due, materialize a concrete `scheduled_message`/send for this occurrence, then compute the next `nextRunAt`.
 
 ## Out of scope
 - Multi-step journeys / branching sequences → M35 (recurring is single-step repetition).

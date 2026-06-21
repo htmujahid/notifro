@@ -1,6 +1,6 @@
-# Milestone 31 — Audit log, suppression & consent ledger
+# Milestone 30 — Audit log, suppression & consent ledger
 
-**Phase:** 9 · **Depends on:** M22 · **Status:** Done
+**Phase:** 9 · **Depends on:** M21 · **Status:** Done
 
 ## Goal
 Make sends legally defensible: a **suppression list** that blocks delivery to bounced/complained addresses,
@@ -12,7 +12,7 @@ Suppression guarantees a hard-bounced or complained address never gets contacted
 is the audit trail; redaction keeps PII out of logs.
 
 ## Current state
-- M22 added bounce receipts on `delivery`.
+- M21 added bounce receipts on `delivery`.
 - `apps/api/src/lib/suppress.ts` was a stub; no consent ledger or redaction existed.
 
 ## Scope (in)

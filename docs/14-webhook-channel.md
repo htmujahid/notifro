@@ -10,7 +10,7 @@ and reject replays — recorded as a `delivery` like every other channel.
 ## Why it matters
 Webhooks make Renderical extensible to anything a customer can host (internal systems, Zapier-style
 relays, custom channels we don't natively support). Signed delivery is table-stakes for trust, and the
-HMAC primitive here is reused by signed inbound webhooks (M31) and compliance (M34).
+HMAC primitive here is reused by signed inbound webhooks (M30) and compliance (M34).
 
 ## Current state
 - `notification` + `delivery` + `ChannelAdapter` exist (M10). The channel registry + connection storage
@@ -29,8 +29,8 @@ HMAC primitive here is reused by signed inbound webhooks (M31) and compliance (M
 - Surface webhook endpoints on `channels.tsx` (list, add, enable/disable, reveal-once secret).
 
 ## Out of scope (deferred)
-- **Inbound** webhook ingestion (events that *trigger* sends) → M31.
-- Delivery receipts / ret/ open tracking from the receiver → M22; retries → M21 (single inline attempt
+- **Inbound** webhook ingestion (events that *trigger* sends) → M30.
+- Delivery receipts / ret/ open tracking from the receiver → M21; retries → M20 (single inline attempt
   here, status from HTTP response only).
 - Replay-protection enforcement on *our* inbound endpoints → M34 (this milestone signs *outbound*).
 

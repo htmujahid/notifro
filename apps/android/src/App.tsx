@@ -4,19 +4,16 @@ import { App as CapacitorApp } from "@capacitor/app"
 import { Preferences } from "@capacitor/preferences"
 import { RouterProvider, createHashRouter } from "react-router"
 
-import { createApiClient } from "@renderical/api-client/client"
 import { AppProvider } from "@renderical/app/app/context"
 import { createMobileAuthClient } from "@renderical/app/auth/client.mobile"
 import {
   NATIVE_REDIRECT_URL,
   deepLinkToPath,
 } from "@renderical/app/auth/native-url"
-import { registerForPush } from "@renderical/mobile-shared/push"
 import { routes } from "@renderical/views/routes/android"
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8787"
 const authClient = createMobileAuthClient(API_URL, Preferences)
-const apiClient = createApiClient(API_URL)
 const router = createHashRouter(routes)
 
 export function App() {
@@ -25,7 +22,6 @@ export function App() {
       const path = deepLinkToPath(url)
       if (path) router.navigate(path)
     })
-    void registerForPush(apiClient, "android").catch(() => {})
     return () => {
       handle.then((listener) => listener.remove())
     }

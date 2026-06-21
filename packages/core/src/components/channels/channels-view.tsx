@@ -4,7 +4,6 @@ import {
   MailIcon,
   MessageSquareIcon,
   PhoneIcon,
-  SmartphoneIcon,
   WebhookIcon,
 } from "lucide-react"
 
@@ -82,12 +81,6 @@ const CHANNEL_META: Record<
       "Post Adaptive Cards to a Teams channel via a connector/workflow webhook URL. No OAuth required.",
     icon: MessageSquareIcon,
   },
-  mobile_push: {
-    name: "Mobile Push",
-    description:
-      "Native iOS & Android push via APNs and FCM. Devices register their token automatically.",
-    icon: SmartphoneIcon,
-  },
   in_app: {
     name: "In-App",
     description:
@@ -108,7 +101,6 @@ const CHANNEL_TYPES = [
   "slack",
   "discord",
   "teams",
-  "mobile_push",
   "in_app",
 ] as const
 

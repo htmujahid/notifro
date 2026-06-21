@@ -1,11 +1,11 @@
-# Milestone 32 — Provider failover & health checks
+# Milestone 31 — Provider failover & health checks
 
-**Phase:** 10 · **Depends on:** M21 · **Status:** Done
+**Phase:** 10 · **Depends on:** M20 · **Status:** Done
 
 ## Goal
 Keep delivery flowing when a provider connection fails: configure a **fallback connection** per channel that
-the queue consumer switches to on a non-retryable failure, support an **APNs relay** for environments that
-can't reach Apple directly, and expose a **health endpoint** for uptime monitoring.
+the queue consumer switches to on a non-retryable failure, and expose a **health endpoint** for uptime
+monitoring.
 
 ## Why it matters
 A single provider outage shouldn't drop notifications. Provider-level failover reroutes a failed send to a
@@ -13,7 +13,7 @@ second connection on the *same* channel; the health check lets external monitors
 database are live.
 
 ## Current state
-- M21 runs delivery on `DELIVERY_Q` with retries/DLQ.
+- M20 runs delivery on `DELIVERY_Q` with retries/DLQ.
 - Failure on a connection went straight to the dead-letter queue with no provider-level retry.
 
 ## Scope (in)
@@ -23,8 +23,6 @@ database are live.
   connection (bypassing `resolveSendConnection`). On a **non-retryable** failure with **no** explicit
   `connectionId`, the consumer looks up a `provider_fallback` for `(userId, channel)`, inserts a new delivery
   row, and re-enqueues with the fallback `connectionId`. The `!connectionId` guard prevents infinite loops.
-- **APNs relay**: `APNS_RELAY_URL` (optional env) overrides the APNs host in `sendApns()` — threaded from
-  `SendContext.env` through the mobile-push adapter.
 - **Health endpoint**: `GET /health` probes D1 with a count query and returns `{status, db, queue, ts}`
   (`200` ok, `503` on DB error).
 
@@ -33,8 +31,7 @@ Migration `apps/api/migrations/0029_provider_fallback.sql`:
 - `provider_fallback` (id, userId FK, channel, primaryConnectionId, fallbackConnectionId, createdAt) UNIQUE
   on `(userId, channel)`
 
-Kysely `ProviderFallbackTable` added to `DB`. `APNS_RELAY_URL: string | undefined` added to
-`worker-configuration.d.ts` and to the `SendContext.env` Pick in `apps/api/src/channels/adapter.ts`.
+Kysely `ProviderFallbackTable` added to `DB`.
 
 ## API surface
 `requireAuth`, user-scoped (`apps/api/src/routes/provider-fallbacks.ts`):
@@ -55,14 +52,12 @@ Plus `GET /health` (unauthenticated liveness probe).
    `resolveSendConnection`.
 3. Add the failover branch before dead-lettering: on non-retryable error with no `connectionId`, look up the
    fallback and re-enqueue with the fallback connection.
-4. Thread `APNS_RELAY_URL` through `SendContext.env` → mobile-push adapter → `sendApns()`.
-5. Add `GET /health` (D1 probe) and the `provider_fallback` CRUD route.
-6. `FailoverSection` UI + hooks.
+4. Add `GET /health` (D1 probe) and the `provider_fallback` CRUD route.
+5. `FailoverSection` UI + hooks.
 
 ## Acceptance criteria
 - [x] A non-retryable failure on a channel with a configured fallback re-enqueues to the fallback connection.
 - [x] A fallback-triggered delivery (carrying `connectionId`) never triggers another failover (no loops).
-- [x] `APNS_RELAY_URL`, when set, overrides the APNs host for mobile-push sends.
 - [x] `GET /health` returns `200` with `db:'ok'` when D1 is reachable and `503` when it isn't.
 - [x] Fallback rules are user-scoped via `requireAuth`; POST upserts by channel.
 

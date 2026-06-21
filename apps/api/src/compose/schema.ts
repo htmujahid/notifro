@@ -10,7 +10,6 @@ const CHANNEL_TYPE_VALUES = [
   "slack",
   "discord",
   "teams",
-  "mobile_push",
   "in_app",
 ] as const
 
@@ -99,7 +98,6 @@ export const RecipientSchema = z.discriminatedUnion("type", [
     slackUserId: z.string().optional(),
     discordUserId: z.string().optional(),
     teamsUserId: z.string().optional(),
-    deviceToken: z.string().optional(),
     pushSubscription: z.record(z.string(), z.unknown()).optional(),
   }),
   z.object({

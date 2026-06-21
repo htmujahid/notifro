@@ -22,7 +22,7 @@ implementing one interface and registering it — not reworking the data model e
 ## Scope (in)
 - **Channel types** (`apps/api/src/channels/types.ts`): a `ChannelType` union —
   `email | webhook | web_push | sms | whatsapp | telegram | in_app` (M08's initial 7-type scope;
-  later extended to 11 by M18–M20 — `+ slack, discord, teams, mobile_push` — so the final union is 11).
+  later extended to 10 by M18–M19 — `+ slack, discord, teams` — so the final union is 10).
 - **`connection` table** (wrangler SQL migration + Kysely `DB` interface): user-scoped row representing one
   configured provider instance — `id`, `userId`, `type` (`ChannelType`), `name` (human label),
   `status` (`active | disabled | needs_reauth | error`), `config` (JSON text — non-secret settings),
@@ -50,7 +50,7 @@ implementing one interface and registering it — not reworking the data model e
 ## Out of scope (deferred)
 - Any concrete adapter implementation → M10 (email) and M13–M17.
 - The `ComposePayload` definition → M09.
-- Inbound receipt handling → M22.
+- Inbound receipt handling → M21.
 
 ## Data model
 `connection` (new). Wrangler D1 migration (`apps/api/migrations/0002_connections.sql`):

@@ -23,7 +23,7 @@ on.
   - `content`: `title?`, `subject?`, `body` (`text` and/or `markdown`), `blocks?` (ordered typed blocks:
     `text`, `heading`, `image`, `divider`, `button`, `button_group`, `fields`), `attachments?`.
   - `metadata`: `category?`, `priority` (`low|normal|high|urgent`), `tags?`, `data?`.
-  - `idempotencyKey?` (enforced in M21).
+  - `idempotencyKey?` (enforced in M20).
   - `recipient`: discriminated union — `user` (internal id) or `contact` (`{ email?, phone?, ... }`).
   - `localeHint?` and `timezoneHint?`.
 - **Transform contract** (`apps/api/src/compose/transform.ts`): a `ChannelTransform<Provider>` type and
@@ -38,15 +38,14 @@ on.
   - `slack` → Slack message payload (M18)
   - `discord` → Discord message payload (M19)
   - `teams` → Teams message payload (M19)
-  - `mobile_push` → native push payload (M20)
-  (M18–M20 add slack/discord/teams/mobile_push.)
+  (M18–M19 add slack/discord/teams.)
   Stubs throw `not_implemented` until their channel milestone fills them in.
 - **`renderPreview(payload, type)`** helper signature (used by Create page preview).
 - Replace the M08 forward declaration so `ChannelAdapter.transform` is typed against the real `ComposePayload`.
 
 ## Out of scope (deferred)
-- Template variables/conditionals/loops/localization → M25.
-- Idempotency enforcement → M21.
+- Template variables/conditionals/loops/localization → M24.
+- Idempotency enforcement → M20.
 
 ## Data model
 None — this is a payload/contract milestone.
@@ -60,7 +59,7 @@ builder author against the same shape.
 
 ## Implementation steps
 1. Create `apps/api/src/compose/schema.ts` with the Zod schemas; export inferred types.
-2. Create `apps/api/src/compose/transform.ts` with stub transforms for all channel types (7 at M09; M18–M20 add four more).
+2. Create `apps/api/src/compose/transform.ts` with stub transforms for all channel types (7 at M09; M18–M19 add three more).
 3. Update `apps/api/src/channels/adapter.ts` to import the real `ComposePayload`.
 4. Add `renderPreview(payload, type)` in `apps/api/src/compose/preview.ts`.
 5. Re-export payload types from `@renderical/api-client` (`src/types.ts`).
@@ -74,5 +73,5 @@ builder author against the same shape.
 
 ## Risks & notes
 - Keep the block model small but composable; resist channel-specific fields in the core payload.
-- Each channel milestone (M10, M13–M20) replaces exactly one stub transform — design stubs to fail loudly
+- Each channel milestone (M10, M13–M19) replaces exactly one stub transform — design stubs to fail loudly
   at send time, never produce a silent malformed send.

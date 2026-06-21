@@ -1,4 +1,4 @@
-# Milestone 21 — Delivery queue: retries, exponential backoff, dead-letter queue & idempotency keys
+# Milestone 20 — Delivery queue: retries, exponential backoff, dead-letter queue & idempotency keys
 
 **Phase:** 4 · **Depends on:** M10 · **Status:** Done
 
@@ -28,12 +28,12 @@ messages, and dedupe so a retried API call doesn't double-notify a user.
   the DLQ) with the last error, surfaced to operators (the deliveries/logs views).
 - **Idempotency**: an `idempotency_key` table (org-scoped, key, notificationId, createdAt, TTL window); a
   duplicate `idempotencyKey` within the window returns the original notification instead of sending again.
-- **Status transitions**: formalize `queued → retrying → sent → (delivered, M22) | failed | dead`.
+- **Status transitions**: formalize `queued → retrying → sent → (delivered, M21) | failed | dead`.
 
 ## Out of scope (deferred)
-- `delivered`/`opened`/`clicked` receipts & bounce handling → M22.
-- Scheduled / future-dated sends → M23 (those enqueue at fire time).
-- Per-recipient rate-aware throttling beyond retry/idempotency → M30 (rate limiting).
+- `delivered`/`opened`/`clicked` receipts & bounce handling → M21.
+- Scheduled / future-dated sends → M22 (those enqueue at fire time).
+- Per-recipient rate-aware throttling beyond retry/idempotency → M29 (rate limiting).
 
 ## Data model
 - `delivery` (M10): add `attempts` (int), `nextRetryAt?`, `lastError?`.
@@ -88,4 +88,4 @@ messages, and dedupe so a retried API call doesn't double-notify a user.
 - Idempotency must be checked at the producer **before** enqueue, and the key window documented (e.g. 24h).
 - Keep adapter `send()` errors classified (retryable vs terminal) so non-retryable failures (bad recipient)
   go straight to `failed`/`dead` without burning retries.
-- M22 (receipts) and M23 (scheduling) both build on this consumer — keep it small and well-typed.
+- M21 (receipts) and M22 (scheduling) both build on this consumer — keep it small and well-typed.

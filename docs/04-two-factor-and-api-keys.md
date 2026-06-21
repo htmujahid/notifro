@@ -8,8 +8,8 @@ codes), **phone number** verification via Twilio SMS OTP, and **API keys** (`rk_
 authenticate without a session — including the full 2FA setup/verify UI.
 
 ## Why it matters
-2FA protects the single owner account that controls all sends. API-key auth is what lets the SDK/CLI (M31)
-and MCP server (M32) call the platform programmatically. Both are better-auth plugins layered on the M03 core.
+2FA protects the single owner account that controls all sends. API-key auth is what lets the SDK/CLI (M30)
+and MCP server (M31) call the platform programmatically. Both are better-auth plugins layered on the M03 core.
 
 ## Current state
 - M03 established the better-auth core (email/password, Google, sessions) + the auth/account UI shell.
@@ -44,7 +44,7 @@ and MCP server (M32) call the platform programmatically. Both are better-auth pl
 ## API surface
 - 2FA / phone / API-key endpoints are served under `/api/auth/*` by the better-auth plugins (enable/disable
   2FA, send/verify OTP, verify TOTP/backup code, phone verify, key verify).
-- Developer-facing API-key **management** (`GET/POST/DELETE /api/keys`) is built on the apiKey plugin in M31.
+- Developer-facing API-key **management** (`GET/POST/DELETE /api/keys`) is built on the apiKey plugin in M30.
 
 ## Implementation steps
 1. Add `twoFactor`, `phoneNumber`, `apiKey` plugins to `createAuth` in `auth.ts`.
@@ -62,7 +62,7 @@ and MCP server (M32) call the platform programmatically. Both are better-auth pl
 - [x] A `test`-mode key sets `sandboxMode`; `apiKeyId` is recorded for audit logging.
 
 ## Risks & notes
-- The `apikey` table is the better-auth plugin's own schema (migration 0025) — M31's developer tooling builds
+- The `apikey` table is the better-auth plugin's own schema (migration 0025) — M30's developer tooling builds
   on it (an earlier custom `api_key` table from migration 0024 was superseded by the plugin).
 - Twilio SMS OTP silently no-ops if the `TWILIO_*` env vars are unset (dev-friendly).
 - API-key + session auth both populate the same `c.var.user`, so `requireAuth` (M06) treats them uniformly.

@@ -34,7 +34,7 @@ of hardcoded numbers and mock cards, with no guidance and no "you have nothing y
 - **Onboarding checklist/wizard** — a dashboard banner + dedicated `/onboarding` view with steps:
   (1) connect your first channel (links to Channels, M08), (2) send a test notification (a one-click "send
   test to me" using M10), (3) explore channels, (4) explore
-  templates (M25/M26, link only). Steps auto-complete by detecting real state (a connection exists, ≥1
+  templates (M24/M25, link only). Steps auto-complete by detecting real state (a connection exists, ≥1
   delivery succeeded); dismissable once done.
 - **Wire `dashboard.tsx`** to `GET /api/overview`; show the onboarding checklist when incomplete, the
   metrics/recent-activity view when active.

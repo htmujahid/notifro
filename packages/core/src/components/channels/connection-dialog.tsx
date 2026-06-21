@@ -186,55 +186,6 @@ export const CHANNEL_FORMS: Record<string, ChannelForm> = {
       },
     ],
   },
-  mobile_push: {
-    title: "Mobile Push (APNs / FCM)",
-    blurb:
-      "Provide APNs and/or FCM credentials. Devices register their tokens automatically from the native apps.",
-    fields: [
-      {
-        key: "apns.keyId",
-        label: "APNs Key ID",
-        placeholder: "ABC123DEFG",
-        group: "credentials",
-        help: "Apple token-based auth",
-      },
-      {
-        key: "apns.teamId",
-        label: "APNs Team ID",
-        placeholder: "TEAM123456",
-        group: "credentials",
-      },
-      {
-        key: "apns.bundleId",
-        label: "iOS Bundle ID",
-        placeholder: "com.example.app",
-        group: "credentials",
-      },
-      {
-        key: "apns.p8",
-        label: "APNs .p8 key",
-        placeholder: "-----BEGIN PRIVATE KEY-----",
-        group: "credentials",
-        secret: true,
-        multiline: true,
-      },
-      {
-        key: "fcm.projectId",
-        label: "FCM Project ID",
-        placeholder: "my-firebase-project",
-        group: "credentials",
-        help: "Firebase Cloud Messaging",
-      },
-      {
-        key: "fcm.serviceAccountJson",
-        label: "FCM service account JSON",
-        placeholder: '{ "type": "service_account", … }',
-        group: "credentials",
-        secret: true,
-        multiline: true,
-      },
-    ],
-  },
 }
 
 function setPath(

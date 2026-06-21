@@ -24,7 +24,6 @@ export type ChannelType =
   | "discord"
   | "teams"
   | "web_push"
-  | "mobile_push"
   | "sms"
   | "whatsapp"
   | "telegram"
@@ -55,7 +54,6 @@ export type Recipient =
       slackUserId?: string
       discordUserId?: string
       teamsUserId?: string
-      deviceToken?: string
       pushSubscription?: Record<string, unknown>
     }
   | { type: "segment"; segmentId: string }

@@ -20,7 +20,6 @@ function synthetic(userId: string, type: ChannelType, ts: string): Connection {
     slack: "Slack",
     discord: "Discord",
     teams: "Teams",
-    mobile_push: "Mobile Push",
   }
   return {
     id: type,

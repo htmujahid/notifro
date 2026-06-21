@@ -41,9 +41,9 @@ into inconsistency. Locking these now means resource milestones (M08+) are pure 
   `apps/api/src/routes/<domain>.ts`; `index.ts` mounts it via `app.route('/api', domainRoutes)`.
 
 ## Out of scope (deferred)
-- API-key auth → M31.
+- API-key auth → M30.
 - Any concrete resource routes → their own milestones.
-- Rate limiting → M30.
+- Rate limiting → M29.
 
 ## Data model
 None new.

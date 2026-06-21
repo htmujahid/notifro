@@ -9,7 +9,6 @@ export const CHANNELS = [
   "sms",
   "in_app",
   "web_push",
-  "mobile_push",
   "webhook",
   "slack",
   "discord",
