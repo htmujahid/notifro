@@ -1,3 +1,5 @@
+import type { ColumnType } from 'kysely'
+
 export interface Timestamps {
   createdAt: string
   updatedAt: string
@@ -71,6 +73,8 @@ export interface DeliveryTable {
   openedAt: string | null
   clickedAt: string | null
   bouncedAt: string | null
+  recipientId: ColumnType<string | null, string | null | undefined, string | null>
+  variantId: ColumnType<string | null, string | null | undefined, string | null>
   createdAt: string
   updatedAt: string
 }
@@ -243,6 +247,39 @@ export interface BrandKitTable {
   updatedAt: string
 }
 
+export interface RecipientTable {
+  id: string
+  userId: string
+  externalId: string | null
+  email: string | null
+  phone: string | null
+  locale: string | null
+  timezone: string | null
+  attributes: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface SegmentTable {
+  id: string
+  userId: string
+  name: string
+  filter: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface MessageVariantTable {
+  id: string
+  userId: string
+  notificationId: string
+  label: string
+  weight: number
+  payload: string
+  createdAt: string
+  updatedAt: string
+}
+
 export interface DB {
   user: UserTable
   connection: ConnectionTable
@@ -264,4 +301,7 @@ export interface DB {
   recipient_profile: RecipientProfileTable
   recurring_send: RecurringSendTable
   recipient_send_time: RecipientSendTimeTable
+  recipient: RecipientTable
+  segment: SegmentTable
+  message_variant: MessageVariantTable
 }

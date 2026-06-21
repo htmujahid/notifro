@@ -8,10 +8,23 @@ import { ComposePayloadSchema } from '../compose/schema'
 import { resolveTemplate, renderTemplate } from '../lib/render-template'
 import { localToUtc } from '../scheduling/utils'
 import { getStoSendAt } from '../scheduling/sto'
+import { resolveSegment, assignVariant } from '../lib/segment-resolver'
 import type { AppEnv } from '../lib/types'
 import type { ChannelType } from '../channels/types'
 import type { DeliveryQueueMessage } from '../queue/consumer'
 import type { ComposePayload } from '../compose/schema'
+
+const VariantSchema = z.object({
+  label: z.string().min(1).max(20),
+  weight: z.number().int().min(1).max(99).optional().default(50),
+  content: z
+    .object({
+      title: z.string().optional(),
+      subject: z.string().optional(),
+      body: z.object({ text: z.string().optional(), markdown: z.string().optional() }).optional(),
+    })
+    .optional(),
+})
 
 const SendRequestSchema = ComposePayloadSchema.extend({
   content: ComposePayloadSchema.shape.content.optional(),
@@ -19,6 +32,7 @@ const SendRequestSchema = ComposePayloadSchema.extend({
   templateSlug: z.string().optional(),
   templateData: z.record(z.string(), z.unknown()).optional(),
   templateLocale: z.string().optional(),
+  variants: z.array(VariantSchema).optional(),
 }).refine(
   (v) => v.content !== undefined || v.templateId !== undefined || v.templateSlug !== undefined,
   { message: 'Either content or templateId/templateSlug is required' },
@@ -161,6 +175,8 @@ router.openapi(sendRoute, async (c) => {
   const userId = c.var.user!.id
   const ts = now()
 
+  const isSegmentSend = rawPayload.recipient?.type === 'segment'
+
   let resolvedTemplateId: string | null = null
   let payload: ComposePayload
 
@@ -253,7 +269,8 @@ router.openapi(sendRoute, async (c) => {
 
   const channels = payload.channels ?? ['email']
   const notifId = newId()
-  const subject = payload.content.subject ?? payload.content.title ?? null
+  const subject = payload.content?.subject ?? payload.content?.title ?? null
+  const mode = isSegmentSend ? 'broadcast' : 'transactional'
 
   await db
     .insertInto('notification')
@@ -263,7 +280,7 @@ router.openapi(sendRoute, async (c) => {
       payload: JSON.stringify(payload),
       subject,
       channels: JSON.stringify(channels),
-      mode: 'transactional',
+      mode,
       status: 'queued',
       templateId: resolvedTemplateId,
       templateData: resolvedTemplateId && rawPayload.templateData ? JSON.stringify(rawPayload.templateData) : null,
@@ -271,6 +288,29 @@ router.openapi(sendRoute, async (c) => {
       updatedAt: ts,
     })
     .execute()
+
+  const variantDefs = rawPayload.variants ?? []
+  const variantRows: { id: string; label: string; weight: number; content?: Record<string, unknown> }[] = []
+
+  if (variantDefs.length > 0) {
+    for (const v of variantDefs) {
+      const vid = newId()
+      await db
+        .insertInto('message_variant')
+        .values({
+          id: vid,
+          userId,
+          notificationId: notifId,
+          label: v.label,
+          weight: v.weight ?? 50,
+          payload: JSON.stringify(v),
+          createdAt: ts,
+          updatedAt: ts,
+        })
+        .execute()
+      variantRows.push({ id: vid, label: v.label, weight: v.weight ?? 50, content: v.content as Record<string, unknown> | undefined })
+    }
+  }
 
   type DeliveryRow = {
     id: string
@@ -288,21 +328,139 @@ router.openapi(sendRoute, async (c) => {
     openedAt: string | null
     clickedAt: string | null
     bouncedAt: string | null
+    recipientId: string | null
+    variantId: string | null
     createdAt: string
     updatedAt: string
   }
 
   const deliveries: DeliveryRow[] = []
 
-  for (const channel of channels) {
-    const adapter = getAdapter(channel as ChannelType)
-    const dts = now()
-    const deliveryId = newId()
+  if (isSegmentSend) {
+    const segmentId = (payload.recipient as { type: 'segment'; segmentId: string }).segmentId
+    const recipients = await resolveSegment(db, userId, segmentId)
 
-    if (!adapter) {
-      await db
-        .insertInto('delivery')
-        .values({
+    for (const recip of recipients) {
+      for (const channel of channels) {
+        const dts = now()
+        const deliveryId = newId()
+        const conn = await resolveSendConnection(db, userId, channel as ChannelType, dts)
+        const recipientAddr = recip.email ?? recip.phone ?? ''
+
+        let variantId: string | null = null
+        if (variantRows.length > 0) {
+          const chosen = await assignVariant(notifId, recip.id, variantRows)
+          variantId = chosen.id
+        }
+
+        if (!conn) {
+          await db
+            .insertInto('delivery')
+            .values({
+              id: deliveryId,
+              userId,
+              notificationId: notifId,
+              channel,
+              recipient: recipientAddr,
+              status: 'failed',
+              providerMessageId: null,
+              error: `No active ${channel} connection`,
+              attempts: 1,
+              nextRetryAt: null,
+              lastError: `No active ${channel} connection`,
+              deliveredAt: null,
+              openedAt: null,
+              clickedAt: null,
+              bouncedAt: null,
+              recipientId: recip.id,
+              variantId,
+              createdAt: dts,
+              updatedAt: dts,
+            })
+            .execute()
+          continue
+        }
+
+        await db
+          .insertInto('delivery')
+          .values({
+            id: deliveryId,
+            userId,
+            notificationId: notifId,
+            channel,
+            recipient: recipientAddr,
+            status: 'queued',
+            providerMessageId: null,
+            error: null,
+            attempts: 0,
+            nextRetryAt: null,
+            lastError: null,
+            deliveredAt: null,
+            openedAt: null,
+            clickedAt: null,
+            bouncedAt: null,
+            recipientId: recip.id,
+            variantId,
+            createdAt: dts,
+            updatedAt: dts,
+          })
+          .execute()
+
+        await c.env.DELIVERY_Q.send({ deliveryId, notificationId: notifId, userId, channel } as DeliveryQueueMessage)
+
+        deliveries.push({
+          id: deliveryId,
+          userId,
+          notificationId: notifId,
+          channel,
+          recipient: recipientAddr,
+          status: 'queued',
+          providerMessageId: null,
+          error: null,
+          attempts: 0,
+          nextRetryAt: null,
+          lastError: null,
+          deliveredAt: null,
+          openedAt: null,
+          clickedAt: null,
+          bouncedAt: null,
+          recipientId: recip.id,
+          variantId,
+          createdAt: dts,
+          updatedAt: dts,
+        })
+      }
+    }
+  } else {
+    for (const channel of channels) {
+      const adapter = getAdapter(channel as ChannelType)
+      const dts = now()
+      const deliveryId = newId()
+
+      if (!adapter) {
+        await db
+          .insertInto('delivery')
+          .values({
+            id: deliveryId,
+            userId,
+            notificationId: notifId,
+            channel,
+            recipient: '',
+            status: 'failed',
+            providerMessageId: null,
+            error: `No adapter registered for channel: ${channel}`,
+            attempts: 1,
+            nextRetryAt: null,
+            lastError: `No adapter registered for channel: ${channel}`,
+            deliveredAt: null,
+            openedAt: null,
+            clickedAt: null,
+            bouncedAt: null,
+            createdAt: dts,
+            updatedAt: dts,
+          })
+          .execute()
+        deliveries.push({
           id: deliveryId,
           userId,
           notificationId: notifId,
@@ -314,39 +472,45 @@ router.openapi(sendRoute, async (c) => {
           attempts: 1,
           nextRetryAt: null,
           lastError: `No adapter registered for channel: ${channel}`,
+          deliveredAt: null,
+          openedAt: null,
+          clickedAt: null,
+          bouncedAt: null,
+          recipientId: null,
+          variantId: null,
           createdAt: dts,
           updatedAt: dts,
         })
-        .execute()
-      deliveries.push({
-        id: deliveryId,
-        userId,
-        notificationId: notifId,
-        channel,
-        recipient: '',
-        status: 'failed',
-        providerMessageId: null,
-        error: `No adapter registered for channel: ${channel}`,
-        attempts: 1,
-        nextRetryAt: null,
-        lastError: `No adapter registered for channel: ${channel}`,
-        deliveredAt: null,
-        openedAt: null,
-        clickedAt: null,
-        bouncedAt: null,
-        createdAt: dts,
-        updatedAt: dts,
-      })
-      continue
-    }
+        continue
+      }
 
-    const conn = await resolveSendConnection(db, userId, channel as ChannelType, dts)
-    const recipientAddr = await resolveRecipientAddress(db, channel, payload.recipient as Record<string, unknown>)
+      const conn = await resolveSendConnection(db, userId, channel as ChannelType, dts)
+      const recipientAddr = await resolveRecipientAddress(db, channel, payload.recipient as Record<string, unknown>)
 
-    if (!conn) {
-      await db
-        .insertInto('delivery')
-        .values({
+      if (!conn) {
+        await db
+          .insertInto('delivery')
+          .values({
+            id: deliveryId,
+            userId,
+            notificationId: notifId,
+            channel,
+            recipient: recipientAddr,
+            status: 'failed',
+            providerMessageId: null,
+            error: `No active ${channel} connection — connect via Channels page first`,
+            attempts: 1,
+            nextRetryAt: null,
+            lastError: `No active ${channel} connection — connect via Channels page first`,
+            deliveredAt: null,
+            openedAt: null,
+            clickedAt: null,
+            bouncedAt: null,
+            createdAt: dts,
+            updatedAt: dts,
+          })
+          .execute()
+        deliveries.push({
           id: deliveryId,
           userId,
           notificationId: notifId,
@@ -362,35 +526,46 @@ router.openapi(sendRoute, async (c) => {
           openedAt: null,
           clickedAt: null,
           bouncedAt: null,
+          recipientId: null,
+          variantId: null,
+          createdAt: dts,
+          updatedAt: dts,
+        })
+        continue
+      }
+
+      await db
+        .insertInto('delivery')
+        .values({
+          id: deliveryId,
+          userId,
+          notificationId: notifId,
+          channel,
+          recipient: recipientAddr,
+          status: 'queued',
+          providerMessageId: null,
+          error: null,
+          attempts: 0,
+          nextRetryAt: null,
+          lastError: null,
+          deliveredAt: null,
+          openedAt: null,
+          clickedAt: null,
+          bouncedAt: null,
           createdAt: dts,
           updatedAt: dts,
         })
         .execute()
-      deliveries.push({
-        id: deliveryId,
-        userId,
-        notificationId: notifId,
-        channel,
-        recipient: recipientAddr,
-        status: 'failed',
-        providerMessageId: null,
-        error: `No active ${channel} connection — connect via Channels page first`,
-        attempts: 1,
-        nextRetryAt: null,
-        lastError: `No active ${channel} connection — connect via Channels page first`,
-        deliveredAt: null,
-        openedAt: null,
-        clickedAt: null,
-        bouncedAt: null,
-        createdAt: dts,
-        updatedAt: dts,
-      })
-      continue
-    }
 
-    await db
-      .insertInto('delivery')
-      .values({
+      const queueMsg: DeliveryQueueMessage = {
+        deliveryId,
+        notificationId: notifId,
+        userId,
+        channel,
+      }
+      await c.env.DELIVERY_Q.send(queueMsg)
+
+      deliveries.push({
         id: deliveryId,
         userId,
         notificationId: notifId,
@@ -406,38 +581,12 @@ router.openapi(sendRoute, async (c) => {
         openedAt: null,
         clickedAt: null,
         bouncedAt: null,
+        recipientId: null,
+        variantId: null,
         createdAt: dts,
         updatedAt: dts,
       })
-      .execute()
-
-    const queueMsg: DeliveryQueueMessage = {
-      deliveryId,
-      notificationId: notifId,
-      userId,
-      channel,
     }
-    await c.env.DELIVERY_Q.send(queueMsg)
-
-    deliveries.push({
-      id: deliveryId,
-      userId,
-      notificationId: notifId,
-      channel,
-      recipient: recipientAddr,
-      status: 'queued',
-      providerMessageId: null,
-      error: null,
-      attempts: 0,
-      nextRetryAt: null,
-      lastError: null,
-      deliveredAt: null,
-      openedAt: null,
-      clickedAt: null,
-      bouncedAt: null,
-      createdAt: dts,
-      updatedAt: dts,
-    })
   }
 
   if (payload.idempotencyKey) {

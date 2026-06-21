@@ -182,3 +182,41 @@ export interface RecipientPreferences {
   quietHoursEnd: string | null
   updatedAt: string
 }
+
+export interface RecipientRecord {
+  id: string
+  userId: string
+  externalId: string | null
+  email: string | null
+  phone: string | null
+  locale: string | null
+  timezone: string | null
+  attributes: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Segment {
+  id: string
+  userId: string
+  name: string
+  filter: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface MessageVariant {
+  id: string
+  userId: string
+  notificationId: string
+  label: string
+  weight: number
+  payload: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface SegmentPreview {
+  count: number
+  sample: { id: string; email: string | null }[]
+}

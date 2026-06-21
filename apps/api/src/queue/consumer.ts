@@ -1,6 +1,7 @@
 import { db } from '../db/client'
 import { getAdapter } from '../channels/registry'
 import { resolveSendConnection } from '../channels/resolve'
+import { renderTemplate } from '../lib/render-template'
 import type { ChannelType } from '../channels/types'
 
 export interface DeliveryQueueMessage {
@@ -140,7 +141,43 @@ async function processDelivery(
   }
 
   const attempts = delivery.attempts + 1
-  const payload = JSON.parse(notification.payload)
+  let payload = JSON.parse(notification.payload)
+
+  if (notification.mode === 'broadcast' && delivery.recipientId && notification.templateId) {
+    const recipient = await database
+      .selectFrom('recipient')
+      .where('id', '=', delivery.recipientId)
+      .select(['attributes', 'locale'])
+      .executeTakeFirst()
+    if (recipient) {
+      const template = await database
+        .selectFrom('template')
+        .where('id', '=', notification.templateId)
+        .where('userId', '=', delivery.userId)
+        .selectAll()
+        .executeTakeFirst()
+      if (template) {
+        const baseData = notification.templateData ? (JSON.parse(notification.templateData) as Record<string, unknown>) : {}
+        const recipientAttrs = recipient.attributes ? (JSON.parse(recipient.attributes) as Record<string, unknown>) : {}
+        const rendered = renderTemplate(template, { ...baseData, ...recipientAttrs }, recipient.locale ?? undefined)
+        payload = { ...payload, content: rendered }
+      }
+    }
+  }
+
+  if (delivery.variantId) {
+    const variant = await database
+      .selectFrom('message_variant')
+      .where('id', '=', delivery.variantId)
+      .select('payload')
+      .executeTakeFirst()
+    if (variant) {
+      const variantData = JSON.parse(variant.payload) as { content?: Record<string, unknown> }
+      if (variantData.content && payload.content) {
+        payload = { ...payload, content: { ...payload.content, ...variantData.content } }
+      }
+    }
+  }
 
   let ok = false
   let providerMessageId: string | null = null

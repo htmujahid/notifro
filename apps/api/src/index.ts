@@ -23,6 +23,8 @@ import recurringRouter from './routes/recurring'
 import templateVersionsRouter from './routes/template-versions'
 import snippetsRouter from './routes/snippets'
 import brandKitRouter from './routes/brand-kit'
+import recipientsRouter from './routes/recipients'
+import segmentsRouter from './routes/segments'
 import { handleDeliveryQueue } from './queue/consumer'
 import { handleScheduledSweep } from './scheduling/sweep'
 import { recomputeAllStoProfiles } from './scheduling/sto'
@@ -148,6 +150,8 @@ app.route('/api', recurringRouter)
 app.route('/api', templateVersionsRouter)
 app.route('/api', snippetsRouter)
 app.route('/api', brandKitRouter)
+app.route('/api', recipientsRouter)
+app.route('/api', segmentsRouter)
 
 app.doc('/doc', {
   openapi: '3.0.0',
