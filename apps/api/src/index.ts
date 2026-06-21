@@ -35,6 +35,8 @@ import requestLogRouter from './routes/request-log'
 import mcpRouter from './routes/mcp'
 import analyticsRouter from './routes/analytics'
 import complianceRouter from './routes/compliance'
+import journeysRouter from './routes/journeys'
+import eventsRouter from './routes/events'
 import { redactPii } from './lib/redact'
 import { createMcpServer, WebStandardStreamableHTTPServerTransport } from '@workspace/mcp'
 import { handleDeliveryQueue } from './queue/consumer'
@@ -226,6 +228,8 @@ app.route('/api', requestLogRouter)
 app.route('/api', mcpRouter)
 app.route('/api', analyticsRouter)
 app.route('/api', complianceRouter)
+app.route('/api', journeysRouter)
+app.route('/api', eventsRouter)
 
 app.use('/mcp', (c, next) => {
   return cors({

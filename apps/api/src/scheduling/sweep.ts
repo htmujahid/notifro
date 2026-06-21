@@ -5,6 +5,7 @@ import type { ChannelType } from '../channels/types'
 import type { DeliveryQueueMessage } from '../queue/consumer'
 import { isInQuietHours, isInDeliveryWindow, nextAllowedTime, nextWindowStart } from './utils'
 import { nextCronRun } from './cron'
+import { advanceJourneyRun } from '../lib/journey-engine'
 
 export async function handleScheduledSweep(env: CloudflareBindings): Promise<void> {
   const database = db(env.DB)
@@ -184,6 +185,20 @@ export async function handleScheduledSweep(env: CloudflareBindings): Promise<voi
       .set({ nextRunAt, lastRunAt: runAt, updatedAt: rdts })
       .where('id', '=', recurring.id)
       .execute()
+  }
+
+  const dueRuns = await database
+    .selectFrom('journey_run')
+    .where('status', '=', 'active')
+    .where('nextResumeAt', 'is not', null)
+    .where('nextResumeAt', '<=', ts)
+    .selectAll()
+    .orderBy('nextResumeAt', 'asc')
+    .limit(50)
+    .execute()
+
+  for (const run of dueRuns) {
+    await advanceJourneyRun(run, database, env)
   }
 
 }

@@ -16,6 +16,7 @@ import {
   ScrollIcon,
   Settings2Icon,
   UsersIcon,
+  WorkflowIcon,
 } from "lucide-react"
 import {
   Sidebar,
@@ -48,6 +49,7 @@ const NAV_DOCUMENTS = [
   { name: "Audiences", url: "/audiences", icon: <UsersIcon className="size-4" /> },
   { name: "Analytics", url: "/analytics", icon: <BarChart3Icon className="size-4" /> },
   { name: "Routing", url: "/routing", icon: <RouteIcon className="size-4" /> },
+  { name: "Journeys", url: "/journeys", icon: <WorkflowIcon className="size-4" /> },
   { name: "Developers", url: "/developers", icon: <CodeIcon className="size-4" /> },
 ]
 

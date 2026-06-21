@@ -397,3 +397,36 @@ export interface ConsentEvent {
   actorNote: string | null
   createdAt: string
 }
+
+export interface Journey {
+  id: string
+  userId: string
+  name: string
+  status: string
+  trigger: string | null
+  steps: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface JourneyRun {
+  id: string
+  userId: string
+  journeyId: string
+  recipientId: string
+  status: string
+  currentStepId: string
+  nextResumeAt: string | null
+  context: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface JourneyEvent {
+  id: string
+  userId: string
+  name: string
+  recipientId: string | null
+  payload: string
+  createdAt: string
+}

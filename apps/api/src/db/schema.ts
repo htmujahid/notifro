@@ -406,6 +406,39 @@ export interface ConsentEventTable {
   createdAt: string
 }
 
+export interface JourneyTable {
+  id: string
+  userId: string
+  name: string
+  status: string
+  trigger: string | null
+  steps: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface JourneyRunTable {
+  id: string
+  userId: string
+  journeyId: string
+  recipientId: string
+  status: string
+  currentStepId: string
+  nextResumeAt: string | null
+  context: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface JourneyEventTable {
+  id: string
+  userId: string
+  name: string
+  recipientId: string | null
+  payload: string
+  createdAt: string
+}
+
 export interface DB {
   user: UserTable
   connection: ConnectionTable
@@ -440,4 +473,7 @@ export interface DB {
   mcp_pending_action: McpPendingActionTable
   suppression: SuppressionTable
   consent_event: ConsentEventTable
+  journey: JourneyTable
+  journey_run: JourneyRunTable
+  journey_event: JourneyEventTable
 }
