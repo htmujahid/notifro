@@ -2,6 +2,7 @@ import { BellIcon, CheckCircleIcon, CalendarIcon, RadioIcon } from "lucide-react
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@workspace/ui/components/card"
 import { useOverview } from "../../hooks/overview"
 import { DashboardSkeleton } from "./dashboard-skeleton"
+import { AnalyticsSection } from "./analytics-section"
 
 const STATUS_STYLES: Record<string, string> = {
   completed: "bg-green-500/10 text-green-700 dark:text-green-400",
@@ -48,6 +49,8 @@ export function OverviewMetrics() {
           </Card>
         ))}
       </div>
+
+      <AnalyticsSection />
 
       <div>
         <h2 className="mb-4 text-sm font-medium text-foreground">Recent notifications</h2>

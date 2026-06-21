@@ -340,3 +340,39 @@ export interface ApiRequestLog {
   latencyMs: number | null
   createdAt: string
 }
+
+export interface AnalyticsSummary {
+  sent: number
+  delivered: number
+  opened: number
+  clicked: number
+  bounced: number
+  deliveryRate: number
+  openRate: number
+  clickRate: number
+}
+
+export interface AnalyticsTimeseriesItem {
+  period: string
+  sent: number
+  delivered: number
+  opened: number
+  clicked: number
+}
+
+export interface AnalyticsChannelRow {
+  channel: string
+  sent: number
+  delivered: number
+  opened: number
+  clicked: number
+  bounced: number
+  deliveryRate: number
+}
+
+export interface AnalyticsTopicRow {
+  topicKey: string
+  sent: number
+  delivered: number
+  deliveryRate: number
+}

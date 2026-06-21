@@ -33,6 +33,7 @@ import rateLimitsRouter from './routes/rate-limits'
 import keysRouter from './routes/keys'
 import requestLogRouter from './routes/request-log'
 import mcpRouter from './routes/mcp'
+import analyticsRouter from './routes/analytics'
 import { createMcpServer, WebStandardStreamableHTTPServerTransport } from '@workspace/mcp'
 import { handleDeliveryQueue } from './queue/consumer'
 import { handleScheduledSweep } from './scheduling/sweep'
@@ -221,6 +222,7 @@ app.route('/api', rateLimitsRouter)
 app.route('/api', keysRouter)
 app.route('/api', requestLogRouter)
 app.route('/api', mcpRouter)
+app.route('/api', analyticsRouter)
 
 app.use('/mcp', (c, next) => {
   return cors({
