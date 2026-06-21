@@ -35,6 +35,7 @@
     "./auth/use-session": "./src/auth/use-session.ts",
     "./auth/client.web": "./src/auth/client.web.ts",
     "./auth/client.desktop": "./src/auth/client.desktop.ts",
-    "./auth/client.mobile": "./src/auth/client.mobile.ts"
+    "./auth/client.mobile": "./src/auth/client.mobile.ts",
+    "./auth/native-url": "./src/auth/native-url.ts"
   }
 }
