@@ -25,6 +25,8 @@ import snippetsRouter from './routes/snippets'
 import brandKitRouter from './routes/brand-kit'
 import recipientsRouter from './routes/recipients'
 import segmentsRouter from './routes/segments'
+import topicsRouter from './routes/topics'
+import preferencesRouter from './routes/preferences'
 import { handleDeliveryQueue } from './queue/consumer'
 import { handleScheduledSweep } from './scheduling/sweep'
 import { recomputeAllStoProfiles } from './scheduling/sto'
@@ -152,6 +154,8 @@ app.route('/api', snippetsRouter)
 app.route('/api', brandKitRouter)
 app.route('/api', recipientsRouter)
 app.route('/api', segmentsRouter)
+app.route('/api', topicsRouter)
+app.route('/api', preferencesRouter)
 
 app.doc('/doc', {
   openapi: '3.0.0',

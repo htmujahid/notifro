@@ -5,6 +5,7 @@ export interface SendContext {
   db: AppDB
   notificationId?: string
   deliveryId?: string
+  recipientId?: string
   env?: Pick<CloudflareBindings, 'VAPID_PUBLIC_KEY' | 'VAPID_PRIVATE_KEY' | 'VAPID_SUBJECT' | 'CONNECTION_ENC_KEY' | 'BETTER_AUTH_URL'>
 }
 

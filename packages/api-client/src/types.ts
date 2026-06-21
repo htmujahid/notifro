@@ -143,6 +143,7 @@ export interface ComposePayload {
   deliveryWindowEnd?: string
   respectQuietHours?: boolean
   sendTimeOptimized?: boolean
+  topicKey?: string
 }
 
 export interface ScheduledMessage {
@@ -219,4 +220,50 @@ export interface MessageVariant {
 export interface SegmentPreview {
   count: number
   sample: { id: string; email: string | null }[]
+}
+
+export interface Topic {
+  id: string
+  userId: string
+  key: string
+  name: string
+  description: string | null
+  defaultOptIn: number
+  transactional: number
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Preference {
+  id: string
+  userId: string
+  recipientId: string
+  channel: string
+  topicId: string | null
+  optedIn: number
+  source: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ChannelPriority {
+  id: string
+  userId: string
+  recipientId: string
+  order: string[]
+  createdAt: string
+  updatedAt: string
+}
+
+export interface PreferenceCenter {
+  recipientId: string
+  topics: Array<{
+    topicId: string
+    key: string
+    name: string
+    description: string | null
+    transactional: number
+    channels: Array<{ channel: string; optedIn: boolean }>
+  }>
+  globalOptOut: string[]
 }

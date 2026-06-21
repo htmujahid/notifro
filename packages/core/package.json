@@ -47,6 +47,7 @@
     "./hooks/webhooks": "./src/hooks/webhooks.ts",
     "./hooks/schedules": "./src/hooks/schedules.ts",
     "./hooks/templates": "./src/hooks/templates.ts",
-    "./hooks/audiences": "./src/hooks/audiences.ts"
+    "./hooks/audiences": "./src/hooks/audiences.ts",
+    "./hooks/preferences": "./src/hooks/preferences.ts"
   }
 }

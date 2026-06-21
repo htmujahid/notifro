@@ -185,7 +185,7 @@ async function processDelivery(
 
   try {
     const provider = adapter.transform(payload, { connection: conn })
-    const result = await adapter.send(provider as any, conn, { db: database, notificationId, deliveryId, env })
+    const result = await adapter.send(provider as any, conn, { db: database, notificationId, deliveryId, recipientId: delivery.recipientId ?? undefined, env })
     ok = result.ok
     providerMessageId = result.providerMessageId ?? null
     sendError = result.ok ? null : (result.error ?? 'Send failed')

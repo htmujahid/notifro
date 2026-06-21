@@ -280,6 +280,39 @@ export interface MessageVariantTable {
   updatedAt: string
 }
 
+export interface TopicTable {
+  id: string
+  userId: string
+  key: string
+  name: string
+  description: string | null
+  defaultOptIn: number
+  transactional: number
+  createdAt: string
+  updatedAt: string
+}
+
+export interface PreferenceTable {
+  id: string
+  userId: string
+  recipientId: string
+  channel: string
+  topicId: string | null
+  optedIn: number
+  source: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ChannelPriorityTable {
+  id: string
+  userId: string
+  recipientId: string
+  order: string
+  createdAt: string
+  updatedAt: string
+}
+
 export interface DB {
   user: UserTable
   connection: ConnectionTable
@@ -304,4 +337,7 @@ export interface DB {
   recipient: RecipientTable
   segment: SegmentTable
   message_variant: MessageVariantTable
+  topic: TopicTable
+  preference: PreferenceTable
+  channel_priority: ChannelPriorityTable
 }

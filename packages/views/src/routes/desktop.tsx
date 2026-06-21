@@ -1,7 +1,7 @@
 import { lazy } from "react"
 import type { RouteObject } from "react-router"
 import { ProtectedRoute } from "@workspace/core/components/protected-route"
-import { sharedAuthRoutes, sharedProtectedChildren, notFoundRoute } from "./_shared"
+import { sharedAuthRoutes, sharedProtectedChildren, publicRoutes, notFoundRoute } from "./_shared"
 
 const RootLayout = lazy(() => import("@workspace/core/layouts/root-layout"))
 const AppLayout = lazy(() => import("@workspace/core/layouts/app-layout"))
@@ -25,6 +25,7 @@ export const routes: RouteObject[] = [
         ],
       },
       sharedAuthRoutes,
+      ...publicRoutes,
       notFoundRoute,
     ],
   },

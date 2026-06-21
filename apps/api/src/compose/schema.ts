@@ -129,6 +129,7 @@ export const ComposePayloadSchema = z.object({
   deliveryWindowEnd: HHMM.optional(),
   respectQuietHours: z.boolean().optional().default(true),
   sendTimeOptimized: z.boolean().optional().default(false),
+  topicKey: z.string().optional(),
 })
 
 export type ComposePayload = z.infer<typeof ComposePayloadSchema>

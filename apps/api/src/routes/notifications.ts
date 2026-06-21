@@ -9,6 +9,7 @@ import { resolveTemplate, renderTemplate } from '../lib/render-template'
 import { localToUtc } from '../scheduling/utils'
 import { getStoSendAt } from '../scheduling/sto'
 import { resolveSegment, assignVariant } from '../lib/segment-resolver'
+import { resolvePreferences } from '../lib/resolve-preferences'
 import type { AppEnv } from '../lib/types'
 import type { ChannelType } from '../channels/types'
 import type { DeliveryQueueMessage } from '../queue/consumer'
@@ -33,6 +34,7 @@ const SendRequestSchema = ComposePayloadSchema.extend({
   templateData: z.record(z.string(), z.unknown()).optional(),
   templateLocale: z.string().optional(),
   variants: z.array(VariantSchema).optional(),
+  topicKey: z.string().optional(),
 }).refine(
   (v) => v.content !== undefined || v.templateId !== undefined || v.templateSlug !== undefined,
   { message: 'Either content or templateId/templateSlug is required' },
@@ -344,8 +346,38 @@ router.openapi(sendRoute, async (c) => {
       for (const channel of channels) {
         const dts = now()
         const deliveryId = newId()
-        const conn = await resolveSendConnection(db, userId, channel as ChannelType, dts)
         const recipientAddr = recip.email ?? recip.phone ?? ''
+
+        const prefResult = await resolvePreferences(db, userId, recip.id, channel, rawPayload.topicKey)
+        if (!prefResult.allowed) {
+          await db
+            .insertInto('delivery')
+            .values({
+              id: deliveryId,
+              userId,
+              notificationId: notifId,
+              channel,
+              recipient: recipientAddr,
+              status: 'skipped',
+              providerMessageId: null,
+              error: prefResult.reason ?? 'preference:opted_out',
+              attempts: 0,
+              nextRetryAt: null,
+              lastError: prefResult.reason ?? 'preference:opted_out',
+              deliveredAt: null,
+              openedAt: null,
+              clickedAt: null,
+              bouncedAt: null,
+              recipientId: recip.id,
+              variantId: null,
+              createdAt: dts,
+              updatedAt: dts,
+            })
+            .execute()
+          continue
+        }
+
+        const conn = await resolveSendConnection(db, userId, channel as ChannelType, dts)
 
         let variantId: string | null = null
         if (variantRows.length > 0) {
@@ -437,6 +469,73 @@ router.openapi(sendRoute, async (c) => {
       const dts = now()
       const deliveryId = newId()
 
+      const recipientAddr = await resolveRecipientAddress(db, channel, payload.recipient as Record<string, unknown>)
+
+      let nonSegmentRecipientId: string | null = null
+      if (recipientAddr && rawPayload.topicKey) {
+        const recipRow = await db
+          .selectFrom('recipient')
+          .where('userId', '=', userId)
+          .where((eb) =>
+            eb.or([
+              eb('email', '=', recipientAddr),
+              eb('phone', '=', recipientAddr),
+            ]),
+          )
+          .select('id')
+          .executeTakeFirst()
+        if (recipRow) {
+          nonSegmentRecipientId = recipRow.id
+          const prefResult = await resolvePreferences(db, userId, recipRow.id, channel, rawPayload.topicKey)
+          if (!prefResult.allowed) {
+            await db
+              .insertInto('delivery')
+              .values({
+                id: deliveryId,
+                userId,
+                notificationId: notifId,
+                channel,
+                recipient: recipientAddr,
+                status: 'skipped',
+                providerMessageId: null,
+                error: prefResult.reason ?? 'preference:opted_out',
+                attempts: 0,
+                nextRetryAt: null,
+                lastError: prefResult.reason ?? 'preference:opted_out',
+                deliveredAt: null,
+                openedAt: null,
+                clickedAt: null,
+                bouncedAt: null,
+                createdAt: dts,
+                updatedAt: dts,
+              })
+              .execute()
+            deliveries.push({
+              id: deliveryId,
+              userId,
+              notificationId: notifId,
+              channel,
+              recipient: recipientAddr,
+              status: 'skipped',
+              providerMessageId: null,
+              error: prefResult.reason ?? 'preference:opted_out',
+              attempts: 0,
+              nextRetryAt: null,
+              lastError: prefResult.reason ?? 'preference:opted_out',
+              deliveredAt: null,
+              openedAt: null,
+              clickedAt: null,
+              bouncedAt: null,
+              recipientId: null,
+              variantId: null,
+              createdAt: dts,
+              updatedAt: dts,
+            })
+            continue
+          }
+        }
+      }
+
       if (!adapter) {
         await db
           .insertInto('delivery')
@@ -485,7 +584,6 @@ router.openapi(sendRoute, async (c) => {
       }
 
       const conn = await resolveSendConnection(db, userId, channel as ChannelType, dts)
-      const recipientAddr = await resolveRecipientAddress(db, channel, payload.recipient as Record<string, unknown>)
 
       if (!conn) {
         await db
@@ -552,6 +650,7 @@ router.openapi(sendRoute, async (c) => {
           openedAt: null,
           clickedAt: null,
           bouncedAt: null,
+          recipientId: nonSegmentRecipientId,
           createdAt: dts,
           updatedAt: dts,
         })
@@ -581,7 +680,7 @@ router.openapi(sendRoute, async (c) => {
         openedAt: null,
         clickedAt: null,
         bouncedAt: null,
-        recipientId: null,
+        recipientId: nonSegmentRecipientId,
         variantId: null,
         createdAt: dts,
         updatedAt: dts,
