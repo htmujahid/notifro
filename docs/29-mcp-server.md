@@ -1,6 +1,6 @@
-# Milestone 32 — MCP server (remote HTTP + local stdio)
+# Milestone 29 — MCP server (remote HTTP + local stdio)
 
-**Phase:** 8 · **Depends on:** M10, M28, M31 · **Status:** Done
+**Phase:** 8 · **Depends on:** M10, M28 (developer tools) · **Status:** Done
 
 ## Goal
 Expose the platform to AI agents over the Model Context Protocol: tools to send/schedule/inspect
@@ -13,12 +13,12 @@ Agents are a first-class way to operate notification infrastructure. MCP makes e
 by an LLM, while approval gates keep destructive/sending actions under human control.
 
 ## Current state
-- M31 added API keys + request logging; the remote MCP endpoint authenticates with the same keys.
-- M10 send pipeline, M28 preferences, and the template/analytics routes already exist for the tools to call.
+- M28 (developer tools) added API keys + request logging; the remote MCP endpoint authenticates with the same keys.
+- M10 send pipeline and the template/analytics routes already exist for the tools to call.
 
 ## Scope (in)
-- **`@renderical/mcp`** package: a `createMcpServer(config)` factory exposing 9 tools (`list_channels`,
-  `send_notification`, `schedule_notification`, `get_delivery_status`, `manage_preferences`,
+- **`@renderical/mcp`** package: a `createMcpServer(config)` factory exposing 8 tools (`list_channels`,
+  `send_notification`, `schedule_notification`, `get_delivery_status`,
   `create_template`, `render_preview`, `query_analytics`, `approve_action`), 3 resources
   (`renderical://channels`, `://templates`, `://recent-deliveries`), and 3 prompts. Tools call the Worker
   over HTTP, threading the caller's auth.
@@ -31,7 +31,7 @@ by an LLM, while approval gates keep destructive/sending actions under human con
   the stored HTTP call.
 
 ## Data model
-Migration `apps/api/migrations/0026_mcp.sql`:
+Migration `apps/api/migrations/0020_mcp.sql`:
 - `mcp_approval_gate` (id, userId FK, tool, requiresApproval, createdAt, updatedAt) UNIQUE on `(userId, tool)`
 - `mcp_pending_action` (id, userId FK, tool, payload, status, expiresAt, createdAt, updatedAt) — 24h expiry
 

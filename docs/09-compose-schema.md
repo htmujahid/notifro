@@ -24,8 +24,7 @@ on.
     `text`, `heading`, `image`, `divider`, `button`, `button_group`, `fields`), `attachments?`.
   - `metadata`: `category?`, `priority` (`low|normal|high|urgent`), `tags?`, `data?`.
   - `idempotencyKey?` (enforced in M21).
-  - `recipient`: discriminated union — `user` (internal id), `contact` (`{ email?, phone?, ... }`), or
-    `segment` (id; resolved in M27).
+  - `recipient`: discriminated union — `user` (internal id) or `contact` (`{ email?, phone?, ... }`).
   - `localeHint?` and `timezoneHint?`.
 - **Transform contract** (`apps/api/src/compose/transform.ts`): a `ChannelTransform<Provider>` type and
   stub transforms per channel type:
@@ -47,7 +46,6 @@ on.
 
 ## Out of scope (deferred)
 - Template variables/conditionals/loops/localization → M25.
-- Segment resolution → M27.
 - Idempotency enforcement → M21.
 
 ## Data model

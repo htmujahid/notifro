@@ -1,6 +1,6 @@
-# Milestone 36 — Provider failover & health checks
+# Milestone 32 — Provider failover & health checks
 
-**Phase:** 10 · **Depends on:** M21, M29 (routing) · **Status:** Done
+**Phase:** 10 · **Depends on:** M21 · **Status:** Done
 
 ## Goal
 Keep delivery flowing when a provider connection fails: configure a **fallback connection** per channel that
@@ -8,12 +8,12 @@ the queue consumer switches to on a non-retryable failure, support an **APNs rel
 can't reach Apple directly, and expose a **health endpoint** for uptime monitoring.
 
 ## Why it matters
-A single provider outage shouldn't drop notifications. Provider-level failover (distinct from M29's
-channel-level chains) reroutes a failed send to a second connection on the *same* channel; the health check
-lets external monitors verify the worker + database are live.
+A single provider outage shouldn't drop notifications. Provider-level failover reroutes a failed send to a
+second connection on the *same* channel; the health check lets external monitors verify the worker +
+database are live.
 
 ## Current state
-- M21 runs delivery on `DELIVERY_Q` with retries/DLQ; M29 added channel-level fallback chains.
+- M21 runs delivery on `DELIVERY_Q` with retries/DLQ.
 - Failure on a connection went straight to the dead-letter queue with no provider-level retry.
 
 ## Scope (in)
@@ -67,6 +67,6 @@ Plus `GET /health` (unauthenticated liveness probe).
 - [x] Fallback rules are user-scoped via `requireAuth`; POST upserts by channel.
 
 ## Risks & notes
-- Failover is provider-level (same channel, different connection); channel-level escalation is M29 chains.
+- Failover is provider-level (same channel, different connection).
 - `queue:'ok'` in the health response is static — Workers don't expose queue health at runtime.
 - One fallback rule per channel per user (UNIQUE on `(userId, channel)`); upsert via POST.

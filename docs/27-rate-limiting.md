@@ -1,4 +1,4 @@
-# Milestone 30 — KV-backed rate limiting
+# Milestone 27 — KV-backed rate limiting
 
 **Phase:** 7 · **Depends on:** M21, M05–M07 · **Status:** Done
 
@@ -7,11 +7,11 @@ Cap how many notifications a user sends per channel per rolling window, enforced
 Cloudflare KV counter backed by a D1-stored rule.
 
 ## Why it matters
-Runaway loops, misconfigured journeys, or a buggy integration can fan out thousands of sends. A per-channel
+A buggy integration or misconfigured schedule can fan out thousands of sends. A per-channel
 rate limit protects provider quotas, cost, and sender reputation without a heavyweight counting store.
 
 ## Current state
-- M21 runs delivery async on `DELIVERY_Q`; `notifications.ts` already gates each delivery on preferences (M28).
+- M21 runs delivery async on `DELIVERY_Q`; `notifications.ts` already gates each delivery on the suppression list (M31).
 - No throttling primitive exists (the earlier frequency-cap/digest milestone was reverted as out of scope).
 
 ## Scope (in)

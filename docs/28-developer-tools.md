@@ -1,4 +1,4 @@
-# Milestone 31 — Developer tools: API keys, SDK & CLI
+# Milestone 28 — Developer tools: API keys, SDK & CLI
 
 **Phase:** 8 · **Depends on:** M10, M06 · **Status:** Done
 

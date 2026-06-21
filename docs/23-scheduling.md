@@ -8,9 +8,9 @@ quiet hours / do-not-disturb, and restrict delivery to time windows (e.g. only 9
 durable scheduler that enqueues due messages onto the M21 delivery queue.
 
 ## Why it matters
-Transactional sends fire now; campaigns, reminders, and digests must fire later, in the recipient's local
+Transactional sends fire now; reminders and digests must fire later, in the recipient's local
 time, without waking people at 3am. Scheduling + quiet hours are table-stakes for a notification platform
-and a prerequisite for recurring sends (M24) and journeys (M35).
+and a prerequisite for recurring sends (M24).
 
 ## Current state
 - M21 delivers via a Cloudflare Queue; `POST /api/notifications` enqueues immediately.
@@ -35,8 +35,6 @@ and a prerequisite for recurring sends (M24) and journeys (M35).
 
 ## Out of scope (deferred)
 - Recurring/cron definitions → M24.
-- Full preference center UI → M28 (quiet hours storage here; rich preference UI there).
-- Multi-step journeys with delays → M35.
 
 ## Data model
 - `scheduled_message`: org-scoped, `payload` (json), `sendAt` (UTC), `status`, `channel`, `createdAt`,
@@ -59,7 +57,7 @@ and a prerequisite for recurring sends (M24) and journeys (M35).
     - Filters AND-ed with the mandatory `userId` scope; unknown sort/filter key or operator →
       `422`; malformed cursor → `422`.
 - `DELETE /api/schedules/:id` — cancel a pending scheduled message.
-- `PATCH /api/recipients/:id/preferences` — set timezone / quiet hours (also used by M28).
+- `PATCH /api/recipients/:id/preferences` — set timezone / quiet hours.
 
 ## Frontend
 - Wire `packages/views/src/pages/schedules.tsx` to `GET /api/schedules` (replace mock data): list upcoming

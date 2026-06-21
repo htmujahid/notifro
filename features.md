@@ -13,11 +13,8 @@
    - [Channels & Adapters](#channels--adapters)
    - [Notification Compose & Send](#notification-compose--send)
    - [Delivery Queue & Retry](#delivery-queue--retry)
-   - [Routing Rules & Fallback Chains](#routing-rules--fallback-chains)
    - [Scheduling & Recurring Sends](#scheduling--recurring-sends)
-   - [Journey Engine](#journey-engine)
-   - [Audience & Recipient Management](#audience--recipient-management)
-   - [Preference Center & Topics](#preference-center--topics)
+   - [Topics](#topics)
    - [Suppression & Compliance](#suppression--compliance)
    - [Templates & Snippets](#templates--snippets)
    - [Analytics & Tracking](#analytics--tracking)
@@ -141,7 +138,7 @@ Route `GET/POST/PATCH/DELETE /api/connections` — CRUD for connections.
 ```
 ComposePayload {
   schemaVersion: "1"
-  recipient: user | contact | segment
+  recipient: user | contact
   channels: ChannelType[]
   content: {
     title?, subject?, body (text|markdown),
@@ -163,21 +160,13 @@ ComposePayload {
 **Recipient types:**
 - `user` — owner's own user account (email auto-resolved)
 - `contact` — ad-hoc address (email, phone, slackUserId, discordUserId, teamsUserId, deviceToken, pushSubscription)
-- `segment` — broadcasts to all recipients matching a saved segment filter
 
 **Send flow** (`routes/notifications.ts`):
 1. Parse + validate `ComposePayload`
 2. Idempotency key check
-3. Resolve routing rules → override channel/chain
-4. If recipient is `segment`, fan-out to all matching recipients
-5. Resolve preferences per recipient + topic → skip if opted-out
-6. Resolve connection per channel
-7. Create `notification` row + one `delivery` row per (recipient × channel)
-8. Enqueue `DeliveryQueueMessage` → `DELIVERY_Q`
-
-**Modes:**
-- `transactional` — default
-- `broadcast` — used when recipient is a segment; template rendered per-recipient
+3. Resolve connection per channel
+4. Create `notification` row + one `delivery` row per channel
+5. Enqueue `DeliveryQueueMessage` → `DELIVERY_Q`
 
 **Sandbox mode** — `X-Renderical-Sandbox: true` header or test-mode API key; returns preview without sending; marks `sandboxMode: true` in response.
 
@@ -193,15 +182,13 @@ Cloudflare Queue consumer at `queue/consumer.ts`.
 
 **Per-message flow:**
 1. Load `delivery` + `notification` rows
-2. If `escalationCheck=true` → check if chain step succeeded; if not, escalate to next step
-3. Check suppression list; mark `suppressed` if hit
-4. Resolve connection (direct ID or `resolveSendConnection`)
-5. For broadcast + template: render template against per-recipient attributes + locale strings
-6. Call adapter `send()`
-7. On success: mark `delivered`, log `delivery_event`, check chain escalation schedule
-8. On retryable error (timeout / 429 / 502-504): exponential backoff up to `MAX_ATTEMPTS=5`; `msg.retry({ delaySeconds })`
-9. On permanent error: try `provider_fallback` for the channel; then move to `dead_letter`
-10. On chain delivery with `successOn=[opened|clicked]`: re-queue with `delaySeconds` for escalation check
+2. Check suppression list; mark `suppressed` if hit
+3. Resolve connection
+4. Render template if attached
+5. Call adapter `send()`
+6. On success: mark `delivered`, log `delivery_event`
+7. On retryable error (timeout / 429 / 502-504): exponential backoff up to `MAX_ATTEMPTS=5`; `msg.retry({ delaySeconds })`
+8. On permanent error: move to `dead_letter`
 
 **Backoff formula:** `min(10×2^(attempts−1), 3600) × (1 + rand(0.2))`
 
@@ -210,28 +197,6 @@ Cloudflare Queue consumer at `queue/consumer.ts`.
 **PII redaction:** Error strings passed through `redactPii()` before persistence.
 
 Files: `apps/api/src/queue/consumer.ts`, `apps/api/src/lib/suppress.ts`, `apps/api/src/lib/redact.ts`
-
----
-
-### Routing Rules & Fallback Chains
-
-**Routing rules** (`routing_rule` table):
-- Ordered by `priority` (lower = higher precedence)
-- `match` conditions: `messageType`, `minPriority`, `recipientAttr` (field/op/value), `timeWindow` (HH:MM start–end UTC)
-- Each rule targets either a `channel` (string) or a `fallback_chain` (by ID)
-- Disabled rules are skipped
-
-**Fallback chains** (`fallback_chain` table):
-- Named ordered list of `ChainStep[]`
-- Each step: `{ channel, connectionId?, waitForDeliveryMs, successOn: ("delivered"|"opened"|"clicked")[] }`
-- Escalation: if a step does not achieve `successOn` within `waitForDeliveryMs`, the next step is queued (up to 10 steps)
-- Idempotency key `chain:{notificationId}:{stepIndex}` prevents duplicate escalations
-
-**Provider fallbacks** (`provider_fallback` table):
-- Per-channel primary/fallback connection pairs
-- Triggered automatically on permanent (non-retryable) send failure
-
-Files: `apps/api/src/lib/routing.ts`, `apps/api/src/routes/routing.ts`, `apps/api/src/routes/chains.ts`, `apps/api/src/routes/provider-fallbacks.ts`
 
 ---
 
@@ -254,87 +219,18 @@ Files: `apps/api/src/lib/routing.ts`, `apps/api/src/routes/routing.ts`, `apps/ap
 2. Apply quiet-hours / delivery-window: reschedule if blocked
 3. Create `notification` + `delivery` rows, enqueue to `DELIVERY_Q`
 4. Process up to 50 due `recurring_send` rows
-5. Advance due `journey_run` rows where `nextResumeAt <= now`
 
 Files: `apps/api/src/scheduling/`, `apps/api/src/routes/schedules.ts`, `apps/api/src/routes/recurring.ts`
 
 ---
 
-### Journey Engine
-
-Multi-step automation engine.
-
-**Data model:**
-- `journey` — name, status (draft/active), optional trigger, `steps` (JSON graph)
-- `journey_run` — one per (journey × recipient); tracks `currentStepId`, `nextResumeAt`, `context` (JSON), `status`
-- `journey_event` — arbitrary named events with `recipientId` and `payload`
-
-**Step kinds:**
-
-| Kind | Behaviour |
-|---|---|
-| `send` | Creates a notification + deliveries, enqueues to queue; uses idempotency key `journey:{runId}:{stepId}` |
-| `wait` | Sets `nextResumeAt = now + delayMs`; pauses until sweep re-advances |
-| `branch` | Evaluates `FilterNode` conditions against run `context`; follows first matching branch or `default` |
-| `exit` | Marks run `completed` |
-
-**Filter operators** (shared with segment resolver): `eq`, `neq`, `gt`, `lt`, `gte`, `lte`, `contains`, `in` — on nested dot-path fields.
-
-**Event triggers:** `journey_event` rows can start/advance journeys when an event name matches a journey's trigger.
-
-**Depth guard:** Maximum 50 recursive steps per `advanceJourneyRun` call.
-
-Files: `apps/api/src/lib/journey-engine.ts`, `apps/api/src/routes/journeys.ts`, `apps/api/src/routes/events.ts`
-
----
-
-### Audience & Recipient Management
-
-**Recipients** (`recipient` table):
-- `externalId` (your system's ID), `email`, `phone`, `locale`, `timezone`, `attributes` (JSON)
-- CRUD: `GET/POST/PATCH/DELETE /api/recipients`
-
-**Segments** (`segment` table):
-- `name`, `filter` (JSON `FilterNode`)
-- Filter nodes: `{ and: [] }`, `{ or: [] }`, or a leaf clause `{ field, op, value }`
-- Fields resolved from `recipient.attributes` via `json_extract()` in SQLite
-- `previewSegment()` returns count + 100-row sample without materialising
-- CRUD: `GET/POST/PATCH/DELETE /api/segments`
-- Preview: `POST /api/segments/preview`
-
-**Segment fan-out:** When a notification targets a `segment`, `resolveSegment()` returns all matching recipients and one delivery record is created per recipient per channel.
-
-Files: `apps/api/src/lib/segment-resolver.ts`, `apps/api/src/routes/recipients.ts`, `apps/api/src/routes/segments.ts`
-
----
-
-### Preference Center & Topics
+### Topics
 
 **Topics** (`topic` table):
-- `key` (slugged string), `name`, `description`, `defaultOptIn`, `transactional` flag
-- Transactional topics always deliver regardless of preferences
+- `key` (slugged string), `name`, `description` — used to tag notifications in logs and analytics
 - CRUD: `GET/POST/PATCH/DELETE /api/topics`
 
-**Preferences** (`preference` table):
-- Per `(recipientId, channel, topicId?)` opt-in/out record
-- `topicId = null` → global channel opt-out
-- `source` tracks where the preference came from (user, api, import)
-
-**Preference resolution** (`lib/resolve-preferences.ts`):
-1. If `topicKey` is transactional → always allowed
-2. Topic-level preference → block if opted-out
-3. Global channel preference → block if opted-out
-4. Default → allowed
-
-**Preference token** (`lib/preference-token.ts`): Signed token for public preference-center URLs.
-
-**Public preference center:** `GET /api/preferences/center/:recipientId` — no auth required; returns topics + current preferences.
-
-**Consent events** (`consent_event` table): Immutable audit log of every opt-in/out action with source and actor note.
-
-**Unsubscribe page:** `/unsubscribe` — public route; reads preference token from URL.
-
-Files: `apps/api/src/routes/topics.ts`, `apps/api/src/routes/preferences.ts`, `apps/api/src/lib/resolve-preferences.ts`, `apps/api/src/lib/preference-token.ts`
+Files: `apps/api/src/routes/topics.ts`
 
 ---
 
@@ -342,7 +238,7 @@ Files: `apps/api/src/routes/topics.ts`, `apps/api/src/routes/preferences.ts`, `a
 
 **Suppression list** (`suppression` table):
 - Per `(channel, address)` — checked before every send
-- Reasons: bounce, spam, unsubscribe, manual
+- Reasons: bounce, complaint, manual
 - `isSuppressed()` short-circuits delivery before calling adapter
 
 **Compliance routes:**
@@ -493,7 +389,6 @@ Uses `@modelcontextprotocol/sdk` via the `@renderical/mcp` package. Serves a Str
 | `send_notification` | Send a notification; supports human-approval gate |
 | `schedule_notification` | Schedule a notification at a future time |
 | `get_delivery_status` | Fetch delivery records for a notification |
-| `manage_preferences` | List topics / preferences / preference center |
 | `create_template` | Create a new template |
 | `render_preview` | Dry-run render via sandbox mode |
 | `query_analytics` | Query delivery analytics |
@@ -600,29 +495,6 @@ Feature-level React components and data hooks used across all app targets.
 - `TemplateEdit` — full template editor: content, variables, locale strings, preview pane
 - `VersionRow` — version history row with restore action
 
-### Audiences (`components/audiences/`)
-
-- `AudiencesView` — tabs for Recipients and Segments
-- `RecipientsTab` — paginated recipient table
-- `SegmentsTab` — segment list
-- `FilterBuilder` — drag-and-drop AND/OR filter clause builder
-- `NewSegmentDialog` — create segment with filter
-- `SegmentPreviewDialog` — live preview of matching recipients
-- `SegmentPreviewBadge` — count badge
-
-### Routing (`components/routing/`)
-
-- `RoutingView` — routing rules list + fallback chains list
-- `CreateRuleDialog` — rule creation form (match conditions, target)
-- `CreateChainDialog` — chain creation form
-- `ChainStepsEditor` — ordered step list with success-on conditions
-
-### Journeys (`components/journeys/`)
-
-- `JourneysView` — journey list table
-- `JourneyDetailDialog` — view steps, runs, status
-- `JourneyStatusBadge` — colour-coded status indicator
-
 ### Schedules (`components/schedules/`)
 
 - `SchedulesView` — tabs for one-time schedules and recurring sends
@@ -642,17 +514,11 @@ Feature-level React components and data hooks used across all app targets.
 
 ### Settings (`components/settings/`)
 
-- `SettingsView` — tabs for Brand Kit, Compliance, Rate Limits, Failover, Subscriptions
+- `SettingsView` — tabs for Brand Kit, Compliance, Rate Limits, Topics
 - `BrandKitSection` — logo upload, colour palette, font stack
 - `ComplianceSection` — suppression list management
 - `RateLimitsSection` — per-channel rate rule CRUD
-- `FailoverSection` — provider fallback configuration
-- `SubscriptionsSection` — topic + preference management UI
-
-### Preferences (`components/preferences/`)
-
-- `PreferencesView` — public-facing preference center (no auth required)
-- Topic opt-in/out toggles per channel
+- `SubscriptionsSection` — notification topic tag management
 
 ### Onboarding (`components/onboarding/`)
 
@@ -664,7 +530,6 @@ Feature-level React components and data hooks used across all app targets.
 - `CreateView` — quick-compose notification form
 - `LogsView` — raw delivery log with filters
 - `HelpView` + `FaqItem` — FAQ accordion
-- `UnsubscribeView` — public unsubscribe page via token
 - `ProtectedRoute` — session guard wrapper
 - `RendericalLogo` — SVG brand logo
 
@@ -675,20 +540,16 @@ All hooks use `@tanstack/react-query` via the `api-client` package.
 | Hook file | Features covered |
 |---|---|
 | `analytics.ts` | `useAnalytics`, `useOverview` |
-| `audiences.ts` | `useRecipients`, `useSegments`, `useSegmentPreview` |
 | `compliance.ts` | `useSuppressions`, `useConsentEvents` |
 | `connections.ts` | `useConnections`, `useCreateConnection`, `useDeleteConnection` |
 | `developers.ts` | `useApiKeys`, `useCreateKey`, `useRevokeKey`, `useRequestLog` |
-| `failover.ts` | `useProviderFallbacks` |
 | `inbox.ts` | `useInboxMessages`, `useMarkRead` |
-| `journeys.ts` | `useJourneys`, `useJourneyRuns` |
 | `mcp.ts` | `useMcpGates`, `usePendingActions`, `useApproveMcpAction` |
 | `notifications.ts` | `useNotifications`, `useSendNotification` |
 | `overview.ts` | `useOverviewStats` |
-| `preferences.ts` | `useTopics`, `usePreferences`, `usePreferenceCenter` |
+| `preferences.ts` | `useTopics`, `useCreateTopic`, `useDeleteTopic` |
 | `push.ts` | `useVapidKey`, `useSubscribePush` |
 | `rate-limits.ts` | `useRateLimits` |
-| `routing.ts` | `useRoutingRules`, `useFallbackChains` |
 | `schedules.ts` | `useSchedules`, `useRecurringSends` |
 | `templates.ts` | `useTemplates`, `useTemplate`, `useTemplateVersions` |
 | `webhooks.ts` | `useWebhooks`, `useCreateWebhook`, `useDeleteWebhook` |
@@ -717,10 +578,7 @@ Page-level components and platform-specific router configs.
 | `/templates` | `pages/templates.tsx` | `TemplatesView` |
 | `/templates/:id` | `pages/template-edit.tsx` | `TemplateEdit` |
 | `/logs` | `pages/logs.tsx` | `LogsView` |
-| `/audiences` | `pages/audiences.tsx` | `AudiencesView` |
 | `/analytics` | `pages/analytics.tsx` | `AnalyticsView` |
-| `/routing` | `pages/routing.tsx` | `RoutingView` |
-| `/journeys` | `pages/journeys.tsx` | `JourneysView` |
 | `/developers` | `pages/developers.tsx` | `DevelopersView` |
 | `/settings` | `pages/settings.tsx` | `SettingsView` |
 | `/help` | `pages/help.tsx` | `HelpView` |
@@ -728,8 +586,6 @@ Page-level components and platform-specific router configs.
 | `/account` | `pages/account/profile.tsx` | `ProfileForm` |
 | `/account/security` | `pages/account/security.tsx` | Change email / password |
 | `/account/two-factor` | `pages/account/two-factor.tsx` | `TwoFactorSettings` |
-| `/preferences` (public) | `pages/preferences.tsx` | `PreferencesView` |
-| `/unsubscribe` (public) | `pages/unsubscribe.tsx` | `UnsubscribeView` |
 
 ### Platform Routers
 
@@ -956,25 +812,14 @@ Astro + Cloudflare Pages.
 | `webhook_endpoint` | Outbound webhook endpoints with HMAC secret |
 | `scheduled_message` | One-time scheduled notifications |
 | `recurring_send` | Cron-based recurring sends |
-| `recipient_profile` | Recipient quiet-hours and timezone preferences |
-| `recipient` | Addressable contacts (email, phone, locale, attributes JSON) |
-| `segment` | Named audience filters (FilterNode JSON) |
-| `topic` | Notification topics (key, name, transactional flag) |
-| `preference` | Per-recipient channel/topic opt-in status |
-| `channel_priority` | Per-recipient channel ordering |
-| `fallback_chain` | Ordered channel escalation chains |
-| `routing_rule` | Priority-ordered routing rules |
+| `topic` | Notification topic tags (key, name, description) |
 | `rate_limit_rule` | Per-channel rate limit configs |
 | `apikey` | API keys with prefix, metadata, rate-limit config |
 | `api_request_log` | Authenticated API call audit log |
 | `mcp_approval_gate` | Per-MCP-tool approval requirement flags |
 | `mcp_pending_action` | MCP actions awaiting human approval |
 | `suppression` | Hard-suppressed channel+address pairs |
-| `consent_event` | Immutable opt-in/out audit trail |
-| `provider_fallback` | Primary → fallback connection pairs per channel |
-| `journey` | Journey definitions (steps graph, trigger) |
-| `journey_run` | In-progress journey executions |
-| `journey_event` | Named events for journey triggers |
+| `consent_event` | Immutable suppression audit trail |
 | `onboarding_state` | First-run checklist progress |
 
 ---
@@ -1014,14 +859,7 @@ All routes prefixed `/api` unless noted.
 | `GET/POST/DELETE` | `/api/schedules` | One-time schedule CRUD |
 | `GET/POST/PATCH/DELETE` | `/api/recurring` | Recurring send CRUD |
 | `GET/PUT` | `/api/brand-kit` | Brand kit |
-| `GET/POST/PATCH/DELETE` | `/api/recipients` | Recipient CRUD |
-| `GET/POST/PATCH/DELETE` | `/api/segments` | Segment CRUD |
-| `POST` | `/api/segments/preview` | Preview segment match |
 | `GET/POST/PATCH/DELETE` | `/api/topics` | Topic CRUD |
-| `GET/POST/PATCH/DELETE` | `/api/preferences` | Preference CRUD |
-| `GET` | `/api/preferences/center/:recipientId` | Public preference center |
-| `GET/POST/PATCH/DELETE` | `/api/routing` | Routing rule CRUD |
-| `GET/POST/PATCH/DELETE` | `/api/chains` | Fallback chain CRUD |
 | `GET/POST/PATCH/DELETE` | `/api/rate-limits` | Rate limit rule CRUD |
 | `GET/POST/DELETE` | `/api/keys` | API key CRUD |
 | `GET` | `/api/request-log` | API request log |
@@ -1029,16 +867,9 @@ All routes prefixed `/api` unless noted.
 | `GET` | `/api/analytics` | Delivery analytics |
 | `GET/POST/DELETE` | `/api/compliance/suppressions` | Suppression list |
 | `GET` | `/api/compliance/consent-events` | Consent audit log |
-| `GET/POST/PATCH/DELETE` | `/api/journeys` | Journey CRUD |
-| `POST` | `/api/journeys/:id/start` | Start a journey for a recipient |
-| `GET` | `/api/journeys/:id/runs` | List journey runs |
-| `POST` | `/api/events` | Emit journey event |
-| `GET/POST/PATCH/DELETE` | `/api/provider-fallbacks` | Provider fallback CRUD |
 | `GET/PATCH` | `/api/mcp/gates` | MCP approval gate settings |
 | `POST` | `/api/mcp/pending` | Create pending MCP action |
 | `POST` | `/api/mcp/pending/:id/approve` | Approve pending MCP action |
-| `GET` | `/api/recipient-profiles` | Recipient profile (quiet hours) |
-| `PUT` | `/api/recipient-profiles` | Update recipient profile |
 | `GET` | `/t/o/:token` | Open pixel tracking |
 | `GET` | `/t/c/:token` | Click tracking + redirect |
 | `POST` | `/webhooks/receipts/*` | Provider inbound receipt callbacks |

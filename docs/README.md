@@ -21,7 +21,7 @@ milestones are **Done**; these are reference docs for future changes, not a buil
 - **Queue**: Cloudflare Queues (`DELIVERY_Q`) for delivery fan-out. Consumer in
   `apps/api/src/queue/consumer.ts`.
 - **Cron**: Cloudflare Workers cron triggers. Sweep handler in `apps/api/src/scheduling/sweep.ts` (advances
-  due scheduled sends, recurring sends, and journey runs).
+  due scheduled sends and recurring sends).
 - **Frontend packages**: `@renderical/views` (pages/routes), `@renderical/core` (hooks/components/layouts),
   `@renderical/api-client` (typed client + shared types). UI from `@renderical/ui` (shadcn-generated — never
   edit `packages/ui/src/components/`).
@@ -75,16 +75,12 @@ milestones are **Done**; these are reference docs for future changes, not a buil
 | 24 | Recurring/cron sends                               | 5     | M23                   | Done   |
 | 25 | Template engine (vars, conditionals, loops, i18n)  | 6     | M09                   | Done   |
 | 26 | Template management UI (builder, versioning)       | 6     | M25                   | Done   |
-| 27 | Audiences, segmentation & personalization          | 6     | M09, M25, M10         | Done   |
-| 28 | Preference center, topics, unsubscribe             | 7     | M10, M11              | Done   |
-| 29 | Routing rules & fallback chains                    | 7     | M28, M05–M07          | Done   |
-| 30 | KV-backed rate limiting                            | 7     | M21, M05–M07          | Done   |
-| 31 | Developer tools: API keys, SDK, CLI                | 8     | M10, M06              | Done   |
-| 32 | MCP server (remote HTTP + local stdio)             | 8     | M10, M28, M31         | Done   |
-| 33 | Analytics dashboards                               | 9     | M22                   | Done   |
-| 34 | Audit log, suppression & consent ledger            | 9     | M22, M28              | Done   |
-| 35 | Workflows & multi-step journeys                    | 10    | M23, M29, M30         | Done   |
-| 36 | Provider failover & health checks                  | 10    | M21, M29              | Done   |
+| 27 | KV-backed rate limiting                            | 7     | M21, M05–M07          | Done   |
+| 28 | Developer tools: API keys, SDK, CLI                | 8     | M10, M06              | Done   |
+| 29 | MCP server (remote HTTP + local stdio)             | 8     | M10, M28              | Done   |
+| 30 | Analytics dashboards                               | 9     | M22                   | Done   |
+| 31 | Audit log, suppression & consent ledger            | 9     | M22                   | Done   |
+| 32 | Provider failover & health checks                  | 10    | M21                   | Done   |
 
 ## Phase map
 
@@ -95,11 +91,11 @@ milestones are **Done**; these are reference docs for future changes, not a buil
 - **Phase 3 — Channels**: 13–20 (web push, webhook, SMS, WhatsApp, Telegram, Slack, Discord/Teams, mobile push)
 - **Phase 4 — Reliability**: 21–22 (queue, receipts)
 - **Phase 5 — Scheduling**: 23–24 (scheduling, recurring)
-- **Phase 6 — Templates & targeting**: 25–27 (engine, UI, audiences/segmentation)
-- **Phase 7 — Preferences & control**: 28–30 (preference center, routing, rate limiting)
-- **Phase 8 — Developer platform**: 31–32 (API keys/SDK/CLI, MCP)
-- **Phase 9 — Observability**: 33–34 (analytics, audit/compliance)
-- **Phase 10 — Orchestration & ops**: 35–36 (journeys, failover/health)
+- **Phase 6 — Templates**: 25–26 (engine, UI)
+- **Phase 7 — Controls**: 27 (rate limiting)
+- **Phase 8 — Developer platform**: 28–29 (API keys/SDK/CLI, MCP)
+- **Phase 9 — Observability**: 30–31 (analytics, audit/compliance)
+- **Phase 10 — Ops**: 32 (failover/health)
 
 ## Milestone file template
 
