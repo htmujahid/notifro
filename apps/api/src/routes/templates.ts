@@ -225,6 +225,27 @@ router.openapi(patchRoute, async (c) => {
     if (conflict) throw Errors.badRequest(`Template slug '${body.slug}' already exists`)
   }
 
+  const maxVersionRow = await c.var.db
+    .selectFrom('template_version')
+    .where('templateId', '=', id)
+    .select(c.var.db.fn.max('version').as('maxVersion'))
+    .executeTakeFirst()
+  const nextVersion = ((maxVersionRow?.maxVersion as number | null) ?? 0) + 1
+
+  await c.var.db
+    .insertInto('template_version')
+    .values({
+      id: newId(),
+      userId,
+      templateId: id,
+      version: nextVersion,
+      content: existing.content,
+      localeStrings: existing.localeStrings,
+      variables: existing.variables,
+      createdAt: ts,
+    })
+    .execute()
+
   const updates: Record<string, unknown> = { updatedAt: ts }
   if (body.name !== undefined) updates.name = body.name
   if (body.slug !== undefined) updates.slug = body.slug

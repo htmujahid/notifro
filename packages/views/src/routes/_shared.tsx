@@ -15,6 +15,7 @@ const SchedulesPage = lazy(() => import("../pages/schedules"))
 const ChannelsPage = lazy(() => import("../pages/channels"))
 const CreatePage = lazy(() => import("../pages/create"))
 const TemplatesPage = lazy(() => import("../pages/templates"))
+const TemplateEditPage = lazy(() => import("../pages/template-edit"))
 const LogsPage = lazy(() => import("../pages/logs"))
 const AudiencesPage = lazy(() => import("../pages/audiences"))
 const AnalyticsPage = lazy(() => import("../pages/analytics"))
@@ -44,6 +45,7 @@ export const sharedProtectedChildren: RouteObject[] = [
   { path: "channels", element: <ChannelsPage /> },
   { path: "create", element: <CreatePage /> },
   { path: "templates", element: <TemplatesPage /> },
+  { path: "templates/:id", element: <TemplateEditPage /> },
   { path: "logs", element: <LogsPage /> },
   { path: "audiences", element: <AudiencesPage /> },
   { path: "analytics", element: <AnalyticsPage /> },

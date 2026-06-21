@@ -20,6 +20,9 @@ import receiptsRouter from './routes/receipts'
 import schedulesRouter from './routes/schedules'
 import recipientProfilesRouter from './routes/recipient-profiles'
 import recurringRouter from './routes/recurring'
+import templateVersionsRouter from './routes/template-versions'
+import snippetsRouter from './routes/snippets'
+import brandKitRouter from './routes/brand-kit'
 import { handleDeliveryQueue } from './queue/consumer'
 import { handleScheduledSweep } from './scheduling/sweep'
 import { recomputeAllStoProfiles } from './scheduling/sto'
@@ -142,6 +145,9 @@ app.route('/webhooks', receiptsRouter)
 app.route('/api', schedulesRouter)
 app.route('/api', recipientProfilesRouter)
 app.route('/api', recurringRouter)
+app.route('/api', templateVersionsRouter)
+app.route('/api', snippetsRouter)
+app.route('/api', brandKitRouter)
 
 app.doc('/doc', {
   openapi: '3.0.0',

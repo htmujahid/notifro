@@ -1,34 +1,18 @@
+import { FileTextIcon, PlusIcon } from "lucide-react"
+import { Link } from "react-router"
 import { Button } from "@workspace/ui/components/button"
-import { PlusIcon, FileTextIcon, MailIcon, BellIcon, MessageSquareIcon, WebhookIcon } from "lucide-react"
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from "@workspace/ui/components/empty"
+import { useTemplates, useDeleteTemplate } from "@workspace/core/hooks/templates"
 
-const CHANNEL_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
-  Email: MailIcon,
-  Push: BellIcon,
-  Slack: MessageSquareIcon,
-  Webhook: WebhookIcon,
-}
-
-const ALL_TEMPLATES = [
-  { id: 1, name: "Welcome email", channel: "Email", type: "Transactional", lastModified: "Jun 18, 2026", usedBy: 3 },
-  { id: 2, name: "Payment received", channel: "Email", type: "Transactional", lastModified: "Jun 15, 2026", usedBy: 1 },
-  { id: 3, name: "Subscription expiring", channel: "Push", type: "Reminder", lastModified: "Jun 14, 2026", usedBy: 2 },
-  { id: 4, name: "Weekly digest", channel: "Email", type: "Digest", lastModified: "Jun 12, 2026", usedBy: 1 },
-  { id: 5, name: "Incident alert", channel: "Slack", type: "Alert", lastModified: "Jun 10, 2026", usedBy: 4 },
-  { id: 6, name: "Low inventory", channel: "Slack", type: "Alert", lastModified: "Jun 8, 2026", usedBy: 2 },
-  { id: 7, name: "Password reset", channel: "Email", type: "Transactional", lastModified: "Jun 5, 2026", usedBy: 1 },
-  { id: 8, name: "Deployment hook", channel: "Webhook", type: "System", lastModified: "Jun 3, 2026", usedBy: 1 },
-]
-
-const TYPE_STYLES: Record<string, string> = {
-  Transactional: "bg-blue-500/10 text-blue-700 dark:text-blue-400",
-  Reminder: "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400",
-  Digest: "bg-purple-500/10 text-purple-700 dark:text-purple-400",
-  Alert: "bg-red-500/10 text-red-700 dark:text-red-400",
-  System: "bg-muted text-muted-foreground",
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })
 }
 
 export function TemplatesView() {
+  const { data, isLoading } = useTemplates()
+  const deleteTemplate = useDeleteTemplate()
+  const templates = data?.pages.flatMap((p) => p.data) ?? []
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
@@ -38,13 +22,18 @@ export function TemplatesView() {
             Reusable notification templates across all channels.
           </p>
         </div>
-        <Button size="sm" className="gap-1.5">
+        <Link
+          to="/templates/new"
+          className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+        >
           <PlusIcon className="size-4" />
           New template
-        </Button>
+        </Link>
       </div>
 
-      {ALL_TEMPLATES.length === 0 ? (
+      {isLoading ? (
+        <div className="text-sm text-muted-foreground">Loading…</div>
+      ) : templates.length === 0 ? (
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon"><FileTextIcon /></EmptyMedia>
@@ -52,7 +41,13 @@ export function TemplatesView() {
             <EmptyDescription>Create reusable message templates to keep your notifications consistent across channels.</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
-            <Button size="sm" className="gap-1.5"><PlusIcon className="size-4" />New template</Button>
+            <Link
+              to="/templates/new"
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              <PlusIcon className="size-4" />
+              New template
+            </Link>
           </EmptyContent>
         </Empty>
       ) : (
@@ -61,38 +56,47 @@ export function TemplatesView() {
             <thead>
               <tr className="border-b border-border bg-muted/40">
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground">Name</th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Channel</th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Type</th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Used by</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Slug</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Locale</th>
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground">Last modified</th>
+                <th className="px-4 py-3" />
               </tr>
             </thead>
             <tbody className="divide-y divide-border bg-card">
-              {ALL_TEMPLATES.map((t) => {
-                const Icon = CHANNEL_ICONS[t.channel] ?? FileTextIcon
-                return (
-                  <tr key={t.id} className="cursor-pointer transition-colors hover:bg-muted/30">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2.5">
-                        <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted">
-                          <Icon className="size-3.5 text-muted-foreground" />
-                        </div>
-                        <span className="font-medium">{t.name}</span>
+              {templates.map((t) => (
+                <tr key={t.id} className="transition-colors hover:bg-muted/30">
+                  <td className="px-4 py-3">
+                    <Link to={`/templates/${t.id}`} className="flex items-center gap-2.5 hover:underline">
+                      <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted">
+                        <FileTextIcon className="size-3.5 text-muted-foreground" />
                       </div>
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground">{t.channel}</td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${TYPE_STYLES[t.type]}`}>
-                        {t.type}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      {t.usedBy} {t.usedBy === 1 ? "schedule" : "schedules"}
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground">{t.lastModified}</td>
-                  </tr>
-                )
-              })}
+                      <span className="font-medium">{t.name}</span>
+                    </Link>
+                  </td>
+                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{t.slug}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{t.defaultLocale}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{formatDate(t.updatedAt)}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center justify-end gap-2">
+                      <Link
+                        to={`/templates/${t.id}`}
+                        className="inline-flex items-center rounded-md border px-2.5 py-1 text-xs font-medium transition-colors hover:bg-muted"
+                      >
+                        Edit
+                      </Link>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                        disabled={deleteTemplate.isPending}
+                        onClick={() => deleteTemplate.mutate(t.id)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

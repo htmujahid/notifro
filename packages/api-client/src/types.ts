@@ -74,6 +74,36 @@ export interface Template {
   updatedAt: string
 }
 
+export interface TemplateVersion {
+  id: string
+  userId: string
+  templateId: string
+  version: number
+  content: string
+  localeStrings: string | null
+  variables: string | null
+  createdAt: string
+}
+
+export interface Snippet {
+  id: string
+  userId: string
+  name: string
+  content: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface BrandKit {
+  id: string
+  userId: string
+  logoUrl: string | null
+  colors: string | null
+  fontStack: string | null
+  createdAt: string
+  updatedAt: string
+}
+
 export interface ComposePayload {
   schemaVersion?: '1'
   content?: {

@@ -213,10 +213,43 @@ export interface RecipientProfileTable {
   updatedAt: string
 }
 
+export interface TemplateVersionTable {
+  id: string
+  userId: string
+  templateId: string
+  version: number
+  content: string
+  localeStrings: string | null
+  variables: string | null
+  createdAt: string
+}
+
+export interface SnippetTable {
+  id: string
+  userId: string
+  name: string
+  content: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface BrandKitTable {
+  id: string
+  userId: string
+  logoUrl: string | null
+  colors: string | null
+  fontStack: string | null
+  createdAt: string
+  updatedAt: string
+}
+
 export interface DB {
   user: UserTable
   connection: ConnectionTable
   template: TemplateTable
+  template_version: TemplateVersionTable
+  snippet: SnippetTable
+  brand_kit: BrandKitTable
   notification: NotificationTable
   delivery: DeliveryTable
   delivery_event: DeliveryEventTable
