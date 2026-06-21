@@ -385,6 +385,27 @@ export interface McpPendingActionTable {
   updatedAt: string
 }
 
+export interface SuppressionTable {
+  id: string
+  userId: string
+  channel: string
+  address: string
+  reason: string
+  createdAt: string
+}
+
+export interface ConsentEventTable {
+  id: string
+  userId: string
+  recipientId: string | null
+  channel: string
+  topicId: string | null
+  event: string
+  source: string
+  actorNote: string | null
+  createdAt: string
+}
+
 export interface DB {
   user: UserTable
   connection: ConnectionTable
@@ -417,4 +438,6 @@ export interface DB {
   api_request_log: ApiRequestLogTable
   mcp_approval_gate: McpApprovalGateTable
   mcp_pending_action: McpPendingActionTable
+  suppression: SuppressionTable
+  consent_event: ConsentEventTable
 }

@@ -376,3 +376,24 @@ export interface AnalyticsTopicRow {
   delivered: number
   deliveryRate: number
 }
+
+export interface Suppression {
+  id: string
+  userId: string
+  channel: string
+  address: string
+  reason: string
+  createdAt: string
+}
+
+export interface ConsentEvent {
+  id: string
+  userId: string
+  recipientId: string | null
+  channel: string
+  topicId: string | null
+  event: string
+  source: string
+  actorNote: string | null
+  createdAt: string
+}

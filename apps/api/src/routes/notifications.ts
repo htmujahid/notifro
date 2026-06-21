@@ -12,6 +12,7 @@ import { resolvePreferences } from '../lib/resolve-preferences'
 import { checkRateLimit } from '../lib/rate-limit'
 import { resolveRoute } from '../lib/routing'
 import { getTransform } from '../compose/transform'
+import { isSuppressed } from '../lib/suppress'
 import type { AppEnv } from '../lib/types'
 import type { ChannelType } from '../channels/types'
 import type { DeliveryQueueMessage } from '../queue/consumer'
@@ -473,6 +474,35 @@ router.openapi(sendRoute, async (c) => {
           continue
         }
 
+        const suppressed = await isSuppressed(db, userId, channel, recipientAddr)
+        if (suppressed) {
+          await db
+            .insertInto('delivery')
+            .values({
+              id: deliveryId,
+              userId,
+              notificationId: notifId,
+              channel,
+              recipient: recipientAddr,
+              status: 'suppressed',
+              providerMessageId: null,
+              error: `suppressed:${suppressed.reason}`,
+              attempts: 0,
+              nextRetryAt: null,
+              lastError: `suppressed:${suppressed.reason}`,
+              deliveredAt: null,
+              openedAt: null,
+              clickedAt: null,
+              bouncedAt: null,
+              recipientId: recip.id,
+              variantId: null,
+              createdAt: dts,
+              updatedAt: dts,
+            })
+            .execute()
+          continue
+        }
+
         const rlResult = await checkRateLimit(c.env.RATE_LIMIT_KV, db, userId, channel, Date.now())
         if (rlResult === 'exceeded') {
           await db
@@ -701,6 +731,57 @@ router.openapi(sendRoute, async (c) => {
           attempts: 0,
           nextRetryAt: null,
           lastError: 'rate_limit:exceeded',
+          deliveredAt: null,
+          openedAt: null,
+          clickedAt: null,
+          bouncedAt: null,
+          recipientId: null,
+          variantId: null,
+          chainId: null,
+          chainStepIndex: null,
+          escalatedFromDeliveryId: null,
+          createdAt: dts,
+          updatedAt: dts,
+        })
+        continue
+      }
+
+      const suppCheck = await isSuppressed(db, userId, channel, recipientAddr)
+      if (suppCheck) {
+        await db
+          .insertInto('delivery')
+          .values({
+            id: deliveryId,
+            userId,
+            notificationId: notifId,
+            channel,
+            recipient: recipientAddr,
+            status: 'suppressed',
+            providerMessageId: null,
+            error: `suppressed:${suppCheck.reason}`,
+            attempts: 0,
+            nextRetryAt: null,
+            lastError: `suppressed:${suppCheck.reason}`,
+            deliveredAt: null,
+            openedAt: null,
+            clickedAt: null,
+            bouncedAt: null,
+            createdAt: dts,
+            updatedAt: dts,
+          })
+          .execute()
+        deliveries.push({
+          id: deliveryId,
+          userId,
+          notificationId: notifId,
+          channel,
+          recipient: recipientAddr,
+          status: 'suppressed',
+          providerMessageId: null,
+          error: `suppressed:${suppCheck.reason}`,
+          attempts: 0,
+          nextRetryAt: null,
+          lastError: `suppressed:${suppCheck.reason}`,
           deliveredAt: null,
           openedAt: null,
           clickedAt: null,

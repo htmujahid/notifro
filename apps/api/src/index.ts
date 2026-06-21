@@ -34,6 +34,8 @@ import keysRouter from './routes/keys'
 import requestLogRouter from './routes/request-log'
 import mcpRouter from './routes/mcp'
 import analyticsRouter from './routes/analytics'
+import complianceRouter from './routes/compliance'
+import { redactPii } from './lib/redact'
 import { createMcpServer, WebStandardStreamableHTTPServerTransport } from '@workspace/mcp'
 import { handleDeliveryQueue } from './queue/consumer'
 import { handleScheduledSweep } from './scheduling/sweep'
@@ -134,7 +136,7 @@ app.use('/api/*', async (c, next) => {
         userId,
         apiKeyId: c.var.apiKeyId,
         method: c.req.method,
-        path: new URL(c.req.url).pathname,
+        path: redactPii(new URL(c.req.url).pathname),
         status: c.res.status,
         latencyMs: ms,
         createdAt: new Date().toISOString(),
@@ -223,6 +225,7 @@ app.route('/api', keysRouter)
 app.route('/api', requestLogRouter)
 app.route('/api', mcpRouter)
 app.route('/api', analyticsRouter)
+app.route('/api', complianceRouter)
 
 app.use('/mcp', (c, next) => {
   return cors({

@@ -2,7 +2,7 @@ import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
 import { requireAuth } from '../middleware/auth'
 import { Errors, validationHook } from '../lib/errors'
 import { signPreferenceToken, verifyPreferenceToken } from '../lib/preference-token'
-import { suppress } from '../lib/suppress'
+import { suppress, recordConsentEvent } from '../lib/suppress'
 import type { AppEnv } from '../lib/types'
 
 const TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000
@@ -458,6 +458,16 @@ publicRouter.openapi(prefCenterPostRoute, async (c) => {
         })
         .execute()
     }
+
+    await recordConsentEvent(
+      c.var.db,
+      userId,
+      pref.channel,
+      pref.optedIn ? 'opt_in' : 'opt_out',
+      'preference_center',
+      recipientId,
+      pref.topicId ?? null,
+    )
   }
 
   return c.json({ updated: preferences.length })
@@ -527,7 +537,9 @@ publicRouter.openapi(unsubscribePostRoute, async (c) => {
     .select('email')
     .executeTakeFirst()
 
-  await suppress(c.var.db, userId, recipient?.email ?? recipientId, 'unsubscribed')
+  if (recipient?.email) {
+    await suppress(c.var.db, userId, 'email', recipient.email, 'unsubscribe', recipientId)
+  }
 
   return c.json({ ok: true })
 })

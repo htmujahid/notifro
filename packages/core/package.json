@@ -53,6 +53,7 @@
     "./hooks/rate-limits": "./src/hooks/rate-limits.ts",
     "./hooks/developers": "./src/hooks/developers.ts",
     "./hooks/mcp": "./src/hooks/mcp.ts",
-    "./hooks/analytics": "./src/hooks/analytics.ts"
+    "./hooks/analytics": "./src/hooks/analytics.ts",
+    "./hooks/compliance": "./src/hooks/compliance.ts"
   }
 }

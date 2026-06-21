@@ -3,6 +3,8 @@ import { getAdapter } from '../channels/registry'
 import { resolveSendConnection } from '../channels/resolve'
 import { renderTemplate } from '../lib/render-template'
 import { escalateChain } from '../lib/routing'
+import { isSuppressed } from '../lib/suppress'
+import { redactPii } from '../lib/redact'
 import type { ChannelType } from '../channels/types'
 
 export interface DeliveryQueueMessage {
@@ -173,6 +175,18 @@ async function processDelivery(
     return
   }
 
+  const suppressed = await isSuppressed(database, userId, channel, delivery.recipient)
+  if (suppressed) {
+    await database
+      .updateTable('delivery')
+      .set({ status: 'suppressed', error: `suppressed:${suppressed.reason}`, updatedAt: ts })
+      .where('id', '=', deliveryId)
+      .execute()
+    await updateNotificationStatus(database, notificationId, ts)
+    msg.ack()
+    return
+  }
+
   const attempts = delivery.attempts + 1
   let payload = JSON.parse(notification.payload)
 
@@ -211,6 +225,8 @@ async function processDelivery(
   } catch (err) {
     sendError = err instanceof Error ? err.message : String(err)
   }
+
+  if (sendError) sendError = redactPii(sendError)
 
   if (ok) {
     await database

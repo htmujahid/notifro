@@ -67,7 +67,7 @@ router.post('/:provider', async (c) => {
     } else if (messageStatus === 'undelivered' || messageStatus === 'failed') {
       await db.updateTable('delivery').set({ bouncedAt: ts, status: 'bounced', updatedAt: ts }).where('id', '=', delivery.id).execute()
       await recordEvent(db, delivery.id, delivery.userId, 'bounced', ts, { messageStatus })
-      await suppress(db, delivery.userId, delivery.recipient, 'bounced')
+      await suppress(db, delivery.userId, delivery.channel, delivery.recipient, 'hard_bounce')
     }
 
     return c.json({ ok: true })
