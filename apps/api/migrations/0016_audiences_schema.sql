@@ -25,18 +25,5 @@ CREATE TABLE "segment" (
 CREATE INDEX "segment_user_updated_idx" ON "segment" ("userId", "updatedAt");
 CREATE INDEX "segment_user_name_idx" ON "segment" ("userId", "name");
 
-CREATE TABLE "message_variant" (
-  "id" text not null primary key,
-  "userId" text not null references "user"("id") on delete cascade,
-  "notificationId" text not null references "notification"("id") on delete cascade,
-  "label" text not null,
-  "weight" integer not null default 50,
-  "payload" text not null,
-  "createdAt" text not null,
-  "updatedAt" text not null
-);
-CREATE INDEX "message_variant_notification_idx" ON "message_variant" ("notificationId");
-CREATE INDEX "message_variant_user_idx" ON "message_variant" ("userId");
-
 ALTER TABLE "delivery" ADD COLUMN "recipientId" text;
 ALTER TABLE "delivery" ADD COLUMN "variantId" text;
