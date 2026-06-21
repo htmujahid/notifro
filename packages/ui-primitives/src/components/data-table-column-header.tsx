@@ -1,10 +1,13 @@
 import * as React from "react"
 
-import { type Column } from "@tanstack/react-table"
 import { ArrowDownIcon, ArrowUpDownIcon, ArrowUpIcon } from "lucide-react"
 
-interface DataTableColumnHeaderProps<TData, TValue>
-  extends React.HTMLAttributes<HTMLButtonElement> {
+import { type Column } from "@tanstack/react-table"
+
+interface DataTableColumnHeaderProps<
+  TData,
+  TValue,
+> extends React.HTMLAttributes<HTMLButtonElement> {
   column: Column<TData, TValue>
   title: string
 }

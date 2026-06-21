@@ -366,7 +366,9 @@ export function ConnectionDialog({
             <ResponsiveModalTitle>
               {existing ? `Manage ${form.title}` : `Connect ${form.title}`}
             </ResponsiveModalTitle>
-            <ResponsiveModalDescription>{form.blurb}</ResponsiveModalDescription>
+            <ResponsiveModalDescription>
+              {form.blurb}
+            </ResponsiveModalDescription>
           </ResponsiveModalHeader>
 
           <ResponsiveModalBody className="flex flex-col gap-3">

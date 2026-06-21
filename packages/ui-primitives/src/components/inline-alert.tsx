@@ -18,11 +18,7 @@ export function InlineAlert({
 }) {
   return (
     <p
-      className={[
-        "rounded-md px-3 py-2 text-sm",
-        STYLES[variant],
-        className,
-      ]
+      className={["rounded-md px-3 py-2 text-sm", STYLES[variant], className]
         .filter(Boolean)
         .join(" ")}
     >

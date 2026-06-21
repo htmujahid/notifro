@@ -12,6 +12,7 @@ import {
 import { useNavigate } from "react-router"
 
 import type { ChannelType } from "@renderical/api-client/types"
+import { PageHeader } from "@renderical/ui-primitives/components/page-header"
 import { Button } from "@renderical/ui/components/button"
 import {
   Card,
@@ -29,8 +30,6 @@ import {
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 import { Textarea } from "@renderical/ui/components/textarea"
-
-import { PageHeader } from "@renderical/ui-primitives/components/page-header"
 
 import { useConnections } from "../../hooks/connections"
 import {

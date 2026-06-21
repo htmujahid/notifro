@@ -26,10 +26,7 @@ import { useQueryClient } from "@tanstack/react-query"
 import { useAuth } from "@renderical/app/auth/context"
 import { SESSION_QUERY_KEY, useSession } from "@renderical/app/auth/use-session"
 import { Avatar, AvatarFallback } from "@renderical/ui/components/avatar"
-import {
-  Drawer,
-  DrawerContent,
-} from "@renderical/ui/components/drawer"
+import { Drawer, DrawerContent } from "@renderical/ui/components/drawer"
 
 import { useUnreadCount } from "../../hooks/inbox"
 import { QuickCreateDialog } from "./quick-create-dialog"

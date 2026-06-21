@@ -2,6 +2,8 @@ import React from "react"
 
 import { GitBranchIcon, PlusIcon, RouteIcon, Trash2Icon } from "lucide-react"
 
+import { PageHeader } from "@renderical/ui-primitives/components/page-header"
+import { SectionHeader } from "@renderical/ui-primitives/components/section-header"
 import { Badge } from "@renderical/ui/components/badge"
 import { Button } from "@renderical/ui/components/button"
 import { Switch } from "@renderical/ui/components/switch"
@@ -13,9 +15,6 @@ import {
   useRoutingRules,
   useUpdateRoutingRule,
 } from "../../hooks/routing"
-import { PageHeader } from "@renderical/ui-primitives/components/page-header"
-import { SectionHeader } from "@renderical/ui-primitives/components/section-header"
-
 import { CreateChainDialog } from "./create-chain-dialog"
 import { CreateRuleDialog } from "./create-rule-dialog"
 
@@ -45,7 +44,13 @@ export function RoutingView() {
       />
 
       <section className="flex flex-col gap-3">
-        <SectionHeader title={<><RouteIcon className="size-4" /> Routing rules</>}>
+        <SectionHeader
+          title={
+            <>
+              <RouteIcon className="size-4" /> Routing rules
+            </>
+          }
+        >
           <Button size="sm" onClick={() => setNewRuleOpen(true)}>
             <PlusIcon className="size-3.5 mr-1" /> New rule
           </Button>
@@ -142,7 +147,13 @@ export function RoutingView() {
       </section>
 
       <section className="flex flex-col gap-3">
-        <SectionHeader title={<><GitBranchIcon className="size-4" /> Fallback chains</>}>
+        <SectionHeader
+          title={
+            <>
+              <GitBranchIcon className="size-4" /> Fallback chains
+            </>
+          }
+        >
           <Button size="sm" onClick={() => setNewChainOpen(true)}>
             <PlusIcon className="size-3.5 mr-1" /> New chain
           </Button>

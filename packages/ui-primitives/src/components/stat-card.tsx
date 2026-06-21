@@ -47,7 +47,5 @@ export function StatCardGrid({
   children: React.ReactNode
   cols?: 2 | 3 | 4 | 8
 }) {
-  return (
-    <div className={`grid gap-4 ${GRID_COLS[cols]}`}>{children}</div>
-  )
+  return <div className={`grid gap-4 ${GRID_COLS[cols]}`}>{children}</div>
 }

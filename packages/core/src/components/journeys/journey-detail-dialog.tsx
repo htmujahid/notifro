@@ -160,7 +160,11 @@ export function JourneyDetailDialog({
                   <pre className="max-h-48 overflow-auto rounded bg-muted p-2 text-xs">
                     {(() => {
                       try {
-                        return JSON.stringify(JSON.parse(journey.steps), null, 2)
+                        return JSON.stringify(
+                          JSON.parse(journey.steps),
+                          null,
+                          2
+                        )
                       } catch {
                         return journey.steps
                       }

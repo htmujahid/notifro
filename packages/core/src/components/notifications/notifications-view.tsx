@@ -4,9 +4,8 @@ import { BellOffIcon, CheckCheckIcon, PlusIcon } from "lucide-react"
 import { useNavigate } from "react-router"
 
 import type { ListResponse } from "@renderical/api-client/types"
-import { Button } from "@renderical/ui/components/button"
-
 import { PageHeader } from "@renderical/ui-primitives/components/page-header"
+import { Button } from "@renderical/ui/components/button"
 
 import { useInbox, useMarkAllRead, useMarkRead } from "../../hooks/inbox"
 import type { InboxFilter, InboxMessage } from "../../hooks/inbox"
@@ -49,7 +48,10 @@ export function NotificationsView() {
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader title="Notifications" description="Your in-app notification inbox.">
+      <PageHeader
+        title="Notifications"
+        description="Your in-app notification inbox."
+      >
         {messages.some((m) => !m.readAt) && (
           <Button
             variant="outline"

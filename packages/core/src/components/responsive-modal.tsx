@@ -82,7 +82,8 @@ export function ResponsiveModalTitle({
   className?: string
 }) {
   const isMobile = React.useContext(ModalModeCtx)
-  if (isMobile) return <DrawerTitle className={className}>{children}</DrawerTitle>
+  if (isMobile)
+    return <DrawerTitle className={className}>{children}</DrawerTitle>
   return <DialogTitle className={className}>{children}</DialogTitle>
 }
 
@@ -108,7 +109,9 @@ export function ResponsiveModalBody({
   const isMobile = React.useContext(ModalModeCtx)
   const base = isMobile ? "px-4 pb-2" : ""
   return (
-    <div className={[base, className].filter(Boolean).join(" ")}>{children}</div>
+    <div className={[base, className].filter(Boolean).join(" ")}>
+      {children}
+    </div>
   )
 }
 
@@ -120,6 +123,7 @@ export function ResponsiveModalFooter({
   className?: string
 }) {
   const isMobile = React.useContext(ModalModeCtx)
-  if (isMobile) return <DrawerFooter className={className}>{children}</DrawerFooter>
+  if (isMobile)
+    return <DrawerFooter className={className}>{children}</DrawerFooter>
   return <DialogFooter className={className}>{children}</DialogFooter>
 }

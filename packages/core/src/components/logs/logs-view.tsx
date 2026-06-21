@@ -2,12 +2,15 @@ import { useState } from "react"
 
 import { RefreshCwIcon } from "lucide-react"
 
-import { Button } from "@renderical/ui/components/button"
-import { DataTable, type ColumnDef } from "@renderical/ui-primitives/components/data-table"
+import {
+  type ColumnDef,
+  DataTable,
+} from "@renderical/ui-primitives/components/data-table"
 import { DataTableColumnHeader } from "@renderical/ui-primitives/components/data-table-column-header"
 import { DataTableToolbar } from "@renderical/ui-primitives/components/data-table-toolbar"
 import { PageHeader } from "@renderical/ui-primitives/components/page-header"
 import { useDataTable } from "@renderical/ui-primitives/components/use-data-table"
+import { Button } from "@renderical/ui/components/button"
 
 const ALL_LOGS = [
   {

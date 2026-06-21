@@ -58,7 +58,9 @@ function OptionGrid({ onSelect }: { onSelect: (url: string) => void }) {
           </div>
           <div>
             <p className="text-sm font-medium">{title}</p>
-            <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              {description}
+            </p>
           </div>
         </button>
       ))}
@@ -87,7 +89,9 @@ export function QuickCreateDialog({
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>Quick create</DrawerTitle>
-            <DrawerDescription>What would you like to create?</DrawerDescription>
+            <DrawerDescription>
+              What would you like to create?
+            </DrawerDescription>
           </DrawerHeader>
           <div className="px-4 pb-4">
             <OptionGrid onSelect={go} />

@@ -6,7 +6,10 @@ import {
 } from "lucide-react"
 
 import { PageHeader } from "@renderical/ui-primitives/components/page-header"
-import { StatCard, StatCardGrid } from "@renderical/ui-primitives/components/stat-card"
+import {
+  StatCard,
+  StatCardGrid,
+} from "@renderical/ui-primitives/components/stat-card"
 
 import { useOverview } from "../../hooks/overview"
 import { AnalyticsSection } from "./analytics-section"
@@ -68,7 +71,13 @@ export function OverviewMetrics() {
 
       <StatCardGrid cols={4}>
         {STATS.map(({ label, value, delta, icon }) => (
-          <StatCard key={label} label={label} value={value} description={delta} icon={icon} />
+          <StatCard
+            key={label}
+            label={label}
+            value={value}
+            description={delta}
+            icon={icon}
+          />
         ))}
       </StatCardGrid>
 

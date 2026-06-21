@@ -2,6 +2,11 @@ import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
 import { Scalar } from "@scalar/hono-api-reference"
 import { cors } from "hono/cors"
 
+import {
+  WebStandardStreamableHTTPServerTransport,
+  createMcpServer,
+} from "@renderical/mcp"
+
 import { authInstance } from "../lib/auth"
 import { redactPii } from "../lib/redact"
 import type { AppEnv } from "../lib/types"
@@ -38,11 +43,6 @@ import templatesRouter from "./templates"
 import topicsRouter from "./topics"
 import trackingRouter from "./tracking"
 import webhooksRouter from "./webhooks"
-
-import {
-  WebStandardStreamableHTTPServerTransport,
-  createMcpServer,
-} from "@renderical/mcp"
 
 const HelloResponseSchema = z.object({
   message: z.string().openapi({ example: "Hello, World!" }),

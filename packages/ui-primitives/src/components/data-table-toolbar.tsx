@@ -1,7 +1,8 @@
 import * as React from "react"
 
-import { type Table } from "@tanstack/react-table"
 import { SearchIcon, SlidersHorizontalIcon } from "lucide-react"
+
+import { type Table } from "@tanstack/react-table"
 
 import { Button } from "@renderical/ui/components/button"
 import {

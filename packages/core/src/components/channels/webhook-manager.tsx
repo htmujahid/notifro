@@ -33,10 +33,7 @@ export function WebhookManager({ trigger }: { trigger: React.ReactElement }) {
 
   return (
     <>
-      <span
-        onClick={() => setOpen(true)}
-        style={{ display: "contents" }}
-      >
+      <span onClick={() => setOpen(true)} style={{ display: "contents" }}>
         {trigger}
       </span>
       <ResponsiveModal
@@ -58,7 +55,9 @@ export function WebhookManager({ trigger }: { trigger: React.ReactElement }) {
           <ResponsiveModalBody className="flex flex-col gap-3">
             {revealedSecret && (
               <div className="flex flex-col gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3">
-                <p className="text-sm font-medium">Signing secret — shown once</p>
+                <p className="text-sm font-medium">
+                  Signing secret — shown once
+                </p>
                 <p className="text-xs text-muted-foreground">
                   Store this now. Use it to verify the{" "}
                   <code>X-Renderical-Signature</code> header.

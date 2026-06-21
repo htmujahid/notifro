@@ -3,6 +3,14 @@ import * as React from "react"
 import { toast } from "sonner"
 
 import type { Journey } from "@renderical/api-client/types"
+import {
+  type ColumnDef,
+  DataTable,
+} from "@renderical/ui-primitives/components/data-table"
+import { DataTableColumnHeader } from "@renderical/ui-primitives/components/data-table-column-header"
+import { DataTableToolbar } from "@renderical/ui-primitives/components/data-table-toolbar"
+import { PageHeader } from "@renderical/ui-primitives/components/page-header"
+import { useDataTable } from "@renderical/ui-primitives/components/use-data-table"
 import { Button } from "@renderical/ui/components/button"
 import {
   Dialog,
@@ -14,11 +22,6 @@ import {
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 import { Textarea } from "@renderical/ui/components/textarea"
-import { DataTable, type ColumnDef } from "@renderical/ui-primitives/components/data-table"
-import { DataTableColumnHeader } from "@renderical/ui-primitives/components/data-table-column-header"
-import { DataTableToolbar } from "@renderical/ui-primitives/components/data-table-toolbar"
-import { PageHeader } from "@renderical/ui-primitives/components/page-header"
-import { useDataTable } from "@renderical/ui-primitives/components/use-data-table"
 
 import {
   useCreateJourney,
@@ -33,7 +36,9 @@ const EXAMPLE_STEPS = JSON.stringify(
     step1: {
       kind: "send",
       config: {
-        payload: { content: { title: "Welcome!", body: "Thanks for joining." } },
+        payload: {
+          content: { title: "Welcome!", body: "Thanks for joining." },
+        },
         channels: ["email"],
       },
       next: "step2",

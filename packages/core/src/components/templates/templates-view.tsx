@@ -1,6 +1,14 @@
 import { FileTextIcon, PlusIcon } from "lucide-react"
 import { Link } from "react-router"
 
+import {
+  type ColumnDef,
+  DataTable,
+} from "@renderical/ui-primitives/components/data-table"
+import { DataTableColumnHeader } from "@renderical/ui-primitives/components/data-table-column-header"
+import { DataTableToolbar } from "@renderical/ui-primitives/components/data-table-toolbar"
+import { PageHeader } from "@renderical/ui-primitives/components/page-header"
+import { useDataTable } from "@renderical/ui-primitives/components/use-data-table"
 import { Button } from "@renderical/ui/components/button"
 import {
   Empty,
@@ -10,11 +18,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@renderical/ui/components/empty"
-import { DataTable, type ColumnDef } from "@renderical/ui-primitives/components/data-table"
-import { DataTableColumnHeader } from "@renderical/ui-primitives/components/data-table-column-header"
-import { DataTableToolbar } from "@renderical/ui-primitives/components/data-table-toolbar"
-import { PageHeader } from "@renderical/ui-primitives/components/page-header"
-import { useDataTable } from "@renderical/ui-primitives/components/use-data-table"
 
 import { useDeleteTemplate, useTemplates } from "../../hooks/templates"
 

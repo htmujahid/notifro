@@ -10,11 +10,7 @@ export function SectionHeader({
   children?: React.ReactNode
 }) {
   return (
-    <div
-      className={
-        children ? "flex items-center justify-between gap-4" : ""
-      }
-    >
+    <div className={children ? "flex items-center justify-between gap-4" : ""}>
       <div>
         <h2 className="flex items-center gap-1.5 text-sm font-medium">
           {title}

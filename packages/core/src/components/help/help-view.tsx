@@ -5,6 +5,7 @@ import {
   VideoIcon,
 } from "lucide-react"
 
+import { PageHeader } from "@renderical/ui-primitives/components/page-header"
 import { Button } from "@renderical/ui/components/button"
 import {
   Card,
@@ -12,8 +13,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@renderical/ui/components/card"
-
-import { PageHeader } from "@renderical/ui-primitives/components/page-header"
 
 import { FaqItem } from "./faq-item"
 

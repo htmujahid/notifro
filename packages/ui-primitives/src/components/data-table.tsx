@@ -3,12 +3,12 @@ import * as React from "react"
 import { type ColumnDef, type Table, flexRender } from "@tanstack/react-table"
 
 import {
-  Table as UITable,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
+  Table as UITable,
 } from "@renderical/ui/components/table"
 
 import { DataTablePagination } from "./data-table-pagination"
