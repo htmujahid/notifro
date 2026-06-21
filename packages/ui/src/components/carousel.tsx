@@ -2,12 +2,13 @@
 
 import * as React from "react"
 
-import { Button } from "@renderical/ui/components/button"
-import { cn } from "@renderical/ui/lib/utils"
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from "embla-carousel-react"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
+
+import { Button } from "@renderical/ui/components/button"
+import { cn } from "@renderical/ui/lib/utils"
 
 type CarouselApi = UseEmblaCarouselType[1]
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>

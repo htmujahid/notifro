@@ -1,12 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useAuth } from "@renderical/app/auth/context"
-import { Button } from "@renderical/ui/components/button"
-import { Input } from "@renderical/ui/components/input"
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@renderical/ui/components/input-otp"
-import { Label } from "@renderical/ui/components/label"
 import { useForm } from "react-hook-form"
 import { Controller } from "react-hook-form"
 import { useNavigate, useSearchParams } from "react-router"
+
+import { useAuth } from "@renderical/app/auth/context"
+import { Button } from "@renderical/ui/components/button"
+import { Input } from "@renderical/ui/components/input"
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@renderical/ui/components/input-otp"
+import { Label } from "@renderical/ui/components/label"
 
 import {
   type ResetPasswordValues,

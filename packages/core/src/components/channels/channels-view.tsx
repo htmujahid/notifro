@@ -1,11 +1,3 @@
-import { Button } from "@renderical/ui/components/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@renderical/ui/components/card"
 import {
   BellIcon,
   CheckIcon,
@@ -15,6 +7,15 @@ import {
   SmartphoneIcon,
   WebhookIcon,
 } from "lucide-react"
+
+import { Button } from "@renderical/ui/components/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@renderical/ui/components/card"
 
 import { useConnections } from "../../hooks/connections"
 import { usePushRegistration } from "../../hooks/push"

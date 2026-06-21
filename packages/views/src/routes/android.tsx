@@ -1,7 +1,8 @@
 import { lazy } from "react"
 
-import { ProtectedRoute } from "@renderical/core/components/protected-route"
 import type { RouteObject } from "react-router"
+
+import { ProtectedRoute } from "@renderical/core/components/protected-route"
 
 import {
   notFoundRoute,

@@ -1,5 +1,8 @@
 import { useState } from "react"
 
+import { CopyIcon } from "lucide-react"
+import { toast } from "sonner"
+
 import { Button } from "@renderical/ui/components/button"
 import {
   Dialog,
@@ -9,8 +12,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@renderical/ui/components/dialog"
-import { CopyIcon } from "lucide-react"
-import { toast } from "sonner"
 
 import { useWebhooks } from "../../hooks/webhooks"
 import { AddWebhookForm } from "./add-webhook-form"

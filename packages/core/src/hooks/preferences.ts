@@ -1,3 +1,10 @@
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query"
+
 import { useApiClient } from "@renderical/api-client/context"
 import type {
   ChannelPriority,
@@ -7,13 +14,6 @@ import type {
   PreferenceCenter,
   Topic,
 } from "@renderical/api-client/types"
-
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query"
 
 export const topicKeys = {
   all: ["topics"] as const,

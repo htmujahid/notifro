@@ -1,5 +1,7 @@
 import { useState } from "react"
 
+import { RefreshCwIcon, ScrollIcon } from "lucide-react"
+
 import { Button } from "@renderical/ui/components/button"
 import {
   Empty,
@@ -8,7 +10,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@renderical/ui/components/empty"
-import { RefreshCwIcon, ScrollIcon } from "lucide-react"
 
 const ALL_LOGS = [
   {

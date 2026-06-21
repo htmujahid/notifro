@@ -1,5 +1,12 @@
 import { useState } from "react"
 
+import {
+  CalendarXIcon,
+  PlusIcon,
+  RefreshCwIcon,
+  Trash2Icon,
+} from "lucide-react"
+
 import { Button } from "@renderical/ui/components/button"
 import {
   Empty,
@@ -9,12 +16,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@renderical/ui/components/empty"
-import {
-  CalendarXIcon,
-  PlusIcon,
-  RefreshCwIcon,
-  Trash2Icon,
-} from "lucide-react"
 
 import {
   useCancelSchedule,

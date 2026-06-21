@@ -1,9 +1,10 @@
 import { useState } from "react"
 
-import type { ListResponse } from "@renderical/api-client/types"
-import { Button } from "@renderical/ui/components/button"
 import { BellOffIcon, CheckCheckIcon, PlusIcon } from "lucide-react"
 import { useNavigate } from "react-router"
+
+import type { ListResponse } from "@renderical/api-client/types"
+import { Button } from "@renderical/ui/components/button"
 
 import { useInbox, useMarkAllRead, useMarkRead } from "../../hooks/inbox"
 import type { InboxFilter, InboxMessage } from "../../hooks/inbox"

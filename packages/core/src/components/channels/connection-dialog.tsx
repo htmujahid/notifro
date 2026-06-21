@@ -1,5 +1,8 @@
 import { useState } from "react"
 
+import { ActivityIcon, Trash2Icon } from "lucide-react"
+import { toast } from "sonner"
+
 import { Button } from "@renderical/ui/components/button"
 import {
   Dialog,
@@ -12,8 +15,6 @@ import {
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 import { Textarea } from "@renderical/ui/components/textarea"
-import { ActivityIcon, Trash2Icon } from "lucide-react"
-import { toast } from "sonner"
 
 import {
   type Connection,

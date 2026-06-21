@@ -1,3 +1,11 @@
+import {
+  ChevronsUpDownIcon,
+  KeyRoundIcon,
+  LogOutIcon,
+  ShieldIcon,
+  UserIcon,
+} from "lucide-react"
+
 import { Avatar, AvatarFallback } from "@renderical/ui/components/avatar"
 import {
   DropdownMenu,
@@ -14,13 +22,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@renderical/ui/components/sidebar"
-import {
-  ChevronsUpDownIcon,
-  KeyRoundIcon,
-  LogOutIcon,
-  ShieldIcon,
-  UserIcon,
-} from "lucide-react"
 
 export function NavUser({
   user,

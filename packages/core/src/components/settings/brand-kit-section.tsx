@@ -1,9 +1,10 @@
 import { useState } from "react"
 
+import { PaletteIcon } from "lucide-react"
+
 import { Button } from "@renderical/ui/components/button"
 import { Card, CardContent } from "@renderical/ui/components/card"
 import { Separator } from "@renderical/ui/components/separator"
-import { PaletteIcon } from "lucide-react"
 
 import { useBrandKit, useUpdateBrandKit } from "../../hooks/templates"
 

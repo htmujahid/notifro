@@ -1,12 +1,13 @@
 import { apiKey } from "@better-auth/api-key"
+import { betterAuth } from "better-auth"
+import { emailOTP, phoneNumber, twoFactor } from "better-auth/plugins"
+import { env } from "cloudflare:workers"
+
 import {
   sendResetPasswordOTPEmail,
   sendTwoFactorOTPEmail,
   sendVerificationOTPEmail,
 } from "@renderical/mailer"
-import { betterAuth } from "better-auth"
-import { emailOTP, phoneNumber, twoFactor } from "better-auth/plugins"
-import { env } from "cloudflare:workers"
 
 import { kvSecondaryStorage } from "./kv-storage"
 import { mockD1 } from "./mock-db"
@@ -47,7 +48,11 @@ export function createAuth(db: D1Database = mockD1) {
         }: {
           email: string
           otp: string
-          type: "sign-in" | "email-verification" | "forget-password" | "change-email"
+          type:
+            | "sign-in"
+            | "email-verification"
+            | "forget-password"
+            | "change-email"
         }) {
           const user = { email }
           if (type === "email-verification") {

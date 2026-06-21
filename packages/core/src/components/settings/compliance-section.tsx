@@ -1,8 +1,9 @@
 import { useState } from "react"
 
+import { PlusIcon, ShieldIcon, TrashIcon } from "lucide-react"
+
 import { Button } from "@renderical/ui/components/button"
 import { Card, CardContent } from "@renderical/ui/components/card"
-import { PlusIcon, ShieldIcon, TrashIcon } from "lucide-react"
 
 import {
   useAddSuppression,

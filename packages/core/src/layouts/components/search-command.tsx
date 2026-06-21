@@ -1,17 +1,6 @@
 import { useEffect } from "react"
 
 import {
-  Command,
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
-} from "@renderical/ui/components/command"
-import {
   BarChart3Icon,
   BellIcon,
   CalendarIcon,
@@ -28,6 +17,18 @@ import {
   UsersIcon,
 } from "lucide-react"
 import { useNavigate } from "react-router"
+
+import {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from "@renderical/ui/components/command"
 
 export function SearchCommand({
   open,

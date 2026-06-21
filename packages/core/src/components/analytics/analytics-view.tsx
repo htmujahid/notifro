@@ -1,5 +1,7 @@
 import { useState } from "react"
 
+import { BellIcon } from "lucide-react"
+
 import {
   Card,
   CardContent,
@@ -7,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@renderical/ui/components/card"
-import { BellIcon } from "lucide-react"
 
 import {
   useAnalyticsChannels,

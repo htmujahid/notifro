@@ -1,8 +1,12 @@
 import { Suspense, useState } from "react"
 
-import { SidebarInset, SidebarProvider } from "@renderical/ui/components/sidebar"
-import { Toaster } from "@renderical/ui/components/sonner"
 import { Outlet } from "react-router"
+
+import {
+  SidebarInset,
+  SidebarProvider,
+} from "@renderical/ui/components/sidebar"
+import { Toaster } from "@renderical/ui/components/sonner"
 
 import { AppSidebar } from "./components/app-sidebar"
 import { SearchCommand } from "./components/search-command"

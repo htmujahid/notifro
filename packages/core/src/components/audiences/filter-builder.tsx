@@ -1,3 +1,5 @@
+import { PlusIcon, TrashIcon } from "lucide-react"
+
 import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import {
@@ -7,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@renderical/ui/components/select"
-import { PlusIcon, TrashIcon } from "lucide-react"
 
 export type FilterOp =
   | "eq"

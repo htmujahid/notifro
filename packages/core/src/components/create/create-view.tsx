@@ -1,5 +1,16 @@
 import { useState } from "react"
 
+import {
+  ArrowRightIcon,
+  BellIcon,
+  CalendarIcon,
+  CheckCircleIcon,
+  FileTextIcon,
+  UsersIcon,
+  XCircleIcon,
+} from "lucide-react"
+import { useNavigate } from "react-router"
+
 import type { ChannelType } from "@renderical/api-client/types"
 import { Button } from "@renderical/ui/components/button"
 import {
@@ -18,16 +29,6 @@ import {
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 import { Textarea } from "@renderical/ui/components/textarea"
-import {
-  ArrowRightIcon,
-  BellIcon,
-  CalendarIcon,
-  CheckCircleIcon,
-  FileTextIcon,
-  UsersIcon,
-  XCircleIcon,
-} from "lucide-react"
-import { useNavigate } from "react-router"
 
 import { useConnections } from "../../hooks/connections"
 import {

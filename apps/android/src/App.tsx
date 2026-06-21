@@ -2,6 +2,8 @@ import { Suspense, useEffect } from "react"
 
 import { App as CapacitorApp } from "@capacitor/app"
 import { Preferences } from "@capacitor/preferences"
+import { RouterProvider, createHashRouter } from "react-router"
+
 import { createApiClient } from "@renderical/api-client/client"
 import { AppProvider } from "@renderical/app/app/context"
 import { createMobileAuthClient } from "@renderical/app/auth/client.mobile"
@@ -11,7 +13,6 @@ import {
 } from "@renderical/app/auth/native-url"
 import { registerForPush } from "@renderical/mobile-shared/push"
 import { routes } from "@renderical/views/routes/android"
-import { RouterProvider, createHashRouter } from "react-router"
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8787"
 const authClient = createMobileAuthClient(API_URL, Preferences)

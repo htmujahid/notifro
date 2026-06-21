@@ -1,3 +1,5 @@
+import { TrendingUpIcon } from "lucide-react"
+
 import {
   Card,
   CardContent,
@@ -5,7 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@renderical/ui/components/card"
-import { TrendingUpIcon } from "lucide-react"
 
 import {
   useAnalyticsSummary,

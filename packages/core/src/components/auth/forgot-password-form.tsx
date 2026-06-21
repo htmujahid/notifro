@@ -1,11 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { Controller } from "react-hook-form"
+import { useNavigate } from "react-router"
+
 import { useAuth } from "@renderical/app/auth/context"
 import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
-import { useForm } from "react-hook-form"
-import { Controller } from "react-hook-form"
-import { useNavigate } from "react-router"
 
 import {
   type ForgotPasswordValues,
@@ -28,9 +29,7 @@ export function ForgotPasswordForm() {
       form.setError("root", { message: error.message })
       return
     }
-    navigate(
-      `/auth/reset-password?email=${encodeURIComponent(values.email)}`
-    )
+    navigate(`/auth/reset-password?email=${encodeURIComponent(values.email)}`)
   }
 
   return (

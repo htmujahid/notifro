@@ -1,3 +1,9 @@
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query"
+
 import { useApiClient } from "@renderical/api-client/context"
 import type {
   ConsentEvent,
@@ -5,12 +11,6 @@ import type {
   ListResponse,
   Suppression,
 } from "@renderical/api-client/types"
-
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query"
 
 export const complianceKeys = {
   suppressions: ["suppressions"] as const,

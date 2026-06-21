@@ -2,6 +2,12 @@
 
 import * as React from "react"
 
+import { type VariantProps, cva } from "class-variance-authority"
+import { PanelLeftIcon } from "lucide-react"
+
+import { mergeProps } from "@base-ui/react/merge-props"
+import { useRender } from "@base-ui/react/use-render"
+
 import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Separator } from "@renderical/ui/components/separator"
@@ -20,11 +26,6 @@ import {
 } from "@renderical/ui/components/tooltip"
 import { useIsMobile } from "@renderical/ui/hooks/use-mobile"
 import { cn } from "@renderical/ui/lib/utils"
-import { type VariantProps, cva } from "class-variance-authority"
-import { PanelLeftIcon } from "lucide-react"
-
-import { mergeProps } from "@base-ui/react/merge-props"
-import { useRender } from "@base-ui/react/use-render"
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7

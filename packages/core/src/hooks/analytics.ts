@@ -1,3 +1,5 @@
+import { useQuery } from "@tanstack/react-query"
+
 import { useApiClient } from "@renderical/api-client/context"
 import type {
   AnalyticsChannelRow,
@@ -5,8 +7,6 @@ import type {
   AnalyticsTimeseriesItem,
   AnalyticsTopicRow,
 } from "@renderical/api-client/types"
-
-import { useQuery } from "@tanstack/react-query"
 
 export const analyticsKeys = {
   all: ["analytics"] as const,

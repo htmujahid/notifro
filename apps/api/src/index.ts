@@ -1,10 +1,11 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
 import { Scalar } from "@scalar/hono-api-reference"
+import { cors } from "hono/cors"
+
 import {
   WebStandardStreamableHTTPServerTransport,
   createMcpServer,
 } from "@renderical/mcp"
-import { cors } from "hono/cors"
 
 import "./channels/discord"
 import "./channels/email"

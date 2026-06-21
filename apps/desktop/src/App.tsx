@@ -1,5 +1,7 @@
 import { Suspense, useEffect } from "react"
 
+import { RouterProvider, createHashRouter } from "react-router"
+
 import { AppProvider } from "@renderical/app/app/context"
 import { createDesktopAuthClient } from "@renderical/app/auth/client.desktop"
 import {
@@ -7,7 +9,6 @@ import {
   deepLinkToPath,
 } from "@renderical/app/auth/native-url"
 import { routes } from "@renderical/views/routes/desktop"
-import { RouterProvider, createHashRouter } from "react-router"
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8787"
 const authClient = createDesktopAuthClient(API_URL)

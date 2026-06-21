@@ -1,5 +1,7 @@
 import { useState } from "react"
 
+import { useNavigate, useSearchParams } from "react-router"
+
 import { useAuth } from "@renderical/app/auth/context"
 import { Button } from "@renderical/ui/components/button"
 import {
@@ -7,7 +9,6 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@renderical/ui/components/input-otp"
-import { useNavigate, useSearchParams } from "react-router"
 
 export function VerifyEmailCard() {
   const auth = useAuth()
@@ -164,9 +165,7 @@ export function VerifyEmailCard() {
           </InputOTPGroup>
         </InputOTP>
 
-        {error && (
-          <p className="text-sm text-destructive">{error}</p>
-        )}
+        {error && <p className="text-sm text-destructive">{error}</p>}
 
         <Button
           className="w-full"

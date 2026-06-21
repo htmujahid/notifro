@@ -1,5 +1,7 @@
 import { useState } from "react"
 
+import { PlusIcon, TrashIcon, UsersIcon } from "lucide-react"
+
 import { Button } from "@renderical/ui/components/button"
 import {
   Empty,
@@ -10,7 +12,6 @@ import {
 } from "@renderical/ui/components/empty"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
-import { PlusIcon, TrashIcon, UsersIcon } from "lucide-react"
 
 import {
   useCreateRecipient,

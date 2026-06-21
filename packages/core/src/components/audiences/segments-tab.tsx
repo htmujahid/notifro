@@ -1,5 +1,13 @@
 import { useState } from "react"
 
+import {
+  EyeIcon,
+  FilterIcon,
+  PlusIcon,
+  TrashIcon,
+  UsersIcon,
+} from "lucide-react"
+
 import type { Segment } from "@renderical/api-client/types"
 import { Button } from "@renderical/ui/components/button"
 import {
@@ -10,13 +18,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@renderical/ui/components/empty"
-import {
-  EyeIcon,
-  FilterIcon,
-  PlusIcon,
-  TrashIcon,
-  UsersIcon,
-} from "lucide-react"
 
 import { useDeleteSegment, useSegments } from "../../hooks/audiences"
 import { NewSegmentDialog } from "./new-segment-dialog"

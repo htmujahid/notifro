@@ -1,5 +1,7 @@
 import * as React from "react"
 
+import { toast } from "sonner"
+
 import type { Journey } from "@renderical/api-client/types"
 import { Button } from "@renderical/ui/components/button"
 import {
@@ -20,7 +22,6 @@ import {
   TableRow,
 } from "@renderical/ui/components/table"
 import { Textarea } from "@renderical/ui/components/textarea"
-import { toast } from "sonner"
 
 import {
   useCreateJourney,

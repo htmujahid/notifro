@@ -1,10 +1,4 @@
 import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@renderical/ui/components/tabs"
-import {
   Bot,
   Check,
   type LucideIcon,
@@ -12,6 +6,13 @@ import {
   Sparkles,
   TriangleAlert,
 } from "lucide-react"
+
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@renderical/ui/components/tabs"
 
 interface UseCase {
   id: string

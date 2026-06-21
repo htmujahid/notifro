@@ -1,5 +1,7 @@
 import * as React from "react"
 
+import { toast } from "sonner"
+
 import type { Journey, JourneyRun } from "@renderical/api-client/types"
 import { Button } from "@renderical/ui/components/button"
 import {
@@ -26,7 +28,6 @@ import {
   TabsTrigger,
 } from "@renderical/ui/components/tabs"
 import { Textarea } from "@renderical/ui/components/textarea"
-import { toast } from "sonner"
 
 import {
   useActivateJourney,

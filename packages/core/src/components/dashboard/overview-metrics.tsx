@@ -1,16 +1,17 @@
 import {
+  BellIcon,
+  CalendarIcon,
+  CheckCircleIcon,
+  RadioIcon,
+} from "lucide-react"
+
+import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@renderical/ui/components/card"
-import {
-  BellIcon,
-  CalendarIcon,
-  CheckCircleIcon,
-  RadioIcon,
-} from "lucide-react"
 
 import { useOverview } from "../../hooks/overview"
 import { AnalyticsSection } from "./analytics-section"

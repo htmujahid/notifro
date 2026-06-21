@@ -1,17 +1,5 @@
 import * as React from "react"
 
-import { useAuth } from "@renderical/app/auth/context"
-import { SESSION_QUERY_KEY, useSession } from "@renderical/app/auth/use-session"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@renderical/ui/components/sidebar"
-import { RendericalMark } from "@renderical/core/components/renderical-logo"
 import {
   BarChart3Icon,
   BellIcon,
@@ -30,6 +18,19 @@ import {
 import { Link, useNavigate } from "react-router"
 
 import { useQueryClient } from "@tanstack/react-query"
+
+import { useAuth } from "@renderical/app/auth/context"
+import { SESSION_QUERY_KEY, useSession } from "@renderical/app/auth/use-session"
+import { RendericalMark } from "@renderical/core/components/renderical-logo"
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@renderical/ui/components/sidebar"
 
 import { NavDocuments } from "./nav-documents"
 import { NavMain } from "./nav-main"
@@ -111,11 +112,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const email = session?.user?.email ?? ""
   const initials = name
     ? name
-      .split(" ")
-      .map((n: string) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2)
+        .split(" ")
+        .map((n: string) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
     : email.slice(0, 2).toUpperCase() || "U"
 
   async function handleSignOut() {

@@ -1,6 +1,7 @@
+import { Link } from "react-router"
+
 import { RendericalMark } from "@renderical/core/components/renderical-logo"
 import { buttonVariants } from "@renderical/ui/components/button"
-import { Link } from "react-router"
 
 export default function NotFoundPage() {
   return (

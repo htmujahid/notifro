@@ -1,17 +1,18 @@
 import { useState } from "react"
 
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { Controller } from "react-hook-form"
+import { useNavigate } from "react-router"
+
+import { useQueryClient } from "@tanstack/react-query"
+
 import { useApp } from "@renderical/app/app/context"
 import { useAuth } from "@renderical/app/auth/context"
 import { SESSION_QUERY_KEY } from "@renderical/app/auth/use-session"
 import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
-import { useForm } from "react-hook-form"
-import { Controller } from "react-hook-form"
-import { useNavigate } from "react-router"
-
-import { useQueryClient } from "@tanstack/react-query"
 
 import { type SignUpValues, signUpSchema } from "../../schemas/auth"
 import { GoogleIcon, OrDivider } from "./auth-icons"

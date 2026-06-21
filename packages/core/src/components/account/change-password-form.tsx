@@ -1,9 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { Controller, useForm } from "react-hook-form"
+
 import { useAuth } from "@renderical/app/auth/context"
 import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
-import { Controller, useForm } from "react-hook-form"
 
 import {
   type ChangePasswordValues,

@@ -2,8 +2,9 @@
 
 import * as React from "react"
 
-import { cn } from "@renderical/ui/lib/utils"
 import { Drawer as DrawerPrimitive } from "vaul"
+
+import { cn } from "@renderical/ui/lib/utils"
 
 function Drawer({
   ...props

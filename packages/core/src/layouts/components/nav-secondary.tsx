@@ -1,5 +1,7 @@
 import * as React from "react"
 
+import { NavLink } from "react-router"
+
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -7,7 +9,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@renderical/ui/components/sidebar"
-import { NavLink } from "react-router"
 
 type NavSecondaryItem =
   | { title: string; url: string; icon: React.ReactNode; onClick?: never }

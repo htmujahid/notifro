@@ -1,4 +1,5 @@
 import { registerPlugin } from "@capacitor/core"
+
 import type { ApiClient } from "@renderical/api-client/client"
 
 export type DevicePlatform = "ios" | "android"

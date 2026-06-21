@@ -1,7 +1,3 @@
-import { useApiClient } from "@renderical/api-client/context"
-import { Badge } from "@renderical/ui/components/badge"
-import { Button } from "@renderical/ui/components/button"
-import { Card, CardContent } from "@renderical/ui/components/card"
 import {
   BotIcon,
   CheckIcon,
@@ -10,6 +6,11 @@ import {
   TrashIcon,
   XIcon,
 } from "lucide-react"
+
+import { useApiClient } from "@renderical/api-client/context"
+import { Badge } from "@renderical/ui/components/badge"
+import { Button } from "@renderical/ui/components/button"
+import { Card, CardContent } from "@renderical/ui/components/card"
 
 import {
   useApproveMcpAction,

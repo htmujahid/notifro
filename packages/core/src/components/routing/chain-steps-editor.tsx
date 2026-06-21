@@ -1,7 +1,8 @@
+import { PlusIcon, Trash2Icon } from "lucide-react"
+
 import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
-import { PlusIcon, Trash2Icon } from "lucide-react"
 
 export const CHANNELS = [
   "email",

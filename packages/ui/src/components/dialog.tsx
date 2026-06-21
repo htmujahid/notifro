@@ -1,10 +1,11 @@
 import * as React from "react"
 
-import { Button } from "@renderical/ui/components/button"
-import { cn } from "@renderical/ui/lib/utils"
 import { XIcon } from "lucide-react"
 
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
+
+import { Button } from "@renderical/ui/components/button"
+import { cn } from "@renderical/ui/lib/utils"
 
 function Dialog({ ...props }: DialogPrimitive.Root.Props) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />

@@ -1,12 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { Controller, useForm } from "react-hook-form"
+
+import { useQueryClient } from "@tanstack/react-query"
+
 import { useAuth } from "@renderical/app/auth/context"
 import { SESSION_QUERY_KEY } from "@renderical/app/auth/use-session"
 import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
-import { Controller, useForm } from "react-hook-form"
-
-import { useQueryClient } from "@tanstack/react-query"
 
 import {
   type TwoFactorPasswordValues,

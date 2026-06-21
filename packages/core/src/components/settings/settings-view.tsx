@@ -1,7 +1,8 @@
+import { CopyIcon, RefreshCwIcon, TrashIcon } from "lucide-react"
+
 import { Button } from "@renderical/ui/components/button"
 import { Card, CardContent } from "@renderical/ui/components/card"
 import { Separator } from "@renderical/ui/components/separator"
-import { CopyIcon, RefreshCwIcon, TrashIcon } from "lucide-react"
 
 import { BrandKitSection } from "./brand-kit-section"
 import { ComplianceSection } from "./compliance-section"

@@ -1,3 +1,6 @@
+import { BellIcon, CalendarIcon, FileTextIcon, UsersIcon } from "lucide-react"
+import { useNavigate } from "react-router"
+
 import {
   Dialog,
   DialogContent,
@@ -5,8 +8,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@renderical/ui/components/dialog"
-import { BellIcon, CalendarIcon, FileTextIcon, UsersIcon } from "lucide-react"
-import { useNavigate } from "react-router"
 
 const OPTIONS = [
   {

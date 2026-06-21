@@ -1,6 +1,14 @@
 import * as React from "react"
 
 import {
+  FolderIcon,
+  MoreHorizontalIcon,
+  ShareIcon,
+  Trash2Icon,
+} from "lucide-react"
+import { NavLink } from "react-router"
+
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -16,13 +24,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@renderical/ui/components/sidebar"
-import {
-  FolderIcon,
-  MoreHorizontalIcon,
-  ShareIcon,
-  Trash2Icon,
-} from "lucide-react"
-import { NavLink } from "react-router"
 
 export function NavDocuments({
   items,

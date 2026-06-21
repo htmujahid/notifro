@@ -1,15 +1,15 @@
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query"
+
 import { useApiClient } from "@renderical/api-client/context"
 import type {
   ListParams,
   ListResponse,
   RateLimitRule,
 } from "@renderical/api-client/types"
-
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query"
 
 export const rateLimitKeys = {
   all: ["rateLimits"] as const,

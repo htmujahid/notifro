@@ -2,11 +2,12 @@
 
 import * as React from "react"
 
-import { Button } from "@renderical/ui/components/button"
-import { cn } from "@renderical/ui/lib/utils"
 import { XIcon } from "lucide-react"
 
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
+
+import { Button } from "@renderical/ui/components/button"
+import { cn } from "@renderical/ui/lib/utils"
 
 function Sheet({ ...props }: SheetPrimitive.Root.Props) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />

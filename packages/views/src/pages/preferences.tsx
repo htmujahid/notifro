@@ -1,5 +1,6 @@
-import { PreferencesView } from "@renderical/core/components/preferences/preferences-view"
 import { useSearchParams } from "react-router"
+
+import { PreferencesView } from "@renderical/core/components/preferences/preferences-view"
 
 export default function PreferencesPage() {
   const [params] = useSearchParams()

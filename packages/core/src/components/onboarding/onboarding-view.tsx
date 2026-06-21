@@ -1,4 +1,3 @@
-import { Button } from "@renderical/ui/components/button"
 import {
   ArrowRightIcon,
   BellIcon,
@@ -8,6 +7,8 @@ import {
 } from "lucide-react"
 import { Link } from "react-router"
 import { toast } from "sonner"
+
+import { Button } from "@renderical/ui/components/button"
 
 import { useOnboarding, useOverview, useSendTest } from "../../hooks/overview"
 import { StepIcon } from "./step-icon"

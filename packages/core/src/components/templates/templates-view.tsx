@@ -1,3 +1,6 @@
+import { FileTextIcon, PlusIcon } from "lucide-react"
+import { Link } from "react-router"
+
 import { Button } from "@renderical/ui/components/button"
 import {
   Empty,
@@ -7,8 +10,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@renderical/ui/components/empty"
-import { FileTextIcon, PlusIcon } from "lucide-react"
-import { Link } from "react-router"
 
 import { useDeleteTemplate, useTemplates } from "../../hooks/templates"
 

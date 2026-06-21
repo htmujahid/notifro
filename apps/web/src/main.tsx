@@ -1,7 +1,8 @@
 import { StrictMode } from "react"
 
-import "@renderical/ui/globals.css"
 import { createRoot } from "react-dom/client"
+
+import "@renderical/ui/globals.css"
 
 import { App } from "./App.tsx"
 

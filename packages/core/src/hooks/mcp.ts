@@ -1,11 +1,11 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+
 import { useApiClient } from "@renderical/api-client/context"
 import type {
   ListResponse,
   McpApprovalGate,
   McpPendingAction,
 } from "@renderical/api-client/types"
-
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 export const mcpKeys = {
   all: ["mcp"] as const,

@@ -1,9 +1,10 @@
 import { Suspense } from "react"
 
+import { RouterProvider, createBrowserRouter } from "react-router"
+
 import { AppProvider } from "@renderical/app/app/context"
 import { createWebAuthClient } from "@renderical/app/auth/client.web"
 import { routes } from "@renderical/views/routes/web"
-import { RouterProvider, createBrowserRouter } from "react-router"
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8787"
 const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL ?? window.location.origin

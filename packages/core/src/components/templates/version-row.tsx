@@ -1,6 +1,7 @@
+import { RotateCcwIcon } from "lucide-react"
+
 import type { TemplateVersion } from "@renderical/api-client/types"
 import { Button } from "@renderical/ui/components/button"
-import { RotateCcwIcon } from "lucide-react"
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleString(undefined, {

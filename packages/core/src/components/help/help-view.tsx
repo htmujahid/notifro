@@ -1,3 +1,10 @@
+import {
+  BookOpenIcon,
+  FileTextIcon,
+  MessageCircleIcon,
+  VideoIcon,
+} from "lucide-react"
+
 import { Button } from "@renderical/ui/components/button"
 import {
   Card,
@@ -5,12 +12,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@renderical/ui/components/card"
-import {
-  BookOpenIcon,
-  FileTextIcon,
-  MessageCircleIcon,
-  VideoIcon,
-} from "lucide-react"
 
 import { FaqItem } from "./faq-item"
 
