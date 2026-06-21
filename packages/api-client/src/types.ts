@@ -311,6 +311,25 @@ export interface ApiKeyWithSecret extends ApiKey {
   key: string
 }
 
+export interface McpApprovalGate {
+  id: string
+  userId: string
+  tool: string
+  requiresApproval: number
+  createdAt: string
+  updatedAt: string
+}
+
+export interface McpPendingAction {
+  id: string
+  userId: string
+  tool: string
+  status: string
+  expiresAt: string
+  createdAt: string
+  updatedAt: string
+}
+
 export interface ApiRequestLog {
   id: string
   userId: string

@@ -51,6 +51,7 @@
     "./hooks/preferences": "./src/hooks/preferences.ts",
     "./hooks/routing": "./src/hooks/routing.ts",
     "./hooks/rate-limits": "./src/hooks/rate-limits.ts",
-    "./hooks/developers": "./src/hooks/developers.ts"
+    "./hooks/developers": "./src/hooks/developers.ts",
+    "./hooks/mcp": "./src/hooks/mcp.ts"
   }
 }

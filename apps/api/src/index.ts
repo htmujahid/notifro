@@ -32,6 +32,8 @@ import chainsRouter from './routes/chains'
 import rateLimitsRouter from './routes/rate-limits'
 import keysRouter from './routes/keys'
 import requestLogRouter from './routes/request-log'
+import mcpRouter from './routes/mcp'
+import { createMcpServer, WebStandardStreamableHTTPServerTransport } from '@workspace/mcp'
 import { handleDeliveryQueue } from './queue/consumer'
 import { handleScheduledSweep } from './scheduling/sweep'
 import './channels/email'
@@ -218,6 +220,36 @@ app.route('/api', chainsRouter)
 app.route('/api', rateLimitsRouter)
 app.route('/api', keysRouter)
 app.route('/api', requestLogRouter)
+app.route('/api', mcpRouter)
+
+app.use('/mcp', (c, next) => {
+  return cors({
+    origin: '*',
+    allowHeaders: ['Content-Type', 'Authorization', 'X-API-Key', 'Mcp-Session-Id', 'MCP-Protocol-Version'],
+    allowMethods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+    maxAge: 86400,
+  })(c, next)
+})
+
+app.all('/mcp', async (c) => {
+  const authHeader = c.req.header('Authorization')
+  const apiKeyHeader = c.req.header('X-API-Key')
+  const rawKey = apiKeyHeader ?? (authHeader?.startsWith('Bearer rk_') ? authHeader.slice(7) : null)
+
+  if (!rawKey?.startsWith('rk_')) {
+    return c.json({ error: { code: 'unauthenticated', message: 'API key required for MCP' } }, 401)
+  }
+
+  const baseUrl = new URL(c.req.url).origin
+  const server = createMcpServer({ baseUrl, apiKey: rawKey })
+  const transport = new WebStandardStreamableHTTPServerTransport({
+    sessionIdGenerator: undefined,
+    enableJsonResponse: true,
+  })
+  await server.connect(transport)
+  return transport.handleRequest(c.req.raw)
+})
+
 app.doc('/doc', {
   openapi: '3.0.0',
   info: { title: 'Renderical API', version: '1.0.0' },

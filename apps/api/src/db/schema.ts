@@ -365,6 +365,26 @@ export interface ApiRequestLogTable {
   createdAt: string
 }
 
+export interface McpApprovalGateTable {
+  id: string
+  userId: string
+  tool: string
+  requiresApproval: number
+  createdAt: string
+  updatedAt: string
+}
+
+export interface McpPendingActionTable {
+  id: string
+  userId: string
+  tool: string
+  payload: string
+  status: string
+  expiresAt: string
+  createdAt: string
+  updatedAt: string
+}
+
 export interface DB {
   user: UserTable
   connection: ConnectionTable
@@ -395,4 +415,6 @@ export interface DB {
   rate_limit_rule: RateLimitRuleTable
   apikey: ApikeyTable
   api_request_log: ApiRequestLogTable
+  mcp_approval_gate: McpApprovalGateTable
+  mcp_pending_action: McpPendingActionTable
 }

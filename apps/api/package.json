@@ -16,6 +16,7 @@
     "@scalar/hono-api-reference": "^0.11.4",
     "@workspace/i18n": "workspace:*",
     "@workspace/mailer": "workspace:*",
+    "@workspace/mcp": "workspace:*",
     "@workspace/templating": "workspace:*",
     "better-auth": "^1.6.20",
     "hono": "^4.12.26",
