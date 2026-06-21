@@ -1,16 +1,17 @@
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ChevronsLeftIcon,
-  ChevronsRightIcon,
-} from "lucide-react"
-
 import { type Table } from "@tanstack/react-table"
 
-import { Button } from "@renderical/ui/components/button"
+import { Field, FieldLabel } from "@renderical/ui/components/field"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@renderical/ui/components/pagination"
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -27,11 +28,10 @@ export function DataTablePagination<TData>({
 }: DataTablePaginationProps<TData>) {
   const { pageIndex, pageSize } = table.getState().pagination
   const filteredCount = table.getFilteredRowModel().rows.length
-  const pageCount = table.getPageCount()
 
   return (
-    <div className="flex flex-col items-start gap-3 text-xs sm:flex-row sm:items-center sm:justify-between">
-      <p className="text-muted-foreground">
+    <div className="flex items-center justify-between gap-4">
+      <p className="text-xs text-muted-foreground">
         {filteredCount === 0
           ? "No results"
           : `${pageIndex * pageSize + 1}–${Math.min(
@@ -41,72 +41,57 @@ export function DataTablePagination<TData>({
       </p>
 
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2">
-          <span className="text-muted-foreground">Rows per page</span>
+        <Field orientation="horizontal" className="w-fit">
+          <FieldLabel htmlFor="rows-per-page" className="text-xs">
+            Rows per page
+          </FieldLabel>
           <Select
             value={String(pageSize)}
             onValueChange={(v) =>
               table.setPagination({ pageIndex: 0, pageSize: Number(v) })
             }
           >
-            <SelectTrigger className="h-7 w-16 text-xs">
+            <SelectTrigger className="w-20" id="rows-per-page" size="sm">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
-              {pageSizeOptions.map((n) => (
-                <SelectItem key={n} value={String(n)}>
-                  {n}
-                </SelectItem>
-              ))}
+            <SelectContent align="start">
+              <SelectGroup>
+                {pageSizeOptions.map((n) => (
+                  <SelectItem key={n} value={String(n)}>
+                    {n}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
             </SelectContent>
           </Select>
-        </div>
+        </Field>
 
-        <div className="flex items-center gap-1">
-          <Button
-            variant="outline"
-            size="icon"
-            className="size-7"
-            onClick={() => table.firstPage()}
-            disabled={!table.getCanPreviousPage()}
-            aria-label="First page"
-          >
-            <ChevronsLeftIcon className="size-3.5" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            className="size-7"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-            aria-label="Previous page"
-          >
-            <ChevronLeftIcon className="size-3.5" />
-          </Button>
-          <span className="min-w-[3.5rem] text-center text-muted-foreground">
-            {pageIndex + 1} / {Math.max(1, pageCount)}
-          </span>
-          <Button
-            variant="outline"
-            size="icon"
-            className="size-7"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-            aria-label="Next page"
-          >
-            <ChevronRightIcon className="size-3.5" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            className="size-7"
-            onClick={() => table.lastPage()}
-            disabled={!table.getCanNextPage()}
-            aria-label="Last page"
-          >
-            <ChevronsRightIcon className="size-3.5" />
-          </Button>
-        </div>
+        <Pagination className="mx-0 w-auto">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => table.previousPage()}
+                aria-disabled={!table.getCanPreviousPage()}
+                className={
+                  !table.getCanPreviousPage()
+                    ? "pointer-events-none opacity-50"
+                    : ""
+                }
+              />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => table.nextPage()}
+                aria-disabled={!table.getCanNextPage()}
+                className={
+                  !table.getCanNextPage()
+                    ? "pointer-events-none opacity-50"
+                    : ""
+                }
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
     </div>
   )

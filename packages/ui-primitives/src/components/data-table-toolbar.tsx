@@ -11,7 +11,11 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@renderical/ui/components/dropdown-menu"
-import { Input } from "@renderical/ui/components/input"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@renderical/ui/components/input-group"
 
 declare module "@tanstack/react-table" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -36,15 +40,16 @@ export function DataTableToolbar<TData>({
 
   return (
     <div className="flex items-center gap-2">
-      <div className="relative max-w-xs flex-1">
-        <SearchIcon className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
-        <Input
+      <InputGroup className="max-w-xs flex-1">
+        <InputGroupAddon>
+          <SearchIcon className="size-3.5" />
+        </InputGroupAddon>
+        <InputGroupInput
           value={globalFilter}
           onChange={(e) => table.setGlobalFilter(e.target.value)}
           placeholder={searchPlaceholder}
-          className="pl-8"
         />
-      </div>
+      </InputGroup>
 
       {children}
 
