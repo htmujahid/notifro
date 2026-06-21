@@ -5,7 +5,7 @@ import {
   sendVerificationOTPEmail,
 } from "@renderical/mailer"
 import { betterAuth } from "better-auth"
-import { emailOtp, phoneNumber, twoFactor } from "better-auth/plugins"
+import { emailOTP, phoneNumber, twoFactor } from "better-auth/plugins"
 import { env } from "cloudflare:workers"
 
 import { kvSecondaryStorage } from "./kv-storage"
@@ -36,7 +36,7 @@ export function createAuth(db: D1Database = mockD1) {
       },
     },
     plugins: [
-      emailOtp({
+      emailOTP({
         otpLength: 6,
         expiresIn: 300,
         overrideDefaultEmailVerification: true,
@@ -47,7 +47,7 @@ export function createAuth(db: D1Database = mockD1) {
         }: {
           email: string
           otp: string
-          type: "sign-in" | "email-verification" | "forget-password"
+          type: "sign-in" | "email-verification" | "forget-password" | "change-email"
         }) {
           const user = { email }
           if (type === "email-verification") {
