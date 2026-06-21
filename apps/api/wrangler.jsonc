@@ -24,6 +24,9 @@
       "remote": true
     }
   ],
+  "triggers": {
+    "crons": ["* * * * *"]
+  },
   "queues": {
     "producers": [
       { "binding": "DELIVERY_Q", "queue": "delivery-queue" }

@@ -108,6 +108,8 @@ export const RecipientSchema = z.discriminatedUnion('type', [
   }),
 ])
 
+const HHMM = z.string().regex(/^\d{2}:\d{2}$/)
+
 export const ComposePayloadSchema = z.object({
   schemaVersion: z.literal('1').default('1'),
   content: ContentSchema,
@@ -119,6 +121,13 @@ export const ComposePayloadSchema = z.object({
   timezoneHint: z.string().optional(),
   trackOpens: z.boolean().optional().default(true),
   trackClicks: z.boolean().optional().default(true),
+  sendAt: z.string().optional(),
+  sendAtLocal: z.string().optional(),
+  quietHoursStart: HHMM.optional(),
+  quietHoursEnd: HHMM.optional(),
+  deliveryWindowStart: HHMM.optional(),
+  deliveryWindowEnd: HHMM.optional(),
+  respectQuietHours: z.boolean().optional().default(true),
 })
 
 export type ComposePayload = z.infer<typeof ComposePayloadSchema>

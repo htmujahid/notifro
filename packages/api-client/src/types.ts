@@ -85,4 +85,37 @@ export interface ComposePayload {
   channels?: ChannelType[]
   localeHint?: string
   timezoneHint?: string
+  trackOpens?: boolean
+  trackClicks?: boolean
+  sendAt?: string
+  sendAtLocal?: string
+  quietHoursStart?: string
+  quietHoursEnd?: string
+  deliveryWindowStart?: string
+  deliveryWindowEnd?: string
+  respectQuietHours?: boolean
+}
+
+export interface ScheduledMessage {
+  id: string
+  userId: string
+  sendAt: string
+  status: string
+  timezone: string | null
+  quietHoursStart: string | null
+  quietHoursEnd: string | null
+  deliveryWindowStart: string | null
+  deliveryWindowEnd: string | null
+  respectQuietHours: number
+  notificationId: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface RecipientPreferences {
+  userId: string
+  timezone: string | null
+  quietHoursStart: string | null
+  quietHoursEnd: string | null
+  updatedAt: string
 }

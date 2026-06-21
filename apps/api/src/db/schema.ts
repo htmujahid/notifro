@@ -149,6 +149,32 @@ export interface WebhookEndpointTable {
   updatedAt: string
 }
 
+export interface ScheduledMessageTable {
+  id: string
+  userId: string
+  payload: string
+  channels: string
+  sendAt: string
+  status: string
+  timezone: string | null
+  quietHoursStart: string | null
+  quietHoursEnd: string | null
+  deliveryWindowStart: string | null
+  deliveryWindowEnd: string | null
+  respectQuietHours: number
+  notificationId: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface RecipientProfileTable {
+  userId: string
+  timezone: string | null
+  quietHoursStart: string | null
+  quietHoursEnd: string | null
+  updatedAt: string
+}
+
 export interface DB {
   user: UserTable
   connection: ConnectionTable
@@ -162,4 +188,6 @@ export interface DB {
   device_token: DeviceTokenTable
   idempotency_key: IdempotencyKeyTable
   dead_letter: DeadLetterTable
+  scheduled_message: ScheduledMessageTable
+  recipient_profile: RecipientProfileTable
 }

@@ -5,6 +5,7 @@ import { Errors, validationHook } from '../lib/errors'
 import { getAdapter } from '../channels/registry'
 import { resolveSendConnection } from '../channels/resolve'
 import { ComposePayloadSchema } from '../compose/schema'
+import { localToUtc } from '../scheduling/utils'
 import type { AppEnv } from '../lib/types'
 import type { ChannelType } from '../channels/types'
 import type { DeliveryQueueMessage } from '../queue/consumer'
@@ -60,6 +61,13 @@ const ListResponseSchema = z.object({
   nextCursor: z.string().nullable(),
 })
 
+const ScheduledResponseSchema = z.object({
+  id: z.string(),
+  sendAt: z.string(),
+  status: z.literal('pending'),
+  scheduled: z.literal(true),
+})
+
 const sendRoute = createRoute({
   method: 'post',
   path: '/notifications',
@@ -68,6 +76,10 @@ const sendRoute = createRoute({
     200: {
       content: { 'application/json': { schema: NotificationWithDeliveriesSchema } },
       description: 'Notification enqueued',
+    },
+    202: {
+      content: { 'application/json': { schema: ScheduledResponseSchema } },
+      description: 'Notification scheduled for future delivery',
     },
   },
 })
@@ -160,6 +172,42 @@ router.openapi(sendRoute, async (c) => {
         return c.json({ ...(notification as typeof notification), deliveries })
       }
     }
+  }
+
+  if (payload.sendAt || payload.sendAtLocal) {
+    const tz = payload.timezoneHint ?? 'UTC'
+    const sendAtUtc = payload.sendAt
+      ? new Date(payload.sendAt).toISOString()
+      : localToUtc(payload.sendAtLocal!, tz).toISOString()
+
+    if (new Date(sendAtUtc) <= new Date()) {
+      throw Errors.badRequest('sendAt must be in the future')
+    }
+
+    const scheduledId = newId()
+    await db
+      .insertInto('scheduled_message')
+      .values({
+        id: scheduledId,
+        userId,
+        payload: JSON.stringify(payload),
+        channels: JSON.stringify(payload.channels ?? ['email']),
+        sendAt: sendAtUtc,
+        status: 'pending',
+        timezone: payload.timezoneHint ?? null,
+        quietHoursStart: payload.quietHoursStart ?? null,
+        quietHoursEnd: payload.quietHoursEnd ?? null,
+        deliveryWindowStart: payload.deliveryWindowStart ?? null,
+        deliveryWindowEnd: payload.deliveryWindowEnd ?? null,
+        respectQuietHours: payload.respectQuietHours !== false ? 1 : 0,
+        notificationId: null,
+        createdAt: ts,
+        updatedAt: ts,
+      })
+      .execute()
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return c.json({ id: scheduledId, sendAt: sendAtUtc, status: 'pending' as const, scheduled: true as const }, 202) as any
   }
 
   const channels = payload.channels ?? ['email']
@@ -371,7 +419,8 @@ router.openapi(sendRoute, async (c) => {
     .selectAll()
     .executeTakeFirstOrThrow()
 
-  return c.json({ ...(notification as typeof notification), deliveries })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return c.json({ ...(notification as typeof notification), deliveries }) as any
 })
 
 router.openapi(listRoute, async (c) => {

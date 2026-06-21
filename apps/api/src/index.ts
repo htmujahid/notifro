@@ -16,7 +16,10 @@ import devicesRouter from './routes/devices'
 import deliveriesRouter from './routes/deliveries'
 import trackingRouter from './routes/tracking'
 import receiptsRouter from './routes/receipts'
+import schedulesRouter from './routes/schedules'
+import recipientProfilesRouter from './routes/recipient-profiles'
 import { handleDeliveryQueue } from './queue/consumer'
+import { handleScheduledSweep } from './scheduling/sweep'
 import './channels/email'
 import './channels/in-app'
 import './channels/web-push/adapter'
@@ -132,6 +135,8 @@ app.route('/api', devicesRouter)
 app.route('/api', deliveriesRouter)
 app.route('/t', trackingRouter)
 app.route('/webhooks', receiptsRouter)
+app.route('/api', schedulesRouter)
+app.route('/api', recipientProfilesRouter)
 
 app.doc('/doc', {
   openapi: '3.0.0',
@@ -144,5 +149,8 @@ export default {
   fetch: app.fetch.bind(app),
   async queue(batch: MessageBatch<import('./queue/consumer').DeliveryQueueMessage>, env: CloudflareBindings) {
     await handleDeliveryQueue(batch, env)
+  },
+  async scheduled(_event: ScheduledEvent, env: CloudflareBindings, _ctx: ExecutionContext) {
+    await handleScheduledSweep(env)
   },
 }
