@@ -17,6 +17,8 @@ import {
   CardTitle,
 } from "@renderical/ui/components/card"
 
+import { PageHeader } from "@renderical/ui-primitives/components/page-header"
+
 import { useConnections } from "../../hooks/connections"
 import { usePushRegistration } from "../../hooks/push"
 import { useWebhooks } from "../../hooks/webhooks"
@@ -121,12 +123,10 @@ export function ChannelsView() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-xl font-semibold tracking-tight">Channels</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Connect and configure the channels you deliver notifications through.
-        </p>
-      </div>
+      <PageHeader
+        title="Channels"
+        description="Connect and configure the channels you deliver notifications through."
+      />
 
       {isLoading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

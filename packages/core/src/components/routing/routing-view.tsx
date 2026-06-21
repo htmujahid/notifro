@@ -13,6 +13,9 @@ import {
   useRoutingRules,
   useUpdateRoutingRule,
 } from "../../hooks/routing"
+import { PageHeader } from "@renderical/ui-primitives/components/page-header"
+import { SectionHeader } from "@renderical/ui-primitives/components/section-header"
+
 import { CreateChainDialog } from "./create-chain-dialog"
 import { CreateRuleDialog } from "./create-rule-dialog"
 
@@ -36,23 +39,17 @@ export function RoutingView() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="text-xl font-semibold tracking-tight">Routing</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Rules decide which channel or fallback chain a notification uses.
-          Rules are evaluated in priority order (lowest wins).
-        </p>
-      </div>
+      <PageHeader
+        title="Routing"
+        description="Rules decide which channel or fallback chain a notification uses. Rules are evaluated in priority order (lowest wins)."
+      />
 
       <section className="flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <h2 className="flex items-center gap-1.5 text-sm font-medium">
-            <RouteIcon className="size-4" /> Routing rules
-          </h2>
+        <SectionHeader title={<><RouteIcon className="size-4" /> Routing rules</>}>
           <Button size="sm" onClick={() => setNewRuleOpen(true)}>
             <PlusIcon className="size-3.5 mr-1" /> New rule
           </Button>
-        </div>
+        </SectionHeader>
 
         {rules.length === 0 ? (
           <p className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">
@@ -145,14 +142,11 @@ export function RoutingView() {
       </section>
 
       <section className="flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <h2 className="flex items-center gap-1.5 text-sm font-medium">
-            <GitBranchIcon className="size-4" /> Fallback chains
-          </h2>
+        <SectionHeader title={<><GitBranchIcon className="size-4" /> Fallback chains</>}>
           <Button size="sm" onClick={() => setNewChainOpen(true)}>
             <PlusIcon className="size-3.5 mr-1" /> New chain
           </Button>
-        </div>
+        </SectionHeader>
 
         {chains.length === 0 ? (
           <p className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">

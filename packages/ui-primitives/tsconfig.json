@@ -9,7 +9,8 @@
     "strict": true,
     "noEmit": true,
     "paths": {
-      "@renderical/ui-primitives/*": ["./src/*"]
+      "@renderical/ui-primitives/*": ["./src/*"],
+      "@renderical/ui/*": ["../ui/src/*"]
     }
   },
   "include": ["."],

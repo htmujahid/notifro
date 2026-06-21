@@ -30,6 +30,8 @@ import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 import { Textarea } from "@renderical/ui/components/textarea"
 
+import { PageHeader } from "@renderical/ui-primitives/components/page-header"
+
 import { useConnections } from "../../hooks/connections"
 import {
   type NotificationWithDeliveries,
@@ -193,12 +195,10 @@ export function CreateView() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-xl font-semibold tracking-tight">Create</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Choose what you'd like to build in Renderical.
-        </p>
-      </div>
+      <PageHeader
+        title="Create"
+        description="Choose what you'd like to build in Renderical."
+      />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {CREATE_OPTIONS.map((option) => {

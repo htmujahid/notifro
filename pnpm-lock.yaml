@@ -111,9 +111,6 @@ importers:
       '@hono/zod-openapi':
         specifier: ^1.4.0
         version: 1.4.0(hono@4.12.26)(zod@4.4.3)
-      '@scalar/hono-api-reference':
-        specifier: ^0.11.4
-        version: 0.11.4(hono@4.12.26)
       '@renderical/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
@@ -126,6 +123,9 @@ importers:
       '@renderical/templating':
         specifier: workspace:*
         version: link:../../packages/templating
+      '@scalar/hono-api-reference':
+        specifier: ^0.11.4
+        version: 0.11.4(hono@4.12.26)
       better-auth:
         specifier: ^1.6.20
         version: 1.6.20(@cloudflare/workers-types@4.20260617.1)(next@16.2.6(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -456,15 +456,15 @@ importers:
 
   packages/app:
     dependencies:
-      '@tanstack/react-query':
-        specifier: ^5.101.0
-        version: 5.101.0(react@19.2.6)
       '@renderical/api-client':
         specifier: workspace:*
         version: link:../api-client
       '@renderical/ui-primitives':
         specifier: workspace:*
         version: link:../ui-primitives
+      '@tanstack/react-query':
+        specifier: ^5.101.0
+        version: 5.101.0(react@19.2.6)
       better-auth:
         specifier: ^1.6.19
         version: 1.6.19(@cloudflare/workers-types@4.20260617.1)(next@16.2.6(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -533,9 +533,6 @@ importers:
       '@hookform/resolvers':
         specifier: ^3.9.0
         version: 3.10.0(react-hook-form@7.79.0(react@19.2.6))
-      '@tanstack/react-query':
-        specifier: ^5.101.0
-        version: 5.101.0(react@19.2.6)
       '@renderical/api-client':
         specifier: workspace:*
         version: link:../api-client
@@ -545,6 +542,12 @@ importers:
       '@renderical/ui':
         specifier: workspace:*
         version: link:../ui
+      '@renderical/ui-primitives':
+        specifier: workspace:*
+        version: link:../ui-primitives
+      '@tanstack/react-query':
+        specifier: ^5.101.0
+        version: 5.101.0(react@19.2.6)
       lucide-react:
         specifier: ^1.21.0
         version: 1.21.0(react@19.2.6)
@@ -838,6 +841,15 @@ importers:
 
   packages/ui-primitives:
     dependencies:
+      '@renderical/ui':
+        specifier: workspace:*
+        version: link:../ui
+      '@tanstack/react-table':
+        specifier: ^8.21.3
+        version: 8.21.3(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      lucide-react:
+        specifier: ^1.21.0
+        version: 1.21.0(react@19.2.6)
       react:
         specifier: ^19.2.6
         version: 19.2.6
@@ -3532,6 +3544,17 @@ packages:
     resolution: {integrity: sha512-rLlJXSpkqfizLWgkR5+eLeIk0MvTx/meEIR7LRjxic+qxiQP8zVjq7BqQkiCMNLQBlLfuOLqqr6KO5GtrDlmSg==}
     peerDependencies:
       react: ^18 || ^19
+
+  '@tanstack/react-table@8.21.3':
+    resolution: {integrity: sha512-5nNMTSETP4ykGegmVkhjcS8tTLW6Vl4axfEGQN3v0zdHYbK4UfoqfPChclTrJ4EoK9QynqAu9oUf8VEmrpZ5Ww==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      react: '>=16.8'
+      react-dom: '>=16.8'
+
+  '@tanstack/table-core@8.21.3':
+    resolution: {integrity: sha512-ldZXEhOBb8Is7xLs01fR3YEc3DERiz5silj8tnGkFZytt1abEvl/GhUmCE0PMLaMPTa3Jk4HbKmRlHmu+gCftg==}
+    engines: {node: '>=12'}
 
   '@tootallnate/once@2.0.1':
     resolution: {integrity: sha512-HqmEUIGRJ5fSXchkVgR5F7qn48bDBzv0kWj/Kfu5e6uci4UlEeng4331LnBkWffb++Ei3FOVLxo8JJWMFBDMeQ==}
@@ -10529,6 +10552,14 @@ snapshots:
     dependencies:
       '@tanstack/query-core': 5.101.0
       react: 19.2.6
+
+  '@tanstack/react-table@8.21.3(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
+    dependencies:
+      '@tanstack/table-core': 8.21.3
+      react: 19.2.6
+      react-dom: 19.2.6(react@19.2.6)
+
+  '@tanstack/table-core@8.21.3': {}
 
   '@tootallnate/once@2.0.1': {}
 

@@ -17,6 +17,8 @@ import {
   EmptyTitle,
 } from "@renderical/ui/components/empty"
 
+import { PageHeader } from "@renderical/ui-primitives/components/page-header"
+
 import {
   useCancelSchedule,
   useDeleteRecurringSend,
@@ -42,18 +44,12 @@ export function SchedulesView() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold tracking-tight">Schedules</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            One-off and recurring notification schedules.
-          </p>
-        </div>
+      <PageHeader title="Schedules" description="One-off and recurring notification schedules.">
         <Button size="sm" className="gap-1.5" disabled>
           <PlusIcon className="size-4" />
           New schedule
         </Button>
-      </div>
+      </PageHeader>
 
       <div className="flex gap-1 border-b">
         {(["scheduled", "recurring"] as const).map((t) => (

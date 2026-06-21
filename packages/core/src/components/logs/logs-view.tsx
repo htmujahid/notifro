@@ -1,15 +1,13 @@
 import { useState } from "react"
 
-import { RefreshCwIcon, ScrollIcon } from "lucide-react"
+import { RefreshCwIcon } from "lucide-react"
 
 import { Button } from "@renderical/ui/components/button"
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@renderical/ui/components/empty"
+import { DataTable, type ColumnDef } from "@renderical/ui-primitives/components/data-table"
+import { DataTableColumnHeader } from "@renderical/ui-primitives/components/data-table-column-header"
+import { DataTableToolbar } from "@renderical/ui-primitives/components/data-table-toolbar"
+import { PageHeader } from "@renderical/ui-primitives/components/page-header"
+import { useDataTable } from "@renderical/ui-primitives/components/use-data-table"
 
 const ALL_LOGS = [
   {
@@ -107,11 +105,91 @@ const ALL_LOGS = [
 const TABS = ["All", "Delivered", "Failed", "Bounced"] as const
 type Tab = (typeof TABS)[number]
 
+type LogEntry = (typeof ALL_LOGS)[number]
+
 const STATUS_STYLES: Record<string, string> = {
   delivered: "bg-green-500/10 text-green-700 dark:text-green-400",
   failed: "bg-destructive/10 text-destructive",
   bounced: "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400",
 }
+
+const COLUMNS: ColumnDef<LogEntry, unknown>[] = [
+  {
+    accessorKey: "notification",
+    meta: { label: "Notification" },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Notification" />
+    ),
+    cell: ({ getValue }) => (
+      <span className="font-medium">{getValue() as string}</span>
+    ),
+  },
+  {
+    accessorKey: "channel",
+    meta: { label: "Channel" },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Channel" />
+    ),
+    cell: ({ getValue }) => (
+      <span className="text-muted-foreground">{getValue() as string}</span>
+    ),
+  },
+  {
+    accessorKey: "recipient",
+    meta: { label: "Recipient" },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Recipient" />
+    ),
+    cell: ({ getValue }) => (
+      <span className="font-mono text-xs text-muted-foreground">
+        {getValue() as string}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "status",
+    meta: { label: "Status" },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Status" />
+    ),
+    cell: ({ getValue }) => {
+      const s = getValue() as string
+      return (
+        <span
+          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+            STATUS_STYLES[s] ?? "bg-muted text-muted-foreground"
+          }`}
+        >
+          {s}
+        </span>
+      )
+    },
+  },
+  {
+    accessorKey: "duration",
+    meta: { label: "Duration" },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Duration" />
+    ),
+    enableGlobalFilter: false,
+    cell: ({ getValue }) => (
+      <span className="font-mono text-xs text-muted-foreground">
+        {getValue() as string}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "timestamp",
+    meta: { label: "Timestamp" },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Timestamp" />
+    ),
+    enableGlobalFilter: false,
+    cell: ({ getValue }) => (
+      <span className="text-muted-foreground">{getValue() as string}</span>
+    ),
+  },
+]
 
 export function LogsView() {
   const [activeTab, setActiveTab] = useState<Tab>("All")
@@ -121,20 +199,19 @@ export function LogsView() {
       ? ALL_LOGS
       : ALL_LOGS.filter((l) => l.status === activeTab.toLowerCase())
 
+  const { table } = useDataTable({ data: filtered, columns: COLUMNS })
+
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold tracking-tight">Logs</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Delivery history for all outbound notifications.
-          </p>
-        </div>
+      <PageHeader
+        title="Logs"
+        description="Delivery history for all outbound notifications."
+      >
         <Button size="sm" variant="outline" className="gap-1.5">
           <RefreshCwIcon className="size-4" />
           Refresh
         </Button>
-      </div>
+      </PageHeader>
 
       <div className="flex gap-1 border-b border-border">
         {TABS.map((tab) => (
@@ -152,76 +229,12 @@ export function LogsView() {
         ))}
       </div>
 
-      {filtered.length === 0 ? (
-        <Empty>
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <ScrollIcon />
-            </EmptyMedia>
-            <EmptyTitle>No {activeTab.toLowerCase()} entries</EmptyTitle>
-            <EmptyDescription>
-              Delivery logs will appear here once you start sending
-              notifications.
-            </EmptyDescription>
-          </EmptyHeader>
-        </Empty>
-      ) : (
-        <div className="overflow-hidden rounded-xl ring-1 ring-foreground/10">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border bg-muted/40">
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                  Notification
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                  Channel
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                  Recipient
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                  Status
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                  Duration
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                  Timestamp
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border bg-card">
-              {filtered.map((l) => (
-                <tr
-                  key={l.id}
-                  className="cursor-pointer transition-colors hover:bg-muted/30"
-                >
-                  <td className="px-4 py-3 font-medium">{l.notification}</td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    {l.channel}
-                  </td>
-                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
-                    {l.recipient}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[l.status]}`}
-                    >
-                      {l.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
-                    {l.duration}
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    {l.timestamp}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <DataTable
+        table={table}
+        emptyState={`No ${activeTab.toLowerCase()} entries. Delivery logs will appear here once you start sending notifications.`}
+      >
+        <DataTableToolbar table={table} searchPlaceholder="Search logs…" />
+      </DataTable>
     </div>
   )
 }

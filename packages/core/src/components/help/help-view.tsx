@@ -13,6 +13,8 @@ import {
   CardTitle,
 } from "@renderical/ui/components/card"
 
+import { PageHeader } from "@renderical/ui-primitives/components/page-header"
+
 import { FaqItem } from "./faq-item"
 
 const FAQS = [
@@ -72,12 +74,10 @@ const RESOURCES = [
 export function HelpView() {
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="text-xl font-semibold tracking-tight">Help & Support</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Guides, FAQs, and resources to get the most out of Renderical.
-        </p>
-      </div>
+      <PageHeader
+        title="Help & Support"
+        description="Guides, FAQs, and resources to get the most out of Renderical."
+      />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {RESOURCES.map(({ title, description, icon: Icon, href }) => (

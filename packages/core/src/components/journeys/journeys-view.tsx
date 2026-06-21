@@ -13,15 +13,12 @@ import {
 } from "@renderical/ui/components/dialog"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@renderical/ui/components/table"
 import { Textarea } from "@renderical/ui/components/textarea"
+import { DataTable, type ColumnDef } from "@renderical/ui-primitives/components/data-table"
+import { DataTableColumnHeader } from "@renderical/ui-primitives/components/data-table-column-header"
+import { DataTableToolbar } from "@renderical/ui-primitives/components/data-table-toolbar"
+import { PageHeader } from "@renderical/ui-primitives/components/page-header"
+import { useDataTable } from "@renderical/ui-primitives/components/use-data-table"
 
 import {
   useCreateJourney,
@@ -36,9 +33,7 @@ const EXAMPLE_STEPS = JSON.stringify(
     step1: {
       kind: "send",
       config: {
-        payload: {
-          content: { title: "Welcome!", body: "Thanks for joining." },
-        },
+        payload: { content: { title: "Welcome!", body: "Thanks for joining." } },
         channels: ["email"],
       },
       next: "step2",
@@ -101,6 +96,90 @@ export function JourneysView() {
   const journeys =
     data?.pages.flatMap((p) => (p as { data: Journey[] }).data) ?? []
 
+  const columns = React.useMemo<ColumnDef<Journey, unknown>[]>(
+    () => [
+      {
+        accessorKey: "name",
+        meta: { label: "Name" },
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Name" />
+        ),
+        cell: ({ row }) => (
+          <span className="font-medium">{row.original.name}</span>
+        ),
+      },
+      {
+        accessorKey: "status",
+        meta: { label: "Status" },
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Status" />
+        ),
+        cell: ({ row }) => <JourneyStatusBadge status={row.original.status} />,
+      },
+      {
+        id: "trigger",
+        accessorFn: (row) => triggerLabel(row.trigger),
+        meta: { label: "Trigger" },
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Trigger" />
+        ),
+        cell: ({ getValue }) => (
+          <span className="text-muted-foreground">{getValue() as string}</span>
+        ),
+      },
+      {
+        id: "steps",
+        accessorFn: (row) => stepCount(row.steps),
+        meta: { label: "Steps" },
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Steps" />
+        ),
+        enableGlobalFilter: false,
+      },
+      {
+        id: "created",
+        accessorFn: (row) => new Date(row.createdAt).toLocaleDateString(),
+        meta: { label: "Created" },
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Created" />
+        ),
+        enableGlobalFilter: false,
+        cell: ({ getValue }) => (
+          <span className="text-muted-foreground">{getValue() as string}</span>
+        ),
+      },
+      {
+        id: "actions",
+        header: "",
+        enableSorting: false,
+        enableGlobalFilter: false,
+        enableHiding: false,
+        cell: ({ row }) => (
+          <div onClick={(e) => e.stopPropagation()}>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={async () => {
+                try {
+                  await deleteJourney.mutateAsync(row.original.id)
+                  toast.success("Journey deleted")
+                } catch {
+                  toast.error("Cannot delete an active journey")
+                }
+              }}
+              disabled={deleteJourney.isPending}
+            >
+              Delete
+            </Button>
+          </div>
+        ),
+      },
+    ],
+    [deleteJourney]
+  )
+
+  const { table } = useDataTable({ data: journeys, columns })
+
   async function handleCreate() {
     if (!newName.trim()) return
     let stepsObj: Record<string, unknown>
@@ -131,77 +210,23 @@ export function JourneysView() {
     setNewTrigger(EXAMPLE_TRIGGER)
   }
 
-  async function handleDelete(id: string) {
-    try {
-      await deleteJourney.mutateAsync(id)
-      toast.success("Journey deleted")
-    } catch {
-      toast.error("Cannot delete an active journey")
-    }
-  }
-
   return (
-    <div className="p-6 space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Journeys</h1>
+    <div className="flex flex-col gap-6">
+      <PageHeader
+        title="Journeys"
+        description="Automated multi-step notification sequences."
+      >
         <Button onClick={() => setCreateOpen(true)}>New Journey</Button>
-      </div>
+      </PageHeader>
 
-      {isLoading && <p className="text-muted-foreground text-sm">Loading…</p>}
-
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Trigger</TableHead>
-            <TableHead>Steps</TableHead>
-            <TableHead>Created</TableHead>
-            <TableHead />
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {journeys.length === 0 && !isLoading && (
-            <TableRow>
-              <TableCell
-                colSpan={6}
-                className="text-center text-muted-foreground py-8"
-              >
-                No journeys yet. Create one to get started.
-              </TableCell>
-            </TableRow>
-          )}
-          {journeys.map((journey) => (
-            <TableRow
-              key={journey.id}
-              className="cursor-pointer hover:bg-muted/50"
-              onClick={() => setSelected(journey)}
-            >
-              <TableCell className="font-medium">{journey.name}</TableCell>
-              <TableCell>
-                <JourneyStatusBadge status={journey.status} />
-              </TableCell>
-              <TableCell className="text-sm text-muted-foreground">
-                {triggerLabel(journey.trigger)}
-              </TableCell>
-              <TableCell>{stepCount(journey.steps)}</TableCell>
-              <TableCell className="text-sm text-muted-foreground">
-                {new Date(journey.createdAt).toLocaleDateString()}
-              </TableCell>
-              <TableCell onClick={(e) => e.stopPropagation()}>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => handleDelete(journey.id)}
-                  disabled={deleteJourney.isPending}
-                >
-                  Delete
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <DataTable
+        table={table}
+        loading={isLoading}
+        onRowClick={(journey) => setSelected(journey)}
+        emptyState="No journeys yet. Create one to get started."
+      >
+        <DataTableToolbar table={table} searchPlaceholder="Search journeys…" />
+      </DataTable>
 
       {selected && (
         <JourneyDetailDialog

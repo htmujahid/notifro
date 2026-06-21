@@ -5,13 +5,8 @@ import {
   RadioIcon,
 } from "lucide-react"
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@renderical/ui/components/card"
+import { PageHeader } from "@renderical/ui-primitives/components/page-header"
+import { StatCard, StatCardGrid } from "@renderical/ui-primitives/components/stat-card"
 
 import { useOverview } from "../../hooks/overview"
 import { AnalyticsSection } from "./analytics-section"
@@ -66,29 +61,16 @@ export function OverviewMetrics() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-xl font-semibold tracking-tight">Dashboard</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Overview of your notification infrastructure.
-        </p>
-      </div>
+      <PageHeader
+        title="Dashboard"
+        description="Overview of your notification infrastructure."
+      />
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {STATS.map(({ label, value, delta, icon: Icon }) => (
-          <Card key={label} size="sm">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardDescription>{label}</CardDescription>
-                <Icon className="size-4 text-muted-foreground" />
-              </div>
-              <CardTitle className="text-2xl font-bold">{value}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xs text-muted-foreground">{delta}</p>
-            </CardContent>
-          </Card>
+      <StatCardGrid cols={4}>
+        {STATS.map(({ label, value, delta, icon }) => (
+          <StatCard key={label} label={label} value={value} description={delta} icon={icon} />
         ))}
-      </div>
+      </StatCardGrid>
 
       <AnalyticsSection />
 

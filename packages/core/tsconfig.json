@@ -12,7 +12,8 @@
       "@renderical/core/*": ["./src/*"],
       "@renderical/api-client/*": ["../api-client/src/*"],
       "@renderical/app/*": ["../app/src/*"],
-      "@renderical/ui/*": ["../ui/src/*"]
+      "@renderical/ui/*": ["../ui/src/*"],
+      "@renderical/ui-primitives/*": ["../ui-primitives/src/*"]
     }
   },
   "include": ["."],

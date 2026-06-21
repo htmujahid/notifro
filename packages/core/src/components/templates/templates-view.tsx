@@ -10,6 +10,11 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@renderical/ui/components/empty"
+import { DataTable, type ColumnDef } from "@renderical/ui-primitives/components/data-table"
+import { DataTableColumnHeader } from "@renderical/ui-primitives/components/data-table-column-header"
+import { DataTableToolbar } from "@renderical/ui-primitives/components/data-table-toolbar"
+import { PageHeader } from "@renderical/ui-primitives/components/page-header"
+import { useDataTable } from "@renderical/ui-primitives/components/use-data-table"
 
 import { useDeleteTemplate, useTemplates } from "../../hooks/templates"
 
@@ -21,32 +26,125 @@ function formatDate(iso: string): string {
   })
 }
 
+type Template = {
+  id: string
+  name: string
+  slug: string
+  defaultLocale: string
+  updatedAt: string
+}
+
+const COLUMNS: ColumnDef<Template, unknown>[] = [
+  {
+    accessorKey: "name",
+    meta: { label: "Name" },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Name" />
+    ),
+    cell: ({ row }) => (
+      <Link
+        to={`/templates/${row.original.id}`}
+        className="flex items-center gap-2.5 hover:underline"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted">
+          <FileTextIcon className="size-3.5 text-muted-foreground" />
+        </div>
+        <span className="font-medium">{row.original.name}</span>
+      </Link>
+    ),
+  },
+  {
+    accessorKey: "slug",
+    meta: { label: "Slug" },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Slug" />
+    ),
+    cell: ({ getValue }) => (
+      <span className="font-mono text-xs text-muted-foreground">
+        {getValue() as string}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "defaultLocale",
+    meta: { label: "Locale" },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Locale" />
+    ),
+    cell: ({ getValue }) => (
+      <span className="text-muted-foreground">{getValue() as string}</span>
+    ),
+  },
+  {
+    id: "updated",
+    accessorFn: (row) => formatDate(row.updatedAt),
+    meta: { label: "Last modified" },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Last modified" />
+    ),
+    enableGlobalFilter: false,
+    cell: ({ getValue }) => (
+      <span className="text-muted-foreground">{getValue() as string}</span>
+    ),
+  },
+  {
+    id: "actions",
+    header: "",
+    enableSorting: false,
+    enableGlobalFilter: false,
+    enableHiding: false,
+    cell: ({ row }) => <TemplateActions id={row.original.id} />,
+  },
+]
+
+function TemplateActions({ id }: { id: string }) {
+  const deleteTemplate = useDeleteTemplate()
+  return (
+    <div
+      className="flex items-center justify-end gap-2"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <Link
+        to={`/templates/${id}`}
+        className="inline-flex items-center rounded-md border px-2.5 py-1 text-xs font-medium transition-colors hover:bg-muted"
+      >
+        Edit
+      </Link>
+      <Button
+        size="sm"
+        variant="ghost"
+        className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+        disabled={deleteTemplate.isPending}
+        onClick={() => deleteTemplate.mutate(id)}
+      >
+        Delete
+      </Button>
+    </div>
+  )
+}
+
 export function TemplatesView() {
   const { data, isLoading } = useTemplates()
-  const deleteTemplate = useDeleteTemplate()
-  const templates = data?.pages.flatMap((p) => p.data) ?? []
+  const templates = (data?.pages.flatMap((p) => p.data) ?? []) as Template[]
 
-  return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold tracking-tight">Templates</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Reusable notification templates across all channels.
-          </p>
-        </div>
-        <Link
-          to="/templates/new"
-          className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+  const { table } = useDataTable({ data: templates, columns: COLUMNS })
+
+  if (!isLoading && templates.length === 0) {
+    return (
+      <div className="flex flex-col gap-6">
+        <PageHeader
+          title="Templates"
+          description="Reusable notification templates across all channels."
         >
-          <PlusIcon className="size-4" />
-          New template
-        </Link>
-      </div>
-
-      {isLoading ? (
-        <div className="text-sm text-muted-foreground">Loading…</div>
-      ) : templates.length === 0 ? (
+          <Link
+            to="/templates/new"
+            className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            <PlusIcon className="size-4" />
+            New template
+          </Link>
+        </PageHeader>
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">
@@ -68,74 +166,28 @@ export function TemplatesView() {
             </Link>
           </EmptyContent>
         </Empty>
-      ) : (
-        <div className="overflow-hidden rounded-xl ring-1 ring-foreground/10">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border bg-muted/40">
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                  Name
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                  Slug
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                  Locale
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                  Last modified
-                </th>
-                <th className="px-4 py-3" />
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border bg-card">
-              {templates.map((t) => (
-                <tr key={t.id} className="transition-colors hover:bg-muted/30">
-                  <td className="px-4 py-3">
-                    <Link
-                      to={`/templates/${t.id}`}
-                      className="flex items-center gap-2.5 hover:underline"
-                    >
-                      <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted">
-                        <FileTextIcon className="size-3.5 text-muted-foreground" />
-                      </div>
-                      <span className="font-medium">{t.name}</span>
-                    </Link>
-                  </td>
-                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
-                    {t.slug}
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    {t.defaultLocale}
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    {formatDate(t.updatedAt)}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center justify-end gap-2">
-                      <Link
-                        to={`/templates/${t.id}`}
-                        className="inline-flex items-center rounded-md border px-2.5 py-1 text-xs font-medium transition-colors hover:bg-muted"
-                      >
-                        Edit
-                      </Link>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                        disabled={deleteTemplate.isPending}
-                        onClick={() => deleteTemplate.mutate(t.id)}
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      <PageHeader
+        title="Templates"
+        description="Reusable notification templates across all channels."
+      >
+        <Link
+          to="/templates/new"
+          className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+        >
+          <PlusIcon className="size-4" />
+          New template
+        </Link>
+      </PageHeader>
+
+      <DataTable table={table} loading={isLoading}>
+        <DataTableToolbar table={table} searchPlaceholder="Search templates…" />
+      </DataTable>
     </div>
   )
 }

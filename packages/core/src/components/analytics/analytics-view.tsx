@@ -7,8 +7,10 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from "@renderical/ui/components/card"
+
+import { PageHeader } from "@renderical/ui-primitives/components/page-header"
+import { StatCard, StatCardGrid } from "@renderical/ui-primitives/components/stat-card"
 
 import {
   useAnalyticsChannels,
@@ -78,14 +80,11 @@ export function AnalyticsView() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-xl font-semibold tracking-tight">Analytics</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Delivery performance and engagement across all channels.
-          </p>
-        </div>
-
+      <PageHeader
+        title="Analytics"
+        description="Delivery performance and engagement across all channels."
+        className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+      >
         <div className="flex flex-wrap items-center gap-2 text-sm">
           <div className="flex items-center gap-1">
             <label
@@ -124,25 +123,20 @@ export function AnalyticsView() {
             <option value="week">Weekly</option>
           </select>
         </div>
-      </div>
+      </PageHeader>
 
       {summaryLoading ? (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
+        <StatCardGrid cols={8}>
           {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} className="h-16 rounded-lg bg-muted animate-pulse" />
           ))}
-        </div>
+        </StatCardGrid>
       ) : summaryStats ? (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
+        <StatCardGrid cols={8}>
           {summaryStats.map(({ label, value }) => (
-            <Card key={label} size="sm">
-              <CardHeader className="pb-1">
-                <CardDescription className="text-xs">{label}</CardDescription>
-                <CardTitle className="text-lg font-bold">{value}</CardTitle>
-              </CardHeader>
-            </Card>
+            <StatCard key={label} label={label} value={value} size="sm" />
           ))}
-        </div>
+        </StatCardGrid>
       ) : (
         <div className="flex flex-col items-center justify-center rounded-xl py-8 ring-1 ring-foreground/10 text-center">
           <BellIcon className="mb-3 size-8 text-muted-foreground/40" />

@@ -6,6 +6,8 @@ import { useNavigate } from "react-router"
 import type { ListResponse } from "@renderical/api-client/types"
 import { Button } from "@renderical/ui/components/button"
 
+import { PageHeader } from "@renderical/ui-primitives/components/page-header"
+
 import { useInbox, useMarkAllRead, useMarkRead } from "../../hooks/inbox"
 import type { InboxFilter, InboxMessage } from "../../hooks/inbox"
 
@@ -47,38 +49,28 @@ export function NotificationsView() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold tracking-tight">
-            Notifications
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Your in-app notification inbox.
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          {messages.some((m) => !m.readAt) && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-1.5"
-              onClick={() => markAllRead.mutate()}
-              disabled={markAllRead.isPending}
-            >
-              <CheckCheckIcon className="size-4" />
-              Mark all read
-            </Button>
-          )}
+      <PageHeader title="Notifications" description="Your in-app notification inbox.">
+        {messages.some((m) => !m.readAt) && (
           <Button
+            variant="outline"
             size="sm"
             className="gap-1.5"
-            onClick={() => navigate("/create")}
+            onClick={() => markAllRead.mutate()}
+            disabled={markAllRead.isPending}
           >
-            <PlusIcon className="size-4" />
-            New notification
+            <CheckCheckIcon className="size-4" />
+            Mark all read
           </Button>
-        </div>
-      </div>
+        )}
+        <Button
+          size="sm"
+          className="gap-1.5"
+          onClick={() => navigate("/create")}
+        >
+          <PlusIcon className="size-4" />
+          New notification
+        </Button>
+      </PageHeader>
 
       <div className="flex gap-1 border-b border-border">
         {TABS.map((tab) => (

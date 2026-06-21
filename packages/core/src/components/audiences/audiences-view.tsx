@@ -1,5 +1,7 @@
 import { useState } from "react"
 
+import { PageHeader } from "@renderical/ui-primitives/components/page-header"
+
 import { RecipientsTab } from "./recipients-tab"
 import { SegmentsTab } from "./segments-tab"
 
@@ -8,15 +10,10 @@ export function AudiencesView() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold tracking-tight">Audiences</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Manage contacts and segment them into reusable groups for targeted
-            notifications.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Audiences"
+        description="Manage contacts and segment them into reusable groups for targeted notifications."
+      />
 
       <div className="flex gap-1 border-b">
         {(["segments", "contacts"] as const).map((t) => (
