@@ -14,6 +14,8 @@ import pushRouter from './routes/push'
 import webhooksRouter from './routes/webhooks'
 import devicesRouter from './routes/devices'
 import deliveriesRouter from './routes/deliveries'
+import trackingRouter from './routes/tracking'
+import receiptsRouter from './routes/receipts'
 import { handleDeliveryQueue } from './queue/consumer'
 import './channels/email'
 import './channels/in-app'
@@ -128,6 +130,8 @@ app.route('/api', pushRouter)
 app.route('/api', webhooksRouter)
 app.route('/api', devicesRouter)
 app.route('/api', deliveriesRouter)
+app.route('/t', trackingRouter)
+app.route('/webhooks', receiptsRouter)
 
 app.doc('/doc', {
   openapi: '3.0.0',

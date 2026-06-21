@@ -148,7 +148,7 @@ async function processDelivery(
 
   try {
     const provider = adapter.transform(payload, { connection: conn })
-    const result = await adapter.send(provider as any, conn, { db: database, notificationId, env })
+    const result = await adapter.send(provider as any, conn, { db: database, notificationId, deliveryId, env })
     ok = result.ok
     providerMessageId = result.providerMessageId ?? null
     sendError = result.ok ? null : (result.error ?? 'Send failed')
@@ -159,9 +159,13 @@ async function processDelivery(
   if (ok) {
     await database
       .updateTable('delivery')
-      .set({ status: 'delivered', providerMessageId, attempts, lastError: null, nextRetryAt: null, updatedAt: ts })
+      .set({ status: 'delivered', providerMessageId, attempts, lastError: null, nextRetryAt: null, deliveredAt: ts, updatedAt: ts })
       .where('id', '=', deliveryId)
       .execute()
+    const deliveryRow = await database.selectFrom('delivery').where('id', '=', deliveryId).select('userId').executeTakeFirst()
+    if (deliveryRow) {
+      await database.insertInto('delivery_event').values({ id: crypto.randomUUID(), deliveryId, userId: deliveryRow.userId, type: 'delivered', at: ts, meta: '{}' }).execute()
+    }
     await updateNotificationStatus(database, notificationId, ts)
     msg.ack()
     return

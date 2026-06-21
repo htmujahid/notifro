@@ -51,8 +51,21 @@ export interface DeliveryTable {
   attempts: number
   nextRetryAt: string | null
   lastError: string | null
+  deliveredAt: string | null
+  openedAt: string | null
+  clickedAt: string | null
+  bouncedAt: string | null
   createdAt: string
   updatedAt: string
+}
+
+export interface DeliveryEventTable {
+  id: string
+  deliveryId: string
+  userId: string
+  type: string
+  at: string
+  meta: string
 }
 
 export interface IdempotencyKeyTable {
@@ -141,6 +154,7 @@ export interface DB {
   connection: ConnectionTable
   notification: NotificationTable
   delivery: DeliveryTable
+  delivery_event: DeliveryEventTable
   inbox_message: InboxMessageTable
   onboarding_state: OnboardingStateTable
   push_subscription: PushSubscriptionTable

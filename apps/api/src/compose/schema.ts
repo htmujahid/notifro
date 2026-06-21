@@ -117,6 +117,8 @@ export const ComposePayloadSchema = z.object({
   channels: z.array(z.enum(CHANNEL_TYPE_VALUES)).optional(),
   localeHint: z.string().optional(),
   timezoneHint: z.string().optional(),
+  trackOpens: z.boolean().optional().default(true),
+  trackClicks: z.boolean().optional().default(true),
 })
 
 export type ComposePayload = z.infer<typeof ComposePayloadSchema>

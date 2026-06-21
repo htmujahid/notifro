@@ -31,6 +31,10 @@ const DeliveryDtoSchema = z.object({
   attempts: z.number(),
   nextRetryAt: z.string().nullable(),
   lastError: z.string().nullable(),
+  deliveredAt: z.string().nullable(),
+  openedAt: z.string().nullable(),
+  clickedAt: z.string().nullable(),
+  bouncedAt: z.string().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
 })
@@ -189,6 +193,10 @@ router.openapi(sendRoute, async (c) => {
     attempts: number
     nextRetryAt: string | null
     lastError: string | null
+    deliveredAt: string | null
+    openedAt: string | null
+    clickedAt: string | null
+    bouncedAt: string | null
     createdAt: string
     updatedAt: string
   }
@@ -231,6 +239,10 @@ router.openapi(sendRoute, async (c) => {
         attempts: 1,
         nextRetryAt: null,
         lastError: `No adapter registered for channel: ${channel}`,
+        deliveredAt: null,
+        openedAt: null,
+        clickedAt: null,
+        bouncedAt: null,
         createdAt: dts,
         updatedAt: dts,
       })
@@ -255,6 +267,10 @@ router.openapi(sendRoute, async (c) => {
           attempts: 1,
           nextRetryAt: null,
           lastError: `No active ${channel} connection — connect via Channels page first`,
+          deliveredAt: null,
+          openedAt: null,
+          clickedAt: null,
+          bouncedAt: null,
           createdAt: dts,
           updatedAt: dts,
         })
@@ -271,6 +287,10 @@ router.openapi(sendRoute, async (c) => {
         attempts: 1,
         nextRetryAt: null,
         lastError: `No active ${channel} connection — connect via Channels page first`,
+        deliveredAt: null,
+        openedAt: null,
+        clickedAt: null,
+        bouncedAt: null,
         createdAt: dts,
         updatedAt: dts,
       })
@@ -291,6 +311,10 @@ router.openapi(sendRoute, async (c) => {
         attempts: 0,
         nextRetryAt: null,
         lastError: null,
+        deliveredAt: null,
+        openedAt: null,
+        clickedAt: null,
+        bouncedAt: null,
         createdAt: dts,
         updatedAt: dts,
       })
@@ -316,6 +340,10 @@ router.openapi(sendRoute, async (c) => {
       attempts: 0,
       nextRetryAt: null,
       lastError: null,
+      deliveredAt: null,
+      openedAt: null,
+      clickedAt: null,
+      bouncedAt: null,
       createdAt: dts,
       updatedAt: dts,
     })

@@ -163,6 +163,8 @@ router.openapi(testSendRoute, async (c) => {
       body: { text: 'Your Renderical setup is working. Notifications are delivering successfully.' },
     },
     metadata: { priority: 'normal' as const },
+    trackOpens: false,
+    trackClicks: false,
   }
 
   const syntheticConn: Connection = {

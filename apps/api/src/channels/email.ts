@@ -3,6 +3,7 @@ import type { ComposePayload, Connection } from './types'
 import { registerAdapter } from './registry'
 import { registerTransform } from '../compose/transform'
 import { sendNotificationEmail } from '@workspace/mailer'
+import { signTrackingToken } from '../lib/tracking'
 
 export interface EmailProvider {
   to: string
@@ -10,6 +11,8 @@ export interface EmailProvider {
   html: string
   text: string
   from: string
+  trackOpens: boolean
+  trackClicks: boolean
 }
 
 interface EmailConfig {
@@ -73,6 +76,22 @@ function renderText(payload: ComposePayload): string {
   return parts.join('\n\n')
 }
 
+async function rewriteLinks(html: string, deliveryId: string, secret: string, baseUrl: string): Promise<string> {
+  const hrefRe = /href="(https?:\/\/[^"]+)"/gi
+  const replacements: Array<[string, string]> = []
+  let match
+  while ((match = hrefRe.exec(html)) !== null) {
+    const originalUrl = match[1]
+    const token = await signTrackingToken({ d: deliveryId, t: 'click', u: originalUrl }, secret)
+    replacements.push([match[0], `href="${baseUrl}/t/c/${token}"`])
+  }
+  let result = html
+  for (const [original, replacement] of replacements) {
+    result = result.replace(original, replacement)
+  }
+  return result
+}
+
 const emailAdapter: ChannelAdapter<EmailConfig, EmailProvider> = {
   type: 'email',
 
@@ -92,6 +111,8 @@ const emailAdapter: ChannelAdapter<EmailConfig, EmailProvider> = {
       html: renderHtml(payload),
       text: renderText(payload),
       from: DEFAULT_FROM.email,
+      trackOpens: payload.trackOpens !== false,
+      trackClicks: payload.trackClicks !== false,
     }
   },
 
@@ -106,12 +127,29 @@ const emailAdapter: ChannelAdapter<EmailConfig, EmailProvider> = {
       }
     } catch {}
 
+    let { html } = provider
+    const secret = ctx.env?.CONNECTION_ENC_KEY
+    const baseUrl = ctx.env?.BETTER_AUTH_URL?.replace(/\/$/, '')
+
+    if (secret && baseUrl && ctx.deliveryId) {
+      if (provider.trackClicks) {
+        html = await rewriteLinks(html, ctx.deliveryId, secret, baseUrl)
+      }
+      if (provider.trackOpens) {
+        const openToken = await signTrackingToken({ d: ctx.deliveryId, t: 'open' }, secret)
+        html = html.replace(
+          /<\/body>/i,
+          `<img src="${baseUrl}/t/o/${openToken}.gif" width="1" height="1" style="display:none" alt=""></body>`,
+        )
+      }
+    }
+
     try {
       await sendNotificationEmail({
         to: provider.to,
         from: { email: fromEmail, name: fromName },
         subject: provider.subject,
-        html: provider.html,
+        html,
         text: provider.text,
       })
       return { providerMessageId: null, ok: true }
