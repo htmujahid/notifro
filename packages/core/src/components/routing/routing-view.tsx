@@ -1,14 +1,16 @@
 import React from "react"
-import { Button } from "@workspace/ui/components/button"
+
 import { Badge } from "@workspace/ui/components/badge"
+import { Button } from "@workspace/ui/components/button"
 import { Switch } from "@workspace/ui/components/switch"
-import { PlusIcon, Trash2Icon, GitBranchIcon, RouteIcon } from "lucide-react"
+import { GitBranchIcon, PlusIcon, RouteIcon, Trash2Icon } from "lucide-react"
+
 import {
-  useRoutingRules,
-  useUpdateRoutingRule,
+  useDeleteFallbackChain,
   useDeleteRoutingRule,
   useFallbackChains,
-  useDeleteFallbackChain,
+  useRoutingRules,
+  useUpdateRoutingRule,
 } from "../../hooks/routing"
 import { CreateChainDialog } from "./create-chain-dialog"
 import { CreateRuleDialog } from "./create-rule-dialog"
@@ -36,7 +38,8 @@ export function RoutingView() {
       <div>
         <h1 className="text-xl font-semibold tracking-tight">Routing</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Rules decide which channel or fallback chain a notification uses. Rules are evaluated in priority order (lowest wins).
+          Rules decide which channel or fallback chain a notification uses.
+          Rules are evaluated in priority order (lowest wins).
         </p>
       </div>
 
@@ -59,37 +62,66 @@ export function RoutingView() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border bg-muted/40">
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground w-16">Priority</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Match</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Target</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground w-20">Enabled</th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground w-16">
+                    Priority
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                    Match
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                    Target
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground w-20">
+                    Enabled
+                  </th>
                   <th className="px-4 py-3 w-10" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-border bg-card">
                 {rules.map((rule) => {
-                  const match = (() => { try { return JSON.parse(rule.match) } catch { return {} } })() as Record<string, unknown>
-                  const matchSummary = Object.keys(match).length === 0
-                    ? "always"
-                    : Object.entries(match).map(([k, v]) => `${k}: ${JSON.stringify(v)}`).join(", ")
+                  const match = (() => {
+                    try {
+                      return JSON.parse(rule.match)
+                    } catch {
+                      return {}
+                    }
+                  })() as Record<string, unknown>
+                  const matchSummary =
+                    Object.keys(match).length === 0
+                      ? "always"
+                      : Object.entries(match)
+                          .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
+                          .join(", ")
                   return (
-                    <tr key={rule.id} className="transition-colors hover:bg-muted/30">
-                      <td className="px-4 py-3 font-mono text-muted-foreground">{rule.priority}</td>
-                      <td className="px-4 py-3 text-muted-foreground">{matchSummary}</td>
+                    <tr
+                      key={rule.id}
+                      className="transition-colors hover:bg-muted/30"
+                    >
+                      <td className="px-4 py-3 font-mono text-muted-foreground">
+                        {rule.priority}
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground">
+                        {matchSummary}
+                      </td>
                       <td className="px-4 py-3">
                         {rule.targetChainId ? (
                           <span className="flex items-center gap-1">
                             <GitBranchIcon className="size-3.5 text-muted-foreground" />
-                            {chainName(rule.targetChainId) ?? rule.targetChainId}
+                            {chainName(rule.targetChainId) ??
+                              rule.targetChainId}
                           </span>
                         ) : (
-                          <Badge variant="secondary">{rule.targetChannel}</Badge>
+                          <Badge variant="secondary">
+                            {rule.targetChannel}
+                          </Badge>
                         )}
                       </td>
                       <td className="px-4 py-3">
                         <Switch
                           checked={rule.enabled === 1}
-                          onCheckedChange={(v) => toggleRule.mutate({ id: rule.id, enabled: v })}
+                          onCheckedChange={(v) =>
+                            toggleRule.mutate({ id: rule.id, enabled: v })
+                          }
                         />
                       </td>
                       <td className="px-4 py-3">
@@ -123,12 +155,23 @@ export function RoutingView() {
 
         {chains.length === 0 ? (
           <p className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">
-            No fallback chains yet. Chains define ordered escalation steps across channels.
+            No fallback chains yet. Chains define ordered escalation steps
+            across channels.
           </p>
         ) : (
           <div className="flex flex-col gap-3">
             {chains.map((chain) => {
-              const steps = (() => { try { return JSON.parse(chain.steps) as Array<{ channel: string; waitForDeliveryMs: number; successOn: string[] }> } catch { return [] } })()
+              const steps = (() => {
+                try {
+                  return JSON.parse(chain.steps) as Array<{
+                    channel: string
+                    waitForDeliveryMs: number
+                    successOn: string[]
+                  }>
+                } catch {
+                  return []
+                }
+              })()
               return (
                 <div key={chain.id} className="rounded-xl border p-4">
                   <div className="flex items-start justify-between">
@@ -140,7 +183,9 @@ export function RoutingView() {
                             <Badge variant="outline">{step.channel}</Badge>
                             {idx < steps.length - 1 && (
                               <span className="text-xs text-muted-foreground">
-                                {step.waitForDeliveryMs > 0 ? `→ (${step.waitForDeliveryMs / 1000}s)` : "→"}
+                                {step.waitForDeliveryMs > 0
+                                  ? `→ (${step.waitForDeliveryMs / 1000}s)`
+                                  : "→"}
                               </span>
                             )}
                           </React.Fragment>
@@ -164,7 +209,11 @@ export function RoutingView() {
       </section>
 
       <CreateChainDialog open={newChainOpen} onOpenChange={setNewChainOpen} />
-      <CreateRuleDialog open={newRuleOpen} onOpenChange={setNewRuleOpen} chains={chains} />
+      <CreateRuleDialog
+        open={newRuleOpen}
+        onOpenChange={setNewRuleOpen}
+        chains={chains}
+      />
     </div>
   )
 }

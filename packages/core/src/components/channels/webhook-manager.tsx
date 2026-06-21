@@ -1,7 +1,6 @@
 import { useState } from "react"
-import { toast } from "sonner"
+
 import { Button } from "@workspace/ui/components/button"
-import { CopyIcon } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -10,9 +9,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@workspace/ui/components/dialog"
+import { CopyIcon } from "lucide-react"
+import { toast } from "sonner"
+
 import { useWebhooks } from "../../hooks/webhooks"
-import { WebhookRow } from "./webhook-row"
 import { AddWebhookForm } from "./add-webhook-form"
+import { WebhookRow } from "./webhook-row"
 
 export function WebhookManager({ trigger }: { trigger: React.ReactElement }) {
   const [open, setOpen] = useState(false)
@@ -41,7 +43,8 @@ export function WebhookManager({ trigger }: { trigger: React.ReactElement }) {
         <DialogHeader>
           <DialogTitle>Webhook endpoints</DialogTitle>
           <DialogDescription>
-            Deliver signed notification payloads to your HTTP endpoints. Each request is signed with HMAC-SHA256.
+            Deliver signed notification payloads to your HTTP endpoints. Each
+            request is signed with HMAC-SHA256.
           </DialogDescription>
         </DialogHeader>
 
@@ -49,11 +52,19 @@ export function WebhookManager({ trigger }: { trigger: React.ReactElement }) {
           <div className="flex flex-col gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3">
             <p className="text-sm font-medium">Signing secret — shown once</p>
             <p className="text-xs text-muted-foreground">
-              Store this now. Use it to verify the <code>X-Renderical-Signature</code> header.
+              Store this now. Use it to verify the{" "}
+              <code>X-Renderical-Signature</code> header.
             </p>
             <div className="flex items-center gap-2">
-              <code className="min-w-0 flex-1 truncate rounded bg-muted px-2 py-1 text-xs">{revealedSecret}</code>
-              <Button size="icon" variant="outline" onClick={copySecret} title="Copy secret">
+              <code className="min-w-0 flex-1 truncate rounded bg-muted px-2 py-1 text-xs">
+                {revealedSecret}
+              </code>
+              <Button
+                size="icon"
+                variant="outline"
+                onClick={copySecret}
+                title="Copy secret"
+              >
                 <CopyIcon className="size-4" />
               </Button>
             </div>
@@ -64,7 +75,9 @@ export function WebhookManager({ trigger }: { trigger: React.ReactElement }) {
           {isLoading ? (
             <p className="text-sm text-muted-foreground">Loading…</p>
           ) : endpoints.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No endpoints yet. Add one below.</p>
+            <p className="text-sm text-muted-foreground">
+              No endpoints yet. Add one below.
+            </p>
           ) : (
             endpoints.map((ep) => <WebhookRow key={ep.id} endpoint={ep} />)
           )}

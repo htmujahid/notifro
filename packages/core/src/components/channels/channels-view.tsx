@@ -1,16 +1,39 @@
 import { Button } from "@workspace/ui/components/button"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@workspace/ui/components/card"
-import { MailIcon, WebhookIcon, BellIcon, MessageSquareIcon, PhoneIcon, SmartphoneIcon, CheckIcon } from "lucide-react"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card"
+import {
+  BellIcon,
+  CheckIcon,
+  MailIcon,
+  MessageSquareIcon,
+  PhoneIcon,
+  SmartphoneIcon,
+  WebhookIcon,
+} from "lucide-react"
+
 import { useConnections } from "../../hooks/connections"
 import { usePushRegistration } from "../../hooks/push"
 import { useWebhooks } from "../../hooks/webhooks"
-import { WebhookManager } from "./webhook-manager"
 import { ConnectionDialog } from "./connection-dialog"
+import { WebhookManager } from "./webhook-manager"
 
-const CHANNEL_META: Record<string, { name: string; description: string; icon: React.ComponentType<{ className?: string }> }> = {
+const CHANNEL_META: Record<
+  string,
+  {
+    name: string
+    description: string
+    icon: React.ComponentType<{ className?: string }>
+  }
+> = {
   email: {
     name: "Email",
-    description: "Send notifications via Cloudflare Email. No OAuth required — always available.",
+    description:
+      "Send notifications via Cloudflare Email. No OAuth required — always available.",
     icon: MailIcon,
   },
   webhook: {
@@ -30,7 +53,8 @@ const CHANNEL_META: Record<string, { name: string; description: string; icon: Re
   },
   whatsapp: {
     name: "WhatsApp",
-    description: "Send WhatsApp messages via Twilio using a whatsapp: sender number.",
+    description:
+      "Send WhatsApp messages via Twilio using a whatsapp: sender number.",
     icon: MessageSquareIcon,
   },
   telegram: {
@@ -40,34 +64,51 @@ const CHANNEL_META: Record<string, { name: string; description: string; icon: Re
   },
   slack: {
     name: "Slack",
-    description: "Post Block Kit messages to a Slack channel via a bot token. No OAuth required.",
+    description:
+      "Post Block Kit messages to a Slack channel via a bot token. No OAuth required.",
     icon: MessageSquareIcon,
   },
   discord: {
     name: "Discord",
-    description: "Post rich embeds to a Discord channel via an incoming webhook URL. No OAuth required.",
+    description:
+      "Post rich embeds to a Discord channel via an incoming webhook URL. No OAuth required.",
     icon: MessageSquareIcon,
   },
   teams: {
     name: "Microsoft Teams",
-    description: "Post Adaptive Cards to a Teams channel via a connector/workflow webhook URL. No OAuth required.",
+    description:
+      "Post Adaptive Cards to a Teams channel via a connector/workflow webhook URL. No OAuth required.",
     icon: MessageSquareIcon,
   },
   mobile_push: {
     name: "Mobile Push",
-    description: "Native iOS & Android push via APNs and FCM. Devices register their token automatically.",
+    description:
+      "Native iOS & Android push via APNs and FCM. Devices register their token automatically.",
     icon: SmartphoneIcon,
   },
   in_app: {
     name: "In-App",
-    description: "Real-time in-app notifications delivered to the bell inbox. Always available.",
+    description:
+      "Real-time in-app notifications delivered to the bell inbox. Always available.",
     icon: BellIcon,
   },
 }
 
 const ALWAYS_ON = new Set(["email", "in_app"])
 
-const CHANNEL_TYPES = ["email", "webhook", "web_push", "sms", "whatsapp", "telegram", "slack", "discord", "teams", "mobile_push", "in_app"] as const
+const CHANNEL_TYPES = [
+  "email",
+  "webhook",
+  "web_push",
+  "sms",
+  "whatsapp",
+  "telegram",
+  "slack",
+  "discord",
+  "teams",
+  "mobile_push",
+  "in_app",
+] as const
 
 export function ChannelsView() {
   const { data, isLoading } = useConnections({ limit: 50 })
@@ -108,8 +149,15 @@ export function ChannelsView() {
 
             if (ALWAYS_ON.has(type)) {
               connected = true
-              detail = type === "email" ? "Cloudflare Email binding" : "Delivered to the bell inbox"
-              actionNode = <p className="text-xs text-muted-foreground">Active — no configuration needed.</p>
+              detail =
+                type === "email"
+                  ? "Cloudflare Email binding"
+                  : "Delivered to the bell inbox"
+              actionNode = (
+                <p className="text-xs text-muted-foreground">
+                  Active — no configuration needed.
+                </p>
+              )
             } else if (type === "webhook") {
               const enabledCount = webhooks.filter((w) => w.enabled).length
               connected = enabledCount > 0
@@ -120,7 +168,11 @@ export function ChannelsView() {
               actionNode = (
                 <WebhookManager
                   trigger={
-                    <Button size="sm" variant={connected ? "outline" : "default"} className="w-full">
+                    <Button
+                      size="sm"
+                      variant={connected ? "outline" : "default"}
+                      className="w-full"
+                    >
                       {webhooks.length > 0 ? "Manage" : "Add endpoint"}
                     </Button>
                   }
@@ -141,9 +193,17 @@ export function ChannelsView() {
                   variant={push.subscribed ? "outline" : "default"}
                   className="w-full"
                   onClick={push.subscribed ? push.disable : push.enable}
-                  disabled={!push.supported || push.permission === "denied" || push.loading}
+                  disabled={
+                    !push.supported ||
+                    push.permission === "denied" ||
+                    push.loading
+                  }
                 >
-                  {push.loading ? "..." : push.subscribed ? "Disable" : "Enable"}
+                  {push.loading
+                    ? "..."
+                    : push.subscribed
+                      ? "Disable"
+                      : "Enable"}
                 </Button>
               )
             } else {
@@ -154,7 +214,11 @@ export function ChannelsView() {
                   type={type}
                   existing={conn}
                   trigger={
-                    <Button size="sm" variant={connected ? "outline" : "default"} className="w-full">
+                    <Button
+                      size="sm"
+                      variant={connected ? "outline" : "default"}
+                      className="w-full"
+                    >
                       {connected ? "Manage" : "Connect"}
                     </Button>
                   }
@@ -175,10 +239,14 @@ export function ChannelsView() {
                         {connected ? (
                           <>
                             <CheckIcon className="size-3 text-green-600 dark:text-green-400" />
-                            <span className="text-xs text-green-700 dark:text-green-400 font-medium">Connected</span>
+                            <span className="text-xs text-green-700 dark:text-green-400 font-medium">
+                              Connected
+                            </span>
                           </>
                         ) : (
-                          <span className="text-xs text-muted-foreground">Not connected</span>
+                          <span className="text-xs text-muted-foreground">
+                            Not connected
+                          </span>
                         )}
                       </div>
                     </div>

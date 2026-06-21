@@ -1,6 +1,18 @@
-import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-query"
 import { useApiClient } from "@workspace/api-client/context"
-import type { ListParams, ListResponse, RecipientRecord, Segment, SegmentPreview } from "@workspace/api-client/types"
+import type {
+  ListParams,
+  ListResponse,
+  RecipientRecord,
+  Segment,
+  SegmentPreview,
+} from "@workspace/api-client/types"
+
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query"
 
 export const recipientKeys = {
   all: ["recipients"] as const,
@@ -109,8 +121,14 @@ export function useUpdateSegment() {
   const api = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, ...body }: { id: string; name?: string; filter?: Record<string, unknown> }) =>
-      api.patch<Segment>(`/api/segments/${id}`, body),
+    mutationFn: ({
+      id,
+      ...body
+    }: {
+      id: string
+      name?: string
+      filter?: Record<string, unknown>
+    }) => api.patch<Segment>(`/api/segments/${id}`, body),
     onSuccess: (_, { id }) => {
       qc.invalidateQueries({ queryKey: segmentKeys.lists() })
       qc.invalidateQueries({ queryKey: segmentKeys.detail(id) })

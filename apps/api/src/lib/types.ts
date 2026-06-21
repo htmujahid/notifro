@@ -1,5 +1,5 @@
-import type { auth } from './auth'
-import type { AppDB } from '../db/client'
+import type { AppDB } from "../db/client"
+import type { auth } from "./auth"
 
 export type AppEnv = {
   Bindings: CloudflareBindings

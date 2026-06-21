@@ -1,16 +1,21 @@
-import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
-import { requireAuth } from '../middleware/auth'
-import { listQuerySchema, applyListQuery } from '../lib/list-query'
-import { Errors, validationHook } from '../lib/errors'
-import { previewSegment } from '../lib/segment-resolver'
-import type { AppEnv } from '../lib/types'
-import type { FilterNode } from '../lib/segment-resolver'
+import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
 
-const SORTABLE = { updatedAt: 'updatedAt', createdAt: 'createdAt', name: 'name' }
-const FILTERABLE = {
-  q: { column: 'name', schema: z.string(), operator: 'like' as const },
+import { Errors, validationHook } from "../lib/errors"
+import { applyListQuery, listQuerySchema } from "../lib/list-query"
+import { previewSegment } from "../lib/segment-resolver"
+import type { FilterNode } from "../lib/segment-resolver"
+import type { AppEnv } from "../lib/types"
+import { requireAuth } from "../middleware/auth"
+
+const SORTABLE = {
+  updatedAt: "updatedAt",
+  createdAt: "createdAt",
+  name: "name",
 }
-const DEFAULT_SORT = { key: 'updatedAt', order: 'desc' as const }
+const FILTERABLE = {
+  q: { column: "name", schema: z.string(), operator: "like" as const },
+}
+const DEFAULT_SORT = { key: "updatedAt", order: "desc" as const }
 
 const FilterClauseSchema: z.ZodType<FilterNode> = z.lazy(() =>
   z.union([
@@ -18,7 +23,7 @@ const FilterClauseSchema: z.ZodType<FilterNode> = z.lazy(() =>
     z.object({ or: z.array(FilterClauseSchema) }),
     z.object({
       field: z.string().min(1).max(64),
-      op: z.enum(['eq', 'neq', 'gt', 'lt', 'gte', 'lte', 'contains', 'in']),
+      op: z.enum(["eq", "neq", "gt", "lt", "gte", "lte", "contains", "in"]),
       value: z.union([
         z.string(),
         z.number(),
@@ -27,7 +32,7 @@ const FilterClauseSchema: z.ZodType<FilterNode> = z.lazy(() =>
         z.array(z.union([z.string(), z.number()])),
       ]),
     }),
-  ]),
+  ])
 )
 
 const SegmentDtoSchema = z.object({
@@ -60,53 +65,76 @@ const PreviewResponseSchema = z.object({
 })
 
 const listRoute = createRoute({
-  method: 'get',
-  path: '/segments',
+  method: "get",
+  path: "/segments",
   request: {
-    query: listQuerySchema({ sortable: SORTABLE, filterable: FILTERABLE, defaultSort: DEFAULT_SORT }),
+    query: listQuerySchema({
+      sortable: SORTABLE,
+      filterable: FILTERABLE,
+      defaultSort: DEFAULT_SORT,
+    }),
   },
   responses: {
-    200: { content: { 'application/json': { schema: ListResponseSchema } }, description: 'Paginated segments' },
+    200: {
+      content: { "application/json": { schema: ListResponseSchema } },
+      description: "Paginated segments",
+    },
   },
 })
 
 const createRoute_ = createRoute({
-  method: 'post',
-  path: '/segments',
-  request: { body: { content: { 'application/json': { schema: CreateSegmentSchema } } } },
+  method: "post",
+  path: "/segments",
+  request: {
+    body: { content: { "application/json": { schema: CreateSegmentSchema } } },
+  },
   responses: {
-    201: { content: { 'application/json': { schema: SegmentDtoSchema } }, description: 'Created segment' },
+    201: {
+      content: { "application/json": { schema: SegmentDtoSchema } },
+      description: "Created segment",
+    },
   },
 })
 
 const detailRoute = createRoute({
-  method: 'get',
-  path: '/segments/:id',
+  method: "get",
+  path: "/segments/:id",
   responses: {
-    200: { content: { 'application/json': { schema: SegmentDtoSchema } }, description: 'Segment detail' },
+    200: {
+      content: { "application/json": { schema: SegmentDtoSchema } },
+      description: "Segment detail",
+    },
   },
 })
 
 const patchRoute = createRoute({
-  method: 'patch',
-  path: '/segments/:id',
-  request: { body: { content: { 'application/json': { schema: PatchSegmentSchema } } } },
+  method: "patch",
+  path: "/segments/:id",
+  request: {
+    body: { content: { "application/json": { schema: PatchSegmentSchema } } },
+  },
   responses: {
-    200: { content: { 'application/json': { schema: SegmentDtoSchema } }, description: 'Updated segment' },
+    200: {
+      content: { "application/json": { schema: SegmentDtoSchema } },
+      description: "Updated segment",
+    },
   },
 })
 
 const deleteRoute = createRoute({
-  method: 'delete',
-  path: '/segments/:id',
-  responses: { 204: { description: 'Deleted' } },
+  method: "delete",
+  path: "/segments/:id",
+  responses: { 204: { description: "Deleted" } },
 })
 
 const previewRoute = createRoute({
-  method: 'get',
-  path: '/segments/:id/preview',
+  method: "get",
+  path: "/segments/:id/preview",
   responses: {
-    200: { content: { 'application/json': { schema: PreviewResponseSchema } }, description: 'Segment preview' },
+    200: {
+      content: { "application/json": { schema: PreviewResponseSchema } },
+      description: "Segment preview",
+    },
   },
 })
 
@@ -119,12 +147,15 @@ function now() {
 }
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
-router.use('*', requireAuth)
+router.use("*", requireAuth)
 
 router.openapi(listRoute, async (c) => {
-  const parsed = c.req.valid('query')
+  const parsed = c.req.valid("query")
   const userId = c.var.user!.id
-  const baseQuery = c.var.db.selectFrom('segment').where('userId', '=', userId).selectAll()
+  const baseQuery = c.var.db
+    .selectFrom("segment")
+    .where("userId", "=", userId)
+    .selectAll()
   const { qb, getPage } = applyListQuery(baseQuery, parsed, {
     sortable: SORTABLE,
     filterable: FILTERABLE,
@@ -132,16 +163,19 @@ router.openapi(listRoute, async (c) => {
   })
   const rows = await qb.execute()
   const page = getPage(rows as Record<string, unknown>[])
-  return c.json({ data: page.data as z.infer<typeof SegmentDtoSchema>[], nextCursor: page.nextCursor })
+  return c.json({
+    data: page.data as z.infer<typeof SegmentDtoSchema>[],
+    nextCursor: page.nextCursor,
+  })
 })
 
 router.openapi(createRoute_, async (c) => {
-  const body = c.req.valid('json')
+  const body = c.req.valid("json")
   const userId = c.var.user!.id
   const ts = now()
   const id = newId()
   await c.var.db
-    .insertInto('segment')
+    .insertInto("segment")
     .values({
       id,
       userId,
@@ -151,7 +185,11 @@ router.openapi(createRoute_, async (c) => {
       updatedAt: ts,
     })
     .execute()
-  const row = await c.var.db.selectFrom('segment').where('id', '=', id).selectAll().executeTakeFirstOrThrow()
+  const row = await c.var.db
+    .selectFrom("segment")
+    .where("id", "=", id)
+    .selectAll()
+    .executeTakeFirstOrThrow()
   return c.json(row as z.infer<typeof SegmentDtoSchema>, 201)
 })
 
@@ -159,32 +197,40 @@ router.openapi(detailRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
   const row = await c.var.db
-    .selectFrom('segment')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
+    .selectFrom("segment")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
     .selectAll()
     .executeTakeFirst()
-  if (!row) throw Errors.notFound('Segment')
+  if (!row) throw Errors.notFound("Segment")
   return c.json(row as z.infer<typeof SegmentDtoSchema>)
 })
 
 router.openapi(patchRoute, async (c) => {
   const { id } = c.req.param()
-  const body = c.req.valid('json')
+  const body = c.req.valid("json")
   const userId = c.var.user!.id
   const ts = now()
   const existing = await c.var.db
-    .selectFrom('segment')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
-    .select('id')
+    .selectFrom("segment")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
+    .select("id")
     .executeTakeFirst()
-  if (!existing) throw Errors.notFound('Segment')
+  if (!existing) throw Errors.notFound("Segment")
   const updates: Record<string, string> = { updatedAt: ts }
   if (body.name !== undefined) updates.name = body.name
   if (body.filter !== undefined) updates.filter = JSON.stringify(body.filter)
-  await c.var.db.updateTable('segment').set(updates).where('id', '=', id).execute()
-  const row = await c.var.db.selectFrom('segment').where('id', '=', id).selectAll().executeTakeFirstOrThrow()
+  await c.var.db
+    .updateTable("segment")
+    .set(updates)
+    .where("id", "=", id)
+    .execute()
+  const row = await c.var.db
+    .selectFrom("segment")
+    .where("id", "=", id)
+    .selectAll()
+    .executeTakeFirstOrThrow()
   return c.json(row as z.infer<typeof SegmentDtoSchema>)
 })
 
@@ -192,13 +238,13 @@ router.openapi(deleteRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
   const existing = await c.var.db
-    .selectFrom('segment')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
-    .select('id')
+    .selectFrom("segment")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
+    .select("id")
     .executeTakeFirst()
-  if (!existing) throw Errors.notFound('Segment')
-  await c.var.db.deleteFrom('segment').where('id', '=', id).execute()
+  if (!existing) throw Errors.notFound("Segment")
+  await c.var.db.deleteFrom("segment").where("id", "=", id).execute()
   return new Response(null, { status: 204 })
 })
 
@@ -206,12 +252,12 @@ router.openapi(previewRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
   const segment = await c.var.db
-    .selectFrom('segment')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
-    .select('filter')
+    .selectFrom("segment")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
+    .select("filter")
     .executeTakeFirst()
-  if (!segment) throw Errors.notFound('Segment')
+  if (!segment) throw Errors.notFound("Segment")
   let filter: FilterNode
   try {
     filter = JSON.parse(segment.filter) as FilterNode

@@ -16,7 +16,12 @@ export class ApiClientError extends Error {
   readonly details?: ApiErrorDetail[]
   readonly status: number
 
-  constructor(code: ApiErrorCode, message: string, status: number, details?: ApiErrorDetail[]) {
+  constructor(
+    code: ApiErrorCode,
+    message: string,
+    status: number,
+    details?: ApiErrorDetail[]
+  ) {
     super(message)
     this.name = "ApiClientError"
     this.code = code
@@ -25,7 +30,10 @@ export class ApiClientError extends Error {
   }
 }
 
-export function isApiError(e: unknown, code?: ApiErrorCode): e is ApiClientError {
+export function isApiError(
+  e: unknown,
+  code?: ApiErrorCode
+): e is ApiClientError {
   if (!(e instanceof ApiClientError)) return false
   if (code !== undefined) return e.code === code
   return true

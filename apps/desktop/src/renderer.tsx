@@ -2,19 +2,20 @@
  * This file is automatically loaded by Vite and runs in the "renderer" context.
  * It mounts the React app into the DOM.
  */
+import { StrictMode } from "react"
 
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import { App } from './App';
-import './index.css';
+import { createRoot } from "react-dom/client"
 
-const root = document.getElementById('root');
+import { App } from "./App"
+import "./index.css"
+
+const root = document.getElementById("root")
 if (!root) {
-  throw new Error('Root element #root not found');
+  throw new Error("Root element #root not found")
 }
 
 createRoot(root).render(
   <StrictMode>
     <App />
-  </StrictMode>,
-);
+  </StrictMode>
+)

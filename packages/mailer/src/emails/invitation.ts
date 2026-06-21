@@ -1,4 +1,4 @@
-import { binding, type EmailFrom } from '../binding'
+import { type EmailFrom, binding } from "../binding"
 
 export async function sendInvitationEmail({
   email,

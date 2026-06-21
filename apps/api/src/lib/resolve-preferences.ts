@@ -1,4 +1,4 @@
-import type { AppDB } from '../db/client'
+import type { AppDB } from "../db/client"
 
 export interface PreferenceResolution {
   allowed: boolean
@@ -10,25 +10,25 @@ export async function resolvePreferences(
   userId: string,
   recipientId: string,
   channel: string,
-  topicKey?: string,
+  topicKey?: string
 ): Promise<PreferenceResolution> {
   if (topicKey) {
     const topic = await db
-      .selectFrom('topic')
-      .where('userId', '=', userId)
-      .where('key', '=', topicKey)
-      .select(['id', 'transactional'])
+      .selectFrom("topic")
+      .where("userId", "=", userId)
+      .where("key", "=", topicKey)
+      .select(["id", "transactional"])
       .executeTakeFirst()
 
     if (topic?.transactional) return { allowed: true }
 
     if (topic) {
       const topicPref = await db
-        .selectFrom('preference')
-        .where('recipientId', '=', recipientId)
-        .where('channel', '=', channel)
-        .where('topicId', '=', topic.id)
-        .select('optedIn')
+        .selectFrom("preference")
+        .where("recipientId", "=", recipientId)
+        .where("channel", "=", channel)
+        .where("topicId", "=", topic.id)
+        .select("optedIn")
         .executeTakeFirst()
 
       if (topicPref && !topicPref.optedIn) {
@@ -38,15 +38,15 @@ export async function resolvePreferences(
   }
 
   const globalPref = await db
-    .selectFrom('preference')
-    .where('recipientId', '=', recipientId)
-    .where('channel', '=', channel)
-    .where('topicId', 'is', null)
-    .select('optedIn')
+    .selectFrom("preference")
+    .where("recipientId", "=", recipientId)
+    .where("channel", "=", channel)
+    .where("topicId", "is", null)
+    .select("optedIn")
     .executeTakeFirst()
 
   if (globalPref && !globalPref.optedIn) {
-    return { allowed: false, reason: 'preference:global' }
+    return { allowed: false, reason: "preference:global" }
   }
 
   return { allowed: true }

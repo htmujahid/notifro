@@ -1,4 +1,4 @@
-import { env } from 'cloudflare:workers'
+import { env } from "cloudflare:workers"
 
 interface MailerEnv {
   EMAIL: SendEmail
@@ -6,11 +6,13 @@ interface MailerEnv {
 }
 
 function resolveEmail(addr: string | EmailAddress): string {
-  return typeof addr === 'string' ? addr : addr.email
+  return typeof addr === "string" ? addr : addr.email
 }
 
-function resolveRecipients(to: string | EmailAddress | (string | EmailAddress)[]): string {
-  return Array.isArray(to) ? to.map(resolveEmail).join(', ') : resolveEmail(to)
+function resolveRecipients(
+  to: string | EmailAddress | (string | EmailAddress)[]
+): string {
+  return Array.isArray(to) ? to.map(resolveEmail).join(", ") : resolveEmail(to)
 }
 
 const consoleMock: SendEmail = {
@@ -23,24 +25,29 @@ const consoleMock: SendEmail = {
           subject: string
           text?: string
           html?: string
-        },
+        }
   ): Promise<EmailSendResult> {
-    if ('subject' in message) {
-      console.log('\n[EMAIL LOG]')
+    if ("subject" in message) {
+      console.log("\n[EMAIL LOG]")
       console.log(`  To:      ${resolveRecipients(message.to)}`)
       console.log(`  Subject: ${message.subject}`)
       if (message.text) {
-        console.log(`  Body:\n${message.text.split('\n').map((l: string) => `    ${l}`).join('\n')}`)
+        console.log(
+          `  Body:\n${message.text
+            .split("\n")
+            .map((l: string) => `    ${l}`)
+            .join("\n")}`
+        )
       }
-      console.log('')
+      console.log("")
     }
-    return Promise.resolve({ messageId: 'local-mock' })
+    return Promise.resolve({ messageId: "local-mock" })
   },
 }
 
 export function binding(): SendEmail {
   const e = env as unknown as MailerEnv
-  if (e.EMAIL_LOG_ONLY === 'true') return consoleMock
+  if (e.EMAIL_LOG_ONLY === "true") return consoleMock
   return e.EMAIL
 }
 

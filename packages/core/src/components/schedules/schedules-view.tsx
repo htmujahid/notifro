@@ -1,15 +1,38 @@
 import { useState } from "react"
-import { CalendarXIcon, PlusIcon, RefreshCwIcon, Trash2Icon } from "lucide-react"
+
 import { Button } from "@workspace/ui/components/button"
-import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from "@workspace/ui/components/empty"
-import { useSchedules, useCancelSchedule, useRecurringSends, useDeleteRecurringSend, usePatchRecurringSend } from "../../hooks/schedules"
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@workspace/ui/components/empty"
+import {
+  CalendarXIcon,
+  PlusIcon,
+  RefreshCwIcon,
+  Trash2Icon,
+} from "lucide-react"
+
+import {
+  useCancelSchedule,
+  useDeleteRecurringSend,
+  usePatchRecurringSend,
+  useRecurringSends,
+  useSchedules,
+} from "../../hooks/schedules"
 import { RecurringRow } from "./recurring-row"
 
 export function SchedulesView() {
   const [tab, setTab] = useState<"scheduled" | "recurring">("scheduled")
-  const { data: scheduledData, isLoading: scheduledLoading } = useSchedules({ status: "pending" })
+  const { data: scheduledData, isLoading: scheduledLoading } = useSchedules({
+    status: "pending",
+  })
   const cancelSchedule = useCancelSchedule()
-  const { data: recurringData, isLoading: recurringLoading } = useRecurringSends()
+  const { data: recurringData, isLoading: recurringLoading } =
+    useRecurringSends()
   const deleteRecurring = useDeleteRecurringSend()
   const patchRecurring = usePatchRecurringSend()
 
@@ -21,7 +44,9 @@ export function SchedulesView() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold tracking-tight">Schedules</h1>
-          <p className="mt-1 text-sm text-muted-foreground">One-off and recurring notification schedules.</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            One-off and recurring notification schedules.
+          </p>
         </div>
         <Button size="sm" className="gap-1.5" disabled>
           <PlusIcon className="size-4" />
@@ -45,20 +70,26 @@ export function SchedulesView() {
         ))}
       </div>
 
-      {tab === "scheduled" && (
-        scheduledLoading ? (
+      {tab === "scheduled" &&
+        (scheduledLoading ? (
           <div className="text-sm text-muted-foreground">Loading…</div>
         ) : schedules.length === 0 ? (
           <Empty>
             <EmptyHeader>
-              <EmptyMedia variant="icon"><CalendarXIcon /></EmptyMedia>
+              <EmptyMedia variant="icon">
+                <CalendarXIcon />
+              </EmptyMedia>
               <EmptyTitle>No scheduled messages</EmptyTitle>
               <EmptyDescription>
-                Schedule a notification by passing <code>sendAt</code> or <code>sendAtLocal</code> in the compose payload.
+                Schedule a notification by passing <code>sendAt</code> or{" "}
+                <code>sendAtLocal</code> in the compose payload.
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
-              <Button size="sm" className="gap-1.5" disabled><PlusIcon className="size-4" />New schedule</Button>
+              <Button size="sm" className="gap-1.5" disabled>
+                <PlusIcon className="size-4" />
+                New schedule
+              </Button>
             </EmptyContent>
           </Empty>
         ) : (
@@ -70,14 +101,16 @@ export function SchedulesView() {
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="font-mono text-xs text-muted-foreground">{s.id}</p>
+                    <p className="font-mono text-xs text-muted-foreground">
+                      {s.id}
+                    </p>
                     <span
                       className={`inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-xs font-medium ${
                         s.status === "pending"
                           ? "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400"
                           : s.status === "enqueued"
-                          ? "bg-blue-500/10 text-blue-700 dark:text-blue-400"
-                          : "bg-muted text-muted-foreground"
+                            ? "bg-blue-500/10 text-blue-700 dark:text-blue-400"
+                            : "bg-muted text-muted-foreground"
                       }`}
                     >
                       {s.status}
@@ -87,7 +120,9 @@ export function SchedulesView() {
                     <span>Send at: {new Date(s.sendAt).toLocaleString()}</span>
                     {s.timezone && <span>TZ: {s.timezone}</span>}
                     {s.quietHoursStart && s.quietHoursEnd && (
-                      <span>Quiet: {s.quietHoursStart}–{s.quietHoursEnd}</span>
+                      <span>
+                        Quiet: {s.quietHoursStart}–{s.quietHoursEnd}
+                      </span>
                     )}
                   </div>
                 </div>
@@ -106,23 +141,28 @@ export function SchedulesView() {
               </div>
             ))}
           </div>
-        )
-      )}
+        ))}
 
-      {tab === "recurring" && (
-        recurringLoading ? (
+      {tab === "recurring" &&
+        (recurringLoading ? (
           <div className="text-sm text-muted-foreground">Loading…</div>
         ) : recurrings.length === 0 ? (
           <Empty>
             <EmptyHeader>
-              <EmptyMedia variant="icon"><RefreshCwIcon /></EmptyMedia>
+              <EmptyMedia variant="icon">
+                <RefreshCwIcon />
+              </EmptyMedia>
               <EmptyTitle>No recurring sends</EmptyTitle>
               <EmptyDescription>
-                Create a recurring send via <code>POST /api/recurring</code> with a cron expression and payload.
+                Create a recurring send via <code>POST /api/recurring</code>{" "}
+                with a cron expression and payload.
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
-              <Button size="sm" className="gap-1.5" disabled><PlusIcon className="size-4" />New recurring</Button>
+              <Button size="sm" className="gap-1.5" disabled>
+                <PlusIcon className="size-4" />
+                New recurring
+              </Button>
             </EmptyContent>
           </Empty>
         ) : (
@@ -132,12 +172,16 @@ export function SchedulesView() {
                 key={r.id}
                 r={r}
                 onDelete={() => deleteRecurring.mutate(r.id)}
-                onToggle={() => patchRecurring.mutate({ id: r.id, enabled: r.enabled ? 0 : 1 })}
+                onToggle={() =>
+                  patchRecurring.mutate({
+                    id: r.id,
+                    enabled: r.enabled ? 0 : 1,
+                  })
+                }
               />
             ))}
           </div>
-        )
-      )}
+        ))}
     </div>
   )
 }

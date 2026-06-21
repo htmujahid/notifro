@@ -1,11 +1,16 @@
 import { useState } from "react"
-import { useForm, Controller } from "react-hook-form"
+
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useAuth } from "@workspace/app/auth/context"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
-import { useAuth } from "@workspace/app/auth/context"
-import { twoFactorPasswordSchema, type TwoFactorPasswordValues } from "../../schemas/auth"
+import { Controller, useForm } from "react-hook-form"
+
+import {
+  type TwoFactorPasswordValues,
+  twoFactorPasswordSchema,
+} from "../../schemas/auth"
 import { BackupCodeGrid } from "./backup-code-grid"
 
 type BackupStep = "idle" | "password" | "codes"
@@ -21,7 +26,9 @@ export function RegenerateBackupCodesFlow({ onDone }: { onDone: () => void }) {
   })
 
   async function handleGenerate(values: TwoFactorPasswordValues) {
-    const { data, error } = await auth.twoFactor.generateBackupCodes({ password: values.password })
+    const { data, error } = await auth.twoFactor.generateBackupCodes({
+      password: values.password,
+    })
     if (error) {
       form.setError("root", { message: error.message })
       return
@@ -34,7 +41,10 @@ export function RegenerateBackupCodesFlow({ onDone }: { onDone: () => void }) {
 
   if (step === "password") {
     return (
-      <form onSubmit={form.handleSubmit(handleGenerate)} className="flex flex-col gap-4">
+      <form
+        onSubmit={form.handleSubmit(handleGenerate)}
+        className="flex flex-col gap-4"
+      >
         <Controller
           control={form.control}
           name="password"
@@ -49,7 +59,9 @@ export function RegenerateBackupCodesFlow({ onDone }: { onDone: () => void }) {
                 {...field}
               />
               {fieldState.error && (
-                <p className="text-xs text-destructive">{fieldState.error.message}</p>
+                <p className="text-xs text-destructive">
+                  {fieldState.error.message}
+                </p>
               )}
             </div>
           )}
@@ -74,7 +86,8 @@ export function RegenerateBackupCodesFlow({ onDone }: { onDone: () => void }) {
   return (
     <div className="flex flex-col gap-4">
       <p className="text-sm text-muted-foreground">
-        Your previous backup codes have been invalidated. Save these new codes somewhere safe.
+        Your previous backup codes have been invalidated. Save these new codes
+        somewhere safe.
       </p>
       <BackupCodeGrid codes={codes} />
       <Button onClick={onDone}>Done</Button>

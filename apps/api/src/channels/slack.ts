@@ -1,9 +1,9 @@
-import type { ChannelAdapter } from './adapter'
-import type { ComposePayload, Connection } from './types'
-import type { ContentBlock } from '../compose/schema'
-import { registerAdapter } from './registry'
-import { registerTransform } from '../compose/transform'
-import { decrypt } from '../lib/crypto'
+import type { ContentBlock } from "../compose/schema"
+import { registerTransform } from "../compose/transform"
+import { decrypt } from "../lib/crypto"
+import type { ChannelAdapter } from "./adapter"
+import { registerAdapter } from "./registry"
+import type { ComposePayload, Connection } from "./types"
 
 export interface SlackProvider {
   channelId: string
@@ -23,57 +23,69 @@ const TIMEOUT_MS = 15000
 const MAX_BLOCKS = 50
 
 function escapeMrkdwn(input: string): string {
-  return input.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  return input
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
 }
 
 function toMrkdwn(input: string): string {
   let s = escapeMrkdwn(input)
-  s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_m, label, url) => `<${url}|${label}>`)
-  s = s.replace(/\*\*([^*]+)\*\*/g, '*$1*')
+  s = s.replace(
+    /\[([^\]]+)\]\(([^)]+)\)/g,
+    (_m, label, url) => `<${url}|${label}>`
+  )
+  s = s.replace(/\*\*([^*]+)\*\*/g, "*$1*")
   return s
 }
 
 function section(text: string) {
-  return { type: 'section', text: { type: 'mrkdwn', text } }
+  return { type: "section", text: { type: "mrkdwn", text } }
 }
 
-function buttonElement(btn: { label: string; url?: string; action?: string; style?: string }) {
+function buttonElement(btn: {
+  label: string
+  url?: string
+  action?: string
+  style?: string
+}) {
   const element: Record<string, unknown> = {
-    type: 'button',
-    text: { type: 'plain_text', text: btn.label, emoji: true },
+    type: "button",
+    text: { type: "plain_text", text: btn.label, emoji: true },
   }
   if (btn.url) element.url = btn.url
   if (btn.action) element.action_id = btn.action
-  if (btn.style === 'primary' || btn.style === 'danger') element.style = btn.style
+  if (btn.style === "primary" || btn.style === "danger")
+    element.style = btn.style
   return element
 }
 
 function blockFor(block: ContentBlock): unknown[] {
   switch (block.type) {
-    case 'heading':
+    case "heading":
       return [section(`*${toMrkdwn(block.text)}*`)]
-    case 'text':
+    case "text":
       return [section(toMrkdwn(block.markdown ?? block.text))]
-    case 'image':
+    case "image":
       return [
         {
-          type: 'image',
+          type: "image",
           image_url: block.url,
-          alt_text: block.alt ?? block.title ?? 'image',
+          alt_text: block.alt ?? block.title ?? "image",
         },
       ]
-    case 'divider':
-      return [{ type: 'divider' }]
-    case 'button':
-      return [{ type: 'actions', elements: [buttonElement(block)] }]
-    case 'button_group':
-      return [{ type: 'actions', elements: block.buttons.map(buttonElement) }]
-    case 'fields':
+    case "divider":
+      return [{ type: "divider" }]
+    case "button":
+      return [{ type: "actions", elements: [buttonElement(block)] }]
+    case "button_group":
+      return [{ type: "actions", elements: block.buttons.map(buttonElement) }]
+    case "fields":
       return [
         {
-          type: 'section',
+          type: "section",
           fields: block.fields.map((f) => ({
-            type: 'mrkdwn',
+            type: "mrkdwn",
             text: `*${toMrkdwn(f.key)}*\n${toMrkdwn(f.value)}`,
           })),
         },
@@ -85,9 +97,9 @@ function blockFor(block: ContentBlock): unknown[] {
 
 function buildText(payload: ComposePayload): string {
   const { content } = payload
-  const title = content.title ?? content.subject ?? ''
-  const body = content.body.text ?? content.body.markdown ?? ''
-  return [title, body].filter(Boolean).join('\n\n').slice(0, 3000)
+  const title = content.title ?? content.subject ?? ""
+  const body = content.body.text ?? content.body.markdown ?? ""
+  return [title, body].filter(Boolean).join("\n\n").slice(0, 3000)
 }
 
 function buildBlocks(payload: ComposePayload): unknown[] {
@@ -97,8 +109,8 @@ function buildBlocks(payload: ComposePayload): unknown[] {
   const title = content.title ?? content.subject
   if (title) {
     blocks.push({
-      type: 'header',
-      text: { type: 'plain_text', text: title.slice(0, 150), emoji: true },
+      type: "header",
+      text: { type: "plain_text", text: title.slice(0, 150), emoji: true },
     })
   }
 
@@ -112,8 +124,8 @@ function buildBlocks(payload: ComposePayload): unknown[] {
   if (blocks.length > MAX_BLOCKS) {
     const truncated = blocks.slice(0, MAX_BLOCKS - 1)
     truncated.push({
-      type: 'context',
-      elements: [{ type: 'mrkdwn', text: '_message truncated_' }],
+      type: "context",
+      elements: [{ type: "mrkdwn", text: "_message truncated_" }],
     })
     return truncated
   }
@@ -122,45 +134,65 @@ function buildBlocks(payload: ComposePayload): unknown[] {
 }
 
 const slackAdapter: ChannelAdapter<SlackConfig, SlackProvider> = {
-  type: 'slack',
+  type: "slack",
 
   validateConfig(input) {
     return (input ?? {}) as SlackConfig
   },
 
   transform(payload, { connection }): SlackProvider {
-    let channelId = ''
+    let channelId = ""
     try {
       const cfg = JSON.parse(connection.config) as SlackConfig
       if (cfg.channelId) channelId = cfg.channelId
     } catch {}
-    if (!channelId) throw new Error('Slack connection requires config.channelId')
+    if (!channelId)
+      throw new Error("Slack connection requires config.channelId")
 
     return { channelId, text: buildText(payload), blocks: buildBlocks(payload) }
   },
 
   async send(provider, conn, ctx) {
     const encKey = ctx.env?.CONNECTION_ENC_KEY
-    if (!encKey) return { providerMessageId: null, ok: false, error: 'CONNECTION_ENC_KEY not configured' }
+    if (!encKey)
+      return {
+        providerMessageId: null,
+        ok: false,
+        error: "CONNECTION_ENC_KEY not configured",
+      }
     if (!conn.credentials) {
-      return { providerMessageId: null, ok: false, error: 'No Slack bot token — add credentials.botToken' }
+      return {
+        providerMessageId: null,
+        ok: false,
+        error: "No Slack bot token — add credentials.botToken",
+      }
     }
 
     let creds: SlackCredentials
     try {
-      creds = JSON.parse(await decrypt(conn.credentials, encKey)) as SlackCredentials
+      creds = JSON.parse(
+        await decrypt(conn.credentials, encKey)
+      ) as SlackCredentials
     } catch {
-      return { providerMessageId: null, ok: false, error: 'Failed to decrypt Slack credentials' }
+      return {
+        providerMessageId: null,
+        ok: false,
+        error: "Failed to decrypt Slack credentials",
+      }
     }
     if (!creds.botToken) {
-      return { providerMessageId: null, ok: false, error: 'Slack credentials missing botToken' }
+      return {
+        providerMessageId: null,
+        ok: false,
+        error: "Slack credentials missing botToken",
+      }
     }
 
     try {
-      const res = await fetch('https://slack.com/api/chat.postMessage', {
-        method: 'POST',
+      const res = await fetch("https://slack.com/api/chat.postMessage", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json; charset=utf-8',
+          "Content-Type": "application/json; charset=utf-8",
           Authorization: `Bearer ${creds.botToken}`,
         },
         body: JSON.stringify({
@@ -172,29 +204,53 @@ const slackAdapter: ChannelAdapter<SlackConfig, SlackProvider> = {
       })
 
       if (!res.ok) {
-        return { providerMessageId: null, ok: false, error: `Slack error ${res.status}` }
+        return {
+          providerMessageId: null,
+          ok: false,
+          error: `Slack error ${res.status}`,
+        }
       }
 
-      const data = (await res.json()) as { ok?: boolean; ts?: string; error?: string }
+      const data = (await res.json()) as {
+        ok?: boolean
+        ts?: string
+        error?: string
+      }
       if (!data.ok) {
-        return { providerMessageId: null, ok: false, error: data.error ?? 'unknown_slack_error' }
+        return {
+          providerMessageId: null,
+          ok: false,
+          error: data.error ?? "unknown_slack_error",
+        }
       }
 
       return { providerMessageId: data.ts ?? null, ok: true }
     } catch (err) {
-      return { providerMessageId: null, ok: false, error: err instanceof Error ? err.message : String(err) }
+      return {
+        providerMessageId: null,
+        ok: false,
+        error: err instanceof Error ? err.message : String(err),
+      }
     }
   },
 
   async healthCheck(conn) {
     if (!conn.credentials) {
-      return { ok: false, message: 'No bot token — add credentials.botToken', checkedAt: new Date().toISOString() }
+      return {
+        ok: false,
+        message: "No bot token — add credentials.botToken",
+        checkedAt: new Date().toISOString(),
+      }
     }
-    return { ok: true, message: 'Bot token present', checkedAt: new Date().toISOString() }
+    return {
+      ok: true,
+      message: "Bot token present",
+      checkedAt: new Date().toISOString(),
+    }
   },
 }
 
 registerAdapter(slackAdapter)
-registerTransform('slack', (payload, ctx) =>
-  slackAdapter.transform(payload, ctx as { connection: Connection }),
+registerTransform("slack", (payload, ctx) =>
+  slackAdapter.transform(payload, ctx as { connection: Connection })
 )

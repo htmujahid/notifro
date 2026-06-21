@@ -1,6 +1,16 @@
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card"
 import { TrendingUpIcon } from "lucide-react"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@workspace/ui/components/card"
-import { useAnalyticsSummary, useAnalyticsTimeseries } from "../../hooks/analytics"
+
+import {
+  useAnalyticsSummary,
+  useAnalyticsTimeseries,
+} from "../../hooks/analytics"
 import { MiniLineChart } from "./mini-line-chart"
 
 function pct(n: number) {
@@ -8,18 +18,27 @@ function pct(n: number) {
 }
 
 export function AnalyticsSection() {
-  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+  const sevenDaysAgo = new Date(
+    Date.now() - 7 * 24 * 60 * 60 * 1000
+  ).toISOString()
   const now = new Date().toISOString()
 
-  const { data: summary, isLoading: summaryLoading } = useAnalyticsSummary({ from: sevenDaysAgo, to: now })
-  const { data: timeseries, isLoading: tsLoading } = useAnalyticsTimeseries({ from: sevenDaysAgo, to: now, granularity: 'day' })
+  const { data: summary, isLoading: summaryLoading } = useAnalyticsSummary({
+    from: sevenDaysAgo,
+    to: now,
+  })
+  const { data: timeseries, isLoading: tsLoading } = useAnalyticsTimeseries({
+    from: sevenDaysAgo,
+    to: now,
+    granularity: "day",
+  })
 
   const stats = summary
     ? [
-        { label: 'Sent (7d)', value: summary.sent.toLocaleString() },
-        { label: 'Delivered', value: summary.delivered.toLocaleString() },
-        { label: 'Open rate', value: pct(summary.openRate) },
-        { label: 'Click rate', value: pct(summary.clickRate) },
+        { label: "Sent (7d)", value: summary.sent.toLocaleString() },
+        { label: "Delivered", value: summary.delivered.toLocaleString() },
+        { label: "Open rate", value: pct(summary.openRate) },
+        { label: "Click rate", value: pct(summary.clickRate) },
       ]
     : null
 
@@ -51,7 +70,9 @@ export function AnalyticsSection() {
 
       <Card size="sm">
         <CardHeader className="pb-2">
-          <CardDescription className="text-xs">Sent vs Delivered</CardDescription>
+          <CardDescription className="text-xs">
+            Sent vs Delivered
+          </CardDescription>
         </CardHeader>
         <CardContent className="pt-0">
           {tsLoading ? (
@@ -64,7 +85,8 @@ export function AnalyticsSection() {
               <span className="inline-block h-0.5 w-4 bg-primary" /> Sent
             </span>
             <span className="flex items-center gap-1">
-              <span className="inline-block h-0.5 w-4 border-t border-dashed border-muted-foreground" /> Delivered
+              <span className="inline-block h-0.5 w-4 border-t border-dashed border-muted-foreground" />{" "}
+              Delivered
             </span>
           </div>
         </CardContent>

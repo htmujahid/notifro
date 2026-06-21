@@ -1,22 +1,23 @@
-import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
-import { requireAuth } from '../middleware/auth'
-import { listQuerySchema, applyListQuery } from '../lib/list-query'
-import { Errors, validationHook } from '../lib/errors'
-import { encrypt, decrypt } from '../lib/crypto'
-import { generateSecret } from '../channels/webhook/sign'
-import { postWebhook } from '../channels/webhook/adapter'
-import type { AppEnv } from '../lib/types'
+import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
 
-const SORTABLE = { createdAt: 'createdAt', url: 'url' }
+import { postWebhook } from "../channels/webhook/adapter"
+import { generateSecret } from "../channels/webhook/sign"
+import { decrypt, encrypt } from "../lib/crypto"
+import { Errors, validationHook } from "../lib/errors"
+import { applyListQuery, listQuerySchema } from "../lib/list-query"
+import type { AppEnv } from "../lib/types"
+import { requireAuth } from "../middleware/auth"
+
+const SORTABLE = { createdAt: "createdAt", url: "url" }
 const FILTERABLE = {
   enabled: {
-    column: 'enabled',
-    schema: z.enum(['true', 'false']).transform((v) => (v === 'true' ? 1 : 0)),
-    operator: 'eq' as const,
+    column: "enabled",
+    schema: z.enum(["true", "false"]).transform((v) => (v === "true" ? 1 : 0)),
+    operator: "eq" as const,
   },
-  q: { column: 'url', schema: z.string(), operator: 'like' as const },
+  q: { column: "url", schema: z.string(), operator: "like" as const },
 }
-const DEFAULT_SORT = { key: 'createdAt', order: 'desc' as const }
+const DEFAULT_SORT = { key: "createdAt", order: "desc" as const }
 
 const WebhookDtoSchema = z.object({
   id: z.string(),
@@ -45,11 +46,20 @@ const TestResultSchema = z.object({
 })
 
 const listRoute = createRoute({
-  method: 'get',
-  path: '/channels/webhooks',
-  request: { query: listQuerySchema({ sortable: SORTABLE, filterable: FILTERABLE, defaultSort: DEFAULT_SORT }) },
+  method: "get",
+  path: "/channels/webhooks",
+  request: {
+    query: listQuerySchema({
+      sortable: SORTABLE,
+      filterable: FILTERABLE,
+      defaultSort: DEFAULT_SORT,
+    }),
+  },
   responses: {
-    200: { content: { 'application/json': { schema: ListResponseSchema } }, description: 'Paginated webhook endpoints' },
+    200: {
+      content: { "application/json": { schema: ListResponseSchema } },
+      description: "Paginated webhook endpoints",
+    },
   },
 })
 
@@ -61,11 +71,16 @@ const CreateBodySchema = z.object({
 })
 
 const createRoute_ = createRoute({
-  method: 'post',
-  path: '/channels/webhooks',
-  request: { body: { content: { 'application/json': { schema: CreateBodySchema } } } },
+  method: "post",
+  path: "/channels/webhooks",
+  request: {
+    body: { content: { "application/json": { schema: CreateBodySchema } } },
+  },
   responses: {
-    201: { content: { 'application/json': { schema: WebhookWithSecretSchema } }, description: 'Created webhook endpoint' },
+    201: {
+      content: { "application/json": { schema: WebhookWithSecretSchema } },
+      description: "Created webhook endpoint",
+    },
   },
 })
 
@@ -77,27 +92,40 @@ const UpdateBodySchema = z.object({
 })
 
 const updateRoute = createRoute({
-  method: 'patch',
-  path: '/channels/webhooks/:id',
-  request: { body: { content: { 'application/json': { schema: UpdateBodySchema } } } },
+  method: "patch",
+  path: "/channels/webhooks/:id",
+  request: {
+    body: { content: { "application/json": { schema: UpdateBodySchema } } },
+  },
   responses: {
-    200: { content: { 'application/json': { schema: WebhookDtoSchema } }, description: 'Updated webhook endpoint' },
+    200: {
+      content: { "application/json": { schema: WebhookDtoSchema } },
+      description: "Updated webhook endpoint",
+    },
   },
 })
 
 const deleteRoute = createRoute({
-  method: 'delete',
-  path: '/channels/webhooks/:id',
+  method: "delete",
+  path: "/channels/webhooks/:id",
   responses: {
-    200: { content: { 'application/json': { schema: z.object({ ok: z.boolean() }) } }, description: 'Deleted' },
+    200: {
+      content: {
+        "application/json": { schema: z.object({ ok: z.boolean() }) },
+      },
+      description: "Deleted",
+    },
   },
 })
 
 const testRoute = createRoute({
-  method: 'post',
-  path: '/channels/webhooks/:id/test',
+  method: "post",
+  path: "/channels/webhooks/:id/test",
   responses: {
-    200: { content: { 'application/json': { schema: TestResultSchema } }, description: 'Test delivery result' },
+    200: {
+      content: { "application/json": { schema: TestResultSchema } },
+      description: "Test delivery result",
+    },
   },
 })
 
@@ -128,7 +156,9 @@ function toDto(row: WebhookRow): z.infer<typeof WebhookDtoSchema> {
     userId: row.userId,
     url: row.url,
     secretLast4: row.secretLast4,
-    headers: row.headers ? (JSON.parse(row.headers) as Record<string, string>) : null,
+    headers: row.headers
+      ? (JSON.parse(row.headers) as Record<string, string>)
+      : null,
     description: row.description,
     enabled: row.enabled === 1,
     createdAt: row.createdAt,
@@ -137,12 +167,15 @@ function toDto(row: WebhookRow): z.infer<typeof WebhookDtoSchema> {
 }
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
-router.use('*', requireAuth)
+router.use("*", requireAuth)
 
 router.openapi(listRoute, async (c) => {
-  const parsed = c.req.valid('query')
+  const parsed = c.req.valid("query")
   const userId = c.var.user!.id
-  const baseQuery = c.var.db.selectFrom('webhook_endpoint').where('userId', '=', userId).selectAll()
+  const baseQuery = c.var.db
+    .selectFrom("webhook_endpoint")
+    .where("userId", "=", userId)
+    .selectAll()
 
   const { qb, getPage } = applyListQuery(baseQuery, parsed, {
     sortable: SORTABLE,
@@ -157,7 +190,7 @@ router.openapi(listRoute, async (c) => {
 })
 
 router.openapi(createRoute_, async (c) => {
-  const body = c.req.valid('json')
+  const body = c.req.valid("json")
   const userId = c.var.user!.id
 
   const secret = generateSecret()
@@ -165,7 +198,7 @@ router.openapi(createRoute_, async (c) => {
   const ts = now()
 
   await c.var.db
-    .insertInto('webhook_endpoint')
+    .insertInto("webhook_endpoint")
     .values({
       id,
       userId,
@@ -181,9 +214,9 @@ router.openapi(createRoute_, async (c) => {
     .execute()
 
   const row = await c.var.db
-    .selectFrom('webhook_endpoint')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
+    .selectFrom("webhook_endpoint")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
     .selectAll()
     .executeTakeFirstOrThrow()
 
@@ -192,35 +225,36 @@ router.openapi(createRoute_, async (c) => {
 
 router.openapi(updateRoute, async (c) => {
   const { id } = c.req.param()
-  const body = c.req.valid('json')
+  const body = c.req.valid("json")
   const userId = c.var.user!.id
 
   const existing = await c.var.db
-    .selectFrom('webhook_endpoint')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
+    .selectFrom("webhook_endpoint")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
     .selectAll()
     .executeTakeFirst()
 
-  if (!existing) throw Errors.notFound('Webhook endpoint')
+  if (!existing) throw Errors.notFound("Webhook endpoint")
 
   const updates: Record<string, unknown> = { updatedAt: now() }
   if (body.url !== undefined) updates.url = body.url
   if (body.description !== undefined) updates.description = body.description
   if (body.enabled !== undefined) updates.enabled = body.enabled ? 1 : 0
-  if (body.headers !== undefined) updates.headers = body.headers ? JSON.stringify(body.headers) : null
+  if (body.headers !== undefined)
+    updates.headers = body.headers ? JSON.stringify(body.headers) : null
 
   await c.var.db
-    .updateTable('webhook_endpoint')
+    .updateTable("webhook_endpoint")
     .set(updates)
-    .where('id', '=', id)
-    .where('userId', '=', userId)
+    .where("id", "=", id)
+    .where("userId", "=", userId)
     .execute()
 
   const row = await c.var.db
-    .selectFrom('webhook_endpoint')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
+    .selectFrom("webhook_endpoint")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
     .selectAll()
     .executeTakeFirstOrThrow()
 
@@ -232,15 +266,19 @@ router.openapi(deleteRoute, async (c) => {
   const userId = c.var.user!.id
 
   const existing = await c.var.db
-    .selectFrom('webhook_endpoint')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
-    .select('id')
+    .selectFrom("webhook_endpoint")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
+    .select("id")
     .executeTakeFirst()
 
-  if (!existing) throw Errors.notFound('Webhook endpoint')
+  if (!existing) throw Errors.notFound("Webhook endpoint")
 
-  await c.var.db.deleteFrom('webhook_endpoint').where('id', '=', id).where('userId', '=', userId).execute()
+  await c.var.db
+    .deleteFrom("webhook_endpoint")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
+    .execute()
 
   return c.json({ ok: true })
 })
@@ -250,28 +288,44 @@ router.openapi(testRoute, async (c) => {
   const userId = c.var.user!.id
 
   const row = await c.var.db
-    .selectFrom('webhook_endpoint')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
+    .selectFrom("webhook_endpoint")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
     .selectAll()
     .executeTakeFirst()
 
-  if (!row) throw Errors.notFound('Webhook endpoint')
+  if (!row) throw Errors.notFound("Webhook endpoint")
 
   const secret = await decrypt(row.secret, c.env.CONNECTION_ENC_KEY)
-  const headers = row.headers ? (JSON.parse(row.headers) as Record<string, string>) : null
+  const headers = row.headers
+    ? (JSON.parse(row.headers) as Record<string, string>)
+    : null
 
   const sampleBody = JSON.stringify({
-    schemaVersion: '1',
-    event: 'webhook.test',
-    content: { title: 'Renderical test', body: { text: 'This is a test webhook delivery.' } },
-    recipient: { type: 'user', userId },
+    schemaVersion: "1",
+    event: "webhook.test",
+    content: {
+      title: "Renderical test",
+      body: { text: "This is a test webhook delivery." },
+    },
+    recipient: { type: "user", userId },
     sentAt: now(),
   })
 
-  const result = await postWebhook(row.url, secret, sampleBody, newId(), headers)
+  const result = await postWebhook(
+    row.url,
+    secret,
+    sampleBody,
+    newId(),
+    headers
+  )
 
-  return c.json({ ok: result.ok, status: result.status, latencyMs: result.latencyMs, error: result.error })
+  return c.json({
+    ok: result.ok,
+    status: result.status,
+    latencyMs: result.latencyMs,
+    error: result.error,
+  })
 })
 
 export default router

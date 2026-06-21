@@ -1,14 +1,19 @@
-import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
-import { requireAuth } from '../middleware/auth'
-import { listQuerySchema, applyListQuery } from '../lib/list-query'
-import { Errors, validationHook } from '../lib/errors'
-import type { AppEnv } from '../lib/types'
+import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
 
-const SORTABLE = { updatedAt: 'updatedAt', createdAt: 'createdAt', email: 'email' }
-const FILTERABLE = {
-  q: { column: 'email', schema: z.string(), operator: 'like' as const },
+import { Errors, validationHook } from "../lib/errors"
+import { applyListQuery, listQuerySchema } from "../lib/list-query"
+import type { AppEnv } from "../lib/types"
+import { requireAuth } from "../middleware/auth"
+
+const SORTABLE = {
+  updatedAt: "updatedAt",
+  createdAt: "createdAt",
+  email: "email",
 }
-const DEFAULT_SORT = { key: 'updatedAt', order: 'desc' as const }
+const FILTERABLE = {
+  q: { column: "email", schema: z.string(), operator: "like" as const },
+}
+const DEFAULT_SORT = { key: "updatedAt", order: "desc" as const }
 
 const RecipientDtoSchema = z.object({
   id: z.string(),
@@ -49,54 +54,81 @@ const ListResponseSchema = z.object({
 })
 
 const listRoute = createRoute({
-  method: 'get',
-  path: '/recipients',
+  method: "get",
+  path: "/recipients",
   request: {
-    query: listQuerySchema({ sortable: SORTABLE, filterable: FILTERABLE, defaultSort: DEFAULT_SORT }),
+    query: listQuerySchema({
+      sortable: SORTABLE,
+      filterable: FILTERABLE,
+      defaultSort: DEFAULT_SORT,
+    }),
   },
   responses: {
-    200: { content: { 'application/json': { schema: ListResponseSchema } }, description: 'Paginated recipients' },
+    200: {
+      content: { "application/json": { schema: ListResponseSchema } },
+      description: "Paginated recipients",
+    },
   },
 })
 
 const createRoute_ = createRoute({
-  method: 'post',
-  path: '/recipients',
-  request: { body: { content: { 'application/json': { schema: CreateRecipientSchema } } } },
+  method: "post",
+  path: "/recipients",
+  request: {
+    body: {
+      content: { "application/json": { schema: CreateRecipientSchema } },
+    },
+  },
   responses: {
-    201: { content: { 'application/json': { schema: RecipientDtoSchema } }, description: 'Created recipient' },
+    201: {
+      content: { "application/json": { schema: RecipientDtoSchema } },
+      description: "Created recipient",
+    },
   },
 })
 
 const detailRoute = createRoute({
-  method: 'get',
-  path: '/recipients/:id',
+  method: "get",
+  path: "/recipients/:id",
   responses: {
-    200: { content: { 'application/json': { schema: RecipientDtoSchema } }, description: 'Recipient detail' },
+    200: {
+      content: { "application/json": { schema: RecipientDtoSchema } },
+      description: "Recipient detail",
+    },
   },
 })
 
 const patchRoute = createRoute({
-  method: 'patch',
-  path: '/recipients/:id',
-  request: { body: { content: { 'application/json': { schema: PatchRecipientSchema } } } },
+  method: "patch",
+  path: "/recipients/:id",
+  request: {
+    body: { content: { "application/json": { schema: PatchRecipientSchema } } },
+  },
   responses: {
-    200: { content: { 'application/json': { schema: RecipientDtoSchema } }, description: 'Updated recipient' },
+    200: {
+      content: { "application/json": { schema: RecipientDtoSchema } },
+      description: "Updated recipient",
+    },
   },
 })
 
 const deleteRoute = createRoute({
-  method: 'delete',
-  path: '/recipients/:id',
-  responses: { 204: { description: 'Deleted' } },
+  method: "delete",
+  path: "/recipients/:id",
+  responses: { 204: { description: "Deleted" } },
 })
 
 const identifyRoute = createRoute({
-  method: 'post',
-  path: '/recipients/identify',
-  request: { body: { content: { 'application/json': { schema: IdentifySchema } } } },
+  method: "post",
+  path: "/recipients/identify",
+  request: {
+    body: { content: { "application/json": { schema: IdentifySchema } } },
+  },
   responses: {
-    200: { content: { 'application/json': { schema: RecipientDtoSchema } }, description: 'Upserted recipient' },
+    200: {
+      content: { "application/json": { schema: RecipientDtoSchema } },
+      description: "Upserted recipient",
+    },
   },
 })
 
@@ -109,12 +141,15 @@ function now() {
 }
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
-router.use('*', requireAuth)
+router.use("*", requireAuth)
 
 router.openapi(listRoute, async (c) => {
-  const parsed = c.req.valid('query')
+  const parsed = c.req.valid("query")
   const userId = c.var.user!.id
-  const baseQuery = c.var.db.selectFrom('recipient').where('userId', '=', userId).selectAll()
+  const baseQuery = c.var.db
+    .selectFrom("recipient")
+    .where("userId", "=", userId)
+    .selectAll()
   const { qb, getPage } = applyListQuery(baseQuery, parsed, {
     sortable: SORTABLE,
     filterable: FILTERABLE,
@@ -122,17 +157,21 @@ router.openapi(listRoute, async (c) => {
   })
   const rows = await qb.execute()
   const page = getPage(rows as Record<string, unknown>[])
-  return c.json({ data: page.data as z.infer<typeof RecipientDtoSchema>[], nextCursor: page.nextCursor })
+  return c.json({
+    data: page.data as z.infer<typeof RecipientDtoSchema>[],
+    nextCursor: page.nextCursor,
+  })
 })
 
 router.openapi(createRoute_, async (c) => {
-  const body = c.req.valid('json')
+  const body = c.req.valid("json")
   const userId = c.var.user!.id
   const ts = now()
   const id = newId()
-  const locale = body.locale ?? inferLocale(c.req.raw.headers.get('accept-language'))
+  const locale =
+    body.locale ?? inferLocale(c.req.raw.headers.get("accept-language"))
   await c.var.db
-    .insertInto('recipient')
+    .insertInto("recipient")
     .values({
       id,
       userId,
@@ -146,20 +185,25 @@ router.openapi(createRoute_, async (c) => {
       updatedAt: ts,
     })
     .execute()
-  const row = await c.var.db.selectFrom('recipient').where('id', '=', id).selectAll().executeTakeFirstOrThrow()
+  const row = await c.var.db
+    .selectFrom("recipient")
+    .where("id", "=", id)
+    .selectAll()
+    .executeTakeFirstOrThrow()
   return c.json(row as z.infer<typeof RecipientDtoSchema>, 201)
 })
 
 router.openapi(identifyRoute, async (c) => {
-  const body = c.req.valid('json')
+  const body = c.req.valid("json")
   const userId = c.var.user!.id
   const ts = now()
-  const locale = body.locale ?? inferLocale(c.req.raw.headers.get('accept-language'))
+  const locale =
+    body.locale ?? inferLocale(c.req.raw.headers.get("accept-language"))
 
   const existing = await c.var.db
-    .selectFrom('recipient')
-    .where('userId', '=', userId)
-    .where('externalId', '=', body.externalId)
+    .selectFrom("recipient")
+    .where("userId", "=", userId)
+    .where("externalId", "=", body.externalId)
     .selectAll()
     .executeTakeFirst()
 
@@ -170,17 +214,30 @@ router.openapi(identifyRoute, async (c) => {
     if (locale !== undefined) updates.locale = locale ?? null
     if (body.timezone !== undefined) updates.timezone = body.timezone ?? null
     if (body.attributes !== undefined) {
-      const merged = { ...(existing.attributes ? (JSON.parse(existing.attributes) as Record<string, unknown>) : {}), ...body.attributes }
+      const merged = {
+        ...(existing.attributes
+          ? (JSON.parse(existing.attributes) as Record<string, unknown>)
+          : {}),
+        ...body.attributes,
+      }
       updates.attributes = JSON.stringify(merged)
     }
-    await c.var.db.updateTable('recipient').set(updates).where('id', '=', existing.id).execute()
-    const row = await c.var.db.selectFrom('recipient').where('id', '=', existing.id).selectAll().executeTakeFirstOrThrow()
+    await c.var.db
+      .updateTable("recipient")
+      .set(updates)
+      .where("id", "=", existing.id)
+      .execute()
+    const row = await c.var.db
+      .selectFrom("recipient")
+      .where("id", "=", existing.id)
+      .selectAll()
+      .executeTakeFirstOrThrow()
     return c.json(row as z.infer<typeof RecipientDtoSchema>)
   }
 
   const id = newId()
   await c.var.db
-    .insertInto('recipient')
+    .insertInto("recipient")
     .values({
       id,
       userId,
@@ -194,7 +251,11 @@ router.openapi(identifyRoute, async (c) => {
       updatedAt: ts,
     })
     .execute()
-  const row = await c.var.db.selectFrom('recipient').where('id', '=', id).selectAll().executeTakeFirstOrThrow()
+  const row = await c.var.db
+    .selectFrom("recipient")
+    .where("id", "=", id)
+    .selectAll()
+    .executeTakeFirstOrThrow()
   return c.json(row as z.infer<typeof RecipientDtoSchema>)
 })
 
@@ -202,36 +263,48 @@ router.openapi(detailRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
   const row = await c.var.db
-    .selectFrom('recipient')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
+    .selectFrom("recipient")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
     .selectAll()
     .executeTakeFirst()
-  if (!row) throw Errors.notFound('Recipient')
+  if (!row) throw Errors.notFound("Recipient")
   return c.json(row as z.infer<typeof RecipientDtoSchema>)
 })
 
 router.openapi(patchRoute, async (c) => {
   const { id } = c.req.param()
-  const body = c.req.valid('json')
+  const body = c.req.valid("json")
   const userId = c.var.user!.id
   const ts = now()
   const existing = await c.var.db
-    .selectFrom('recipient')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
+    .selectFrom("recipient")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
     .selectAll()
     .executeTakeFirst()
-  if (!existing) throw Errors.notFound('Recipient')
+  if (!existing) throw Errors.notFound("Recipient")
   const updates: Record<string, string | null> = { updatedAt: ts }
-  if (body.externalId !== undefined) updates.externalId = body.externalId ?? null
+  if (body.externalId !== undefined)
+    updates.externalId = body.externalId ?? null
   if (body.email !== undefined) updates.email = body.email ?? null
   if (body.phone !== undefined) updates.phone = body.phone ?? null
   if (body.locale !== undefined) updates.locale = body.locale ?? null
   if (body.timezone !== undefined) updates.timezone = body.timezone ?? null
-  if (body.attributes !== undefined) updates.attributes = body.attributes ? JSON.stringify(body.attributes) : null
-  await c.var.db.updateTable('recipient').set(updates).where('id', '=', id).execute()
-  const row = await c.var.db.selectFrom('recipient').where('id', '=', id).selectAll().executeTakeFirstOrThrow()
+  if (body.attributes !== undefined)
+    updates.attributes = body.attributes
+      ? JSON.stringify(body.attributes)
+      : null
+  await c.var.db
+    .updateTable("recipient")
+    .set(updates)
+    .where("id", "=", id)
+    .execute()
+  const row = await c.var.db
+    .selectFrom("recipient")
+    .where("id", "=", id)
+    .selectAll()
+    .executeTakeFirstOrThrow()
   return c.json(row as z.infer<typeof RecipientDtoSchema>)
 })
 
@@ -239,19 +312,19 @@ router.openapi(deleteRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
   const existing = await c.var.db
-    .selectFrom('recipient')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
-    .select('id')
+    .selectFrom("recipient")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
+    .select("id")
     .executeTakeFirst()
-  if (!existing) throw Errors.notFound('Recipient')
-  await c.var.db.deleteFrom('recipient').where('id', '=', id).execute()
+  if (!existing) throw Errors.notFound("Recipient")
+  await c.var.db.deleteFrom("recipient").where("id", "=", id).execute()
   return new Response(null, { status: 204 })
 })
 
 function inferLocale(acceptLanguage: string | null): string | undefined {
   if (!acceptLanguage) return undefined
-  const primary = acceptLanguage.split(',')[0]?.split(';')[0]?.trim()
+  const primary = acceptLanguage.split(",")[0]?.split(";")[0]?.trim()
   return primary || undefined
 }
 

@@ -1,6 +1,15 @@
-import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useApiClient } from "@workspace/api-client/context"
-import type { ListParams, ListResponse, RateLimitRule } from "@workspace/api-client/types"
+import type {
+  ListParams,
+  ListResponse,
+  RateLimitRule,
+} from "@workspace/api-client/types"
+
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query"
 
 export const rateLimitKeys = {
   all: ["rateLimits"] as const,
@@ -26,8 +35,11 @@ export function useUpsertRateLimit() {
   const api = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: { channel: string; maxCount: number; windowSeconds: number }) =>
-      api.post<RateLimitRule>("/api/rate-limits", body),
+    mutationFn: (body: {
+      channel: string
+      maxCount: number
+      windowSeconds: number
+    }) => api.post<RateLimitRule>("/api/rate-limits", body),
     onSuccess: () => qc.invalidateQueries({ queryKey: rateLimitKeys.lists() }),
   })
 }
@@ -36,8 +48,14 @@ export function useUpdateRateLimit() {
   const api = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, ...body }: { id: string; maxCount?: number; windowSeconds?: number }) =>
-      api.patch<RateLimitRule>(`/api/rate-limits/${id}`, body),
+    mutationFn: ({
+      id,
+      ...body
+    }: {
+      id: string
+      maxCount?: number
+      windowSeconds?: number
+    }) => api.patch<RateLimitRule>(`/api/rate-limits/${id}`, body),
     onSuccess: () => qc.invalidateQueries({ queryKey: rateLimitKeys.lists() }),
   })
 }

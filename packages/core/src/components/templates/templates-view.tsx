@@ -1,11 +1,23 @@
+import { Button } from "@workspace/ui/components/button"
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@workspace/ui/components/empty"
 import { FileTextIcon, PlusIcon } from "lucide-react"
 import { Link } from "react-router"
-import { Button } from "@workspace/ui/components/button"
-import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from "@workspace/ui/components/empty"
-import { useTemplates, useDeleteTemplate } from "../../hooks/templates"
+
+import { useDeleteTemplate, useTemplates } from "../../hooks/templates"
 
 function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })
+  return new Date(iso).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })
 }
 
 export function TemplatesView() {
@@ -36,9 +48,14 @@ export function TemplatesView() {
       ) : templates.length === 0 ? (
         <Empty>
           <EmptyHeader>
-            <EmptyMedia variant="icon"><FileTextIcon /></EmptyMedia>
+            <EmptyMedia variant="icon">
+              <FileTextIcon />
+            </EmptyMedia>
             <EmptyTitle>No templates yet</EmptyTitle>
-            <EmptyDescription>Create reusable message templates to keep your notifications consistent across channels.</EmptyDescription>
+            <EmptyDescription>
+              Create reusable message templates to keep your notifications
+              consistent across channels.
+            </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
             <Link
@@ -55,10 +72,18 @@ export function TemplatesView() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/40">
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Name</th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Slug</th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Locale</th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Last modified</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                  Name
+                </th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                  Slug
+                </th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                  Locale
+                </th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                  Last modified
+                </th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
@@ -66,16 +91,25 @@ export function TemplatesView() {
               {templates.map((t) => (
                 <tr key={t.id} className="transition-colors hover:bg-muted/30">
                   <td className="px-4 py-3">
-                    <Link to={`/templates/${t.id}`} className="flex items-center gap-2.5 hover:underline">
+                    <Link
+                      to={`/templates/${t.id}`}
+                      className="flex items-center gap-2.5 hover:underline"
+                    >
                       <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted">
                         <FileTextIcon className="size-3.5 text-muted-foreground" />
                       </div>
                       <span className="font-medium">{t.name}</span>
                     </Link>
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{t.slug}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{t.defaultLocale}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{formatDate(t.updatedAt)}</td>
+                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
+                    {t.slug}
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {t.defaultLocale}
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {formatDate(t.updatedAt)}
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-2">
                       <Link

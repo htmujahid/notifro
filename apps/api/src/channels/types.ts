@@ -1,37 +1,37 @@
 export type ChannelType =
-  | 'email'
-  | 'webhook'
-  | 'web_push'
-  | 'sms'
-  | 'whatsapp'
-  | 'telegram'
-  | 'slack'
-  | 'discord'
-  | 'teams'
-  | 'mobile_push'
-  | 'in_app'
+  | "email"
+  | "webhook"
+  | "web_push"
+  | "sms"
+  | "whatsapp"
+  | "telegram"
+  | "slack"
+  | "discord"
+  | "teams"
+  | "mobile_push"
+  | "in_app"
 
 export const CHANNEL_TYPES: ChannelType[] = [
-  'email',
-  'webhook',
-  'web_push',
-  'sms',
-  'whatsapp',
-  'telegram',
-  'slack',
-  'discord',
-  'teams',
-  'mobile_push',
-  'in_app',
+  "email",
+  "webhook",
+  "web_push",
+  "sms",
+  "whatsapp",
+  "telegram",
+  "slack",
+  "discord",
+  "teams",
+  "mobile_push",
+  "in_app",
 ]
 
-export type ConnectionStatus = 'active' | 'disabled' | 'needs_reauth' | 'error'
+export type ConnectionStatus = "active" | "disabled" | "needs_reauth" | "error"
 
 export const CONNECTION_STATUSES: ConnectionStatus[] = [
-  'active',
-  'disabled',
-  'needs_reauth',
-  'error',
+  "active",
+  "disabled",
+  "needs_reauth",
+  "error",
 ]
 
 export interface Connection {
@@ -56,7 +56,7 @@ export interface SendResult {
 
 export interface ReceiptUpdate {
   providerMessageId: string
-  status: 'delivered' | 'bounced' | 'opened' | 'clicked' | 'failed'
+  status: "delivered" | "bounced" | "opened" | "clicked" | "failed"
   timestamp: string
   raw?: unknown
 }
@@ -67,4 +67,4 @@ export interface HealthResult {
   checkedAt: string
 }
 
-export type { ComposePayload } from '../compose/schema'
+export type { ComposePayload } from "../compose/schema"

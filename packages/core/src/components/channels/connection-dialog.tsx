@@ -1,9 +1,6 @@
 import { useState } from "react"
-import { toast } from "sonner"
+
 import { Button } from "@workspace/ui/components/button"
-import { Input } from "@workspace/ui/components/input"
-import { Label } from "@workspace/ui/components/label"
-import { Textarea } from "@workspace/ui/components/textarea"
 import {
   Dialog,
   DialogContent,
@@ -12,13 +9,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@workspace/ui/components/dialog"
+import { Input } from "@workspace/ui/components/input"
+import { Label } from "@workspace/ui/components/label"
+import { Textarea } from "@workspace/ui/components/textarea"
 import { ActivityIcon, Trash2Icon } from "lucide-react"
+import { toast } from "sonner"
+
 import {
-  useCreateConnection,
-  useUpdateConnection,
-  useDeleteConnection,
-  useConnectionHealth,
   type Connection,
+  useConnectionHealth,
+  useCreateConnection,
+  useDeleteConnection,
+  useUpdateConnection,
 } from "../../hooks/connections"
 
 type FieldGroup = "config" | "credentials"
@@ -45,68 +47,200 @@ export const CHANNEL_FORMS: Record<string, ChannelForm> = {
     title: "SMS (Twilio)",
     blurb: "Send text messages through your Twilio account.",
     fields: [
-      { key: "from", label: "From number", placeholder: "+15551234567", group: "config", required: true },
-      { key: "accountSid", label: "Twilio Account SID", placeholder: "AC…", group: "credentials", required: true },
-      { key: "authToken", label: "Twilio Auth Token", group: "credentials", secret: true, required: true },
+      {
+        key: "from",
+        label: "From number",
+        placeholder: "+15551234567",
+        group: "config",
+        required: true,
+      },
+      {
+        key: "accountSid",
+        label: "Twilio Account SID",
+        placeholder: "AC…",
+        group: "credentials",
+        required: true,
+      },
+      {
+        key: "authToken",
+        label: "Twilio Auth Token",
+        group: "credentials",
+        secret: true,
+        required: true,
+      },
     ],
   },
   whatsapp: {
     title: "WhatsApp (Twilio)",
     blurb: "Send WhatsApp messages through Twilio using a whatsapp: sender.",
     fields: [
-      { key: "from", label: "From number", placeholder: "whatsapp:+15551234567", group: "config", required: true },
-      { key: "accountSid", label: "Twilio Account SID", placeholder: "AC…", group: "credentials", required: true },
-      { key: "authToken", label: "Twilio Auth Token", group: "credentials", secret: true, required: true },
+      {
+        key: "from",
+        label: "From number",
+        placeholder: "whatsapp:+15551234567",
+        group: "config",
+        required: true,
+      },
+      {
+        key: "accountSid",
+        label: "Twilio Account SID",
+        placeholder: "AC…",
+        group: "credentials",
+        required: true,
+      },
+      {
+        key: "authToken",
+        label: "Twilio Auth Token",
+        group: "credentials",
+        secret: true,
+        required: true,
+      },
     ],
   },
   telegram: {
     title: "Telegram Bot",
     blurb: "Post messages to a chat or channel via a Telegram bot.",
     fields: [
-      { key: "chatId", label: "Chat ID", placeholder: "-1001234567890", group: "config", required: true },
-      { key: "botToken", label: "Bot token", placeholder: "123456:ABC-DEF…", group: "credentials", secret: true, required: true },
+      {
+        key: "chatId",
+        label: "Chat ID",
+        placeholder: "-1001234567890",
+        group: "config",
+        required: true,
+      },
+      {
+        key: "botToken",
+        label: "Bot token",
+        placeholder: "123456:ABC-DEF…",
+        group: "credentials",
+        secret: true,
+        required: true,
+      },
     ],
   },
   slack: {
     title: "Slack",
     blurb: "Post Block Kit messages to a channel via a bot token (xoxb-…).",
     fields: [
-      { key: "channelId", label: "Channel ID", placeholder: "C0123456789", group: "config", required: true },
-      { key: "botToken", label: "Bot token", placeholder: "xoxb-…", group: "credentials", secret: true, required: true },
+      {
+        key: "channelId",
+        label: "Channel ID",
+        placeholder: "C0123456789",
+        group: "config",
+        required: true,
+      },
+      {
+        key: "botToken",
+        label: "Bot token",
+        placeholder: "xoxb-…",
+        group: "credentials",
+        secret: true,
+        required: true,
+      },
     ],
   },
   discord: {
     title: "Discord",
     blurb: "Post rich embeds to a channel via an incoming webhook URL.",
     fields: [
-      { key: "webhookUrl", label: "Webhook URL", placeholder: "https://discord.com/api/webhooks/…", group: "credentials", secret: true, required: true },
-      { key: "username", label: "Override username (optional)", placeholder: "Renderical", group: "config" },
-      { key: "avatarUrl", label: "Override avatar URL (optional)", placeholder: "https://…/avatar.png", group: "config" },
+      {
+        key: "webhookUrl",
+        label: "Webhook URL",
+        placeholder: "https://discord.com/api/webhooks/…",
+        group: "credentials",
+        secret: true,
+        required: true,
+      },
+      {
+        key: "username",
+        label: "Override username (optional)",
+        placeholder: "Renderical",
+        group: "config",
+      },
+      {
+        key: "avatarUrl",
+        label: "Override avatar URL (optional)",
+        placeholder: "https://…/avatar.png",
+        group: "config",
+      },
     ],
   },
   teams: {
     title: "Microsoft Teams",
     blurb: "Post Adaptive Cards via a connector or workflow webhook URL.",
     fields: [
-      { key: "connectorUrl", label: "Connector / workflow URL", placeholder: "https://…webhook.office.com/…", group: "credentials", secret: true, required: true },
-      { key: "cardVersion", label: "Adaptive Card version (optional)", placeholder: "1.5", group: "config" },
+      {
+        key: "connectorUrl",
+        label: "Connector / workflow URL",
+        placeholder: "https://…webhook.office.com/…",
+        group: "credentials",
+        secret: true,
+        required: true,
+      },
+      {
+        key: "cardVersion",
+        label: "Adaptive Card version (optional)",
+        placeholder: "1.5",
+        group: "config",
+      },
     ],
   },
   mobile_push: {
     title: "Mobile Push (APNs / FCM)",
-    blurb: "Provide APNs and/or FCM credentials. Devices register their tokens automatically from the native apps.",
+    blurb:
+      "Provide APNs and/or FCM credentials. Devices register their tokens automatically from the native apps.",
     fields: [
-      { key: "apns.keyId", label: "APNs Key ID", placeholder: "ABC123DEFG", group: "credentials", help: "Apple token-based auth" },
-      { key: "apns.teamId", label: "APNs Team ID", placeholder: "TEAM123456", group: "credentials" },
-      { key: "apns.bundleId", label: "iOS Bundle ID", placeholder: "com.example.app", group: "credentials" },
-      { key: "apns.p8", label: "APNs .p8 key", placeholder: "-----BEGIN PRIVATE KEY-----", group: "credentials", secret: true, multiline: true },
-      { key: "fcm.projectId", label: "FCM Project ID", placeholder: "my-firebase-project", group: "credentials", help: "Firebase Cloud Messaging" },
-      { key: "fcm.serviceAccountJson", label: "FCM service account JSON", placeholder: '{ "type": "service_account", … }', group: "credentials", secret: true, multiline: true },
+      {
+        key: "apns.keyId",
+        label: "APNs Key ID",
+        placeholder: "ABC123DEFG",
+        group: "credentials",
+        help: "Apple token-based auth",
+      },
+      {
+        key: "apns.teamId",
+        label: "APNs Team ID",
+        placeholder: "TEAM123456",
+        group: "credentials",
+      },
+      {
+        key: "apns.bundleId",
+        label: "iOS Bundle ID",
+        placeholder: "com.example.app",
+        group: "credentials",
+      },
+      {
+        key: "apns.p8",
+        label: "APNs .p8 key",
+        placeholder: "-----BEGIN PRIVATE KEY-----",
+        group: "credentials",
+        secret: true,
+        multiline: true,
+      },
+      {
+        key: "fcm.projectId",
+        label: "FCM Project ID",
+        placeholder: "my-firebase-project",
+        group: "credentials",
+        help: "Firebase Cloud Messaging",
+      },
+      {
+        key: "fcm.serviceAccountJson",
+        label: "FCM service account JSON",
+        placeholder: '{ "type": "service_account", … }',
+        group: "credentials",
+        secret: true,
+        multiline: true,
+      },
     ],
   },
 }
 
-function setPath(target: Record<string, unknown>, path: string, value: string): void {
+function setPath(
+  target: Record<string, unknown>,
+  path: string,
+  value: string
+): void {
   const parts = path.split(".")
   let node = target
   for (let i = 0; i < parts.length - 1; i++) {
@@ -133,7 +267,11 @@ interface ConnectionDialogProps {
   trigger: React.ReactElement
 }
 
-export function ConnectionDialog({ type, existing, trigger }: ConnectionDialogProps) {
+export function ConnectionDialog({
+  type,
+  existing,
+  trigger,
+}: ConnectionDialogProps) {
   const form = CHANNEL_FORMS[type]
   const [open, setOpen] = useState(false)
   const create = useCreateConnection()
@@ -145,7 +283,10 @@ export function ConnectionDialog({ type, existing, trigger }: ConnectionDialogPr
   const [values, setValues] = useState<Record<string, string>>(() => {
     const seed: Record<string, string> = {}
     for (const f of form?.fields ?? []) {
-      seed[f.key] = f.group === "config" && existing ? getConfigValue(existing.config, f.key) : ""
+      seed[f.key] =
+        f.group === "config" && existing
+          ? getConfigValue(existing.config, f.key)
+          : ""
     }
     return seed
   })
@@ -218,14 +359,20 @@ export function ConnectionDialog({ type, existing, trigger }: ConnectionDialogPr
       <DialogTrigger render={trigger} />
       <DialogContent className="max-h-[85vh] max-w-lg overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{existing ? `Manage ${form.title}` : `Connect ${form.title}`}</DialogTitle>
+          <DialogTitle>
+            {existing ? `Manage ${form.title}` : `Connect ${form.title}`}
+          </DialogTitle>
           <DialogDescription>{form.blurb}</DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="conn-name">Connection name</Label>
-            <Input id="conn-name" value={name} onChange={(e) => setName(e.target.value)} />
+            <Input
+              id="conn-name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
           </div>
 
           {form.fields.map((f) => (
@@ -237,35 +384,56 @@ export function ConnectionDialog({ type, existing, trigger }: ConnectionDialogPr
                   placeholder={f.placeholder}
                   rows={3}
                   value={values[f.key] ?? ""}
-                  onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
+                  onChange={(e) =>
+                    setValues((v) => ({ ...v, [f.key]: e.target.value }))
+                  }
                 />
               ) : (
                 <Input
                   id={`conn-${f.key}`}
                   type={f.secret ? "password" : "text"}
-                  placeholder={existing && f.secret ? "•••••• (leave blank to keep)" : f.placeholder}
+                  placeholder={
+                    existing && f.secret
+                      ? "•••••• (leave blank to keep)"
+                      : f.placeholder
+                  }
                   value={values[f.key] ?? ""}
-                  onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
+                  onChange={(e) =>
+                    setValues((v) => ({ ...v, [f.key]: e.target.value }))
+                  }
                 />
               )}
-              {f.help && <p className="text-xs text-muted-foreground">{f.help}</p>}
+              {f.help && (
+                <p className="text-xs text-muted-foreground">{f.help}</p>
+              )}
             </div>
           ))}
 
           {existing && (
             <p className="text-xs text-muted-foreground">
-              Secrets are stored encrypted and never shown again. Leave secret fields blank to keep the current values.
+              Secrets are stored encrypted and never shown again. Leave secret
+              fields blank to keep the current values.
             </p>
           )}
           {error && <p className="text-sm text-destructive">{error}</p>}
 
           <div className="flex flex-wrap gap-2 pt-1">
-            <Button size="sm" onClick={handleSubmit} disabled={saving || missingRequired}>
+            <Button
+              size="sm"
+              onClick={handleSubmit}
+              disabled={saving || missingRequired}
+            >
               {saving ? "Saving…" : existing ? "Save changes" : "Connect"}
             </Button>
             {existing && (
               <>
-                <Button size="sm" variant="outline" className="gap-1.5" onClick={handleTest} disabled={health.isPending}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-1.5"
+                  onClick={handleTest}
+                  disabled={health.isPending}
+                >
                   <ActivityIcon className="size-4" />
                   {health.isPending ? "Testing…" : "Test"}
                 </Button>

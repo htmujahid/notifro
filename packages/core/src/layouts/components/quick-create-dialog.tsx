@@ -1,17 +1,12 @@
-import { useNavigate } from "react-router"
-import {
-  BellIcon,
-  CalendarIcon,
-  FileTextIcon,
-  UsersIcon,
-} from "lucide-react"
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@workspace/ui/components/dialog"
+import { BellIcon, CalendarIcon, FileTextIcon, UsersIcon } from "lucide-react"
+import { useNavigate } from "react-router"
 
 const OPTIONS = [
   {
@@ -59,9 +54,7 @@ export function QuickCreateDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Quick create</DialogTitle>
-          <DialogDescription>
-            What would you like to create?
-          </DialogDescription>
+          <DialogDescription>What would you like to create?</DialogDescription>
         </DialogHeader>
         <div className="grid grid-cols-2 gap-3 pt-2">
           {OPTIONS.map(({ title, description, icon: Icon, url }) => (
@@ -75,7 +68,9 @@ export function QuickCreateDialog({
               </div>
               <div>
                 <p className="text-sm font-medium">{title}</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  {description}
+                </p>
               </div>
             </button>
           ))}

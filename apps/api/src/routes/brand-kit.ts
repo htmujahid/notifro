@@ -1,7 +1,8 @@
-import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
-import { requireAuth } from '../middleware/auth'
-import { Errors, validationHook } from '../lib/errors'
-import type { AppEnv } from '../lib/types'
+import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+
+import { Errors, validationHook } from "../lib/errors"
+import type { AppEnv } from "../lib/types"
+import { requireAuth } from "../middleware/auth"
 
 const BrandKitDtoSchema = z.object({
   id: z.string(),
@@ -20,19 +21,27 @@ const UpdateBrandKitSchema = z.object({
 })
 
 const getRoute = createRoute({
-  method: 'get',
-  path: '/brand-kit',
+  method: "get",
+  path: "/brand-kit",
   responses: {
-    200: { content: { 'application/json': { schema: BrandKitDtoSchema } }, description: 'Brand kit' },
+    200: {
+      content: { "application/json": { schema: BrandKitDtoSchema } },
+      description: "Brand kit",
+    },
   },
 })
 
 const putRoute = createRoute({
-  method: 'put',
-  path: '/brand-kit',
-  request: { body: { content: { 'application/json': { schema: UpdateBrandKitSchema } } } },
+  method: "put",
+  path: "/brand-kit",
+  request: {
+    body: { content: { "application/json": { schema: UpdateBrandKitSchema } } },
+  },
   responses: {
-    200: { content: { 'application/json': { schema: BrandKitDtoSchema } }, description: 'Updated brand kit' },
+    200: {
+      content: { "application/json": { schema: BrandKitDtoSchema } },
+      description: "Updated brand kit",
+    },
   },
 })
 
@@ -45,46 +54,47 @@ function now(): string {
 }
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
-router.use('*', requireAuth)
+router.use("*", requireAuth)
 
 router.openapi(getRoute, async (c) => {
   const userId = c.var.user!.id
 
   const row = await c.var.db
-    .selectFrom('brand_kit')
-    .where('userId', '=', userId)
+    .selectFrom("brand_kit")
+    .where("userId", "=", userId)
     .selectAll()
     .executeTakeFirst()
 
-  if (!row) throw Errors.notFound('BrandKit')
+  if (!row) throw Errors.notFound("BrandKit")
   return c.json(row as z.infer<typeof BrandKitDtoSchema>)
 })
 
 router.openapi(putRoute, async (c) => {
-  const body = c.req.valid('json')
+  const body = c.req.valid("json")
   const userId = c.var.user!.id
   const ts = now()
 
   const existing = await c.var.db
-    .selectFrom('brand_kit')
-    .where('userId', '=', userId)
-    .select('id')
+    .selectFrom("brand_kit")
+    .where("userId", "=", userId)
+    .select("id")
     .executeTakeFirst()
 
   if (existing) {
     const updates: Record<string, unknown> = { updatedAt: ts }
     if (body.logoUrl !== undefined) updates.logoUrl = body.logoUrl
-    if (body.colors !== undefined) updates.colors = body.colors ? JSON.stringify(body.colors) : null
+    if (body.colors !== undefined)
+      updates.colors = body.colors ? JSON.stringify(body.colors) : null
     if (body.fontStack !== undefined) updates.fontStack = body.fontStack
 
     await c.var.db
-      .updateTable('brand_kit')
+      .updateTable("brand_kit")
       .set(updates)
-      .where('userId', '=', userId)
+      .where("userId", "=", userId)
       .execute()
   } else {
     await c.var.db
-      .insertInto('brand_kit')
+      .insertInto("brand_kit")
       .values({
         id: newId(),
         userId,
@@ -98,8 +108,8 @@ router.openapi(putRoute, async (c) => {
   }
 
   const row = await c.var.db
-    .selectFrom('brand_kit')
-    .where('userId', '=', userId)
+    .selectFrom("brand_kit")
+    .where("userId", "=", userId)
     .selectAll()
     .executeTakeFirstOrThrow()
 

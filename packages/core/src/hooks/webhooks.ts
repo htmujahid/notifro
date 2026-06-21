@@ -1,6 +1,11 @@
-import { useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-query"
 import { useApiClient } from "@workspace/api-client/context"
 import type { ListParams, ListResponse } from "@workspace/api-client/types"
+
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query"
 
 export interface WebhookEndpoint {
   id: string
@@ -83,7 +88,8 @@ export function useDeleteWebhook() {
   const api = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => api.delete<{ ok: boolean }>(`/api/channels/webhooks/${id}`),
+    mutationFn: (id: string) =>
+      api.delete<{ ok: boolean }>(`/api/channels/webhooks/${id}`),
     onSuccess: () => qc.invalidateQueries({ queryKey: webhookKeys.lists() }),
   })
 }
@@ -91,6 +97,7 @@ export function useDeleteWebhook() {
 export function useTestWebhook() {
   const api = useApiClient()
   return useMutation({
-    mutationFn: (id: string) => api.post<WebhookTestResult>(`/api/channels/webhooks/${id}/test`),
+    mutationFn: (id: string) =>
+      api.post<WebhookTestResult>(`/api/channels/webhooks/${id}/test`),
   })
 }

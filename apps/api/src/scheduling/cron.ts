@@ -1,15 +1,15 @@
 function parseField(field: string, min: number, max: number): Set<number> {
   const values = new Set<number>()
-  for (const part of field.split(',')) {
-    if (part === '*') {
+  for (const part of field.split(",")) {
+    if (part === "*") {
       for (let i = min; i <= max; i++) values.add(i)
-    } else if (part.includes('/')) {
-      const [range, stepStr] = part.split('/')
+    } else if (part.includes("/")) {
+      const [range, stepStr] = part.split("/")
       const step = parseInt(stepStr, 10)
-      const start = range === '*' ? min : parseInt(range, 10)
+      const start = range === "*" ? min : parseInt(range, 10)
       for (let i = start; i <= max; i += step) values.add(i)
-    } else if (part.includes('-')) {
-      const [startStr, endStr] = part.split('-')
+    } else if (part.includes("-")) {
+      const [startStr, endStr] = part.split("-")
       const s = parseInt(startStr, 10)
       const e = parseInt(endStr, 10)
       for (let i = s; i <= e; i++) values.add(i)
@@ -40,27 +40,27 @@ function parseCron(expr: string): ParsedCron {
   }
 }
 
-const WEEKDAY_ABBR = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+const WEEKDAY_ABBR = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
 function matchesCron(date: Date, tz: string, parsed: ParsedCron): boolean {
-  const f = new Intl.DateTimeFormat('en-US', {
+  const f = new Intl.DateTimeFormat("en-US", {
     timeZone: tz,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    weekday: 'short',
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    weekday: "short",
     hour12: false,
   })
   const parts = f.formatToParts(date)
-  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? '0'
-  let h = parseInt(get('hour'), 10)
+  const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "0"
+  let h = parseInt(get("hour"), 10)
   if (h === 24) h = 0
-  const minute = parseInt(get('minute'), 10)
-  const day = parseInt(get('day'), 10)
-  const month = parseInt(get('month'), 10)
-  const weekday = WEEKDAY_ABBR.indexOf(get('weekday'))
+  const minute = parseInt(get("minute"), 10)
+  const day = parseInt(get("day"), 10)
+  const month = parseInt(get("month"), 10)
+  const weekday = WEEKDAY_ABBR.indexOf(get("weekday"))
   return (
     parsed.minutes.has(minute) &&
     parsed.hours.has(h) &&

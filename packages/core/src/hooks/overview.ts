@@ -1,5 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useApiClient } from "@workspace/api-client/context"
+
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+
 import { inboxKeys } from "./inbox"
 
 export interface OnboardingSteps {
@@ -33,7 +35,7 @@ export interface OverviewData {
 }
 
 export const overviewKeys = {
-  all: ['overview'] as const,
+  all: ["overview"] as const,
   overview: () => [...overviewKeys.all] as const,
 }
 
@@ -41,7 +43,7 @@ export function useOverview() {
   const api = useApiClient()
   return useQuery({
     queryKey: overviewKeys.overview(),
-    queryFn: () => api.get<OverviewData>('/api/overview'),
+    queryFn: () => api.get<OverviewData>("/api/overview"),
     refetchInterval: 60_000,
   })
 }
@@ -50,7 +52,10 @@ export function useSendTest() {
   const api = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: () => api.post<{ ok: boolean; notificationId: string }>('/api/overview/test-send'),
+    mutationFn: () =>
+      api.post<{ ok: boolean; notificationId: string }>(
+        "/api/overview/test-send"
+      ),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: overviewKeys.all })
       qc.invalidateQueries({ queryKey: inboxKeys.all })
@@ -62,8 +67,11 @@ export function useOnboarding() {
   const api = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: { dismiss?: boolean; step?: string; completed?: boolean }) =>
-      api.patch<{ ok: boolean }>('/api/onboarding', body),
+    mutationFn: (body: {
+      dismiss?: boolean
+      step?: string
+      completed?: boolean
+    }) => api.patch<{ ok: boolean }>("/api/onboarding", body),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: overviewKeys.all })
     },

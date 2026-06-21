@@ -1,7 +1,20 @@
 import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card"
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card"
 import { BellIcon } from "lucide-react"
-import { useAnalyticsSummary, useAnalyticsTimeseries, useAnalyticsChannels, useAnalyticsTopTopics } from "../../hooks/analytics"
+
+import {
+  useAnalyticsChannels,
+  useAnalyticsSummary,
+  useAnalyticsTimeseries,
+  useAnalyticsTopTopics,
+} from "../../hooks/analytics"
 
 type Granularity = "hour" | "day" | "week"
 
@@ -19,17 +32,32 @@ function toIso(dateStr: string, endOfDay = false): string {
 }
 
 export function AnalyticsView() {
-  const [from, setFrom] = useState(() => formatDate(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()))
+  const [from, setFrom] = useState(() =>
+    formatDate(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+  )
   const [to, setTo] = useState(() => formatDate(new Date().toISOString()))
   const [granularity, setGranularity] = useState<Granularity>("day")
 
   const fromIso = toIso(from)
   const toIso_ = toIso(to, true)
 
-  const { data: summary, isLoading: summaryLoading } = useAnalyticsSummary({ from: fromIso, to: toIso_ })
-  const { data: timeseries, isLoading: tsLoading } = useAnalyticsTimeseries({ from: fromIso, to: toIso_, granularity })
-  const { data: channels, isLoading: channelsLoading } = useAnalyticsChannels({ from: fromIso, to: toIso_ })
-  const { data: topics, isLoading: topicsLoading } = useAnalyticsTopTopics({ from: fromIso, to: toIso_ })
+  const { data: summary, isLoading: summaryLoading } = useAnalyticsSummary({
+    from: fromIso,
+    to: toIso_,
+  })
+  const { data: timeseries, isLoading: tsLoading } = useAnalyticsTimeseries({
+    from: fromIso,
+    to: toIso_,
+    granularity,
+  })
+  const { data: channels, isLoading: channelsLoading } = useAnalyticsChannels({
+    from: fromIso,
+    to: toIso_,
+  })
+  const { data: topics, isLoading: topicsLoading } = useAnalyticsTopTopics({
+    from: fromIso,
+    to: toIso_,
+  })
 
   const summaryStats = summary
     ? [
@@ -52,12 +80,19 @@ export function AnalyticsView() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-xl font-semibold tracking-tight">Analytics</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Delivery performance and engagement across all channels.</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Delivery performance and engagement across all channels.
+          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2 text-sm">
           <div className="flex items-center gap-1">
-            <label htmlFor="from-date" className="text-muted-foreground text-xs">From</label>
+            <label
+              htmlFor="from-date"
+              className="text-muted-foreground text-xs"
+            >
+              From
+            </label>
             <input
               id="from-date"
               type="date"
@@ -67,7 +102,9 @@ export function AnalyticsView() {
             />
           </div>
           <div className="flex items-center gap-1">
-            <label htmlFor="to-date" className="text-muted-foreground text-xs">To</label>
+            <label htmlFor="to-date" className="text-muted-foreground text-xs">
+              To
+            </label>
             <input
               id="to-date"
               type="date"
@@ -108,7 +145,9 @@ export function AnalyticsView() {
       ) : (
         <div className="flex flex-col items-center justify-center rounded-xl py-8 ring-1 ring-foreground/10 text-center">
           <BellIcon className="mb-3 size-8 text-muted-foreground/40" />
-          <p className="text-sm text-muted-foreground">No data for this period.</p>
+          <p className="text-sm text-muted-foreground">
+            No data for this period.
+          </p>
         </div>
       )}
 
@@ -120,28 +159,48 @@ export function AnalyticsView() {
           {tsLoading ? (
             <div className="h-40 rounded bg-muted animate-pulse" />
           ) : tsData.length === 0 ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">No data for this period.</p>
+            <p className="py-8 text-center text-sm text-muted-foreground">
+              No data for this period.
+            </p>
           ) : (
             <div className="flex flex-col gap-2">
-              <svg viewBox={`0 0 800 120`} className="w-full h-32" aria-label="Timeseries chart">
+              <svg
+                viewBox={`0 0 800 120`}
+                className="w-full h-32"
+                aria-label="Timeseries chart"
+              >
                 {tsData.map((d, i) => {
                   const x = 8 + (i / (tsData.length - 1 || 1)) * 784
                   const sentH = (d.sent / maxSent) * 100
                   const delivH = (d.delivered / maxSent) * 100
                   return (
                     <g key={d.period}>
-                      <rect x={x - 4} y={112 - sentH} width={5} height={sentH} className="fill-primary/30" />
-                      <rect x={x + 1} y={112 - delivH} width={5} height={delivH} className="fill-primary" />
+                      <rect
+                        x={x - 4}
+                        y={112 - sentH}
+                        width={5}
+                        height={sentH}
+                        className="fill-primary/30"
+                      />
+                      <rect
+                        x={x + 1}
+                        y={112 - delivH}
+                        width={5}
+                        height={delivH}
+                        className="fill-primary"
+                      />
                     </g>
                   )
                 })}
               </svg>
               <div className="flex items-center gap-4 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1">
-                  <span className="inline-block size-2.5 rounded-sm bg-primary/30" /> Sent
+                  <span className="inline-block size-2.5 rounded-sm bg-primary/30" />{" "}
+                  Sent
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="inline-block size-2.5 rounded-sm bg-primary" /> Delivered
+                  <span className="inline-block size-2.5 rounded-sm bg-primary" />{" "}
+                  Delivered
                 </span>
               </div>
             </div>
@@ -155,27 +214,50 @@ export function AnalyticsView() {
           {channelsLoading ? (
             <div className="h-32 rounded-xl bg-muted animate-pulse" />
           ) : (channels?.data ?? []).length === 0 ? (
-            <p className="py-6 text-center text-sm text-muted-foreground">No channel data.</p>
+            <p className="py-6 text-center text-sm text-muted-foreground">
+              No channel data.
+            </p>
           ) : (
             <div className="overflow-hidden rounded-xl ring-1 ring-foreground/10">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border bg-muted/40">
-                    <th className="px-4 py-3 text-left font-medium text-muted-foreground">Channel</th>
-                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">Sent</th>
-                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">Delivered</th>
-                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">Opened</th>
-                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">Rate</th>
+                    <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                      Channel
+                    </th>
+                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">
+                      Sent
+                    </th>
+                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">
+                      Delivered
+                    </th>
+                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">
+                      Opened
+                    </th>
+                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">
+                      Rate
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border bg-card">
                   {(channels?.data ?? []).map((row) => (
-                    <tr key={row.channel} className="transition-colors hover:bg-muted/30">
+                    <tr
+                      key={row.channel}
+                      className="transition-colors hover:bg-muted/30"
+                    >
                       <td className="px-4 py-3 font-medium">{row.channel}</td>
-                      <td className="px-4 py-3 text-right text-muted-foreground">{row.sent.toLocaleString()}</td>
-                      <td className="px-4 py-3 text-right text-muted-foreground">{row.delivered.toLocaleString()}</td>
-                      <td className="px-4 py-3 text-right text-muted-foreground">{row.opened.toLocaleString()}</td>
-                      <td className="px-4 py-3 text-right font-medium text-green-700 dark:text-green-400">{pct(row.deliveryRate)}</td>
+                      <td className="px-4 py-3 text-right text-muted-foreground">
+                        {row.sent.toLocaleString()}
+                      </td>
+                      <td className="px-4 py-3 text-right text-muted-foreground">
+                        {row.delivered.toLocaleString()}
+                      </td>
+                      <td className="px-4 py-3 text-right text-muted-foreground">
+                        {row.opened.toLocaleString()}
+                      </td>
+                      <td className="px-4 py-3 text-right font-medium text-green-700 dark:text-green-400">
+                        {pct(row.deliveryRate)}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -189,25 +271,44 @@ export function AnalyticsView() {
           {topicsLoading ? (
             <div className="h-32 rounded-xl bg-muted animate-pulse" />
           ) : (topics?.data ?? []).length === 0 ? (
-            <p className="py-6 text-center text-sm text-muted-foreground">No topic data. Send notifications with a topicKey to see results.</p>
+            <p className="py-6 text-center text-sm text-muted-foreground">
+              No topic data. Send notifications with a topicKey to see results.
+            </p>
           ) : (
             <div className="overflow-hidden rounded-xl ring-1 ring-foreground/10">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border bg-muted/40">
-                    <th className="px-4 py-3 text-left font-medium text-muted-foreground">Topic</th>
-                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">Sent</th>
-                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">Delivered</th>
-                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">Rate</th>
+                    <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                      Topic
+                    </th>
+                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">
+                      Sent
+                    </th>
+                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">
+                      Delivered
+                    </th>
+                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">
+                      Rate
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border bg-card">
                   {(topics?.data ?? []).map((row) => (
-                    <tr key={row.topicKey} className="transition-colors hover:bg-muted/30">
+                    <tr
+                      key={row.topicKey}
+                      className="transition-colors hover:bg-muted/30"
+                    >
                       <td className="px-4 py-3 font-medium">{row.topicKey}</td>
-                      <td className="px-4 py-3 text-right text-muted-foreground">{row.sent.toLocaleString()}</td>
-                      <td className="px-4 py-3 text-right text-muted-foreground">{row.delivered.toLocaleString()}</td>
-                      <td className="px-4 py-3 text-right font-medium text-green-700 dark:text-green-400">{pct(row.deliveryRate)}</td>
+                      <td className="px-4 py-3 text-right text-muted-foreground">
+                        {row.sent.toLocaleString()}
+                      </td>
+                      <td className="px-4 py-3 text-right text-muted-foreground">
+                        {row.delivered.toLocaleString()}
+                      </td>
+                      <td className="px-4 py-3 text-right font-medium text-green-700 dark:text-green-400">
+                        {pct(row.deliveryRate)}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

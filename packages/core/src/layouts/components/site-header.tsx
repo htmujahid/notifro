@@ -1,8 +1,9 @@
-import { BellIcon, SearchIcon } from "lucide-react"
-import { useNavigate } from "react-router"
+import { Kbd } from "@workspace/ui/components/kbd"
 import { Separator } from "@workspace/ui/components/separator"
 import { SidebarTrigger } from "@workspace/ui/components/sidebar"
-import { Kbd } from "@workspace/ui/components/kbd"
+import { BellIcon, SearchIcon } from "lucide-react"
+import { useNavigate } from "react-router"
+
 import { useUnreadCount } from "../../hooks/inbox"
 
 export function SiteHeader({ onSearchOpen }: { onSearchOpen: () => void }) {

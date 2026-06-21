@@ -1,7 +1,8 @@
-import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
-import { requireAuth } from '../middleware/auth'
-import { validationHook } from '../lib/errors'
-import type { AppEnv } from '../lib/types'
+import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+
+import { validationHook } from "../lib/errors"
+import type { AppEnv } from "../lib/types"
+import { requireAuth } from "../middleware/auth"
 
 const HHMM = z.string().regex(/^\d{2}:\d{2}$/)
 
@@ -20,36 +21,52 @@ const PreferencesDtoSchema = z.object({
 })
 
 const patchRoute = createRoute({
-  method: 'patch',
-  path: '/recipients/preferences',
-  request: { body: { content: { 'application/json': { schema: PreferencesBodySchema } } } },
+  method: "patch",
+  path: "/recipients/preferences",
+  request: {
+    body: {
+      content: { "application/json": { schema: PreferencesBodySchema } },
+    },
+  },
   responses: {
-    200: { content: { 'application/json': { schema: PreferencesDtoSchema } }, description: 'Updated preferences' },
+    200: {
+      content: { "application/json": { schema: PreferencesDtoSchema } },
+      description: "Updated preferences",
+    },
   },
 })
 
 const getRoute = createRoute({
-  method: 'get',
-  path: '/recipients/preferences',
+  method: "get",
+  path: "/recipients/preferences",
   responses: {
-    200: { content: { 'application/json': { schema: PreferencesDtoSchema } }, description: 'Recipient preferences' },
+    200: {
+      content: { "application/json": { schema: PreferencesDtoSchema } },
+      description: "Recipient preferences",
+    },
   },
 })
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
-router.use('*', requireAuth)
+router.use("*", requireAuth)
 
 router.openapi(getRoute, async (c) => {
   const userId = c.var.user!.id
 
   const profile = await c.var.db
-    .selectFrom('recipient_profile')
-    .where('userId', '=', userId)
+    .selectFrom("recipient_profile")
+    .where("userId", "=", userId)
     .selectAll()
     .executeTakeFirst()
 
   if (!profile) {
-    return c.json({ userId, timezone: null, quietHoursStart: null, quietHoursEnd: null, updatedAt: new Date().toISOString() })
+    return c.json({
+      userId,
+      timezone: null,
+      quietHoursStart: null,
+      quietHoursEnd: null,
+      updatedAt: new Date().toISOString(),
+    })
   }
 
   return c.json(profile)
@@ -57,29 +74,33 @@ router.openapi(getRoute, async (c) => {
 
 router.openapi(patchRoute, async (c) => {
   const userId = c.var.user!.id
-  const body = c.req.valid('json')
+  const body = c.req.valid("json")
   const ts = new Date().toISOString()
 
   const existing = await c.var.db
-    .selectFrom('recipient_profile')
-    .where('userId', '=', userId)
+    .selectFrom("recipient_profile")
+    .where("userId", "=", userId)
     .selectAll()
     .executeTakeFirst()
 
   if (existing) {
     await c.var.db
-      .updateTable('recipient_profile')
+      .updateTable("recipient_profile")
       .set({
         ...(body.timezone !== undefined && { timezone: body.timezone }),
-        ...(body.quietHoursStart !== undefined && { quietHoursStart: body.quietHoursStart }),
-        ...(body.quietHoursEnd !== undefined && { quietHoursEnd: body.quietHoursEnd }),
+        ...(body.quietHoursStart !== undefined && {
+          quietHoursStart: body.quietHoursStart,
+        }),
+        ...(body.quietHoursEnd !== undefined && {
+          quietHoursEnd: body.quietHoursEnd,
+        }),
         updatedAt: ts,
       })
-      .where('userId', '=', userId)
+      .where("userId", "=", userId)
       .execute()
   } else {
     await c.var.db
-      .insertInto('recipient_profile')
+      .insertInto("recipient_profile")
       .values({
         userId,
         timezone: body.timezone ?? null,
@@ -91,8 +112,8 @@ router.openapi(patchRoute, async (c) => {
   }
 
   const profile = await c.var.db
-    .selectFrom('recipient_profile')
-    .where('userId', '=', userId)
+    .selectFrom("recipient_profile")
+    .where("userId", "=", userId)
     .selectAll()
     .executeTakeFirstOrThrow()
 

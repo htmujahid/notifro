@@ -1,18 +1,23 @@
-import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
-import { requireAuth } from '../middleware/auth'
-import { listQuerySchema, applyListQuery } from '../lib/list-query'
-import { Errors, validationHook } from '../lib/errors'
-import type { AppEnv } from '../lib/types'
+import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
 
-const SORTABLE = { name: 'name', createdAt: 'createdAt', updatedAt: 'updatedAt' }
+import { Errors, validationHook } from "../lib/errors"
+import { applyListQuery, listQuerySchema } from "../lib/list-query"
+import type { AppEnv } from "../lib/types"
+import { requireAuth } from "../middleware/auth"
+
+const SORTABLE = {
+  name: "name",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+}
 const FILTERABLE = {}
-const DEFAULT_SORT = { key: 'createdAt', order: 'desc' as const }
+const DEFAULT_SORT = { key: "createdAt", order: "desc" as const }
 
 const ChainStepSchema = z.object({
   channel: z.string().min(1),
   connectionId: z.string().optional(),
   waitForDeliveryMs: z.number().int().min(0).default(0),
-  successOn: z.array(z.enum(['delivered', 'opened', 'clicked'])).min(1),
+  successOn: z.array(z.enum(["delivered", "opened", "clicked"])).min(1),
 })
 
 const FallbackChainDtoSchema = z.object({
@@ -40,38 +45,59 @@ const ListResponseSchema = z.object({
 })
 
 const listRoute = createRoute({
-  method: 'get',
-  path: '/routing/chains',
+  method: "get",
+  path: "/routing/chains",
   request: {
-    query: listQuerySchema({ sortable: SORTABLE, filterable: FILTERABLE, defaultSort: DEFAULT_SORT }),
+    query: listQuerySchema({
+      sortable: SORTABLE,
+      filterable: FILTERABLE,
+      defaultSort: DEFAULT_SORT,
+    }),
   },
   responses: {
-    200: { content: { 'application/json': { schema: ListResponseSchema } }, description: 'Paginated fallback chains' },
+    200: {
+      content: { "application/json": { schema: ListResponseSchema } },
+      description: "Paginated fallback chains",
+    },
   },
 })
 
 const createRoute_ = createRoute({
-  method: 'post',
-  path: '/routing/chains',
-  request: { body: { content: { 'application/json': { schema: CreateFallbackChainSchema } } } },
+  method: "post",
+  path: "/routing/chains",
+  request: {
+    body: {
+      content: { "application/json": { schema: CreateFallbackChainSchema } },
+    },
+  },
   responses: {
-    201: { content: { 'application/json': { schema: FallbackChainDtoSchema } }, description: 'Created fallback chain' },
+    201: {
+      content: { "application/json": { schema: FallbackChainDtoSchema } },
+      description: "Created fallback chain",
+    },
   },
 })
 
 const patchRoute = createRoute({
-  method: 'patch',
-  path: '/routing/chains/:id',
-  request: { body: { content: { 'application/json': { schema: PatchFallbackChainSchema } } } },
+  method: "patch",
+  path: "/routing/chains/:id",
+  request: {
+    body: {
+      content: { "application/json": { schema: PatchFallbackChainSchema } },
+    },
+  },
   responses: {
-    200: { content: { 'application/json': { schema: FallbackChainDtoSchema } }, description: 'Updated fallback chain' },
+    200: {
+      content: { "application/json": { schema: FallbackChainDtoSchema } },
+      description: "Updated fallback chain",
+    },
   },
 })
 
 const deleteRoute = createRoute({
-  method: 'delete',
-  path: '/routing/chains/:id',
-  responses: { 204: { description: 'Deleted' } },
+  method: "delete",
+  path: "/routing/chains/:id",
+  responses: { 204: { description: "Deleted" } },
 })
 
 function newId() {
@@ -83,12 +109,15 @@ function now() {
 }
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
-router.use('*', requireAuth)
+router.use("*", requireAuth)
 
 router.openapi(listRoute, async (c) => {
-  const parsed = c.req.valid('query')
+  const parsed = c.req.valid("query")
   const userId = c.var.user!.id
-  const baseQuery = c.var.db.selectFrom('fallback_chain').where('userId', '=', userId).selectAll()
+  const baseQuery = c.var.db
+    .selectFrom("fallback_chain")
+    .where("userId", "=", userId)
+    .selectAll()
   const { qb, getPage } = applyListQuery(baseQuery, parsed, {
     sortable: SORTABLE,
     filterable: FILTERABLE,
@@ -96,16 +125,19 @@ router.openapi(listRoute, async (c) => {
   })
   const rows = await qb.execute()
   const page = getPage(rows as Record<string, unknown>[])
-  return c.json({ data: page.data as z.infer<typeof FallbackChainDtoSchema>[], nextCursor: page.nextCursor })
+  return c.json({
+    data: page.data as z.infer<typeof FallbackChainDtoSchema>[],
+    nextCursor: page.nextCursor,
+  })
 })
 
 router.openapi(createRoute_, async (c) => {
-  const body = c.req.valid('json')
+  const body = c.req.valid("json")
   const userId = c.var.user!.id
   const ts = now()
   const id = newId()
   await c.var.db
-    .insertInto('fallback_chain')
+    .insertInto("fallback_chain")
     .values({
       id,
       userId,
@@ -115,27 +147,39 @@ router.openapi(createRoute_, async (c) => {
       updatedAt: ts,
     })
     .execute()
-  const row = await c.var.db.selectFrom('fallback_chain').where('id', '=', id).selectAll().executeTakeFirstOrThrow()
+  const row = await c.var.db
+    .selectFrom("fallback_chain")
+    .where("id", "=", id)
+    .selectAll()
+    .executeTakeFirstOrThrow()
   return c.json(row as z.infer<typeof FallbackChainDtoSchema>, 201)
 })
 
 router.openapi(patchRoute, async (c) => {
   const { id } = c.req.param()
-  const body = c.req.valid('json')
+  const body = c.req.valid("json")
   const userId = c.var.user!.id
   const ts = now()
   const existing = await c.var.db
-    .selectFrom('fallback_chain')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
-    .select('id')
+    .selectFrom("fallback_chain")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
+    .select("id")
     .executeTakeFirst()
-  if (!existing) throw Errors.notFound('FallbackChain')
+  if (!existing) throw Errors.notFound("FallbackChain")
   const updates: Record<string, unknown> = { updatedAt: ts }
   if (body.name !== undefined) updates.name = body.name
   if (body.steps !== undefined) updates.steps = JSON.stringify(body.steps)
-  await c.var.db.updateTable('fallback_chain').set(updates).where('id', '=', id).execute()
-  const row = await c.var.db.selectFrom('fallback_chain').where('id', '=', id).selectAll().executeTakeFirstOrThrow()
+  await c.var.db
+    .updateTable("fallback_chain")
+    .set(updates)
+    .where("id", "=", id)
+    .execute()
+  const row = await c.var.db
+    .selectFrom("fallback_chain")
+    .where("id", "=", id)
+    .selectAll()
+    .executeTakeFirstOrThrow()
   return c.json(row as z.infer<typeof FallbackChainDtoSchema>)
 })
 
@@ -143,13 +187,13 @@ router.openapi(deleteRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
   const existing = await c.var.db
-    .selectFrom('fallback_chain')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
-    .select('id')
+    .selectFrom("fallback_chain")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
+    .select("id")
     .executeTakeFirst()
-  if (!existing) throw Errors.notFound('FallbackChain')
-  await c.var.db.deleteFrom('fallback_chain').where('id', '=', id).execute()
+  if (!existing) throw Errors.notFound("FallbackChain")
+  await c.var.db.deleteFrom("fallback_chain").where("id", "=", id).execute()
   return new Response(null, { status: 204 })
 })
 

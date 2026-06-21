@@ -1,17 +1,25 @@
-import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useAuth } from "@workspace/app/auth/context"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
-import { useAuth } from "@workspace/app/auth/context"
-import { changePasswordSchema, type ChangePasswordValues } from "../../schemas/account"
+import { Controller, useForm } from "react-hook-form"
+
+import {
+  type ChangePasswordValues,
+  changePasswordSchema,
+} from "../../schemas/account"
 
 export function ChangePasswordForm() {
   const auth = useAuth()
 
   const form = useForm<ChangePasswordValues>({
     resolver: zodResolver(changePasswordSchema),
-    defaultValues: { currentPassword: "", newPassword: "", confirmPassword: "" },
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
   })
 
   async function handleSubmit(values: ChangePasswordValues) {
@@ -28,7 +36,10 @@ export function ChangePasswordForm() {
   }
 
   return (
-    <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-4">
+    <form
+      onSubmit={form.handleSubmit(handleSubmit)}
+      className="flex flex-col gap-4"
+    >
       <Controller
         control={form.control}
         name="currentPassword"
@@ -43,7 +54,9 @@ export function ChangePasswordForm() {
               {...field}
             />
             {fieldState.error && (
-              <p className="text-xs text-destructive">{fieldState.error.message}</p>
+              <p className="text-xs text-destructive">
+                {fieldState.error.message}
+              </p>
             )}
           </div>
         )}
@@ -63,7 +76,9 @@ export function ChangePasswordForm() {
               {...field}
             />
             {fieldState.error && (
-              <p className="text-xs text-destructive">{fieldState.error.message}</p>
+              <p className="text-xs text-destructive">
+                {fieldState.error.message}
+              </p>
             )}
           </div>
         )}
@@ -83,7 +98,9 @@ export function ChangePasswordForm() {
               {...field}
             />
             {fieldState.error && (
-              <p className="text-xs text-destructive">{fieldState.error.message}</p>
+              <p className="text-xs text-destructive">
+                {fieldState.error.message}
+              </p>
             )}
           </div>
         )}
@@ -101,7 +118,11 @@ export function ChangePasswordForm() {
         </p>
       )}
 
-      <Button type="submit" disabled={form.formState.isSubmitting} className="self-start">
+      <Button
+        type="submit"
+        disabled={form.formState.isSubmitting}
+        className="self-start"
+      >
         {form.formState.isSubmitting ? "Updating…" : "Update password"}
       </Button>
     </form>

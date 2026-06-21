@@ -1,6 +1,18 @@
-import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-query"
 import { useApiClient } from "@workspace/api-client/context"
-import type { ListParams, ListResponse, ScheduledMessage, RecipientPreferences, RecurringSend } from "@workspace/api-client/types"
+import type {
+  ListParams,
+  ListResponse,
+  RecipientPreferences,
+  RecurringSend,
+  ScheduledMessage,
+} from "@workspace/api-client/types"
+
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query"
 
 export const scheduleKeys = {
   all: ["schedules"] as const,
@@ -27,7 +39,8 @@ export function useCancelSchedule() {
   const api = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => api.delete<{ ok: boolean }>(`/api/schedules/${id}`),
+    mutationFn: (id: string) =>
+      api.delete<{ ok: boolean }>(`/api/schedules/${id}`),
     onSuccess: () => qc.invalidateQueries({ queryKey: scheduleKeys.lists() }),
   })
 }
@@ -44,9 +57,16 @@ export function useUpdateRecipientPreferences() {
   const api = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: Partial<Pick<RecipientPreferences, "timezone" | "quietHoursStart" | "quietHoursEnd">>) =>
-      api.patch<RecipientPreferences>("/api/recipients/preferences", body),
-    onSuccess: () => qc.invalidateQueries({ queryKey: scheduleKeys.preferences() }),
+    mutationFn: (
+      body: Partial<
+        Pick<
+          RecipientPreferences,
+          "timezone" | "quietHoursStart" | "quietHoursEnd"
+        >
+      >
+    ) => api.patch<RecipientPreferences>("/api/recipients/preferences", body),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: scheduleKeys.preferences() }),
   })
 }
 
@@ -75,8 +95,12 @@ export function useCreateRecurringSend() {
   const api = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: { payload: Record<string, unknown>; channels: string[]; cron: string; timezone?: string }) =>
-      api.post<RecurringSend>("/api/recurring", body),
+    mutationFn: (body: {
+      payload: Record<string, unknown>
+      channels: string[]
+      cron: string
+      timezone?: string
+    }) => api.post<RecurringSend>("/api/recurring", body),
     onSuccess: () => qc.invalidateQueries({ queryKey: recurringKeys.lists() }),
   })
 }
@@ -85,8 +109,15 @@ export function usePatchRecurringSend() {
   const api = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, ...body }: { id: string; enabled?: number; cron?: string; timezone?: string }) =>
-      api.patch<RecurringSend>(`/api/recurring/${id}`, body),
+    mutationFn: ({
+      id,
+      ...body
+    }: {
+      id: string
+      enabled?: number
+      cron?: string
+      timezone?: string
+    }) => api.patch<RecurringSend>(`/api/recurring/${id}`, body),
     onSuccess: () => qc.invalidateQueries({ queryKey: recurringKeys.lists() }),
   })
 }
@@ -95,7 +126,8 @@ export function useDeleteRecurringSend() {
   const api = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => api.delete<{ ok: boolean }>(`/api/recurring/${id}`),
+    mutationFn: (id: string) =>
+      api.delete<{ ok: boolean }>(`/api/recurring/${id}`),
     onSuccess: () => qc.invalidateQueries({ queryKey: recurringKeys.lists() }),
   })
 }

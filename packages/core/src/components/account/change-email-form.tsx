@@ -1,12 +1,16 @@
-import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useApp } from "@workspace/app/app/context"
+import { useAuth } from "@workspace/app/auth/context"
+import { buildAuthURL } from "@workspace/app/auth/deep-link"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
-import { useAuth } from "@workspace/app/auth/context"
-import { buildAuthURL } from "@workspace/app/auth/deep-link"
-import { useApp } from "@workspace/app/app/context"
-import { changeEmailSchema, type ChangeEmailValues } from "../../schemas/account"
+import { Controller, useForm } from "react-hook-form"
+
+import {
+  type ChangeEmailValues,
+  changeEmailSchema,
+} from "../../schemas/account"
 
 export function ChangeEmailForm() {
   const auth = useAuth()
@@ -36,7 +40,10 @@ export function ChangeEmailForm() {
   }
 
   return (
-    <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-4">
+    <form
+      onSubmit={form.handleSubmit(handleSubmit)}
+      className="flex flex-col gap-4"
+    >
       <Controller
         control={form.control}
         name="newEmail"
@@ -52,7 +59,9 @@ export function ChangeEmailForm() {
               {...field}
             />
             {fieldState.error && (
-              <p className="text-xs text-destructive">{fieldState.error.message}</p>
+              <p className="text-xs text-destructive">
+                {fieldState.error.message}
+              </p>
             )}
           </div>
         )}
@@ -64,7 +73,11 @@ export function ChangeEmailForm() {
         </p>
       )}
 
-      <Button type="submit" disabled={form.formState.isSubmitting} className="self-start">
+      <Button
+        type="submit"
+        disabled={form.formState.isSubmitting}
+        className="self-start"
+      >
         {form.formState.isSubmitting ? "Sending…" : "Change email"}
       </Button>
     </form>

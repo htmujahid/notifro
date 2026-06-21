@@ -1,4 +1,4 @@
-import { binding, type EmailFrom, type EmailUser } from '../binding'
+import { type EmailFrom, type EmailUser, binding } from "../binding"
 
 export async function sendVerificationEmail({
   user,
@@ -13,7 +13,7 @@ export async function sendVerificationEmail({
   await binding().send({
     to: user.email,
     from,
-    subject: 'Verify your email address',
+    subject: "Verify your email address",
     html: `
 <!DOCTYPE html>
 <html>

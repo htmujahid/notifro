@@ -1,6 +1,16 @@
-import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useApiClient } from "@workspace/api-client/context"
-import type { ListParams, ListResponse, Journey, JourneyRun } from "@workspace/api-client/types"
+import type {
+  Journey,
+  JourneyRun,
+  ListParams,
+  ListResponse,
+} from "@workspace/api-client/types"
+
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query"
 
 export const journeyKeys = {
   all: ["journeys"] as const,
@@ -54,8 +64,11 @@ export function useCreateJourney() {
   const api = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: { name: string; trigger?: Record<string, unknown>; steps: Record<string, unknown> }) =>
-      api.post<Journey>("/api/journeys", body),
+    mutationFn: (body: {
+      name: string
+      trigger?: Record<string, unknown>
+      steps: Record<string, unknown>
+    }) => api.post<Journey>("/api/journeys", body),
     onSuccess: () => qc.invalidateQueries({ queryKey: journeyKeys.lists() }),
   })
 }
@@ -64,7 +77,10 @@ export function useUpdateJourney() {
   const api = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, ...body }: {
+    mutationFn: ({
+      id,
+      ...body
+    }: {
       id: string
       name?: string
       trigger?: Record<string, unknown> | null
@@ -91,7 +107,8 @@ export function useActivateJourney() {
   const api = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => api.post<Journey>(`/api/journeys/${id}/activate`, {}),
+    mutationFn: (id: string) =>
+      api.post<Journey>(`/api/journeys/${id}/activate`, {}),
     onSuccess: (_data, id) => {
       qc.invalidateQueries({ queryKey: journeyKeys.lists() })
       qc.invalidateQueries({ queryKey: journeyKeys.detail(id) })
@@ -103,8 +120,16 @@ export function useEnrollRecipient() {
   const api = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ journeyId, recipientId }: { journeyId: string; recipientId: string }) =>
-      api.post<JourneyRun>(`/api/journeys/${journeyId}/enroll`, { recipientId }),
+    mutationFn: ({
+      journeyId,
+      recipientId,
+    }: {
+      journeyId: string
+      recipientId: string
+    }) =>
+      api.post<JourneyRun>(`/api/journeys/${journeyId}/enroll`, {
+        recipientId,
+      }),
     onSuccess: (_data, { journeyId }) => {
       qc.invalidateQueries({ queryKey: journeyKeys.runs(journeyId) })
     },
@@ -114,7 +139,14 @@ export function useEnrollRecipient() {
 export function useTriggerEvent() {
   const api = useApiClient()
   return useMutation({
-    mutationFn: (body: { name: string; recipientId?: string; payload?: Record<string, unknown> }) =>
-      api.post<{ eventId: string; journeysTriggered: number }>("/api/events", body),
+    mutationFn: (body: {
+      name: string
+      recipientId?: string
+      payload?: Record<string, unknown>
+    }) =>
+      api.post<{ eventId: string; journeysTriggered: number }>(
+        "/api/events",
+        body
+      ),
   })
 }

@@ -1,8 +1,10 @@
-import type { betterAuth } from 'better-auth'
+import type { betterAuth } from "better-auth"
 
 // better-auth's `secondaryStorage` shape. Inferred from the option so we stay in
 // sync with the installed version without importing an unexported type.
-type SecondaryStorage = NonNullable<Parameters<typeof betterAuth>[0]['secondaryStorage']>
+type SecondaryStorage = NonNullable<
+  Parameters<typeof betterAuth>[0]["secondaryStorage"]
+>
 
 // Cloudflare KV rejects an `expirationTtl` below 60 seconds. better-auth uses
 // short TTLs for rate-limit windows, so clamp anything smaller to the floor.
@@ -25,7 +27,9 @@ export function kvSecondaryStorage(kv: KVNamespace): SecondaryStorage {
     },
     set: async (key, value, ttl) => {
       if (ttl) {
-        await kv.put(key, value, { expirationTtl: Math.max(ttl, KV_MIN_TTL_SECONDS) })
+        await kv.put(key, value, {
+          expirationTtl: Math.max(ttl, KV_MIN_TTL_SECONDS),
+        })
       } else {
         await kv.put(key, value)
       }

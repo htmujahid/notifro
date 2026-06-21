@@ -1,9 +1,13 @@
 import { Suspense, useEffect } from "react"
-import { createHashRouter, RouterProvider } from "react-router"
+
 import { AppProvider } from "@workspace/app/app/context"
 import { createDesktopAuthClient } from "@workspace/app/auth/client.desktop"
-import { NATIVE_REDIRECT_URL, deepLinkToPath } from "@workspace/app/auth/deep-link"
+import {
+  NATIVE_REDIRECT_URL,
+  deepLinkToPath,
+} from "@workspace/app/auth/deep-link"
 import { routes } from "@workspace/views/routes/desktop"
+import { RouterProvider, createHashRouter } from "react-router"
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8787"
 const authClient = createDesktopAuthClient(API_URL)
@@ -18,7 +22,12 @@ export function App() {
   }, [])
 
   return (
-    <AppProvider platform="desktop" authClient={authClient} apiBaseURL={API_URL} appBaseURL={NATIVE_REDIRECT_URL}>
+    <AppProvider
+      platform="desktop"
+      authClient={authClient}
+      apiBaseURL={API_URL}
+      appBaseURL={NATIVE_REDIRECT_URL}
+    >
       <Suspense fallback={null}>
         <RouterProvider router={router} />
       </Suspense>

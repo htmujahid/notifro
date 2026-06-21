@@ -1,7 +1,9 @@
 import { Suspense, useState } from "react"
-import { Outlet } from "react-router"
+
 import { SidebarInset, SidebarProvider } from "@workspace/ui/components/sidebar"
 import { Toaster } from "@workspace/ui/components/sonner"
+import { Outlet } from "react-router"
+
 import { AppSidebar } from "./components/app-sidebar"
 import { SearchCommand } from "./components/search-command"
 import { SiteHeader } from "./components/site-header"

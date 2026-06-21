@@ -1,4 +1,5 @@
 import { useState } from "react"
+
 import { RecipientsTab } from "./recipients-tab"
 import { SegmentsTab } from "./segments-tab"
 
@@ -11,7 +12,8 @@ export function AudiencesView() {
         <div>
           <h1 className="text-xl font-semibold tracking-tight">Audiences</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Manage contacts and segment them into reusable groups for targeted notifications.
+            Manage contacts and segment them into reusable groups for targeted
+            notifications.
           </p>
         </div>
       </div>

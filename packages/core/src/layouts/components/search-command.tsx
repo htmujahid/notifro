@@ -1,5 +1,16 @@
 import { useEffect } from "react"
-import { useNavigate } from "react-router"
+
+import {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from "@workspace/ui/components/command"
 import {
   BarChart3Icon,
   BellIcon,
@@ -16,17 +27,7 @@ import {
   UserIcon,
   UsersIcon,
 } from "lucide-react"
-import {
-  Command,
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
-} from "@workspace/ui/components/command"
+import { useNavigate } from "react-router"
 
 export function SearchCommand({
   open,
@@ -141,7 +142,6 @@ export function SearchCommand({
               Two-factor auth
             </CommandItem>
           </CommandGroup>
-
         </CommandList>
       </Command>
     </CommandDialog>

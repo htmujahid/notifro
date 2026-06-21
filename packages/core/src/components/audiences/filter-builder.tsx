@@ -1,9 +1,23 @@
-import { PlusIcon, TrashIcon } from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@workspace/ui/components/select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select"
+import { PlusIcon, TrashIcon } from "lucide-react"
 
-export type FilterOp = "eq" | "neq" | "gt" | "lt" | "gte" | "lte" | "contains" | "in"
+export type FilterOp =
+  | "eq"
+  | "neq"
+  | "gt"
+  | "lt"
+  | "gte"
+  | "lte"
+  | "contains"
+  | "in"
 
 export interface FilterClause {
   field: string
@@ -51,13 +65,18 @@ export function FilterBuilder({
             onChange={(e) => updateClause(i, { field: e.target.value })}
             className="w-36"
           />
-          <Select value={clause.op} onValueChange={(v) => updateClause(i, { op: v as FilterOp })}>
+          <Select
+            value={clause.op}
+            onValueChange={(v) => updateClause(i, { op: v as FilterOp })}
+          >
             <SelectTrigger className="w-32">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {(Object.keys(OP_LABELS) as FilterOp[]).map((op) => (
-                <SelectItem key={op} value={op}>{OP_LABELS[op]}</SelectItem>
+                <SelectItem key={op} value={op}>
+                  {OP_LABELS[op]}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -72,7 +91,12 @@ export function FilterBuilder({
           </Button>
         </div>
       ))}
-      <Button variant="outline" size="sm" className="w-fit gap-1.5" onClick={addClause}>
+      <Button
+        variant="outline"
+        size="sm"
+        className="w-fit gap-1.5"
+        onClick={addClause}
+      >
         <PlusIcon className="size-3.5" />
         Add condition
       </Button>

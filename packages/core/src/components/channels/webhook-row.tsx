@@ -1,8 +1,14 @@
-import { toast } from "sonner"
 import { Button } from "@workspace/ui/components/button"
 import { Switch } from "@workspace/ui/components/switch"
 import { SendIcon, Trash2Icon } from "lucide-react"
-import { useUpdateWebhook, useDeleteWebhook, useTestWebhook, type WebhookEndpoint } from "../../hooks/webhooks"
+import { toast } from "sonner"
+
+import {
+  type WebhookEndpoint,
+  useDeleteWebhook,
+  useTestWebhook,
+  useUpdateWebhook,
+} from "../../hooks/webhooks"
 
 export function WebhookRow({ endpoint }: { endpoint: WebhookEndpoint }) {
   const update = useUpdateWebhook(endpoint.id)
@@ -12,8 +18,14 @@ export function WebhookRow({ endpoint }: { endpoint: WebhookEndpoint }) {
   async function handleTest() {
     try {
       const result = await test.mutateAsync(endpoint.id)
-      if (result.ok) toast.success(`Test delivered — HTTP ${result.status} in ${result.latencyMs}ms`)
-      else toast.error(`Test failed — ${result.status ? `HTTP ${result.status}` : result.error} (${result.latencyMs}ms)`)
+      if (result.ok)
+        toast.success(
+          `Test delivered — HTTP ${result.status} in ${result.latencyMs}ms`
+        )
+      else
+        toast.error(
+          `Test failed — ${result.status ? `HTTP ${result.status}` : result.error} (${result.latencyMs}ms)`
+        )
     } catch {
       toast.error("Test request failed")
     }
@@ -24,7 +36,8 @@ export function WebhookRow({ endpoint }: { endpoint: WebhookEndpoint }) {
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium">{endpoint.url}</p>
         <p className="text-xs text-muted-foreground">
-          {endpoint.description ? `${endpoint.description} · ` : ""}secret ••••{endpoint.secretLast4}
+          {endpoint.description ? `${endpoint.description} · ` : ""}secret ••••
+          {endpoint.secretLast4}
         </p>
       </div>
       <Switch
@@ -32,7 +45,13 @@ export function WebhookRow({ endpoint }: { endpoint: WebhookEndpoint }) {
         onCheckedChange={(checked) => update.mutate({ enabled: checked })}
         disabled={update.isPending}
       />
-      <Button size="icon" variant="ghost" onClick={handleTest} disabled={test.isPending} title="Send test">
+      <Button
+        size="icon"
+        variant="ghost"
+        onClick={handleTest}
+        disabled={test.isPending}
+        title="Send test"
+      >
         <SendIcon className="size-4" />
       </Button>
       <Button

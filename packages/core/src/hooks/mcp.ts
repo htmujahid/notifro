@@ -1,6 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useApiClient } from "@workspace/api-client/context"
-import type { ListResponse, McpApprovalGate, McpPendingAction } from "@workspace/api-client/types"
+import type {
+  ListResponse,
+  McpApprovalGate,
+  McpPendingAction,
+} from "@workspace/api-client/types"
+
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 export const mcpKeys = {
   all: ["mcp"] as const,
@@ -49,7 +54,10 @@ export function useApproveMcpAction() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (id: string) =>
-      api.post<{ approved: boolean; result: unknown }>(`/api/mcp/pending/${id}/approve`, {}),
+      api.post<{ approved: boolean; result: unknown }>(
+        `/api/mcp/pending/${id}/approve`,
+        {}
+      ),
     onSuccess: () => qc.invalidateQueries({ queryKey: mcpKeys.pending() }),
   })
 }

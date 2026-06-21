@@ -1,10 +1,3 @@
-import {
-  ChevronsUpDownIcon,
-  LogOutIcon,
-  ShieldIcon,
-  KeyRoundIcon,
-  UserIcon,
-} from "lucide-react"
 import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar"
 import {
   DropdownMenu,
@@ -21,6 +14,13 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@workspace/ui/components/sidebar"
+import {
+  ChevronsUpDownIcon,
+  KeyRoundIcon,
+  LogOutIcon,
+  ShieldIcon,
+  UserIcon,
+} from "lucide-react"
 
 export function NavUser({
   user,
@@ -38,10 +38,7 @@ export function NavUser({
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
-              <SidebarMenuButton
-                size="lg"
-                className="aria-expanded:bg-muted"
-              />
+              <SidebarMenuButton size="lg" className="aria-expanded:bg-muted" />
             }
           >
             <Avatar className="size-8 rounded-lg">
@@ -50,7 +47,9 @@ export function NavUser({
               </AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{user.name || "User"}</span>
+              <span className="truncate font-medium">
+                {user.name || "User"}
+              </span>
               <span className="truncate text-xs text-foreground/70">
                 {user.email}
               </span>
@@ -72,7 +71,9 @@ export function NavUser({
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">{user.name || "User"}</span>
+                    <span className="truncate font-medium">
+                      {user.name || "User"}
+                    </span>
                     <span className="truncate text-xs text-muted-foreground">
                       {user.email}
                     </span>
@@ -90,7 +91,9 @@ export function NavUser({
                 <ShieldIcon />
                 Security
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onNavigate("/account/two-factor")}>
+              <DropdownMenuItem
+                onClick={() => onNavigate("/account/two-factor")}
+              >
                 <KeyRoundIcon />
                 Two-factor auth
               </DropdownMenuItem>

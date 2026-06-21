@@ -1,8 +1,9 @@
 import { useState } from "react"
+
+import { useApiClient } from "@workspace/api-client/context"
 import { Button } from "@workspace/ui/components/button"
 import { Card, CardContent } from "@workspace/ui/components/card"
 import { CodeIcon } from "lucide-react"
-import { useApiClient } from "@workspace/api-client/context"
 
 export function SandboxPanel() {
   const api = useApiClient()
@@ -66,7 +67,9 @@ export function SandboxPanel() {
         <CodeIcon className="size-4 text-muted-foreground" />
         <div>
           <h2 className="text-sm font-medium">Sandbox preview</h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">Render a payload without sending. Uses your session auth.</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Render a payload without sending. Uses your session auth.
+          </p>
         </div>
       </div>
 
@@ -74,7 +77,9 @@ export function SandboxPanel() {
         <CardContent className="flex flex-col gap-3">
           <div className="flex gap-3">
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-muted-foreground">Channel</label>
+              <label className="text-xs font-medium text-muted-foreground">
+                Channel
+              </label>
               <select
                 className="rounded-md border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 value={channel}
@@ -87,7 +92,9 @@ export function SandboxPanel() {
               </select>
             </div>
             <div className="flex flex-1 flex-col gap-1">
-              <label className="text-xs font-medium text-muted-foreground">To</label>
+              <label className="text-xs font-medium text-muted-foreground">
+                To
+              </label>
               <input
                 className="rounded-md border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 placeholder="user@example.com"
@@ -97,7 +104,9 @@ export function SandboxPanel() {
             </div>
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium text-muted-foreground">Subject</label>
+            <label className="text-xs font-medium text-muted-foreground">
+              Subject
+            </label>
             <input
               className="rounded-md border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
               placeholder="Hello"
@@ -106,7 +115,9 @@ export function SandboxPanel() {
             />
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium text-muted-foreground">Body</label>
+            <label className="text-xs font-medium text-muted-foreground">
+              Body
+            </label>
             <textarea
               className="rounded-md border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
               rows={3}
@@ -116,10 +127,19 @@ export function SandboxPanel() {
             />
           </div>
           <div className="flex gap-2">
-            <Button size="sm" disabled={loading || !to || !body} onClick={handleSandboxPreview}>
+            <Button
+              size="sm"
+              disabled={loading || !to || !body}
+              onClick={handleSandboxPreview}
+            >
               {loading ? "Previewing…" : "Preview (sandbox)"}
             </Button>
-            <Button size="sm" variant="outline" disabled={loading || !to || !body} onClick={handlePreview}>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={loading || !to || !body}
+              onClick={handlePreview}
+            >
               Send (real)
             </Button>
           </div>

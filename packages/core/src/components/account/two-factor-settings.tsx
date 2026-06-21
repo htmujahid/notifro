@@ -1,9 +1,12 @@
 import { useState } from "react"
-import { useQueryClient } from "@tanstack/react-query"
+
+import { SESSION_QUERY_KEY, useSession } from "@workspace/app/auth/use-session"
 import { Button } from "@workspace/ui/components/button"
-import { useSession, SESSION_QUERY_KEY } from "@workspace/app/auth/use-session"
-import { EnableFlow } from "./enable-flow"
+
+import { useQueryClient } from "@tanstack/react-query"
+
 import { DisableFlow } from "./disable-flow"
+import { EnableFlow } from "./enable-flow"
 import { RegenerateBackupCodesFlow } from "./regenerate-backup-codes-flow"
 
 type ActiveFlow = "none" | "enable" | "disable" | "backup-codes"
@@ -37,7 +40,9 @@ export function TwoFactorSettings() {
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium">
-            {isEnabled ? "Two-factor authentication is enabled" : "Two-factor authentication is disabled"}
+            {isEnabled
+              ? "Two-factor authentication is enabled"
+              : "Two-factor authentication is disabled"}
           </p>
           <p className="mt-0.5 text-sm text-muted-foreground">
             {isEnabled
@@ -59,10 +64,18 @@ export function TwoFactorSettings() {
       <div className="flex flex-wrap gap-2">
         {isEnabled ? (
           <>
-            <Button variant="destructive" size="sm" onClick={() => setActiveFlow("disable")}>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => setActiveFlow("disable")}
+            >
               Disable 2FA
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setActiveFlow("backup-codes")}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setActiveFlow("backup-codes")}
+            >
               Regenerate backup codes
             </Button>
           </>

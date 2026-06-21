@@ -1,4 +1,5 @@
 import { useState } from "react"
+
 import { ChevronDownIcon } from "lucide-react"
 
 export function FaqItem({ q, a }: { q: string; a: string }) {
@@ -14,9 +15,7 @@ export function FaqItem({ q, a }: { q: string; a: string }) {
           className={`size-4 shrink-0 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`}
         />
       </button>
-      {open && (
-        <p className="pb-4 text-sm text-muted-foreground">{a}</p>
-      )}
+      {open && <p className="pb-4 text-sm text-muted-foreground">{a}</p>}
     </div>
   )
 }

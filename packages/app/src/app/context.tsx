@@ -1,10 +1,12 @@
 import { createContext, useContext, useMemo } from "react"
-import { ThemeProvider } from "@workspace/ui-primitives/components/theme-provider"
-import { AuthProvider } from "../auth/context"
-import type { AuthClient } from "../auth/client"
-import { QueryProvider } from "./query"
+
 import { createApiClient } from "@workspace/api-client/client"
 import { ApiClientProvider } from "@workspace/api-client/context"
+import { ThemeProvider } from "@workspace/ui-primitives/components/theme-provider"
+
+import type { AuthClient } from "../auth/client"
+import { AuthProvider } from "../auth/context"
+import { QueryProvider } from "./query"
 
 export type Platform = "web" | "desktop" | "android" | "ios"
 
@@ -27,7 +29,13 @@ export interface AppProviderProps {
   children: React.ReactNode
 }
 
-export function AppProvider({ platform, authClient, apiBaseURL, appBaseURL, children }: AppProviderProps) {
+export function AppProvider({
+  platform,
+  authClient,
+  apiBaseURL,
+  appBaseURL,
+  children,
+}: AppProviderProps) {
   const value = useMemo<AppContextValue>(
     () => ({
       platform,
@@ -37,7 +45,7 @@ export function AppProvider({ platform, authClient, apiBaseURL, appBaseURL, chil
       isNative: platform !== "web",
       appBaseURL,
     }),
-    [platform, appBaseURL],
+    [platform, appBaseURL]
   )
 
   const apiClient = useMemo(() => createApiClient(apiBaseURL), [apiBaseURL])

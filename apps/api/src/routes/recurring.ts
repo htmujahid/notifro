@@ -1,9 +1,10 @@
-import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
-import { requireAuth } from '../middleware/auth'
-import { listQuerySchema, applyListQuery } from '../lib/list-query'
-import { Errors, validationHook } from '../lib/errors'
-import { nextCronRun, validateCronExpr } from '../scheduling/cron'
-import type { AppEnv } from '../lib/types'
+import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+
+import { Errors, validationHook } from "../lib/errors"
+import { applyListQuery, listQuerySchema } from "../lib/list-query"
+import type { AppEnv } from "../lib/types"
+import { requireAuth } from "../middleware/auth"
+import { nextCronRun, validateCronExpr } from "../scheduling/cron"
 
 const RecurringSendDtoSchema = z.object({
   id: z.string(),
@@ -34,7 +35,7 @@ const CreateBodySchema = z.object({
   payload: z.record(z.string(), z.unknown()),
   channels: z.array(z.string()).min(1),
   cron: z.string(),
-  timezone: z.string().optional().default('UTC'),
+  timezone: z.string().optional().default("UTC"),
 })
 
 const PatchBodySchema = z.object({
@@ -45,88 +46,142 @@ const PatchBodySchema = z.object({
   channels: z.array(z.string()).optional(),
 })
 
-const SORTABLE = { createdAt: 'createdAt', nextRunAt: 'nextRunAt' }
+const SORTABLE = { createdAt: "createdAt", nextRunAt: "nextRunAt" }
 const FILTERABLE = {
-  enabled: { column: 'enabled', schema: z.coerce.number().int().min(0).max(1), operator: 'eq' as const },
-  channel: { column: 'channels', schema: z.string(), operator: 'like' as const },
+  enabled: {
+    column: "enabled",
+    schema: z.coerce.number().int().min(0).max(1),
+    operator: "eq" as const,
+  },
+  channel: {
+    column: "channels",
+    schema: z.string(),
+    operator: "like" as const,
+  },
 }
-const DEFAULT_SORT = { key: 'createdAt', order: 'desc' as const }
+const DEFAULT_SORT = { key: "createdAt", order: "desc" as const }
 
-const RUNS_SORTABLE = { sendAt: 'sendAt' }
+const RUNS_SORTABLE = { sendAt: "sendAt" }
 const RUNS_FILTERABLE = {
-  status: { column: 'status', schema: z.enum(['pending', 'enqueued', 'cancelled']), operator: 'eq' as const },
-  from: { column: 'sendAt', schema: z.string(), operator: 'gte' as const },
-  to: { column: 'sendAt', schema: z.string(), operator: 'lte' as const },
+  status: {
+    column: "status",
+    schema: z.enum(["pending", "enqueued", "cancelled"]),
+    operator: "eq" as const,
+  },
+  from: { column: "sendAt", schema: z.string(), operator: "gte" as const },
+  to: { column: "sendAt", schema: z.string(), operator: "lte" as const },
 }
-const RUNS_DEFAULT_SORT = { key: 'sendAt', order: 'desc' as const }
+const RUNS_DEFAULT_SORT = { key: "sendAt", order: "desc" as const }
 
-const ListResponseSchema = z.object({ data: z.array(RecurringSendDtoSchema), nextCursor: z.string().nullable() })
-const RunsResponseSchema = z.object({ data: z.array(RunDtoSchema), nextCursor: z.string().nullable() })
+const ListResponseSchema = z.object({
+  data: z.array(RecurringSendDtoSchema),
+  nextCursor: z.string().nullable(),
+})
+const RunsResponseSchema = z.object({
+  data: z.array(RunDtoSchema),
+  nextCursor: z.string().nullable(),
+})
 
 const createRoute_ = createRoute({
-  method: 'post',
-  path: '/recurring',
-  request: { body: { content: { 'application/json': { schema: CreateBodySchema } } } },
+  method: "post",
+  path: "/recurring",
+  request: {
+    body: { content: { "application/json": { schema: CreateBodySchema } } },
+  },
   responses: {
-    201: { content: { 'application/json': { schema: RecurringSendDtoSchema } }, description: 'Created' },
+    201: {
+      content: { "application/json": { schema: RecurringSendDtoSchema } },
+      description: "Created",
+    },
   },
 })
 
 const listRoute = createRoute({
-  method: 'get',
-  path: '/recurring',
-  request: { query: listQuerySchema({ sortable: SORTABLE, filterable: FILTERABLE, defaultSort: DEFAULT_SORT }) },
+  method: "get",
+  path: "/recurring",
+  request: {
+    query: listQuerySchema({
+      sortable: SORTABLE,
+      filterable: FILTERABLE,
+      defaultSort: DEFAULT_SORT,
+    }),
+  },
   responses: {
-    200: { content: { 'application/json': { schema: ListResponseSchema } }, description: 'Paginated recurring sends' },
+    200: {
+      content: { "application/json": { schema: ListResponseSchema } },
+      description: "Paginated recurring sends",
+    },
   },
 })
 
 const patchRoute = createRoute({
-  method: 'patch',
-  path: '/recurring/:id',
-  request: { body: { content: { 'application/json': { schema: PatchBodySchema } } } },
+  method: "patch",
+  path: "/recurring/:id",
+  request: {
+    body: { content: { "application/json": { schema: PatchBodySchema } } },
+  },
   responses: {
-    200: { content: { 'application/json': { schema: RecurringSendDtoSchema } }, description: 'Updated' },
+    200: {
+      content: { "application/json": { schema: RecurringSendDtoSchema } },
+      description: "Updated",
+    },
   },
 })
 
 const deleteRoute = createRoute({
-  method: 'delete',
-  path: '/recurring/:id',
+  method: "delete",
+  path: "/recurring/:id",
   responses: {
-    200: { content: { 'application/json': { schema: z.object({ ok: z.literal(true) }) } }, description: 'Deleted' },
+    200: {
+      content: {
+        "application/json": { schema: z.object({ ok: z.literal(true) }) },
+      },
+      description: "Deleted",
+    },
   },
 })
 
 const runsRoute = createRoute({
-  method: 'get',
-  path: '/recurring/:id/runs',
-  request: { query: listQuerySchema({ sortable: RUNS_SORTABLE, filterable: RUNS_FILTERABLE, defaultSort: RUNS_DEFAULT_SORT }) },
+  method: "get",
+  path: "/recurring/:id/runs",
+  request: {
+    query: listQuerySchema({
+      sortable: RUNS_SORTABLE,
+      filterable: RUNS_FILTERABLE,
+      defaultSort: RUNS_DEFAULT_SORT,
+    }),
+  },
   responses: {
-    200: { content: { 'application/json': { schema: RunsResponseSchema } }, description: 'Run history' },
+    200: {
+      content: { "application/json": { schema: RunsResponseSchema } },
+      description: "Run history",
+    },
   },
 })
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
-router.use('*', requireAuth)
+router.use("*", requireAuth)
 
 router.openapi(createRoute_, async (c) => {
-  const { payload, channels, cron, timezone } = c.req.valid('json')
+  const { payload, channels, cron, timezone } = c.req.valid("json")
   const userId = c.var.user!.id
 
-  if (!validateCronExpr(cron)) throw Errors.badRequest('Invalid cron expression')
+  if (!validateCronExpr(cron))
+    throw Errors.badRequest("Invalid cron expression")
 
   const ts = new Date().toISOString()
   let nextRunAt: string
   try {
     nextRunAt = nextCronRun(cron, new Date(), timezone).toISOString()
   } catch {
-    throw Errors.badRequest('Cron expression produces no valid run time within 1 year')
+    throw Errors.badRequest(
+      "Cron expression produces no valid run time within 1 year"
+    )
   }
 
   const id = crypto.randomUUID()
   await c.var.db
-    .insertInto('recurring_send')
+    .insertInto("recurring_send")
     .values({
       id,
       userId,
@@ -143,9 +198,9 @@ router.openapi(createRoute_, async (c) => {
     .execute()
 
   const row = await c.var.db
-    .selectFrom('recurring_send')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
+    .selectFrom("recurring_send")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
     .selectAll()
     .executeTakeFirstOrThrow()
 
@@ -153,12 +208,12 @@ router.openapi(createRoute_, async (c) => {
 })
 
 router.openapi(listRoute, async (c) => {
-  const parsed = c.req.valid('query')
+  const parsed = c.req.valid("query")
   const userId = c.var.user!.id
 
   const baseQuery = c.var.db
-    .selectFrom('recurring_send')
-    .where('userId', '=', userId)
+    .selectFrom("recurring_send")
+    .where("userId", "=", userId)
     .selectAll()
 
   const { qb, getPage } = applyListQuery(baseQuery, parsed, {
@@ -170,38 +225,45 @@ router.openapi(listRoute, async (c) => {
   const rows = await qb.execute()
   const page = getPage(rows as Record<string, unknown>[])
 
-  return c.json({ data: page.data as z.infer<typeof RecurringSendDtoSchema>[], nextCursor: page.nextCursor })
+  return c.json({
+    data: page.data as z.infer<typeof RecurringSendDtoSchema>[],
+    nextCursor: page.nextCursor,
+  })
 })
 
 router.openapi(patchRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
-  const body = c.req.valid('json')
+  const body = c.req.valid("json")
 
   const existing = await c.var.db
-    .selectFrom('recurring_send')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
+    .selectFrom("recurring_send")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
     .selectAll()
     .executeTakeFirst()
 
-  if (!existing) throw Errors.notFound('Recurring send')
+  if (!existing) throw Errors.notFound("Recurring send")
 
   const ts = new Date().toISOString()
   const updates: Record<string, unknown> = { updatedAt: ts }
 
-  if (typeof body.enabled === 'number') updates.enabled = body.enabled
+  if (typeof body.enabled === "number") updates.enabled = body.enabled
   if (body.payload !== undefined) updates.payload = JSON.stringify(body.payload)
-  if (body.channels !== undefined) updates.channels = JSON.stringify(body.channels)
+  if (body.channels !== undefined)
+    updates.channels = JSON.stringify(body.channels)
 
   if (body.cron !== undefined || body.timezone !== undefined) {
     const newCron = body.cron ?? existing.cron
     const newTz = body.timezone ?? existing.timezone
-    if (!validateCronExpr(newCron)) throw Errors.badRequest('Invalid cron expression')
+    if (!validateCronExpr(newCron))
+      throw Errors.badRequest("Invalid cron expression")
     try {
       updates.nextRunAt = nextCronRun(newCron, new Date(), newTz).toISOString()
     } catch {
-      throw Errors.badRequest('Cron expression produces no valid run time within 1 year')
+      throw Errors.badRequest(
+        "Cron expression produces no valid run time within 1 year"
+      )
     }
     if (body.cron !== undefined) updates.cron = body.cron
     if (body.timezone !== undefined) updates.timezone = body.timezone
@@ -209,16 +271,16 @@ router.openapi(patchRoute, async (c) => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await c.var.db
-    .updateTable('recurring_send')
+    .updateTable("recurring_send")
     .set(updates as any)
-    .where('id', '=', id)
-    .where('userId', '=', userId)
+    .where("id", "=", id)
+    .where("userId", "=", userId)
     .execute()
 
   const row = await c.var.db
-    .selectFrom('recurring_send')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
+    .selectFrom("recurring_send")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
     .selectAll()
     .executeTakeFirstOrThrow()
 
@@ -230,18 +292,18 @@ router.openapi(deleteRoute, async (c) => {
   const userId = c.var.user!.id
 
   const existing = await c.var.db
-    .selectFrom('recurring_send')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
-    .select(['id'])
+    .selectFrom("recurring_send")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
+    .select(["id"])
     .executeTakeFirst()
 
-  if (!existing) throw Errors.notFound('Recurring send')
+  if (!existing) throw Errors.notFound("Recurring send")
 
   await c.var.db
-    .deleteFrom('recurring_send')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
+    .deleteFrom("recurring_send")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
     .execute()
 
   return c.json({ ok: true as const })
@@ -250,22 +312,32 @@ router.openapi(deleteRoute, async (c) => {
 router.openapi(runsRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
-  const parsed = c.req.valid('query')
+  const parsed = c.req.valid("query")
 
   const existing = await c.var.db
-    .selectFrom('recurring_send')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
-    .select(['id'])
+    .selectFrom("recurring_send")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
+    .select(["id"])
     .executeTakeFirst()
 
-  if (!existing) throw Errors.notFound('Recurring send')
+  if (!existing) throw Errors.notFound("Recurring send")
 
   const baseQuery = c.var.db
-    .selectFrom('scheduled_message')
-    .where('recurringSendId', '=', id)
-    .where('userId', '=', userId)
-    .select(['id', 'userId', 'sendAt', 'status', 'timezone', 'notificationId', 'recurringSendId', 'createdAt', 'updatedAt'])
+    .selectFrom("scheduled_message")
+    .where("recurringSendId", "=", id)
+    .where("userId", "=", userId)
+    .select([
+      "id",
+      "userId",
+      "sendAt",
+      "status",
+      "timezone",
+      "notificationId",
+      "recurringSendId",
+      "createdAt",
+      "updatedAt",
+    ])
 
   const { qb, getPage } = applyListQuery(baseQuery, parsed, {
     sortable: RUNS_SORTABLE,
@@ -276,7 +348,10 @@ router.openapi(runsRoute, async (c) => {
   const rows = await qb.execute()
   const page = getPage(rows as Record<string, unknown>[])
 
-  return c.json({ data: page.data as z.infer<typeof RunDtoSchema>[], nextCursor: page.nextCursor })
+  return c.json({
+    data: page.data as z.infer<typeof RunDtoSchema>[],
+    nextCursor: page.nextCursor,
+  })
 })
 
 export default router

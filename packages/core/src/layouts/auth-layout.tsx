@@ -1,6 +1,8 @@
 import { Suspense } from "react"
-import { Navigate, Outlet } from "react-router"
+
 import { useSession } from "@workspace/app/auth/use-session"
+import { Navigate, Outlet } from "react-router"
+
 import { RendericalMark } from "../components/renderical-logo"
 
 export default function AuthLayout() {
@@ -26,7 +28,9 @@ export default function AuthLayout() {
           {/* Brand */}
           <div className="flex items-center gap-2 text-foreground">
             <RendericalMark className="size-[18px]" />
-            <span className="font-semibold tracking-tight text-sm">Renderical</span>
+            <span className="font-semibold tracking-tight text-sm">
+              Renderical
+            </span>
           </div>
 
           {/* Main copy */}
@@ -36,10 +40,13 @@ export default function AuthLayout() {
                 Notification infrastructure
               </p>
               <h2 className="text-3xl font-bold tracking-tight text-foreground">
-                Schedule once,<br />notify anywhere.
+                Schedule once,
+                <br />
+                notify anywhere.
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
-                One workspace to schedule, deliver, and manage notifications across every channel your users live in.
+                One workspace to schedule, deliver, and manage notifications
+                across every channel your users live in.
               </p>
             </div>
 
@@ -52,8 +59,18 @@ export default function AuthLayout() {
                 "Powered by Cloudflare Workers",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2">
-                  <svg className="mt-0.5 size-4 shrink-0 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  <svg
+                    className="mt-0.5 size-4 shrink-0 text-foreground"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
                   </svg>
                   {item}
                 </li>
@@ -64,12 +81,16 @@ export default function AuthLayout() {
           {/* Placeholder quote */}
           <blockquote className="border-t border-border pt-8 space-y-3">
             <p className="text-sm text-muted-foreground leading-relaxed italic">
-              "We replaced three cron jobs and a tangle of integrations with one scheduling layer. Reminders, digests, and alerts now ship from the same place."
+              "We replaced three cron jobs and a tangle of integrations with one
+              scheduling layer. Reminders, digests, and alerts now ship from the
+              same place."
             </p>
             <footer className="flex items-center gap-3">
               <div className="size-8 rounded-full bg-muted border border-border" />
               <div>
-                <p className="text-xs font-medium text-foreground">Placeholder Name</p>
+                <p className="text-xs font-medium text-foreground">
+                  Placeholder Name
+                </p>
                 <p className="text-xs text-muted-foreground">Role, Company</p>
               </div>
             </footer>
@@ -82,7 +103,9 @@ export default function AuthLayout() {
         {/* Mobile brand bar */}
         <div className="flex shrink-0 items-center gap-2 border-b border-border px-6 py-4 lg:hidden">
           <RendericalMark className="size-[18px]" />
-          <span className="text-sm font-semibold tracking-tight">Renderical</span>
+          <span className="text-sm font-semibold tracking-tight">
+            Renderical
+          </span>
         </div>
 
         <div className="flex flex-1 items-center justify-center px-6 py-10 sm:px-10">

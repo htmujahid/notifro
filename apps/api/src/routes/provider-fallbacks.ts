@@ -1,7 +1,8 @@
-import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
-import { requireAuth } from '../middleware/auth'
-import { Errors, validationHook } from '../lib/errors'
-import type { AppEnv } from '../lib/types'
+import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+
+import { Errors, validationHook } from "../lib/errors"
+import type { AppEnv } from "../lib/types"
+import { requireAuth } from "../middleware/auth"
 
 const ProviderFallbackDtoSchema = z.object({
   id: z.string(),
@@ -24,65 +25,80 @@ const CreateSchema = z.object({
 })
 
 const listRoute = createRoute({
-  method: 'get',
-  path: '/provider-fallbacks',
+  method: "get",
+  path: "/provider-fallbacks",
   responses: {
-    200: { content: { 'application/json': { schema: ListResponseSchema } }, description: 'Provider fallback rules' },
+    200: {
+      content: { "application/json": { schema: ListResponseSchema } },
+      description: "Provider fallback rules",
+    },
   },
 })
 
 const createRoute_ = createRoute({
-  method: 'post',
-  path: '/provider-fallbacks',
-  request: { body: { content: { 'application/json': { schema: CreateSchema } } } },
+  method: "post",
+  path: "/provider-fallbacks",
+  request: {
+    body: { content: { "application/json": { schema: CreateSchema } } },
+  },
   responses: {
-    201: { content: { 'application/json': { schema: ProviderFallbackDtoSchema } }, description: 'Rule created or updated' },
+    201: {
+      content: { "application/json": { schema: ProviderFallbackDtoSchema } },
+      description: "Rule created or updated",
+    },
   },
 })
 
 const deleteRoute = createRoute({
-  method: 'delete',
-  path: '/provider-fallbacks/:id',
+  method: "delete",
+  path: "/provider-fallbacks/:id",
   responses: {
-    204: { description: 'Rule deleted' },
+    204: { description: "Rule deleted" },
   },
 })
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
-router.use('*', requireAuth)
+router.use("*", requireAuth)
 
 router.openapi(listRoute, async (c) => {
   const { db } = c.var
   const userId = c.var.user!.id
   const rows = await db
-    .selectFrom('provider_fallback')
-    .where('userId', '=', userId)
+    .selectFrom("provider_fallback")
+    .where("userId", "=", userId)
     .selectAll()
-    .orderBy('createdAt', 'desc')
+    .orderBy("createdAt", "desc")
     .execute()
   return c.json({ data: rows, nextCursor: null })
 })
 
 router.openapi(createRoute_, async (c) => {
-  const body = c.req.valid('json')
+  const body = c.req.valid("json")
   const { db } = c.var
   const userId = c.var.user!.id
   const ts = new Date().toISOString()
   const id = crypto.randomUUID()
   await db
-    .insertInto('provider_fallback')
-    .values({ id, userId, channel: body.channel, primaryConnectionId: body.primaryConnectionId, fallbackConnectionId: body.fallbackConnectionId, createdAt: ts })
+    .insertInto("provider_fallback")
+    .values({
+      id,
+      userId,
+      channel: body.channel,
+      primaryConnectionId: body.primaryConnectionId,
+      fallbackConnectionId: body.fallbackConnectionId,
+      createdAt: ts,
+    })
     .onConflict((oc) =>
-      oc.columns(['userId', 'channel']).doUpdateSet({
+      oc.columns(["userId", "channel"]).doUpdateSet({
         primaryConnectionId: body.primaryConnectionId,
         fallbackConnectionId: body.fallbackConnectionId,
-      }),
+      })
     )
     .execute()
   const row = await db
-    .selectFrom('provider_fallback')
-    .where('userId', '=', userId)
-    .where('channel', '=', body.channel)
+    .selectFrom("provider_fallback")
+    .where("userId", "=", userId)
+    .where("channel", "=", body.channel)
     .selectAll()
     .executeTakeFirstOrThrow()
   return c.json(row, 201)
@@ -91,10 +107,15 @@ router.openapi(createRoute_, async (c) => {
 router.openapi(deleteRoute, async (c) => {
   const { db } = c.var
   const userId = c.var.user!.id
-  const id = c.req.param('id')
-  const existing = await db.selectFrom('provider_fallback').where('id', '=', id).where('userId', '=', userId).selectAll().executeTakeFirst()
-  if (!existing) throw Errors.notFound('Provider fallback')
-  await db.deleteFrom('provider_fallback').where('id', '=', id).execute()
+  const id = c.req.param("id")
+  const existing = await db
+    .selectFrom("provider_fallback")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
+    .selectAll()
+    .executeTakeFirst()
+  if (!existing) throw Errors.notFound("Provider fallback")
+  await db.deleteFrom("provider_fallback").where("id", "=", id).execute()
   return new Response(null, { status: 204 })
 })
 

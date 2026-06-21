@@ -1,8 +1,9 @@
-import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
-import { requireAuth } from '../middleware/auth'
-import { validationHook } from '../lib/errors'
-import { advanceJourneyRun } from '../lib/journey-engine'
-import type { AppEnv } from '../lib/types'
+import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+
+import { validationHook } from "../lib/errors"
+import { advanceJourneyRun } from "../lib/journey-engine"
+import type { AppEnv } from "../lib/types"
+import { requireAuth } from "../middleware/auth"
 
 const TriggerEventSchema = z.object({
   name: z.string().min(1),
@@ -16,29 +17,31 @@ const TriggerEventResponseSchema = z.object({
 })
 
 const triggerRoute = createRoute({
-  method: 'post',
-  path: '/events',
-  request: { body: { content: { 'application/json': { schema: TriggerEventSchema } } } },
+  method: "post",
+  path: "/events",
+  request: {
+    body: { content: { "application/json": { schema: TriggerEventSchema } } },
+  },
   responses: {
     200: {
-      content: { 'application/json': { schema: TriggerEventResponseSchema } },
-      description: 'Event recorded and matching journeys triggered',
+      content: { "application/json": { schema: TriggerEventResponseSchema } },
+      description: "Event recorded and matching journeys triggered",
     },
   },
 })
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
-router.use('*', requireAuth)
+router.use("*", requireAuth)
 
 router.openapi(triggerRoute, async (c) => {
-  const { name, recipientId, payload } = c.req.valid('json')
+  const { name, recipientId, payload } = c.req.valid("json")
   const { db } = c.var
   const userId = c.var.user!.id
   const ts = new Date().toISOString()
 
   const eventId = crypto.randomUUID()
   await db
-    .insertInto('journey_event')
+    .insertInto("journey_event")
     .values({
       id: eventId,
       userId,
@@ -50,9 +53,9 @@ router.openapi(triggerRoute, async (c) => {
     .execute()
 
   const activeJourneys = await db
-    .selectFrom('journey')
-    .where('userId', '=', userId)
-    .where('status', '=', 'active')
+    .selectFrom("journey")
+    .where("userId", "=", userId)
+    .where("status", "=", "active")
     .selectAll()
     .execute()
 
@@ -66,15 +69,15 @@ router.openapi(triggerRoute, async (c) => {
     } catch {
       continue
     }
-    if (trigger.type !== 'event' || trigger.event !== name) continue
+    if (trigger.type !== "event" || trigger.event !== name) continue
 
     let resolvedRecipientId = recipientId
     if (!resolvedRecipientId) continue
 
     const recipient = await db
-      .selectFrom('recipient')
-      .where('id', '=', resolvedRecipientId)
-      .where('userId', '=', userId)
+      .selectFrom("recipient")
+      .where("id", "=", resolvedRecipientId)
+      .where("userId", "=", userId)
       .selectAll()
       .executeTakeFirst()
 
@@ -87,16 +90,21 @@ router.openapi(triggerRoute, async (c) => {
     const runId = crypto.randomUUID()
     try {
       await db
-        .insertInto('journey_run')
+        .insertInto("journey_run")
         .values({
           id: runId,
           userId,
           journeyId: journey.id,
           recipientId: resolvedRecipientId,
-          status: 'active',
+          status: "active",
           currentStepId: firstStepId,
           nextResumeAt: null,
-          context: JSON.stringify({ ...recipient.attributes ? JSON.parse(recipient.attributes as string) : {}, payload }),
+          context: JSON.stringify({
+            ...(recipient.attributes
+              ? JSON.parse(recipient.attributes as string)
+              : {}),
+            payload,
+          }),
           createdAt: ts,
           updatedAt: ts,
         })
@@ -106,8 +114,8 @@ router.openapi(triggerRoute, async (c) => {
     }
 
     const run = await db
-      .selectFrom('journey_run')
-      .where('id', '=', runId)
+      .selectFrom("journey_run")
+      .where("id", "=", runId)
       .selectAll()
       .executeTakeFirst()
 

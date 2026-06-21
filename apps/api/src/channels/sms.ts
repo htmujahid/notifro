@@ -1,8 +1,8 @@
-import type { ChannelAdapter } from './adapter'
-import type { ComposePayload, Connection } from './types'
-import { registerAdapter } from './registry'
-import { registerTransform } from '../compose/transform'
-import { decrypt } from '../lib/crypto'
+import { registerTransform } from "../compose/transform"
+import { decrypt } from "../lib/crypto"
+import type { ChannelAdapter } from "./adapter"
+import { registerAdapter } from "./registry"
+import type { ComposePayload, Connection } from "./types"
 
 export interface SmsProvider {
   to: string
@@ -21,13 +21,13 @@ interface SmsCredentials {
 function buildBody(payload: ComposePayload): string {
   const { content } = payload
   if (content.body.text) return content.body.text
-  const title = content.title ?? content.subject ?? ''
-  const md = content.body.markdown ?? ''
-  return [title, md].filter(Boolean).join(': ').trim()
+  const title = content.title ?? content.subject ?? ""
+  const md = content.body.markdown ?? ""
+  return [title, md].filter(Boolean).join(": ").trim()
 }
 
 const smsAdapter: ChannelAdapter<SmsConfig, SmsProvider> = {
-  type: 'sms',
+  type: "sms",
 
   validateConfig(input) {
     return (input ?? {}) as SmsConfig
@@ -35,8 +35,9 @@ const smsAdapter: ChannelAdapter<SmsConfig, SmsProvider> = {
 
   transform(payload, _ctx): SmsProvider {
     const recipient = payload.recipient as { type: string; phone?: string }
-    const phone = recipient.type === 'contact' && recipient.phone ? recipient.phone : ''
-    if (!phone) throw new Error('SMS recipient requires contact.phone')
+    const phone =
+      recipient.type === "contact" && recipient.phone ? recipient.phone : ""
+    if (!phone) throw new Error("SMS recipient requires contact.phone")
 
     return {
       to: phone,
@@ -46,36 +47,68 @@ const smsAdapter: ChannelAdapter<SmsConfig, SmsProvider> = {
 
   async send(provider, conn, ctx) {
     const encKey = ctx.env?.CONNECTION_ENC_KEY
-    if (!encKey) return { providerMessageId: null, ok: false, error: 'CONNECTION_ENC_KEY not configured' }
+    if (!encKey)
+      return {
+        providerMessageId: null,
+        ok: false,
+        error: "CONNECTION_ENC_KEY not configured",
+      }
     if (!conn.credentials) {
-      return { providerMessageId: null, ok: false, error: 'No Twilio credentials — add accountSid and authToken' }
+      return {
+        providerMessageId: null,
+        ok: false,
+        error: "No Twilio credentials — add accountSid and authToken",
+      }
     }
 
-    const user = await ctx.db.selectFrom('user').where('id', '=', conn.userId).select(['phoneNumber', 'phoneNumberVerified']).executeTakeFirst()
+    const user = await ctx.db
+      .selectFrom("user")
+      .where("id", "=", conn.userId)
+      .select(["phoneNumber", "phoneNumberVerified"])
+      .executeTakeFirst()
     if (!user?.phoneNumber || !user.phoneNumberVerified) {
-      return { providerMessageId: null, ok: false, error: 'No verified phone number on account — verify your phone number in account settings' }
+      return {
+        providerMessageId: null,
+        ok: false,
+        error:
+          "No verified phone number on account — verify your phone number in account settings",
+      }
     }
     const from = user.phoneNumber
 
     let creds: SmsCredentials
     try {
-      creds = JSON.parse(await decrypt(conn.credentials, encKey)) as SmsCredentials
+      creds = JSON.parse(
+        await decrypt(conn.credentials, encKey)
+      ) as SmsCredentials
     } catch {
-      return { providerMessageId: null, ok: false, error: 'Failed to decrypt Twilio credentials' }
+      return {
+        providerMessageId: null,
+        ok: false,
+        error: "Failed to decrypt Twilio credentials",
+      }
     }
     if (!creds.accountSid || !creds.authToken) {
-      return { providerMessageId: null, ok: false, error: 'Twilio credentials missing accountSid or authToken' }
+      return {
+        providerMessageId: null,
+        ok: false,
+        error: "Twilio credentials missing accountSid or authToken",
+      }
     }
 
     try {
       const url = `https://api.twilio.com/2010-04-01/Accounts/${creds.accountSid}/Messages.json`
       const res = await fetch(url, {
-        method: 'POST',
+        method: "POST",
         headers: {
           Authorization: `Basic ${btoa(`${creds.accountSid}:${creds.authToken}`)}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: new URLSearchParams({ To: provider.to, From: from, Body: provider.body }),
+        body: new URLSearchParams({
+          To: provider.to,
+          From: from,
+          Body: provider.body,
+        }),
       })
 
       if (!res.ok) {
@@ -90,17 +123,31 @@ const smsAdapter: ChannelAdapter<SmsConfig, SmsProvider> = {
       const data = (await res.json()) as { sid: string }
       return { providerMessageId: data.sid, ok: true }
     } catch (err) {
-      return { providerMessageId: null, ok: false, error: err instanceof Error ? err.message : String(err) }
+      return {
+        providerMessageId: null,
+        ok: false,
+        error: err instanceof Error ? err.message : String(err),
+      }
     }
   },
 
   async healthCheck(conn) {
     if (!conn.credentials) {
-      return { ok: false, message: 'No credentials — add accountSid and authToken', checkedAt: new Date().toISOString() }
+      return {
+        ok: false,
+        message: "No credentials — add accountSid and authToken",
+        checkedAt: new Date().toISOString(),
+      }
     }
-    return { ok: true, message: 'Credentials present', checkedAt: new Date().toISOString() }
+    return {
+      ok: true,
+      message: "Credentials present",
+      checkedAt: new Date().toISOString(),
+    }
   },
 }
 
 registerAdapter(smsAdapter)
-registerTransform('sms', (payload, ctx) => smsAdapter.transform(payload, ctx as { connection: Connection }))
+registerTransform("sms", (payload, ctx) =>
+  smsAdapter.transform(payload, ctx as { connection: Connection })
+)

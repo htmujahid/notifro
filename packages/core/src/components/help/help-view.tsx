@@ -1,6 +1,17 @@
 import { Button } from "@workspace/ui/components/button"
-import { Card, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card"
-import { BookOpenIcon, MessageCircleIcon, FileTextIcon, VideoIcon } from "lucide-react"
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card"
+import {
+  BookOpenIcon,
+  FileTextIcon,
+  MessageCircleIcon,
+  VideoIcon,
+} from "lucide-react"
+
 import { FaqItem } from "./faq-item"
 
 const FAQS = [
@@ -31,10 +42,30 @@ const FAQS = [
 ]
 
 const RESOURCES = [
-  { title: "Documentation", description: "Full API reference and integration guides", icon: BookOpenIcon, href: "#" },
-  { title: "Quickstart guide", description: "Send your first notification in under 5 minutes", icon: FileTextIcon, href: "#" },
-  { title: "Video walkthroughs", description: "Step-by-step screencasts for common workflows", icon: VideoIcon, href: "#" },
-  { title: "Community & support", description: "Ask questions and share feedback with the team", icon: MessageCircleIcon, href: "#" },
+  {
+    title: "Documentation",
+    description: "Full API reference and integration guides",
+    icon: BookOpenIcon,
+    href: "#",
+  },
+  {
+    title: "Quickstart guide",
+    description: "Send your first notification in under 5 minutes",
+    icon: FileTextIcon,
+    href: "#",
+  },
+  {
+    title: "Video walkthroughs",
+    description: "Step-by-step screencasts for common workflows",
+    icon: VideoIcon,
+    href: "#",
+  },
+  {
+    title: "Community & support",
+    description: "Ask questions and share feedback with the team",
+    icon: MessageCircleIcon,
+    href: "#",
+  },
 ]
 
 export function HelpView() {
@@ -50,7 +81,10 @@ export function HelpView() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {RESOURCES.map(({ title, description, icon: Icon, href }) => (
           <a key={title} href={href}>
-            <Card size="sm" className="h-full transition-colors hover:bg-muted/40 cursor-pointer">
+            <Card
+              size="sm"
+              className="h-full transition-colors hover:bg-muted/40 cursor-pointer"
+            >
               <CardHeader>
                 <div className="flex size-8 items-center justify-center rounded-lg bg-muted">
                   <Icon className="size-4 text-foreground" />
@@ -75,7 +109,9 @@ export function HelpView() {
       <section className="flex items-center justify-between rounded-xl bg-muted/40 px-6 py-5 ring-1 ring-foreground/10">
         <div>
           <p className="text-sm font-medium">Still stuck?</p>
-          <p className="mt-0.5 text-xs text-muted-foreground">Our team usually replies within a few hours.</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Our team usually replies within a few hours.
+          </p>
         </div>
         <Button size="sm" className="gap-1.5">
           <MessageCircleIcon className="size-4" />

@@ -1,14 +1,14 @@
-import type { ChannelAdapter } from './adapter'
-import type { ComposePayload, Connection } from './types'
-import type { ContentBlock } from '../compose/schema'
-import { registerAdapter } from './registry'
-import { registerTransform } from '../compose/transform'
-import { decrypt } from '../lib/crypto'
+import type { ContentBlock } from "../compose/schema"
+import { registerTransform } from "../compose/transform"
+import { decrypt } from "../lib/crypto"
+import type { ChannelAdapter } from "./adapter"
+import { registerAdapter } from "./registry"
+import type { ComposePayload, Connection } from "./types"
 
 export interface TeamsProvider {
-  type: 'message'
+  type: "message"
   attachments: {
-    contentType: 'application/vnd.microsoft.card.adaptive'
+    contentType: "application/vnd.microsoft.card.adaptive"
     content: Record<string, unknown>
   }[]
 }
@@ -22,17 +22,20 @@ interface TeamsCredentials {
 }
 
 const TIMEOUT_MS = 10000
-const DEFAULT_VERSION = '1.5'
+const DEFAULT_VERSION = "1.5"
 
-function textBlock(text: string, opts?: { bold?: boolean; large?: boolean }): Record<string, unknown> {
-  const block: Record<string, unknown> = { type: 'TextBlock', text, wrap: true }
-  if (opts?.bold) block.weight = 'Bolder'
-  if (opts?.large) block.size = 'Large'
+function textBlock(
+  text: string,
+  opts?: { bold?: boolean; large?: boolean }
+): Record<string, unknown> {
+  const block: Record<string, unknown> = { type: "TextBlock", text, wrap: true }
+  if (opts?.bold) block.weight = "Bolder"
+  if (opts?.large) block.size = "Large"
   return block
 }
 
 const teamsAdapter: ChannelAdapter<TeamsConfig, TeamsProvider> = {
-  type: 'teams',
+  type: "teams",
 
   validateConfig(input) {
     return (input ?? {}) as TeamsConfig
@@ -59,95 +62,149 @@ const teamsAdapter: ChannelAdapter<TeamsConfig, TeamsProvider> = {
     }
 
     const card: Record<string, unknown> = {
-      type: 'AdaptiveCard',
-      $schema: 'http://adaptivecards.io/schemas/adaptive-card.json',
+      type: "AdaptiveCard",
+      $schema: "http://adaptivecards.io/schemas/adaptive-card.json",
       version: cfg.cardVersion ?? DEFAULT_VERSION,
       body,
     }
     if (actions.length > 0) card.actions = actions
 
     return {
-      type: 'message',
-      attachments: [{ contentType: 'application/vnd.microsoft.card.adaptive', content: card }],
+      type: "message",
+      attachments: [
+        {
+          contentType: "application/vnd.microsoft.card.adaptive",
+          content: card,
+        },
+      ],
     }
   },
 
   async send(provider, conn, ctx) {
     const encKey = ctx.env?.CONNECTION_ENC_KEY
-    if (!encKey) return { providerMessageId: null, ok: false, error: 'CONNECTION_ENC_KEY not configured' }
+    if (!encKey)
+      return {
+        providerMessageId: null,
+        ok: false,
+        error: "CONNECTION_ENC_KEY not configured",
+      }
     if (!conn.credentials) {
-      return { providerMessageId: null, ok: false, error: 'No Teams connector URL — add credentials.connectorUrl' }
+      return {
+        providerMessageId: null,
+        ok: false,
+        error: "No Teams connector URL — add credentials.connectorUrl",
+      }
     }
 
     let creds: TeamsCredentials
     try {
-      creds = JSON.parse(await decrypt(conn.credentials, encKey)) as TeamsCredentials
+      creds = JSON.parse(
+        await decrypt(conn.credentials, encKey)
+      ) as TeamsCredentials
     } catch {
-      return { providerMessageId: null, ok: false, error: 'Failed to decrypt Teams credentials' }
+      return {
+        providerMessageId: null,
+        ok: false,
+        error: "Failed to decrypt Teams credentials",
+      }
     }
     if (!creds.connectorUrl) {
-      return { providerMessageId: null, ok: false, error: 'Teams credentials missing connectorUrl' }
+      return {
+        providerMessageId: null,
+        ok: false,
+        error: "Teams credentials missing connectorUrl",
+      }
     }
 
     try {
       new URL(creds.connectorUrl)
     } catch {
-      return { providerMessageId: null, ok: false, error: 'Teams connectorUrl is not a valid URL' }
+      return {
+        providerMessageId: null,
+        ok: false,
+        error: "Teams connectorUrl is not a valid URL",
+      }
     }
 
     try {
       const res = await fetch(creds.connectorUrl, {
-        method: 'POST',
-        redirect: 'manual',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        redirect: "manual",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(provider),
         signal: AbortSignal.timeout(TIMEOUT_MS),
       })
 
       if (res.status < 200 || res.status >= 300) {
-        return { providerMessageId: null, ok: false, error: `HTTP ${res.status}` }
+        return {
+          providerMessageId: null,
+          ok: false,
+          error: `HTTP ${res.status}`,
+        }
       }
       return { providerMessageId: null, ok: true }
     } catch (err) {
-      return { providerMessageId: null, ok: false, error: err instanceof Error ? err.message : String(err) }
+      return {
+        providerMessageId: null,
+        ok: false,
+        error: err instanceof Error ? err.message : String(err),
+      }
     }
   },
 
   async healthCheck(conn) {
     if (!conn.credentials) {
-      return { ok: false, message: 'No connector URL — add credentials.connectorUrl', checkedAt: new Date().toISOString() }
+      return {
+        ok: false,
+        message: "No connector URL — add credentials.connectorUrl",
+        checkedAt: new Date().toISOString(),
+      }
     }
-    return { ok: true, message: 'Connector URL present', checkedAt: new Date().toISOString() }
+    return {
+      ok: true,
+      message: "Connector URL present",
+      checkedAt: new Date().toISOString(),
+    }
   },
 }
 
 function addBlock(
   block: ContentBlock,
   body: Record<string, unknown>[],
-  actions: Record<string, unknown>[],
+  actions: Record<string, unknown>[]
 ): void {
   switch (block.type) {
-    case 'heading':
+    case "heading":
       body.push(textBlock(block.text, { bold: true }))
       return
-    case 'text':
+    case "text":
       body.push(textBlock(block.markdown ?? block.text))
       return
-    case 'image':
-      body.push({ type: 'Image', url: block.url, altText: block.alt ?? block.title ?? 'image' })
-      return
-    case 'fields':
+    case "image":
       body.push({
-        type: 'FactSet',
+        type: "Image",
+        url: block.url,
+        altText: block.alt ?? block.title ?? "image",
+      })
+      return
+    case "fields":
+      body.push({
+        type: "FactSet",
         facts: block.fields.map((f) => ({ title: f.key, value: f.value })),
       })
       return
-    case 'button':
-      if (block.url) actions.push({ type: 'Action.OpenUrl', title: block.label, url: block.url })
+    case "button":
+      if (block.url)
+        actions.push({
+          type: "Action.OpenUrl",
+          title: block.label,
+          url: block.url,
+        })
       return
-    case 'button_group':
+    case "button_group":
       for (const b of block.buttons) {
-        if (b.url) actions.push({ type: 'Action.OpenUrl', title: b.label, url: b.url })
+        if (b.url)
+          actions.push({ type: "Action.OpenUrl", title: b.label, url: b.url })
       }
       return
     default:
@@ -156,6 +213,6 @@ function addBlock(
 }
 
 registerAdapter(teamsAdapter)
-registerTransform('teams', (payload, ctx) =>
-  teamsAdapter.transform(payload, ctx as { connection: Connection }),
+registerTransform("teams", (payload, ctx) =>
+  teamsAdapter.transform(payload, ctx as { connection: Connection })
 )

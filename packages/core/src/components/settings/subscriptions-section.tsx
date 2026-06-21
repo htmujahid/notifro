@@ -1,8 +1,14 @@
 import { useState } from "react"
+
 import { Button } from "@workspace/ui/components/button"
 import { Card, CardContent } from "@workspace/ui/components/card"
 import { BookmarkIcon, PlusIcon, TrashIcon } from "lucide-react"
-import { useTopics, useCreateTopic, useDeleteTopic } from "../../hooks/preferences"
+
+import {
+  useCreateTopic,
+  useDeleteTopic,
+  useTopics,
+} from "../../hooks/preferences"
 
 export function SubscriptionsSection() {
   const { data } = useTopics()
@@ -26,7 +32,7 @@ export function SubscriptionsSection() {
           setIsTransactional(false)
           setShowForm(false)
         },
-      },
+      }
     )
   }
 
@@ -35,11 +41,17 @@ export function SubscriptionsSection() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-sm font-medium">Subscription topics</h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">Define categories recipients can opt in or out of.</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Define categories recipients can opt in or out of.
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <BookmarkIcon className="size-4 text-muted-foreground" />
-          <Button size="sm" className="gap-1.5" onClick={() => setShowForm((v) => !v)}>
+          <Button
+            size="sm"
+            className="gap-1.5"
+            onClick={() => setShowForm((v) => !v)}
+          >
             <PlusIcon className="size-3.5" />
             New topic
           </Button>
@@ -51,7 +63,9 @@ export function SubscriptionsSection() {
           <CardContent className="flex flex-col gap-3">
             <div className="flex gap-3">
               <div className="flex flex-1 flex-col gap-1">
-                <label className="text-xs font-medium text-muted-foreground">Key</label>
+                <label className="text-xs font-medium text-muted-foreground">
+                  Key
+                </label>
                 <input
                   className="rounded-md border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                   placeholder="product_updates"
@@ -60,7 +74,9 @@ export function SubscriptionsSection() {
                 />
               </div>
               <div className="flex flex-1 flex-col gap-1">
-                <label className="text-xs font-medium text-muted-foreground">Name</label>
+                <label className="text-xs font-medium text-muted-foreground">
+                  Name
+                </label>
                 <input
                   className="rounded-md border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                   placeholder="Product Updates"
@@ -77,37 +93,61 @@ export function SubscriptionsSection() {
                 onChange={(e) => setIsTransactional(e.target.checked)}
                 className="size-4 rounded border"
               />
-              <label htmlFor="transactional" className="text-sm">Transactional (never suppressed by preferences)</label>
+              <label htmlFor="transactional" className="text-sm">
+                Transactional (never suppressed by preferences)
+              </label>
             </div>
             <div className="flex gap-2">
-              <Button size="sm" disabled={createTopic.isPending || !key || !name} onClick={handleCreate}>
+              <Button
+                size="sm"
+                disabled={createTopic.isPending || !key || !name}
+                onClick={handleCreate}
+              >
                 Create
               </Button>
-              <Button size="sm" variant="outline" onClick={() => setShowForm(false)}>Cancel</Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setShowForm(false)}
+              >
+                Cancel
+              </Button>
             </div>
           </CardContent>
         </Card>
       )}
 
       {topics.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No topics yet. Create one to let recipients manage their preferences.</p>
+        <p className="text-sm text-muted-foreground">
+          No topics yet. Create one to let recipients manage their preferences.
+        </p>
       ) : (
         <div className="overflow-hidden rounded-xl ring-1 ring-foreground/10">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/40">
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Key</th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Name</th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Type</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                  Key
+                </th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                  Name
+                </th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                  Type
+                </th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
             <tbody className="divide-y divide-border bg-card">
               {topics.map((t) => (
                 <tr key={t.id}>
-                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{t.key}</td>
+                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
+                    {t.key}
+                  </td>
                   <td className="px-4 py-3 font-medium">{t.name}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{t.transactional ? "Transactional" : "Marketing"}</td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {t.transactional ? "Transactional" : "Marketing"}
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex justify-end">
                       <button

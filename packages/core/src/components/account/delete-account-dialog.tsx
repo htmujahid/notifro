@@ -1,9 +1,8 @@
 import { useState } from "react"
-import { useNavigate } from "react-router"
-import { useQueryClient } from "@tanstack/react-query"
+
+import { useAuth } from "@workspace/app/auth/context"
+import { SESSION_QUERY_KEY } from "@workspace/app/auth/use-session"
 import { Button } from "@workspace/ui/components/button"
-import { Input } from "@workspace/ui/components/input"
-import { Label } from "@workspace/ui/components/label"
 import {
   Dialog,
   DialogContent,
@@ -12,8 +11,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@workspace/ui/components/dialog"
-import { useAuth } from "@workspace/app/auth/context"
-import { SESSION_QUERY_KEY } from "@workspace/app/auth/use-session"
+import { Input } from "@workspace/ui/components/input"
+import { Label } from "@workspace/ui/components/label"
+import { useNavigate } from "react-router"
+
+import { useQueryClient } from "@tanstack/react-query"
 
 export function DeleteAccountDialog() {
   const auth = useAuth()
@@ -28,7 +30,9 @@ export function DeleteAccountDialog() {
     setLoading(true)
     setError(null)
     try {
-      const { error } = await auth.deleteUser({ password: password || undefined })
+      const { error } = await auth.deleteUser({
+        password: password || undefined,
+      })
       if (error) {
         setError(error.message ?? "An error occurred")
         return
@@ -51,12 +55,15 @@ export function DeleteAccountDialog() {
           <DialogHeader>
             <DialogTitle>Delete account</DialogTitle>
             <DialogDescription>
-              This action is permanent and cannot be undone. All your data will be deleted.
+              This action is permanent and cannot be undone. All your data will
+              be deleted.
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-3 py-2">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="delete-password">Password (if you have one)</Label>
+              <Label htmlFor="delete-password">
+                Password (if you have one)
+              </Label>
               <Input
                 id="delete-password"
                 type="password"
@@ -75,7 +82,11 @@ export function DeleteAccountDialog() {
             <Button variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button variant="destructive" disabled={loading} onClick={handleDelete}>
+            <Button
+              variant="destructive"
+              disabled={loading}
+              onClick={handleDelete}
+            >
               {loading ? "Deleting…" : "Delete my account"}
             </Button>
           </DialogFooter>

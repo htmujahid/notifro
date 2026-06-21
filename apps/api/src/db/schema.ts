@@ -1,4 +1,4 @@
-import type { ColumnType } from 'kysely'
+import type { ColumnType } from "kysely"
 
 export interface Timestamps {
   createdAt: string
@@ -73,11 +73,23 @@ export interface DeliveryTable {
   openedAt: string | null
   clickedAt: string | null
   bouncedAt: string | null
-  recipientId: ColumnType<string | null, string | null | undefined, string | null>
+  recipientId: ColumnType<
+    string | null,
+    string | null | undefined,
+    string | null
+  >
   variantId: ColumnType<string | null, string | null | undefined, string | null>
   chainId: ColumnType<string | null, string | null | undefined, string | null>
-  chainStepIndex: ColumnType<number | null, number | null | undefined, number | null>
-  escalatedFromDeliveryId: ColumnType<string | null, string | null | undefined, string | null>
+  chainStepIndex: ColumnType<
+    number | null,
+    number | null | undefined,
+    number | null
+  >
+  escalatedFromDeliveryId: ColumnType<
+    string | null,
+    string | null | undefined,
+    string | null
+  >
   createdAt: string
   updatedAt: string
 }

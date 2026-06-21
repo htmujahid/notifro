@@ -1,6 +1,16 @@
-import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useApiClient } from "@workspace/api-client/context"
-import type { ListParams, ListResponse, FallbackChain, RoutingRule } from "@workspace/api-client/types"
+import type {
+  FallbackChain,
+  ListParams,
+  ListResponse,
+  RoutingRule,
+} from "@workspace/api-client/types"
+
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query"
 
 export const routingRuleKeys = {
   all: ["routingRules"] as const,
@@ -39,7 +49,8 @@ export function useCreateRoutingRule() {
       targetChainId?: string
       targetChannel?: string
     }) => api.post<RoutingRule>("/api/routing/rules", body),
-    onSuccess: () => qc.invalidateQueries({ queryKey: routingRuleKeys.lists() }),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: routingRuleKeys.lists() }),
   })
 }
 
@@ -47,7 +58,10 @@ export function useUpdateRoutingRule() {
   const api = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, ...body }: {
+    mutationFn: ({
+      id,
+      ...body
+    }: {
       id: string
       priority?: number
       enabled?: boolean
@@ -55,7 +69,8 @@ export function useUpdateRoutingRule() {
       targetChainId?: string | null
       targetChannel?: string | null
     }) => api.patch<RoutingRule>(`/api/routing/rules/${id}`, body),
-    onSuccess: () => qc.invalidateQueries({ queryKey: routingRuleKeys.lists() }),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: routingRuleKeys.lists() }),
   })
 }
 
@@ -64,7 +79,8 @@ export function useDeleteRoutingRule() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (id: string) => api.delete(`/api/routing/rules/${id}`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: routingRuleKeys.lists() }),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: routingRuleKeys.lists() }),
   })
 }
 
@@ -92,10 +108,11 @@ export function useCreateFallbackChain() {
         channel: string
         connectionId?: string
         waitForDeliveryMs: number
-        successOn: ('delivered' | 'opened' | 'clicked')[]
+        successOn: ("delivered" | "opened" | "clicked")[]
       }>
     }) => api.post<FallbackChain>("/api/routing/chains", body),
-    onSuccess: () => qc.invalidateQueries({ queryKey: fallbackChainKeys.lists() }),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: fallbackChainKeys.lists() }),
   })
 }
 
@@ -103,17 +120,21 @@ export function useUpdateFallbackChain() {
   const api = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, ...body }: {
+    mutationFn: ({
+      id,
+      ...body
+    }: {
       id: string
       name?: string
       steps?: Array<{
         channel: string
         connectionId?: string
         waitForDeliveryMs: number
-        successOn: ('delivered' | 'opened' | 'clicked')[]
+        successOn: ("delivered" | "opened" | "clicked")[]
       }>
     }) => api.patch<FallbackChain>(`/api/routing/chains/${id}`, body),
-    onSuccess: () => qc.invalidateQueries({ queryKey: fallbackChainKeys.lists() }),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: fallbackChainKeys.lists() }),
   })
 }
 
@@ -122,7 +143,8 @@ export function useDeleteFallbackChain() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (id: string) => api.delete(`/api/routing/chains/${id}`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: fallbackChainKeys.lists() }),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: fallbackChainKeys.lists() }),
   })
 }
 

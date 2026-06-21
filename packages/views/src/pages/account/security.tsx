@@ -1,7 +1,7 @@
-import { Separator } from "@workspace/ui/components/separator"
 import { ChangeEmailForm } from "@workspace/core/components/account/change-email-form"
 import { ChangePasswordForm } from "@workspace/core/components/account/change-password-form"
 import { DeleteAccountDialog } from "@workspace/core/components/account/delete-account-dialog"
+import { Separator } from "@workspace/ui/components/separator"
 
 export default function AccountSecurityPage() {
   return (
@@ -40,7 +40,9 @@ export default function AccountSecurityPage() {
 
         <section className="flex flex-col gap-4">
           <div>
-            <h3 className="text-base font-medium text-destructive">Danger zone</h3>
+            <h3 className="text-base font-medium text-destructive">
+              Danger zone
+            </h3>
             <p className="mt-0.5 text-sm text-muted-foreground">
               Permanently delete your account and all associated data.
             </p>

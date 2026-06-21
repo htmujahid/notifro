@@ -1,16 +1,29 @@
-import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
-import { requireAuth } from '../middleware/auth'
-import { listQuerySchema, applyListQuery } from '../lib/list-query'
-import { Errors, validationHook } from '../lib/errors'
-import type { AppEnv } from '../lib/types'
+import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
 
-const SORTABLE = { name: 'name', createdAt: 'createdAt', updatedAt: 'updatedAt' }
-const FILTERABLE = {
-  q: { column: 'name', schema: z.string(), operator: 'like' as const },
-  transactional: { column: 'transactional', schema: z.coerce.number().int().min(0).max(1), operator: 'eq' as const },
-  defaultOptIn: { column: 'defaultOptIn', schema: z.coerce.number().int().min(0).max(1), operator: 'eq' as const },
+import { Errors, validationHook } from "../lib/errors"
+import { applyListQuery, listQuerySchema } from "../lib/list-query"
+import type { AppEnv } from "../lib/types"
+import { requireAuth } from "../middleware/auth"
+
+const SORTABLE = {
+  name: "name",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
 }
-const DEFAULT_SORT = { key: 'createdAt', order: 'desc' as const }
+const FILTERABLE = {
+  q: { column: "name", schema: z.string(), operator: "like" as const },
+  transactional: {
+    column: "transactional",
+    schema: z.coerce.number().int().min(0).max(1),
+    operator: "eq" as const,
+  },
+  defaultOptIn: {
+    column: "defaultOptIn",
+    schema: z.coerce.number().int().min(0).max(1),
+    operator: "eq" as const,
+  },
+}
+const DEFAULT_SORT = { key: "createdAt", order: "desc" as const }
 
 const TopicDtoSchema = z.object({
   id: z.string(),
@@ -25,7 +38,14 @@ const TopicDtoSchema = z.object({
 })
 
 const CreateTopicSchema = z.object({
-  key: z.string().min(1).max(100).regex(/^[a-z0-9_-]+$/, 'key must be lowercase alphanumeric, hyphens, or underscores'),
+  key: z
+    .string()
+    .min(1)
+    .max(100)
+    .regex(
+      /^[a-z0-9_-]+$/,
+      "key must be lowercase alphanumeric, hyphens, or underscores"
+    ),
   name: z.string().min(1).max(200),
   description: z.string().max(1000).optional(),
   defaultOptIn: z.boolean().optional().default(true),
@@ -45,47 +65,67 @@ const ListResponseSchema = z.object({
 })
 
 const listRoute = createRoute({
-  method: 'get',
-  path: '/topics',
+  method: "get",
+  path: "/topics",
   request: {
-    query: listQuerySchema({ sortable: SORTABLE, filterable: FILTERABLE, defaultSort: DEFAULT_SORT }),
+    query: listQuerySchema({
+      sortable: SORTABLE,
+      filterable: FILTERABLE,
+      defaultSort: DEFAULT_SORT,
+    }),
   },
   responses: {
-    200: { content: { 'application/json': { schema: ListResponseSchema } }, description: 'Paginated topics' },
+    200: {
+      content: { "application/json": { schema: ListResponseSchema } },
+      description: "Paginated topics",
+    },
   },
 })
 
 const createRoute_ = createRoute({
-  method: 'post',
-  path: '/topics',
-  request: { body: { content: { 'application/json': { schema: CreateTopicSchema } } } },
+  method: "post",
+  path: "/topics",
+  request: {
+    body: { content: { "application/json": { schema: CreateTopicSchema } } },
+  },
   responses: {
-    201: { content: { 'application/json': { schema: TopicDtoSchema } }, description: 'Topic created' },
+    201: {
+      content: { "application/json": { schema: TopicDtoSchema } },
+      description: "Topic created",
+    },
   },
 })
 
 const detailRoute = createRoute({
-  method: 'get',
-  path: '/topics/:id',
+  method: "get",
+  path: "/topics/:id",
   responses: {
-    200: { content: { 'application/json': { schema: TopicDtoSchema } }, description: 'Topic detail' },
+    200: {
+      content: { "application/json": { schema: TopicDtoSchema } },
+      description: "Topic detail",
+    },
   },
 })
 
 const patchRoute = createRoute({
-  method: 'patch',
-  path: '/topics/:id',
-  request: { body: { content: { 'application/json': { schema: PatchTopicSchema } } } },
+  method: "patch",
+  path: "/topics/:id",
+  request: {
+    body: { content: { "application/json": { schema: PatchTopicSchema } } },
+  },
   responses: {
-    200: { content: { 'application/json': { schema: TopicDtoSchema } }, description: 'Topic updated' },
+    200: {
+      content: { "application/json": { schema: TopicDtoSchema } },
+      description: "Topic updated",
+    },
   },
 })
 
 const deleteRoute = createRoute({
-  method: 'delete',
-  path: '/topics/:id',
+  method: "delete",
+  path: "/topics/:id",
   responses: {
-    204: { description: 'Topic deleted' },
+    204: { description: "Topic deleted" },
   },
 })
 
@@ -94,12 +134,15 @@ function now(): string {
 }
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
-router.use('*', requireAuth)
+router.use("*", requireAuth)
 
 router.openapi(listRoute, async (c) => {
-  const parsed = c.req.valid('query')
+  const parsed = c.req.valid("query")
   const userId = c.var.user!.id
-  const baseQuery = c.var.db.selectFrom('topic').where('userId', '=', userId).selectAll()
+  const baseQuery = c.var.db
+    .selectFrom("topic")
+    .where("userId", "=", userId)
+    .selectAll()
   const { qb, getPage } = applyListQuery(baseQuery, parsed, {
     sortable: SORTABLE,
     filterable: FILTERABLE,
@@ -107,26 +150,30 @@ router.openapi(listRoute, async (c) => {
   })
   const rows = await qb.execute()
   const page = getPage(rows as Record<string, unknown>[])
-  return c.json({ data: page.data as z.infer<typeof TopicDtoSchema>[], nextCursor: page.nextCursor })
+  return c.json({
+    data: page.data as z.infer<typeof TopicDtoSchema>[],
+    nextCursor: page.nextCursor,
+  })
 })
 
 router.openapi(createRoute_, async (c) => {
-  const body = c.req.valid('json')
+  const body = c.req.valid("json")
   const userId = c.var.user!.id
   const ts = now()
   const id = crypto.randomUUID()
 
   const existing = await c.var.db
-    .selectFrom('topic')
-    .where('userId', '=', userId)
-    .where('key', '=', body.key)
-    .select('id')
+    .selectFrom("topic")
+    .where("userId", "=", userId)
+    .where("key", "=", body.key)
+    .select("id")
     .executeTakeFirst()
 
-  if (existing) throw Errors.badRequest('Topic key already exists for this user')
+  if (existing)
+    throw Errors.badRequest("Topic key already exists for this user")
 
   await c.var.db
-    .insertInto('topic')
+    .insertInto("topic")
     .values({
       id,
       userId,
@@ -140,45 +187,74 @@ router.openapi(createRoute_, async (c) => {
     })
     .execute()
 
-  const topic = await c.var.db.selectFrom('topic').where('id', '=', id).selectAll().executeTakeFirstOrThrow()
+  const topic = await c.var.db
+    .selectFrom("topic")
+    .where("id", "=", id)
+    .selectAll()
+    .executeTakeFirstOrThrow()
   return c.json(topic as z.infer<typeof TopicDtoSchema>, 201)
 })
 
 router.openapi(detailRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
-  const topic = await c.var.db.selectFrom('topic').where('id', '=', id).where('userId', '=', userId).selectAll().executeTakeFirst()
-  if (!topic) throw Errors.notFound('Topic')
+  const topic = await c.var.db
+    .selectFrom("topic")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
+    .selectAll()
+    .executeTakeFirst()
+  if (!topic) throw Errors.notFound("Topic")
   return c.json(topic as z.infer<typeof TopicDtoSchema>)
 })
 
 router.openapi(patchRoute, async (c) => {
   const { id } = c.req.param()
-  const body = c.req.valid('json')
+  const body = c.req.valid("json")
   const userId = c.var.user!.id
   const ts = now()
 
-  const topic = await c.var.db.selectFrom('topic').where('id', '=', id).where('userId', '=', userId).selectAll().executeTakeFirst()
-  if (!topic) throw Errors.notFound('Topic')
+  const topic = await c.var.db
+    .selectFrom("topic")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
+    .selectAll()
+    .executeTakeFirst()
+  if (!topic) throw Errors.notFound("Topic")
 
   const updates: Record<string, unknown> = { updatedAt: ts }
   if (body.name !== undefined) updates.name = body.name
   if (body.description !== undefined) updates.description = body.description
-  if (body.defaultOptIn !== undefined) updates.defaultOptIn = body.defaultOptIn ? 1 : 0
-  if (body.transactional !== undefined) updates.transactional = body.transactional ? 1 : 0
+  if (body.defaultOptIn !== undefined)
+    updates.defaultOptIn = body.defaultOptIn ? 1 : 0
+  if (body.transactional !== undefined)
+    updates.transactional = body.transactional ? 1 : 0
 
-  await c.var.db.updateTable('topic').set(updates).where('id', '=', id).execute()
+  await c.var.db
+    .updateTable("topic")
+    .set(updates)
+    .where("id", "=", id)
+    .execute()
 
-  const updated = await c.var.db.selectFrom('topic').where('id', '=', id).selectAll().executeTakeFirstOrThrow()
+  const updated = await c.var.db
+    .selectFrom("topic")
+    .where("id", "=", id)
+    .selectAll()
+    .executeTakeFirstOrThrow()
   return c.json(updated as z.infer<typeof TopicDtoSchema>)
 })
 
 router.openapi(deleteRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
-  const topic = await c.var.db.selectFrom('topic').where('id', '=', id).where('userId', '=', userId).select('id').executeTakeFirst()
-  if (!topic) throw Errors.notFound('Topic')
-  await c.var.db.deleteFrom('topic').where('id', '=', id).execute()
+  const topic = await c.var.db
+    .selectFrom("topic")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
+    .select("id")
+    .executeTakeFirst()
+  if (!topic) throw Errors.notFound("Topic")
+  await c.var.db.deleteFrom("topic").where("id", "=", id).execute()
   return c.body(null, 204)
 })
 

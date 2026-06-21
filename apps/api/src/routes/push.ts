@@ -1,7 +1,8 @@
-import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
-import { requireAuth } from '../middleware/auth'
-import { Errors, validationHook } from '../lib/errors'
-import type { AppEnv } from '../lib/types'
+import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+
+import { Errors, validationHook } from "../lib/errors"
+import type { AppEnv } from "../lib/types"
+import { requireAuth } from "../middleware/auth"
 
 const SubscribeBodySchema = z.object({
   endpoint: z.string().url(),
@@ -23,28 +24,43 @@ const VapidKeyResponseSchema = z.object({
 const OkResponseSchema = z.object({ ok: z.boolean() })
 
 const subscribeRoute = createRoute({
-  method: 'post',
-  path: '/push/subscribe',
-  request: { body: { content: { 'application/json': { schema: SubscribeBodySchema } } } },
+  method: "post",
+  path: "/push/subscribe",
+  request: {
+    body: { content: { "application/json": { schema: SubscribeBodySchema } } },
+  },
   responses: {
-    200: { content: { 'application/json': { schema: OkResponseSchema } }, description: 'Subscribed' },
+    200: {
+      content: { "application/json": { schema: OkResponseSchema } },
+      description: "Subscribed",
+    },
   },
 })
 
 const unsubscribeRoute = createRoute({
-  method: 'post',
-  path: '/push/unsubscribe',
-  request: { body: { content: { 'application/json': { schema: UnsubscribeBodySchema } } } },
+  method: "post",
+  path: "/push/unsubscribe",
+  request: {
+    body: {
+      content: { "application/json": { schema: UnsubscribeBodySchema } },
+    },
+  },
   responses: {
-    200: { content: { 'application/json': { schema: OkResponseSchema } }, description: 'Unsubscribed' },
+    200: {
+      content: { "application/json": { schema: OkResponseSchema } },
+      description: "Unsubscribed",
+    },
   },
 })
 
 const vapidKeyRoute = createRoute({
-  method: 'get',
-  path: '/push/vapid-public-key',
+  method: "get",
+  path: "/push/vapid-public-key",
   responses: {
-    200: { content: { 'application/json': { schema: VapidKeyResponseSchema } }, description: 'VAPID public key' },
+    200: {
+      content: { "application/json": { schema: VapidKeyResponseSchema } },
+      description: "VAPID public key",
+    },
   },
 })
 
@@ -57,28 +73,33 @@ function now(): string {
 }
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
-router.use('*', requireAuth)
+router.use("*", requireAuth)
 
 router.openapi(subscribeRoute, async (c) => {
-  const { endpoint, keys, userAgent } = c.req.valid('json')
+  const { endpoint, keys, userAgent } = c.req.valid("json")
   const userId = c.var.user!.id
   const { db } = c.var
 
   const existing = await db
-    .selectFrom('push_subscription')
-    .where('endpoint', '=', endpoint)
-    .select('id')
+    .selectFrom("push_subscription")
+    .where("endpoint", "=", endpoint)
+    .select("id")
     .executeTakeFirst()
 
   if (existing) {
     await db
-      .updateTable('push_subscription')
-      .set({ p256dh: keys.p256dh, auth: keys.auth, userAgent: userAgent ?? null, updatedAt: now() })
-      .where('id', '=', existing.id)
+      .updateTable("push_subscription")
+      .set({
+        p256dh: keys.p256dh,
+        auth: keys.auth,
+        userAgent: userAgent ?? null,
+        updatedAt: now(),
+      })
+      .where("id", "=", existing.id)
       .execute()
   } else {
     await db
-      .insertInto('push_subscription')
+      .insertInto("push_subscription")
       .values({
         id: newId(),
         userId,
@@ -96,26 +117,26 @@ router.openapi(subscribeRoute, async (c) => {
 })
 
 router.openapi(unsubscribeRoute, async (c) => {
-  const { endpoint } = c.req.valid('json')
+  const { endpoint } = c.req.valid("json")
   const userId = c.var.user!.id
   const { db } = c.var
 
   const sub = await db
-    .selectFrom('push_subscription')
-    .where('endpoint', '=', endpoint)
-    .where('userId', '=', userId)
-    .select('id')
+    .selectFrom("push_subscription")
+    .where("endpoint", "=", endpoint)
+    .where("userId", "=", userId)
+    .select("id")
     .executeTakeFirst()
 
-  if (!sub) throw Errors.notFound('Push subscription')
+  if (!sub) throw Errors.notFound("Push subscription")
 
-  await db.deleteFrom('push_subscription').where('id', '=', sub.id).execute()
+  await db.deleteFrom("push_subscription").where("id", "=", sub.id).execute()
 
   return c.json({ ok: true })
 })
 
 router.openapi(vapidKeyRoute, async (c) => {
-  const key = c.env.VAPID_PUBLIC_KEY ?? ''
+  const key = c.env.VAPID_PUBLIC_KEY ?? ""
   return c.json({ publicKey: key })
 })
 

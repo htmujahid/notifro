@@ -1,10 +1,10 @@
-import type { db } from '../db/client'
+import type { db } from "../db/client"
 
 export interface ChainStep {
   channel: string
   connectionId?: string
   waitForDeliveryMs: number
-  successOn: ('delivered' | 'opened' | 'clicked')[]
+  successOn: ("delivered" | "opened" | "clicked")[]
 }
 
 export interface MatchCondition {
@@ -15,8 +15,8 @@ export interface MatchCondition {
 }
 
 export type RouteResult =
-  | { type: 'channel'; channel: string }
-  | { type: 'chain'; chainId: string; steps: ChainStep[] }
+  | { type: "channel"; channel: string }
+  | { type: "chain"; chainId: string; steps: ChainStep[] }
   | null
 
 export interface NotificationInput {
@@ -24,7 +24,7 @@ export interface NotificationInput {
   messageType?: string
 }
 
-const PRIORITY_ORDER = ['low', 'normal', 'high', 'urgent']
+const PRIORITY_ORDER = ["low", "normal", "high", "urgent"]
 
 function matchesPriority(minPriority: string, actual: string): boolean {
   return PRIORITY_ORDER.indexOf(actual) >= PRIORITY_ORDER.indexOf(minPriority)
@@ -32,34 +32,45 @@ function matchesPriority(minPriority: string, actual: string): boolean {
 
 function matchesTimeWindow(start: string, end: string): boolean {
   const now = new Date()
-  const [sh, sm] = start.split(':').map(Number)
-  const [eh, em] = end.split(':').map(Number)
+  const [sh, sm] = start.split(":").map(Number)
+  const [eh, em] = end.split(":").map(Number)
   const nowMins = now.getUTCHours() * 60 + now.getUTCMinutes()
   const startMins = (sh ?? 0) * 60 + (sm ?? 0)
   const endMins = (eh ?? 0) * 60 + (em ?? 0)
   return nowMins >= startMins && nowMins <= endMins
 }
 
-function evaluateMatch(match: MatchCondition, notification: NotificationInput): boolean {
+function evaluateMatch(
+  match: MatchCondition,
+  notification: NotificationInput
+): boolean {
   if (match.minPriority) {
-    const priority = notification.priority ?? 'normal'
+    const priority = notification.priority ?? "normal"
     if (!matchesPriority(match.minPriority, priority)) return false
   }
-  if (match.messageType !== undefined && notification.messageType !== match.messageType) return false
-  if (match.timeWindow && !matchesTimeWindow(match.timeWindow.start, match.timeWindow.end)) return false
+  if (
+    match.messageType !== undefined &&
+    notification.messageType !== match.messageType
+  )
+    return false
+  if (
+    match.timeWindow &&
+    !matchesTimeWindow(match.timeWindow.start, match.timeWindow.end)
+  )
+    return false
   return true
 }
 
 export async function resolveRoute(
   database: ReturnType<typeof db>,
   userId: string,
-  notification: NotificationInput,
+  notification: NotificationInput
 ): Promise<RouteResult> {
   const rules = await database
-    .selectFrom('routing_rule')
-    .where('userId', '=', userId)
-    .where('enabled', '=', 1)
-    .orderBy('priority', 'asc')
+    .selectFrom("routing_rule")
+    .where("userId", "=", userId)
+    .where("enabled", "=", 1)
+    .orderBy("priority", "asc")
     .selectAll()
     .execute()
 
@@ -69,19 +80,19 @@ export async function resolveRoute(
 
     if (rule.targetChainId) {
       const chain = await database
-        .selectFrom('fallback_chain')
-        .where('id', '=', rule.targetChainId)
-        .where('userId', '=', userId)
+        .selectFrom("fallback_chain")
+        .where("id", "=", rule.targetChainId)
+        .where("userId", "=", userId)
         .selectAll()
         .executeTakeFirst()
       if (!chain) continue
       const steps = JSON.parse(chain.steps) as ChainStep[]
       if (steps.length === 0) continue
-      return { type: 'chain', chainId: chain.id, steps }
+      return { type: "chain", chainId: chain.id, steps }
     }
 
     if (rule.targetChannel) {
-      return { type: 'channel', channel: rule.targetChannel }
+      return { type: "channel", channel: rule.targetChannel }
     }
   }
 
@@ -96,12 +107,12 @@ export async function escalateChain(
   userId: string,
   chainId: string,
   currentStepIndex: number,
-  ts: string,
+  ts: string
 ): Promise<void> {
   const chain = await database
-    .selectFrom('fallback_chain')
-    .where('id', '=', chainId)
-    .where('userId', '=', userId)
+    .selectFrom("fallback_chain")
+    .where("id", "=", chainId)
+    .where("userId", "=", userId)
     .selectAll()
     .executeTakeFirst()
 
@@ -114,10 +125,10 @@ export async function escalateChain(
 
   const idempotencyKey = `chain:${notificationId}:${nextStepIndex}`
   const existing = await database
-    .selectFrom('idempotency_key')
-    .where('userId', '=', userId)
-    .where('key', '=', idempotencyKey)
-    .select('notificationId')
+    .selectFrom("idempotency_key")
+    .where("userId", "=", userId)
+    .where("key", "=", idempotencyKey)
+    .select("notificationId")
     .executeTakeFirst()
 
   if (existing) return
@@ -126,39 +137,40 @@ export async function escalateChain(
   const nextDeliveryId = crypto.randomUUID()
 
   const notification = await database
-    .selectFrom('notification')
-    .where('id', '=', notificationId)
-    .select(['payload'])
+    .selectFrom("notification")
+    .where("id", "=", notificationId)
+    .select(["payload"])
     .executeTakeFirst()
 
   if (!notification) return
 
   const payload = JSON.parse(notification.payload) as Record<string, unknown>
-  const recipient = (payload.recipient as Record<string, unknown> | undefined) ?? {}
+  const recipient =
+    (payload.recipient as Record<string, unknown> | undefined) ?? {}
 
-  let recipientAddr = ''
-  if (recipient.type === 'contact' && recipient.email) {
+  let recipientAddr = ""
+  if (recipient.type === "contact" && recipient.email) {
     recipientAddr = recipient.email as string
-  } else if (recipient.type === 'contact' && recipient.phone) {
+  } else if (recipient.type === "contact" && recipient.phone) {
     recipientAddr = recipient.phone as string
-  } else if (recipient.type === 'user' && recipient.userId) {
+  } else if (recipient.type === "user" && recipient.userId) {
     const user = await database
-      .selectFrom('user')
-      .where('id', '=', recipient.userId as string)
-      .select('email')
+      .selectFrom("user")
+      .where("id", "=", recipient.userId as string)
+      .select("email")
       .executeTakeFirst()
-    recipientAddr = user?.email ?? ''
+    recipientAddr = user?.email ?? ""
   }
 
   await database
-    .insertInto('delivery')
+    .insertInto("delivery")
     .values({
       id: nextDeliveryId,
       userId,
       notificationId,
       channel: nextStep.channel,
       recipient: recipientAddr,
-      status: 'queued',
+      status: "queued",
       providerMessageId: null,
       error: null,
       attempts: 0,
@@ -178,7 +190,7 @@ export async function escalateChain(
 
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
   await database
-    .insertInto('idempotency_key')
+    .insertInto("idempotency_key")
     .values({
       userId,
       key: idempotencyKey,

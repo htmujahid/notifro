@@ -1,6 +1,12 @@
-import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from "@tanstack/react-query"
 import { useApiClient } from "@workspace/api-client/context"
 import type { ListResponse } from "@workspace/api-client/types"
+
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query"
 
 export interface InboxMessage {
   id: string
@@ -17,21 +23,21 @@ export interface InboxMessage {
   updatedAt: string
 }
 
-export type InboxFilter = 'all' | 'unread' | 'read'
+export type InboxFilter = "all" | "unread" | "read"
 
 export const inboxKeys = {
-  all: ['inbox'] as const,
-  lists: () => [...inboxKeys.all, 'list'] as const,
+  all: ["inbox"] as const,
+  lists: () => [...inboxKeys.all, "list"] as const,
   list: (filter: InboxFilter) => [...inboxKeys.lists(), filter] as const,
-  unreadCount: () => [...inboxKeys.all, 'unread-count'] as const,
+  unreadCount: () => [...inboxKeys.all, "unread-count"] as const,
 }
 
-export function useInbox(filter: InboxFilter = 'all') {
+export function useInbox(filter: InboxFilter = "all") {
   const api = useApiClient()
   return useInfiniteQuery({
     queryKey: inboxKeys.list(filter),
     queryFn: ({ pageParam }) =>
-      api.get<ListResponse<InboxMessage>>('/api/inbox', {
+      api.get<ListResponse<InboxMessage>>("/api/inbox", {
         filter,
         ...(pageParam ? { cursor: pageParam as string } : {}),
       }),
@@ -44,7 +50,7 @@ export function useUnreadCount() {
   const api = useApiClient()
   return useQuery({
     queryKey: inboxKeys.unreadCount(),
-    queryFn: () => api.get<{ count: number }>('/api/inbox/unread-count'),
+    queryFn: () => api.get<{ count: number }>("/api/inbox/unread-count"),
     refetchInterval: 30_000,
   })
 }
@@ -65,7 +71,7 @@ export function useMarkAllRead() {
   const api = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: () => api.post<{ updated: number }>('/api/inbox/read-all'),
+    mutationFn: () => api.post<{ updated: number }>("/api/inbox/read-all"),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: inboxKeys.lists() })
       qc.invalidateQueries({ queryKey: inboxKeys.unreadCount() })

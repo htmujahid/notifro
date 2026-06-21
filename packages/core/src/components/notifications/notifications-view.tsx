@@ -1,10 +1,12 @@
 import { useState } from "react"
-import { BellOffIcon, CheckCheckIcon, PlusIcon } from "lucide-react"
-import { Button } from "@workspace/ui/components/button"
-import { useInbox, useMarkRead, useMarkAllRead } from "../../hooks/inbox"
-import type { InboxFilter, InboxMessage } from "../../hooks/inbox"
+
 import type { ListResponse } from "@workspace/api-client/types"
+import { Button } from "@workspace/ui/components/button"
+import { BellOffIcon, CheckCheckIcon, PlusIcon } from "lucide-react"
 import { useNavigate } from "react-router"
+
+import { useInbox, useMarkAllRead, useMarkRead } from "../../hooks/inbox"
+import type { InboxFilter, InboxMessage } from "../../hooks/inbox"
 
 const TABS: { label: string; value: InboxFilter }[] = [
   { label: "All", value: "all" },
@@ -34,7 +36,8 @@ export function NotificationsView() {
   const markRead = useMarkRead()
   const markAllRead = useMarkAllRead()
 
-  const messages = data?.pages.flatMap((p: ListResponse<InboxMessage>) => p.data) ?? []
+  const messages =
+    data?.pages.flatMap((p: ListResponse<InboxMessage>) => p.data) ?? []
 
   async function handleMessageClick(id: string, url: string | null) {
     await markRead.mutateAsync(id)
@@ -45,8 +48,12 @@ export function NotificationsView() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight">Notifications</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Your in-app notification inbox.</p>
+          <h1 className="text-xl font-semibold tracking-tight">
+            Notifications
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Your in-app notification inbox.
+          </p>
         </div>
         <div className="flex items-center gap-2">
           {messages.some((m) => !m.readAt) && (
@@ -61,7 +68,11 @@ export function NotificationsView() {
               Mark all read
             </Button>
           )}
-          <Button size="sm" className="gap-1.5" onClick={() => navigate("/create")}>
+          <Button
+            size="sm"
+            className="gap-1.5"
+            onClick={() => navigate("/create")}
+          >
             <PlusIcon className="size-4" />
             New notification
           </Button>
@@ -91,7 +102,9 @@ export function NotificationsView() {
       ) : messages.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <BellOffIcon className="mb-3 size-8 text-muted-foreground/50" />
-          <p className="text-sm text-muted-foreground">No {activeFilter === "all" ? "" : activeFilter + " "}notifications.</p>
+          <p className="text-sm text-muted-foreground">
+            No {activeFilter === "all" ? "" : activeFilter + " "}notifications.
+          </p>
         </div>
       ) : (
         <div className="flex flex-col gap-2">
@@ -104,11 +117,17 @@ export function NotificationsView() {
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    {!msg.readAt && <span className="size-2 rounded-full bg-blue-500 shrink-0" />}
-                    <span className="font-medium text-sm truncate">{msg.title}</span>
+                    {!msg.readAt && (
+                      <span className="size-2 rounded-full bg-blue-500 shrink-0" />
+                    )}
+                    <span className="font-medium text-sm truncate">
+                      {msg.title}
+                    </span>
                   </div>
                   {msg.body && (
-                    <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{msg.body}</p>
+                    <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
+                      {msg.body}
+                    </p>
                   )}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
@@ -117,13 +136,19 @@ export function NotificationsView() {
                   >
                     {msg.readAt ? "read" : "unread"}
                   </span>
-                  <span className="text-xs text-muted-foreground">{relativeTime(msg.createdAt)}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {relativeTime(msg.createdAt)}
+                  </span>
                 </div>
               </div>
             </button>
           ))}
           {hasNextPage && (
-            <Button variant="outline" className="self-center" onClick={() => fetchNextPage()}>
+            <Button
+              variant="outline"
+              className="self-center"
+              onClick={() => fetchNextPage()}
+            >
               Load more
             </Button>
           )}

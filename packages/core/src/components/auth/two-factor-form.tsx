@@ -1,15 +1,25 @@
 import { useState } from "react"
-import { useForm, Controller } from "react-hook-form"
+
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useNavigate, useSearchParams } from "react-router"
-import { useQueryClient } from "@tanstack/react-query"
-import { Button } from "@workspace/ui/components/button"
-import { Input } from "@workspace/ui/components/input"
-import { Label } from "@workspace/ui/components/label"
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@workspace/ui/components/input-otp"
 import { useAuth } from "@workspace/app/auth/context"
 import { SESSION_QUERY_KEY } from "@workspace/app/auth/use-session"
-import { twoFactorVerifySchema, type TwoFactorVerifyValues } from "../../schemas/auth"
+import { Button } from "@workspace/ui/components/button"
+import { Input } from "@workspace/ui/components/input"
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@workspace/ui/components/input-otp"
+import { Label } from "@workspace/ui/components/label"
+import { Controller, useForm } from "react-hook-form"
+import { useNavigate, useSearchParams } from "react-router"
+
+import { useQueryClient } from "@tanstack/react-query"
+
+import {
+  type TwoFactorVerifyValues,
+  twoFactorVerifySchema,
+} from "../../schemas/auth"
 
 type Mode = "totp" | "otp" | "backup"
 
@@ -45,9 +55,15 @@ export function TwoFactorForm() {
   async function handleSubmit(values: TwoFactorVerifyValues) {
     let result
     if (mode === "totp") {
-      result = await auth.twoFactor.verifyTotp({ code: values.code, trustDevice: true })
+      result = await auth.twoFactor.verifyTotp({
+        code: values.code,
+        trustDevice: true,
+      })
     } else if (mode === "otp") {
-      result = await auth.twoFactor.verifyOtp({ code: values.code, trustDevice: true })
+      result = await auth.twoFactor.verifyOtp({
+        code: values.code,
+        trustDevice: true,
+      })
     } else {
       result = await auth.twoFactor.verifyBackupCode({ code: values.code })
     }
@@ -73,7 +89,9 @@ export function TwoFactorForm() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">Two-factor verification</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">
+          Two-factor verification
+        </h1>
         <p className="text-sm text-muted-foreground">
           {isTotp && "Enter the 6-digit code from your authenticator app."}
           {isOtp && "Enter the code sent to your email."}
@@ -81,7 +99,10 @@ export function TwoFactorForm() {
         </p>
       </div>
 
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-4">
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="flex flex-col gap-4"
+      >
         {isOtp && !otpSent ? (
           <Button
             type="button"
@@ -125,7 +146,9 @@ export function TwoFactorForm() {
                   </InputOTP>
                 )}
                 {fieldState.error && (
-                  <p className="text-xs text-destructive">{fieldState.error.message}</p>
+                  <p className="text-xs text-destructive">
+                    {fieldState.error.message}
+                  </p>
                 )}
               </div>
             )}
@@ -139,7 +162,11 @@ export function TwoFactorForm() {
         )}
 
         {!(isOtp && !otpSent) && (
-          <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={form.formState.isSubmitting}
+          >
             {form.formState.isSubmitting ? "Verifying…" : "Verify"}
           </Button>
         )}

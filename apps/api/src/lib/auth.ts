@@ -1,39 +1,62 @@
-import { env } from 'cloudflare:workers'
-import { betterAuth } from 'better-auth'
-import { twoFactor, phoneNumber } from 'better-auth/plugins'
-import { apiKey } from '@better-auth/api-key'
-import { sendVerificationEmail, sendResetPasswordEmail, sendTwoFactorOTPEmail } from '@workspace/mailer'
-import { mockD1 } from './mock-db'
-import { kvSecondaryStorage } from './kv-storage'
+import { apiKey } from "@better-auth/api-key"
+import {
+  sendResetPasswordEmail,
+  sendTwoFactorOTPEmail,
+  sendVerificationEmail,
+} from "@workspace/mailer"
+import { betterAuth } from "better-auth"
+import { phoneNumber, twoFactor } from "better-auth/plugins"
+import { env } from "cloudflare:workers"
 
-const FROM = { email: 'noreply@renderical.com', name: 'Renderical' }
+import { kvSecondaryStorage } from "./kv-storage"
+import { mockD1 } from "./mock-db"
+
+const FROM = { email: "noreply@renderical.com", name: "Renderical" }
 
 export function createAuth(db: D1Database = mockD1) {
   return betterAuth({
-    appName: 'Renderical',
+    appName: "Renderical",
     database: db,
     secondaryStorage: kvSecondaryStorage(env.KV),
     rateLimit: {
       enabled: true,
-      storage: 'secondary-storage',
+      storage: "secondary-storage",
       window: 60,
       max: 100,
     },
-    trustedOrigins: [env.FRONTEND_URL, 'renderical://', 'renderical://**'],
+    trustedOrigins: [env.FRONTEND_URL, "renderical://", "renderical://**"],
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: true,
-      sendVerificationEmail: async ({ user, url }: { user: { email: string; name?: string | null }; url: string }) => {
+      sendVerificationEmail: async ({
+        user,
+        url,
+      }: {
+        user: { email: string; name?: string | null }
+        url: string
+      }) => {
         await sendVerificationEmail({ user, url, from: FROM })
       },
-      sendResetPassword: async ({ user, url }: { user: { email: string; name?: string | null }; url: string }) => {
+      sendResetPassword: async ({
+        user,
+        url,
+      }: {
+        user: { email: string; name?: string | null }
+        url: string
+      }) => {
         await sendResetPasswordEmail({ user, url, from: FROM })
       },
     },
     emailVerification: {
       sendOnSignIn: true,
       autoSignInAfterVerification: true,
-      sendVerificationEmail: async ({ user, url }: { user: { email: string; name?: string | null }; url: string }) => {
+      sendVerificationEmail: async ({
+        user,
+        url,
+      }: {
+        user: { email: string; name?: string | null }
+        url: string
+      }) => {
         await sendVerificationEmail({ user, url, from: FROM })
       },
     },
@@ -46,7 +69,13 @@ export function createAuth(db: D1Database = mockD1) {
     plugins: [
       twoFactor({
         otpOptions: {
-          async sendOTP({ user, otp }: { user: { email: string; name?: string | null }; otp: string }) {
+          async sendOTP({
+            user,
+            otp,
+          }: {
+            user: { email: string; name?: string | null }
+            otp: string
+          }) {
             await sendTwoFactorOTPEmail({ user, otp, from: FROM })
           },
         },
@@ -57,20 +86,27 @@ export function createAuth(db: D1Database = mockD1) {
           const token = env.TWILIO_AUTH_TOKEN
           const from = env.TWILIO_FROM_NUMBER
           if (!sid || !token || !from) return
-          await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
-            method: 'POST',
-            headers: {
-              Authorization: `Basic ${btoa(`${sid}:${token}`)}`,
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({ To: to, From: from, Body: `Your Renderical verification code: ${code}` }),
-          })
+          await fetch(
+            `https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Basic ${btoa(`${sid}:${token}`)}`,
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+              body: new URLSearchParams({
+                To: to,
+                From: from,
+                Body: `Your Renderical verification code: ${code}`,
+              }),
+            }
+          )
         },
         otpLength: 6,
         expiresIn: 300,
       }),
       apiKey({
-        defaultPrefix: 'rk_',
+        defaultPrefix: "rk_",
         enableMetadata: true,
         rateLimit: { enabled: false },
       }),

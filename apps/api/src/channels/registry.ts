@@ -1,5 +1,5 @@
-import type { ChannelType } from './types'
-import type { ChannelAdapter } from './adapter'
+import type { ChannelAdapter } from "./adapter"
+import type { ChannelType } from "./types"
 
 const adapters = new Map<ChannelType, ChannelAdapter>()
 

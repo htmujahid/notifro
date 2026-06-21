@@ -15,41 +15,41 @@ export interface ApiResponse<T> {
   data: T
 }
 
-export type Priority = 'low' | 'normal' | 'high' | 'urgent'
+export type Priority = "low" | "normal" | "high" | "urgent"
 
 export type ChannelType =
-  | 'email'
-  | 'webhook'
-  | 'slack'
-  | 'discord'
-  | 'teams'
-  | 'web_push'
-  | 'mobile_push'
-  | 'sms'
-  | 'whatsapp'
-  | 'telegram'
-  | 'in_app'
+  | "email"
+  | "webhook"
+  | "slack"
+  | "discord"
+  | "teams"
+  | "web_push"
+  | "mobile_push"
+  | "sms"
+  | "whatsapp"
+  | "telegram"
+  | "in_app"
 
 type ButtonProps = {
   label: string
   url?: string
   action?: string
-  style?: 'primary' | 'secondary' | 'danger'
+  style?: "primary" | "secondary" | "danger"
 }
 
 export type ContentBlock =
-  | { type: 'text'; text: string; markdown?: string }
-  | { type: 'heading'; text: string; level?: number }
-  | { type: 'image'; url: string; alt?: string; title?: string }
-  | { type: 'divider' }
-  | ({ type: 'button' } & ButtonProps)
-  | { type: 'button_group'; buttons: ButtonProps[] }
-  | { type: 'fields'; fields: Array<{ key: string; value: string }> }
+  | { type: "text"; text: string; markdown?: string }
+  | { type: "heading"; text: string; level?: number }
+  | { type: "image"; url: string; alt?: string; title?: string }
+  | { type: "divider" }
+  | ({ type: "button" } & ButtonProps)
+  | { type: "button_group"; buttons: ButtonProps[] }
+  | { type: "fields"; fields: Array<{ key: string; value: string }> }
 
 export type Recipient =
-  | { type: 'user'; userId: string }
+  | { type: "user"; userId: string }
   | {
-      type: 'contact'
+      type: "contact"
       email?: string
       phone?: string
       slackUserId?: string
@@ -58,7 +58,7 @@ export type Recipient =
       deviceToken?: string
       pushSubscription?: Record<string, unknown>
     }
-  | { type: 'segment'; segmentId: string }
+  | { type: "segment"; segmentId: string }
 
 export interface Template {
   id: string
@@ -105,7 +105,7 @@ export interface BrandKit {
 }
 
 export interface ComposePayload {
-  schemaVersion?: '1'
+  schemaVersion?: "1"
   content?: {
     title?: string
     subject?: string
@@ -247,7 +247,7 @@ export interface ChainStep {
   channel: string
   connectionId?: string
   waitForDeliveryMs: number
-  successOn: ('delivered' | 'opened' | 'clicked')[]
+  successOn: ("delivered" | "opened" | "clicked")[]
 }
 
 export interface FallbackChain {
@@ -301,7 +301,7 @@ export interface ApiKey {
   start: string | null
   prefix: string | null
   enabled: boolean
-  metadata: { mode?: 'live' | 'test'; [key: string]: unknown } | null
+  metadata: { mode?: "live" | "test"; [key: string]: unknown } | null
   lastRequest: string | null
   createdAt: string
   updatedAt: string

@@ -1,8 +1,9 @@
 import { Suspense } from "react"
-import { createBrowserRouter, RouterProvider } from "react-router"
+
 import { AppProvider } from "@workspace/app/app/context"
 import { createWebAuthClient } from "@workspace/app/auth/client.web"
 import { routes } from "@workspace/views/routes/web"
+import { RouterProvider, createBrowserRouter } from "react-router"
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8787"
 const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL ?? window.location.origin
@@ -11,7 +12,12 @@ const router = createBrowserRouter(routes)
 
 export function App() {
   return (
-    <AppProvider platform="web" authClient={authClient} apiBaseURL={API_URL} appBaseURL={FRONTEND_URL}>
+    <AppProvider
+      platform="web"
+      authClient={authClient}
+      apiBaseURL={API_URL}
+      appBaseURL={FRONTEND_URL}
+    >
       <Suspense fallback={null}>
         <RouterProvider router={router} />
       </Suspense>

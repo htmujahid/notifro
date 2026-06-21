@@ -1,5 +1,6 @@
 // Frontend (apps/web) base URL — auth lives under /auth on the web app.
-const FRONTEND_URL = import.meta.env.PUBLIC_FRONTEND_URL ?? "http://localhost:5173";
+const FRONTEND_URL =
+  import.meta.env.PUBLIC_FRONTEND_URL ?? "http://localhost:5173"
 
 export const site = {
   name: "Renderical",
@@ -17,7 +18,7 @@ export const site = {
   twitter: "@renderical", // Twitter/X handle for twitter:site & twitter:creator
   locale: "en_US",
   themeColor: "#FFFFFF",
-};
+}
 
 export const nav = [
   { label: "Features", href: "/features" },
@@ -25,7 +26,7 @@ export const nav = [
   { label: "MCP Server", href: "/mcp" },
   { label: "Developers", href: "/developers" },
   { label: "Security", href: "/security" },
-];
+]
 
 export const channels = [
   { name: "Slack", note: "Block Kit" },
@@ -37,4 +38,4 @@ export const channels = [
   { name: "In-App Inbox", note: "Drop-in feed" },
   { name: "Webhooks", note: "Signed & replay-safe" },
   { name: "SMS", note: "Fallback tier" },
-];
+]

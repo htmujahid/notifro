@@ -1,12 +1,13 @@
-import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
-import { requireAuth } from '../middleware/auth'
-import { listQuerySchema, applyListQuery } from '../lib/list-query'
-import { Errors, validationHook } from '../lib/errors'
-import type { AppEnv } from '../lib/types'
+import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
 
-const SORTABLE = { createdAt: 'createdAt', channel: 'channel' }
+import { Errors, validationHook } from "../lib/errors"
+import { applyListQuery, listQuerySchema } from "../lib/list-query"
+import type { AppEnv } from "../lib/types"
+import { requireAuth } from "../middleware/auth"
+
+const SORTABLE = { createdAt: "createdAt", channel: "channel" }
 const FILTERABLE = {}
-const DEFAULT_SORT = { key: 'createdAt', order: 'desc' as const }
+const DEFAULT_SORT = { key: "createdAt", order: "desc" as const }
 
 const RateLimitRuleDtoSchema = z.object({
   id: z.string(),
@@ -35,46 +36,67 @@ const ListResponseSchema = z.object({
 })
 
 const listRoute = createRoute({
-  method: 'get',
-  path: '/rate-limits',
+  method: "get",
+  path: "/rate-limits",
   request: {
-    query: listQuerySchema({ sortable: SORTABLE, filterable: FILTERABLE, defaultSort: DEFAULT_SORT }),
+    query: listQuerySchema({
+      sortable: SORTABLE,
+      filterable: FILTERABLE,
+      defaultSort: DEFAULT_SORT,
+    }),
   },
   responses: {
-    200: { content: { 'application/json': { schema: ListResponseSchema } }, description: 'Paginated rate limit rules' },
+    200: {
+      content: { "application/json": { schema: ListResponseSchema } },
+      description: "Paginated rate limit rules",
+    },
   },
 })
 
 const createRoute_ = createRoute({
-  method: 'post',
-  path: '/rate-limits',
-  request: { body: { content: { 'application/json': { schema: CreateRateLimitRuleSchema } } } },
+  method: "post",
+  path: "/rate-limits",
+  request: {
+    body: {
+      content: { "application/json": { schema: CreateRateLimitRuleSchema } },
+    },
+  },
   responses: {
-    201: { content: { 'application/json': { schema: RateLimitRuleDtoSchema } }, description: 'Created or updated rate limit rule' },
+    201: {
+      content: { "application/json": { schema: RateLimitRuleDtoSchema } },
+      description: "Created or updated rate limit rule",
+    },
   },
 })
 
 const patchRoute = createRoute({
-  method: 'patch',
-  path: '/rate-limits/:id',
-  request: { body: { content: { 'application/json': { schema: PatchRateLimitRuleSchema } } } },
+  method: "patch",
+  path: "/rate-limits/:id",
+  request: {
+    body: {
+      content: { "application/json": { schema: PatchRateLimitRuleSchema } },
+    },
+  },
   responses: {
-    200: { content: { 'application/json': { schema: RateLimitRuleDtoSchema } }, description: 'Updated rate limit rule' },
+    200: {
+      content: { "application/json": { schema: RateLimitRuleDtoSchema } },
+      description: "Updated rate limit rule",
+    },
   },
 })
 
 const deleteRoute = createRoute({
-  method: 'delete',
-  path: '/rate-limits/:id',
+  method: "delete",
+  path: "/rate-limits/:id",
   responses: {
-    204: { description: 'Deleted' },
+    204: { description: "Deleted" },
   },
 })
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 
-router.use('/rate-limits', requireAuth)
-router.use('/rate-limits/:id', requireAuth)
+router.use("/rate-limits", requireAuth)
+router.use("/rate-limits/:id", requireAuth)
 
 function newId() {
   return crypto.randomUUID()
@@ -85,13 +107,13 @@ function now() {
 }
 
 router.openapi(listRoute, async (c) => {
-  const parsed = c.req.valid('query')
+  const parsed = c.req.valid("query")
   const userId = c.var.user!.id
   const db = c.var.db
 
   const baseQuery = db
-    .selectFrom('rate_limit_rule')
-    .where('userId', '=', userId)
+    .selectFrom("rate_limit_rule")
+    .where("userId", "=", userId)
     .selectAll()
 
   const { qb, getPage } = applyListQuery(baseQuery, parsed, {
@@ -103,32 +125,43 @@ router.openapi(listRoute, async (c) => {
   const rows = await qb.execute()
   const page = getPage(rows as Record<string, unknown>[])
 
-  return c.json({ data: page.data as z.infer<typeof RateLimitRuleDtoSchema>[], nextCursor: page.nextCursor })
+  return c.json({
+    data: page.data as z.infer<typeof RateLimitRuleDtoSchema>[],
+    nextCursor: page.nextCursor,
+  })
 })
 
 router.openapi(createRoute_, async (c) => {
-  const body = c.req.valid('json')
+  const body = c.req.valid("json")
   const userId = c.var.user!.id
   const db = c.var.db
   const ts = now()
   const id = newId()
 
   await db
-    .insertInto('rate_limit_rule')
-    .values({ id, userId, channel: body.channel, maxCount: body.maxCount, windowSeconds: body.windowSeconds, createdAt: ts, updatedAt: ts })
+    .insertInto("rate_limit_rule")
+    .values({
+      id,
+      userId,
+      channel: body.channel,
+      maxCount: body.maxCount,
+      windowSeconds: body.windowSeconds,
+      createdAt: ts,
+      updatedAt: ts,
+    })
     .onConflict((oc) =>
-      oc.columns(['userId', 'channel']).doUpdateSet({
+      oc.columns(["userId", "channel"]).doUpdateSet({
         maxCount: body.maxCount,
         windowSeconds: body.windowSeconds,
         updatedAt: ts,
-      }),
+      })
     )
     .execute()
 
   const row = await db
-    .selectFrom('rate_limit_rule')
-    .where('userId', '=', userId)
-    .where('channel', '=', body.channel)
+    .selectFrom("rate_limit_rule")
+    .where("userId", "=", userId)
+    .where("channel", "=", body.channel)
     .selectAll()
     .executeTakeFirstOrThrow()
 
@@ -137,30 +170,36 @@ router.openapi(createRoute_, async (c) => {
 
 router.openapi(patchRoute, async (c) => {
   const { id } = c.req.param()
-  const body = c.req.valid('json')
+  const body = c.req.valid("json")
   const userId = c.var.user!.id
   const db = c.var.db
   const ts = now()
 
   const existing = await db
-    .selectFrom('rate_limit_rule')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
+    .selectFrom("rate_limit_rule")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
     .selectAll()
     .executeTakeFirst()
 
-  if (!existing) throw Errors.notFound('rate_limit_rule')
+  if (!existing) throw Errors.notFound("rate_limit_rule")
 
   const updates: Record<string, unknown> = { updatedAt: ts }
   if (body.maxCount !== undefined) updates.maxCount = body.maxCount
-  if (body.windowSeconds !== undefined) updates.windowSeconds = body.windowSeconds
+  if (body.windowSeconds !== undefined)
+    updates.windowSeconds = body.windowSeconds
 
-  await db.updateTable('rate_limit_rule').set(updates).where('id', '=', id).where('userId', '=', userId).execute()
+  await db
+    .updateTable("rate_limit_rule")
+    .set(updates)
+    .where("id", "=", id)
+    .where("userId", "=", userId)
+    .execute()
 
   const updated = await db
-    .selectFrom('rate_limit_rule')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
+    .selectFrom("rate_limit_rule")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
     .selectAll()
     .executeTakeFirstOrThrow()
 
@@ -173,15 +212,19 @@ router.openapi(deleteRoute, async (c) => {
   const db = c.var.db
 
   const existing = await db
-    .selectFrom('rate_limit_rule')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
-    .select('id')
+    .selectFrom("rate_limit_rule")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
+    .select("id")
     .executeTakeFirst()
 
-  if (!existing) throw Errors.notFound('rate_limit_rule')
+  if (!existing) throw Errors.notFound("rate_limit_rule")
 
-  await db.deleteFrom('rate_limit_rule').where('id', '=', id).where('userId', '=', userId).execute()
+  await db
+    .deleteFrom("rate_limit_rule")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
+    .execute()
 
   return c.body(null, 204)
 })

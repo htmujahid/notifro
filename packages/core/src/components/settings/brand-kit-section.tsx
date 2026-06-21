@@ -1,8 +1,10 @@
 import { useState } from "react"
+
 import { Button } from "@workspace/ui/components/button"
 import { Card, CardContent } from "@workspace/ui/components/card"
 import { Separator } from "@workspace/ui/components/separator"
 import { PaletteIcon } from "lucide-react"
+
 import { useBrandKit, useUpdateBrandKit } from "../../hooks/templates"
 
 export function BrandKitSection() {
@@ -23,7 +25,9 @@ export function BrandKitSection() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-sm font-medium">Brand kit</h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">Logo, colors, and font used in email and template rendering.</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Logo, colors, and font used in email and template rendering.
+          </p>
         </div>
         <PaletteIcon className="size-4 text-muted-foreground" />
       </div>
@@ -32,7 +36,9 @@ export function BrandKitSection() {
           <div className="flex items-center justify-between gap-8">
             <div>
               <p className="text-sm font-medium">Logo URL</p>
-              <p className="text-xs text-muted-foreground">Absolute URL to your logo image.</p>
+              <p className="text-xs text-muted-foreground">
+                Absolute URL to your logo image.
+              </p>
             </div>
             <input
               className="w-64 rounded-md border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
@@ -45,7 +51,9 @@ export function BrandKitSection() {
           <div className="flex items-center justify-between gap-8">
             <div>
               <p className="text-sm font-medium">Font stack</p>
-              <p className="text-xs text-muted-foreground">CSS font-family value for email templates.</p>
+              <p className="text-xs text-muted-foreground">
+                CSS font-family value for email templates.
+              </p>
             </div>
             <input
               className="w-64 rounded-md border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
@@ -55,7 +63,13 @@ export function BrandKitSection() {
             />
           </div>
           <div className="flex justify-end">
-            <Button size="sm" disabled={updateBrandKit.isPending} onClick={handleSave}>Save</Button>
+            <Button
+              size="sm"
+              disabled={updateBrandKit.isPending}
+              onClick={handleSave}
+            >
+              Save
+            </Button>
           </div>
         </CardContent>
       </Card>

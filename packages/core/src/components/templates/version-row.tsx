@@ -1,9 +1,15 @@
-import { RotateCcwIcon } from "lucide-react"
-import { Button } from "@workspace/ui/components/button"
 import type { TemplateVersion } from "@workspace/api-client/types"
+import { Button } from "@workspace/ui/components/button"
+import { RotateCcwIcon } from "lucide-react"
 
 function formatDate(iso: string): string {
-  return new Date(iso).toLocaleString(undefined, { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" })
+  return new Date(iso).toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  })
 }
 
 interface VersionRowProps {
@@ -17,9 +23,16 @@ export function VersionRow({ v, onRestore, restoring }: VersionRowProps) {
     <div className="flex items-center justify-between gap-4 rounded-lg bg-muted/40 px-4 py-3">
       <div>
         <p className="text-sm font-medium">v{v.version}</p>
-        <p className="text-xs text-muted-foreground">{formatDate(v.createdAt)}</p>
+        <p className="text-xs text-muted-foreground">
+          {formatDate(v.createdAt)}
+        </p>
       </div>
-      <Button size="sm" variant="outline" disabled={restoring} onClick={onRestore}>
+      <Button
+        size="sm"
+        variant="outline"
+        disabled={restoring}
+        onClick={onRestore}
+      >
         <RotateCcwIcon className="mr-1.5 size-3.5" />
         Restore
       </Button>

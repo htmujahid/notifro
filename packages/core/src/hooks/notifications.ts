@@ -1,6 +1,16 @@
-import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-query"
 import { useApiClient } from "@workspace/api-client/context"
-import type { ListParams, ListResponse, ComposePayload } from "@workspace/api-client/types"
+import type {
+  ComposePayload,
+  ListParams,
+  ListResponse,
+} from "@workspace/api-client/types"
+
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query"
 
 export interface Delivery {
   id: string
@@ -44,7 +54,8 @@ export function useSendNotification() {
   return useMutation({
     mutationFn: (payload: ComposePayload) =>
       api.post<NotificationWithDeliveries>("/api/notifications", payload),
-    onSuccess: () => qc.invalidateQueries({ queryKey: notificationKeys.lists() }),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: notificationKeys.lists() }),
   })
 }
 
@@ -66,7 +77,8 @@ export function useNotification(id: string) {
   const api = useApiClient()
   return useQuery({
     queryKey: notificationKeys.detail(id),
-    queryFn: () => api.get<NotificationWithDeliveries>(`/api/notifications/${id}`),
+    queryFn: () =>
+      api.get<NotificationWithDeliveries>(`/api/notifications/${id}`),
     enabled: Boolean(id),
   })
 }

@@ -1,8 +1,9 @@
-import { Link } from "react-router"
-import { CheckIcon, ArrowRightIcon, Loader2Icon } from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
-import { useOverview, useSendTest, useOnboarding } from "../../hooks/overview"
+import { ArrowRightIcon, CheckIcon, Loader2Icon } from "lucide-react"
+import { Link } from "react-router"
 import { toast } from "sonner"
+
+import { useOnboarding, useOverview, useSendTest } from "../../hooks/overview"
 import { DashboardSkeleton } from "./dashboard-skeleton"
 
 export function OnboardingChecklist() {
@@ -19,14 +20,22 @@ export function OnboardingChecklist() {
     {
       key: "connect_channel" as const,
       label: "Connect your first channel",
-      description: "Link an email, SMS, or webhook connection to start sending notifications.",
+      description:
+        "Link an email, SMS, or webhook connection to start sending notifications.",
       done: steps.connect_channel,
-      action: <Link to="/channels"><Button size="sm" variant="outline">Go to Channels <ArrowRightIcon className="ml-1 size-3" /></Button></Link>,
+      action: (
+        <Link to="/channels">
+          <Button size="sm" variant="outline">
+            Go to Channels <ArrowRightIcon className="ml-1 size-3" />
+          </Button>
+        </Link>
+      ),
     },
     {
       key: "send_test" as const,
       label: "Send a test notification",
-      description: "Verify your setup by delivering a real in-app notification to yourself.",
+      description:
+        "Verify your setup by delivering a real in-app notification to yourself.",
       done: steps.send_test,
       action: (
         <Button
@@ -35,12 +44,18 @@ export function OnboardingChecklist() {
           disabled={sendTest.isPending}
           onClick={() =>
             sendTest.mutate(undefined, {
-              onSuccess: () => toast.success("Test notification delivered — check your inbox."),
-              onError: (err) => toast.error(err instanceof Error ? err.message : "Send failed"),
+              onSuccess: () =>
+                toast.success(
+                  "Test notification delivered — check your inbox."
+                ),
+              onError: (err) =>
+                toast.error(err instanceof Error ? err.message : "Send failed"),
             })
           }
         >
-          {sendTest.isPending ? <Loader2Icon className="mr-1 size-3 animate-spin" /> : null}
+          {sendTest.isPending ? (
+            <Loader2Icon className="mr-1 size-3 animate-spin" />
+          ) : null}
           Send test
         </Button>
       ),
@@ -48,14 +63,17 @@ export function OnboardingChecklist() {
     {
       key: "explore_templates" as const,
       label: "Explore templates",
-      description: "Browse reusable message templates to speed up future notifications.",
+      description:
+        "Browse reusable message templates to speed up future notifications.",
       done: steps.explore_templates,
       action: (
         <Link to="/templates">
           <Button
             size="sm"
             variant="outline"
-            onClick={() => onboarding.mutate({ step: "explore_templates", completed: true })}
+            onClick={() =>
+              onboarding.mutate({ step: "explore_templates", completed: true })
+            }
           >
             Go to Templates <ArrowRightIcon className="ml-1 size-3" />
           </Button>
@@ -70,9 +88,12 @@ export function OnboardingChecklist() {
     <div className="flex flex-col gap-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight">Get started with Renderical</h1>
+          <h1 className="text-xl font-semibold tracking-tight">
+            Get started with Renderical
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Complete these steps to send your first notification. {completedCount}/{STEPS.length} done.
+            Complete these steps to send your first notification.{" "}
+            {completedCount}/{STEPS.length} done.
           </p>
         </div>
         <Button
@@ -90,7 +111,9 @@ export function OnboardingChecklist() {
           <div
             key={step.key}
             className={`flex items-center gap-4 rounded-xl px-5 py-4 ring-1 transition-colors ${
-              step.done ? "bg-muted/30 ring-foreground/5" : "bg-card ring-foreground/10"
+              step.done
+                ? "bg-muted/30 ring-foreground/5"
+                : "bg-card ring-foreground/10"
             }`}
           >
             <div
@@ -100,14 +123,22 @@ export function OnboardingChecklist() {
                   : "bg-muted ring-foreground/10 text-muted-foreground"
               }`}
             >
-              {step.done ? <CheckIcon className="size-4" /> : <span className="text-xs font-medium" />}
+              {step.done ? (
+                <CheckIcon className="size-4" />
+              ) : (
+                <span className="text-xs font-medium" />
+              )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className={`text-sm font-medium ${step.done ? "line-through text-muted-foreground" : ""}`}>
+              <p
+                className={`text-sm font-medium ${step.done ? "line-through text-muted-foreground" : ""}`}
+              >
                 {step.label}
               </p>
               {!step.done && (
-                <p className="mt-0.5 text-xs text-muted-foreground">{step.description}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  {step.description}
+                </p>
               )}
             </div>
             {!step.done && <div className="shrink-0">{step.action}</div>}

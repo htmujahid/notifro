@@ -1,6 +1,11 @@
-import { useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-query"
 import { useApiClient } from "@workspace/api-client/context"
 import type { ListParams, ListResponse } from "@workspace/api-client/types"
+
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query"
 
 export interface Connection {
   id: string
@@ -90,7 +95,10 @@ export function useConnectionHealth(id: string) {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: () =>
-      api.post<{ ok: boolean; message?: string; checkedAt: string }>(`/api/connections/${id}/health`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: connectionKeys.detail(id) }),
+      api.post<{ ok: boolean; message?: string; checkedAt: string }>(
+        `/api/connections/${id}/health`
+      ),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: connectionKeys.detail(id) }),
   })
 }

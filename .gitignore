@@ -35,3 +35,7 @@ dist-ssr
 
 # typescript
 *.tsbuildinfo
+
+plans
+plan2
+.claude

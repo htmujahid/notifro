@@ -1,17 +1,20 @@
 import { useState } from "react"
-import { useForm } from "react-hook-form"
+
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Controller } from "react-hook-form"
-import { useNavigate, useSearchParams } from "react-router"
-import { useQueryClient } from "@tanstack/react-query"
+import { useApp } from "@workspace/app/app/context"
+import { useAuth } from "@workspace/app/auth/context"
+import { buildAuthURL } from "@workspace/app/auth/deep-link"
+import { SESSION_QUERY_KEY } from "@workspace/app/auth/use-session"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
-import { useAuth } from "@workspace/app/auth/context"
-import { SESSION_QUERY_KEY } from "@workspace/app/auth/use-session"
-import { buildAuthURL } from "@workspace/app/auth/deep-link"
-import { useApp } from "@workspace/app/app/context"
-import { signInSchema, type SignInValues } from "../../schemas/auth"
+import { useForm } from "react-hook-form"
+import { Controller } from "react-hook-form"
+import { useNavigate, useSearchParams } from "react-router"
+
+import { useQueryClient } from "@tanstack/react-query"
+
+import { type SignInValues, signInSchema } from "../../schemas/auth"
 import { GoogleIcon, OrDivider } from "./auth-icons"
 
 export function SignInForm() {
@@ -65,7 +68,9 @@ export function SignInForm() {
       {/* Header */}
       <div className="flex flex-col gap-1 text-center">
         <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
-        <p className="text-sm text-muted-foreground">Sign in to your Renderical account</p>
+        <p className="text-sm text-muted-foreground">
+          Sign in to your Renderical account
+        </p>
       </div>
 
       {/* Google */}
@@ -83,7 +88,10 @@ export function SignInForm() {
       <OrDivider />
 
       {/* Email / password form */}
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-4">
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="flex flex-col gap-4"
+      >
         <Controller
           control={form.control}
           name="email"
@@ -99,7 +107,9 @@ export function SignInForm() {
                 {...field}
               />
               {fieldState.error && (
-                <p className="text-xs text-destructive">{fieldState.error.message}</p>
+                <p className="text-xs text-destructive">
+                  {fieldState.error.message}
+                </p>
               )}
             </div>
           )}
@@ -128,7 +138,9 @@ export function SignInForm() {
                 {...field}
               />
               {fieldState.error && (
-                <p className="text-xs text-destructive">{fieldState.error.message}</p>
+                <p className="text-xs text-destructive">
+                  {fieldState.error.message}
+                </p>
               )}
             </div>
           )}

@@ -6,6 +6,7 @@
   "scripts": {
     "generate": "openapi-typescript http://localhost:8787/doc -o src/generated.ts",
     "lint": "eslint",
+    "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

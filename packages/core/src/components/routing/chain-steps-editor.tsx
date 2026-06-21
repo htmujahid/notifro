@@ -3,10 +3,26 @@ import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
 import { PlusIcon, Trash2Icon } from "lucide-react"
 
-export const CHANNELS = ["email", "sms", "in_app", "web_push", "mobile_push", "webhook", "slack", "discord", "teams", "telegram", "whatsapp"]
+export const CHANNELS = [
+  "email",
+  "sms",
+  "in_app",
+  "web_push",
+  "mobile_push",
+  "webhook",
+  "slack",
+  "discord",
+  "teams",
+  "telegram",
+  "whatsapp",
+]
 export const SUCCESS_ON_OPTIONS = ["delivered", "opened", "clicked"] as const
 
-export type StepItem = { channel: string; waitForDeliveryMs: number; successOn: ("delivered" | "opened" | "clicked")[] }
+export type StepItem = {
+  channel: string
+  waitForDeliveryMs: number
+  successOn: ("delivered" | "opened" | "clicked")[]
+}
 
 export function ChainStepsEditor({
   steps,
@@ -16,7 +32,14 @@ export function ChainStepsEditor({
   onChange: (steps: StepItem[]) => void
 }) {
   function addStep() {
-    onChange([...steps, { channel: "email", waitForDeliveryMs: 0, successOn: ["delivered" as const] }])
+    onChange([
+      ...steps,
+      {
+        channel: "email",
+        waitForDeliveryMs: 0,
+        successOn: ["delivered" as const],
+      },
+    ])
   }
 
   function removeStep(idx: number) {
@@ -41,7 +64,9 @@ export function ChainStepsEditor({
                   onChange={(e) => updateStep(idx, { channel: e.target.value })}
                 >
                   {CHANNELS.map((ch) => (
-                    <option key={ch} value={ch}>{ch}</option>
+                    <option key={ch} value={ch}>
+                      {ch}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -51,7 +76,11 @@ export function ChainStepsEditor({
                   type="number"
                   className="h-8 w-28"
                   value={step.waitForDeliveryMs}
-                  onChange={(e) => updateStep(idx, { waitForDeliveryMs: Number(e.target.value) })}
+                  onChange={(e) =>
+                    updateStep(idx, {
+                      waitForDeliveryMs: Number(e.target.value),
+                    })
+                  }
                 />
               </div>
             </div>
@@ -59,7 +88,10 @@ export function ChainStepsEditor({
               <Label className="text-xs">Success on</Label>
               <div className="flex gap-2">
                 {SUCCESS_ON_OPTIONS.map((opt) => (
-                  <label key={opt} className="flex items-center gap-1 text-xs cursor-pointer">
+                  <label
+                    key={opt}
+                    className="flex items-center gap-1 text-xs cursor-pointer"
+                  >
                     <input
                       type="checkbox"
                       checked={step.successOn.includes(opt)}
@@ -67,7 +99,9 @@ export function ChainStepsEditor({
                         const next = e.target.checked
                           ? [...step.successOn, opt]
                           : step.successOn.filter((s) => s !== opt)
-                        updateStep(idx, { successOn: next as typeof step.successOn })
+                        updateStep(idx, {
+                          successOn: next as typeof step.successOn,
+                        })
                       }}
                     />
                     {opt}
@@ -76,13 +110,23 @@ export function ChainStepsEditor({
               </div>
             </div>
           </div>
-          <Button variant="ghost" size="icon" className="mt-1 h-7 w-7 shrink-0 text-muted-foreground" onClick={() => removeStep(idx)}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="mt-1 h-7 w-7 shrink-0 text-muted-foreground"
+            onClick={() => removeStep(idx)}
+          >
             <Trash2Icon className="size-3.5" />
           </Button>
         </div>
       ))}
       {steps.length < 10 && (
-        <Button variant="outline" size="sm" className="self-start" onClick={addStep}>
+        <Button
+          variant="outline"
+          size="sm"
+          className="self-start"
+          onClick={addStep}
+        >
           <PlusIcon className="size-3.5 mr-1" /> Add step
         </Button>
       )}

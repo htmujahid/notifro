@@ -1,10 +1,16 @@
 import { useState } from "react"
+
+import type { ApiKeyWithSecret } from "@workspace/api-client/types"
+import { Badge } from "@workspace/ui/components/badge"
 import { Button } from "@workspace/ui/components/button"
 import { Card, CardContent } from "@workspace/ui/components/card"
-import { Badge } from "@workspace/ui/components/badge"
-import { CopyIcon, PlusIcon, TrashIcon, KeyIcon } from "lucide-react"
-import { useApiKeys, useCreateApiKey, useRevokeApiKey } from "../../hooks/developers"
-import type { ApiKeyWithSecret } from "@workspace/api-client/types"
+import { CopyIcon, KeyIcon, PlusIcon, TrashIcon } from "lucide-react"
+
+import {
+  useApiKeys,
+  useCreateApiKey,
+  useRevokeApiKey,
+} from "../../hooks/developers"
 
 export function ApiKeysSection() {
   const { data, isLoading } = useApiKeys()
@@ -28,7 +34,7 @@ export function ApiKeysSection() {
           setMode("live")
           setShowForm(false)
         },
-      },
+      }
     )
   }
 
@@ -37,11 +43,17 @@ export function ApiKeysSection() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-sm font-medium">API keys</h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">Authenticate server-to-server API calls.</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Authenticate server-to-server API calls.
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <KeyIcon className="size-4 text-muted-foreground" />
-          <Button size="sm" className="gap-1.5" onClick={() => setShowForm((v) => !v)}>
+          <Button
+            size="sm"
+            className="gap-1.5"
+            onClick={() => setShowForm((v) => !v)}
+          >
             <PlusIcon className="size-3.5" />
             New key
           </Button>
@@ -49,13 +61,18 @@ export function ApiKeysSection() {
       </div>
 
       {newKey && (
-        <Card size="sm" className="border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950">
+        <Card
+          size="sm"
+          className="border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950"
+        >
           <CardContent className="flex flex-col gap-2">
             <p className="text-xs font-medium text-green-800 dark:text-green-200">
               Key created. Copy it now — it won&apos;t be shown again.
             </p>
             <div className="flex items-center gap-2">
-              <code className="flex-1 break-all rounded bg-background px-2 py-1 text-xs font-mono">{newKey.key}</code>
+              <code className="flex-1 break-all rounded bg-background px-2 py-1 text-xs font-mono">
+                {newKey.key}
+              </code>
               <Button
                 size="icon"
                 variant="outline"
@@ -65,7 +82,12 @@ export function ApiKeysSection() {
                 <CopyIcon className="size-3.5" />
               </Button>
             </div>
-            <Button size="sm" variant="outline" className="self-start" onClick={() => setNewKey(null)}>
+            <Button
+              size="sm"
+              variant="outline"
+              className="self-start"
+              onClick={() => setNewKey(null)}
+            >
               Done
             </Button>
           </CardContent>
@@ -77,7 +99,9 @@ export function ApiKeysSection() {
           <CardContent className="flex flex-col gap-3">
             <div className="flex gap-3">
               <div className="flex flex-1 flex-col gap-1">
-                <label className="text-xs font-medium text-muted-foreground">Name</label>
+                <label className="text-xs font-medium text-muted-foreground">
+                  Name
+                </label>
                 <input
                   className="rounded-md border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                   placeholder="My key"
@@ -86,7 +110,9 @@ export function ApiKeysSection() {
                 />
               </div>
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-muted-foreground">Mode</label>
+                <label className="text-xs font-medium text-muted-foreground">
+                  Mode
+                </label>
                 <select
                   className="rounded-md border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                   value={mode}
@@ -98,10 +124,20 @@ export function ApiKeysSection() {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button size="sm" disabled={createKey.isPending || !name} onClick={handleCreate}>
+              <Button
+                size="sm"
+                disabled={createKey.isPending || !name}
+                onClick={handleCreate}
+              >
                 Create
               </Button>
-              <Button size="sm" variant="outline" onClick={() => setShowForm(false)}>Cancel</Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setShowForm(false)}
+              >
+                Cancel
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -115,12 +151,24 @@ export function ApiKeysSection() {
         <div className="flex flex-col divide-y rounded-lg border">
           {keys.map((key) => (
             <div key={key.id} className="flex items-center gap-3 px-4 py-3">
-              <Badge variant={key.metadata?.mode === "test" ? "secondary" : "default"} className="shrink-0 text-xs">
+              <Badge
+                variant={
+                  key.metadata?.mode === "test" ? "secondary" : "default"
+                }
+                className="shrink-0 text-xs"
+              >
                 {key.metadata?.mode ?? "live"}
               </Badge>
-              <span className="flex-1 font-mono text-xs">{key.start ?? key.prefix}…</span>
+              <span className="flex-1 font-mono text-xs">
+                {key.start ?? key.prefix}…
+              </span>
               <span className="text-xs text-muted-foreground">{key.name}</span>
-              <span className="text-xs text-muted-foreground">last used: {key.lastRequest ? new Date(key.lastRequest).toLocaleDateString() : "never"}</span>
+              <span className="text-xs text-muted-foreground">
+                last used:{" "}
+                {key.lastRequest
+                  ? new Date(key.lastRequest).toLocaleDateString()
+                  : "never"}
+              </span>
               <Button
                 size="icon"
                 variant="ghost"

@@ -1,6 +1,6 @@
-import { Link } from "react-router"
-import { buttonVariants } from "@workspace/ui/components/button"
 import { RendericalMark } from "@workspace/core/components/renderical-logo"
+import { buttonVariants } from "@workspace/ui/components/button"
+import { Link } from "react-router"
 
 export default function NotFoundPage() {
   return (
@@ -13,8 +13,10 @@ export default function NotFoundPage() {
           backgroundImage:
             "radial-gradient(color-mix(in oklch, var(--foreground) 12%, transparent) 1px, transparent 1px)",
           backgroundSize: "18px 18px",
-          maskImage: "radial-gradient(ellipse 60% 50% at 50% 32%, #000 40%, transparent 75%)",
-          WebkitMaskImage: "radial-gradient(ellipse 60% 50% at 50% 32%, #000 40%, transparent 75%)",
+          maskImage:
+            "radial-gradient(ellipse 60% 50% at 50% 32%, #000 40%, transparent 75%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse 60% 50% at 50% 32%, #000 40%, transparent 75%)",
         }}
       />
       {/* primary glow */}
@@ -45,17 +47,22 @@ export default function NotFoundPage() {
         404
       </h1>
 
-      <h2 className="mt-4 text-2xl font-semibold tracking-tight text-foreground">This page didn't deliver</h2>
+      <h2 className="mt-4 text-2xl font-semibold tracking-tight text-foreground">
+        This page didn't deliver
+      </h2>
       <p className="mt-2 max-w-sm text-pretty text-muted-foreground">
-        We couldn't route you there — that page doesn't exist or has moved. Let's get you back to your
-        notifications.
+        We couldn't route you there — that page doesn't exist or has moved.
+        Let's get you back to your notifications.
       </p>
 
       <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
         <Link to="/" className={buttonVariants({ size: "lg" })}>
           Back to dashboard
         </Link>
-        <Link to="/channels" className={buttonVariants({ variant: "outline", size: "lg" })}>
+        <Link
+          to="/channels"
+          className={buttonVariants({ variant: "outline", size: "lg" })}
+        >
           View channels
         </Link>
       </div>

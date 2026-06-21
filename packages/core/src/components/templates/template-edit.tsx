@@ -1,8 +1,18 @@
 import { useState } from "react"
-import { useNavigate } from "react-router"
-import { HistoryIcon, EyeIcon, SaveIcon } from "lucide-react"
+
 import { Button } from "@workspace/ui/components/button"
-import { useTemplate, useCreateTemplate, useUpdateTemplate, useDeleteTemplate, useRenderPreview, useTemplateVersions, useRestoreVersion } from "../../hooks/templates"
+import { EyeIcon, HistoryIcon, SaveIcon } from "lucide-react"
+import { useNavigate } from "react-router"
+
+import {
+  useCreateTemplate,
+  useDeleteTemplate,
+  useRenderPreview,
+  useRestoreVersion,
+  useTemplate,
+  useTemplateVersions,
+  useUpdateTemplate,
+} from "../../hooks/templates"
 import { VersionRow } from "./version-row"
 
 interface Props {
@@ -27,10 +37,15 @@ export function TemplateEditView({ templateId }: Props) {
   const [slug, setSlug] = useState("")
   const [description, setDescription] = useState("")
   const [defaultLocale, setDefaultLocale] = useState("en")
-  const [contentJson, setContentJson] = useState('{\n  "subject": "",\n  "body": { "text": "" }\n}')
+  const [contentJson, setContentJson] = useState(
+    '{\n  "subject": "",\n  "body": { "text": "" }\n}'
+  )
   const [contentError, setContentError] = useState("")
   const [previewData, setPreviewData] = useState("{}")
-  const [previewResult, setPreviewResult] = useState<Record<string, unknown> | null>(null)
+  const [previewResult, setPreviewResult] = useState<Record<
+    string,
+    unknown
+  > | null>(null)
   const [tab, setTab] = useState<"editor" | "history">("editor")
   const [initialized, setInitialized] = useState(false)
 
@@ -72,7 +87,14 @@ export function TemplateEditView({ templateId }: Props) {
       })
       navigate(`/templates/${created.id}`)
     } else {
-      await updateTemplate.mutateAsync({ id: templateId!, name, slug, description: description || undefined, defaultLocale, content })
+      await updateTemplate.mutateAsync({
+        id: templateId!,
+        name,
+        slug,
+        description: description || undefined,
+        defaultLocale,
+        content,
+      })
     }
   }
 
@@ -97,8 +119,14 @@ export function TemplateEditView({ templateId }: Props) {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight">{isNew ? "New template" : name || "Edit template"}</h1>
-          {!isNew && <p className="mt-1 font-mono text-xs text-muted-foreground">{template?.slug}</p>}
+          <h1 className="text-xl font-semibold tracking-tight">
+            {isNew ? "New template" : name || "Edit template"}
+          </h1>
+          {!isNew && (
+            <p className="mt-1 font-mono text-xs text-muted-foreground">
+              {template?.slug}
+            </p>
+          )}
         </div>
         <div className="flex items-center gap-2">
           {!isNew && (
@@ -107,12 +135,20 @@ export function TemplateEditView({ templateId }: Props) {
               variant="ghost"
               className="text-destructive hover:bg-destructive/10 hover:text-destructive"
               disabled={deleteTemplate.isPending}
-              onClick={() => deleteTemplate.mutate(templateId!, { onSuccess: () => navigate("/templates") })}
+              onClick={() =>
+                deleteTemplate.mutate(templateId!, {
+                  onSuccess: () => navigate("/templates"),
+                })
+              }
             >
               Delete
             </Button>
           )}
-          <Button size="sm" disabled={createTemplate.isPending || updateTemplate.isPending} onClick={handleSave}>
+          <Button
+            size="sm"
+            disabled={createTemplate.isPending || updateTemplate.isPending}
+            onClick={handleSave}
+          >
             <SaveIcon className="mr-1.5 size-3.5" />
             {isNew ? "Create" : "Save"}
           </Button>
@@ -125,10 +161,22 @@ export function TemplateEditView({ templateId }: Props) {
             key={t}
             onClick={() => setTab(t)}
             className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-colors ${
-              tab === t ? "border-b-2 border-foreground text-foreground" : "text-muted-foreground hover:text-foreground"
+              tab === t
+                ? "border-b-2 border-foreground text-foreground"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            {t === "editor" ? <><EyeIcon className="size-3.5" />Editor</> : <><HistoryIcon className="size-3.5" />History</>}
+            {t === "editor" ? (
+              <>
+                <EyeIcon className="size-3.5" />
+                Editor
+              </>
+            ) : (
+              <>
+                <HistoryIcon className="size-3.5" />
+                History
+              </>
+            )}
           </button>
         ))}
       </div>
@@ -183,17 +231,24 @@ export function TemplateEditView({ templateId }: Props) {
               <textarea
                 className="h-64 rounded-md border bg-background px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 value={contentJson}
-                onChange={(e) => { setContentJson(e.target.value); setContentError("") }}
+                onChange={(e) => {
+                  setContentJson(e.target.value)
+                  setContentError("")
+                }}
                 spellCheck={false}
               />
-              {contentError && <p className="text-xs text-destructive">{contentError}</p>}
+              {contentError && (
+                <p className="text-xs text-destructive">{contentError}</p>
+              )}
             </div>
           </div>
 
           {!isNew && (
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-1.5">
-                <label className="text-sm font-medium">Preview data (JSON)</label>
+                <label className="text-sm font-medium">
+                  Preview data (JSON)
+                </label>
                 <textarea
                   className="h-32 rounded-md border bg-background px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                   value={previewData}
@@ -201,14 +256,23 @@ export function TemplateEditView({ templateId }: Props) {
                   spellCheck={false}
                 />
               </div>
-              <Button size="sm" variant="outline" disabled={renderPreview.isPending} onClick={handlePreview}>
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={renderPreview.isPending}
+                onClick={handlePreview}
+              >
                 <EyeIcon className="mr-1.5 size-3.5" />
                 Render preview
               </Button>
               {previewResult && (
                 <div className="rounded-lg bg-muted/40 p-4">
-                  <p className="mb-2 text-xs font-medium text-muted-foreground">Rendered output</p>
-                  <pre className="overflow-x-auto font-mono text-xs">{JSON.stringify(previewResult, null, 2)}</pre>
+                  <p className="mb-2 text-xs font-medium text-muted-foreground">
+                    Rendered output
+                  </p>
+                  <pre className="overflow-x-auto font-mono text-xs">
+                    {JSON.stringify(previewResult, null, 2)}
+                  </pre>
                 </div>
               )}
             </div>
@@ -219,14 +283,22 @@ export function TemplateEditView({ templateId }: Props) {
       {tab === "history" && (
         <div className="flex flex-col gap-3">
           {versions.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No version history yet. Edit and save this template to create a snapshot.</p>
+            <p className="text-sm text-muted-foreground">
+              No version history yet. Edit and save this template to create a
+              snapshot.
+            </p>
           ) : (
             versions.map((v) => (
               <VersionRow
                 key={v.id}
                 v={v}
                 restoring={restoreVersion.isPending}
-                onRestore={() => restoreVersion.mutate({ templateId: templateId!, version: v.version })}
+                onRestore={() =>
+                  restoreVersion.mutate({
+                    templateId: templateId!,
+                    version: v.version,
+                  })
+                }
               />
             ))
           )}

@@ -1,6 +1,5 @@
 import * as React from "react"
-import { NavLink } from "react-router"
-import { CirclePlusIcon, InboxIcon } from "lucide-react"
+
 import { Button } from "@workspace/ui/components/button"
 import {
   SidebarGroup,
@@ -9,6 +8,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@workspace/ui/components/sidebar"
+import { CirclePlusIcon, InboxIcon } from "lucide-react"
+import { NavLink } from "react-router"
 
 export function NavMain({
   items,

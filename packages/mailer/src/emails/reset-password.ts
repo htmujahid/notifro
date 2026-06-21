@@ -1,4 +1,4 @@
-import { binding, type EmailFrom, type EmailUser } from '../binding'
+import { type EmailFrom, type EmailUser, binding } from "../binding"
 
 export async function sendResetPasswordEmail({
   user,
@@ -13,7 +13,7 @@ export async function sendResetPasswordEmail({
   await binding().send({
     to: user.email,
     from,
-    subject: 'Reset your password',
+    subject: "Reset your password",
     html: `
 <!DOCTYPE html>
 <html>

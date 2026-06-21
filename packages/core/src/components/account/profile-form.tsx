@@ -1,13 +1,19 @@
 import { useEffect } from "react"
-import { useForm, Controller } from "react-hook-form"
+
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useQueryClient } from "@tanstack/react-query"
+import { useAuth } from "@workspace/app/auth/context"
+import { SESSION_QUERY_KEY, useSession } from "@workspace/app/auth/use-session"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
-import { useAuth } from "@workspace/app/auth/context"
-import { useSession, SESSION_QUERY_KEY } from "@workspace/app/auth/use-session"
-import { updateProfileSchema, type UpdateProfileValues } from "../../schemas/account"
+import { Controller, useForm } from "react-hook-form"
+
+import { useQueryClient } from "@tanstack/react-query"
+
+import {
+  type UpdateProfileValues,
+  updateProfileSchema,
+} from "../../schemas/account"
 
 export function ProfileForm() {
   const auth = useAuth()
@@ -41,7 +47,10 @@ export function ProfileForm() {
   }
 
   return (
-    <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-4">
+    <form
+      onSubmit={form.handleSubmit(handleSubmit)}
+      className="flex flex-col gap-4"
+    >
       <Controller
         control={form.control}
         name="name"
@@ -57,7 +66,9 @@ export function ProfileForm() {
               {...field}
             />
             {fieldState.error && (
-              <p className="text-xs text-destructive">{fieldState.error.message}</p>
+              <p className="text-xs text-destructive">
+                {fieldState.error.message}
+              </p>
             )}
           </div>
         )}
@@ -77,7 +88,9 @@ export function ProfileForm() {
               {...field}
             />
             {fieldState.error && (
-              <p className="text-xs text-destructive">{fieldState.error.message}</p>
+              <p className="text-xs text-destructive">
+                {fieldState.error.message}
+              </p>
             )}
           </div>
         )}
@@ -95,7 +108,11 @@ export function ProfileForm() {
         </p>
       )}
 
-      <Button type="submit" disabled={form.formState.isSubmitting} className="self-start">
+      <Button
+        type="submit"
+        disabled={form.formState.isSubmitting}
+        className="self-start"
+      >
         {form.formState.isSubmitting ? "Saving…" : "Save changes"}
       </Button>
     </form>

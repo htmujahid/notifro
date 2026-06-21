@@ -1,5 +1,5 @@
-import { useSearchParams } from "react-router"
 import { UnsubscribeView } from "@workspace/core/components/unsubscribe/unsubscribe-view"
+import { useSearchParams } from "react-router"
 
 export default function UnsubscribePage() {
   const [params] = useSearchParams()

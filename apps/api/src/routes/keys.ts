@@ -1,8 +1,9 @@
-import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
-import { requireAuth } from '../middleware/auth'
-import { Errors, validationHook } from '../lib/errors'
-import { authInstance } from '../lib/auth'
-import type { AppEnv } from '../lib/types'
+import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+
+import { authInstance } from "../lib/auth"
+import { Errors, validationHook } from "../lib/errors"
+import type { AppEnv } from "../lib/types"
+import { requireAuth } from "../middleware/auth"
 
 const ApiKeyDtoSchema = z.object({
   id: z.string(),
@@ -23,7 +24,7 @@ const ApiKeyCreateResponseSchema = ApiKeyDtoSchema.extend({
 
 const CreateKeySchema = z.object({
   name: z.string().min(1).max(32),
-  mode: z.enum(['live', 'test']).default('live'),
+  mode: z.enum(["live", "test"]).default("live"),
 })
 
 const ListResponseSchema = z.object({
@@ -32,34 +33,42 @@ const ListResponseSchema = z.object({
 })
 
 const listRoute = createRoute({
-  method: 'get',
-  path: '/keys',
+  method: "get",
+  path: "/keys",
   responses: {
-    200: { content: { 'application/json': { schema: ListResponseSchema } }, description: 'API keys' },
+    200: {
+      content: { "application/json": { schema: ListResponseSchema } },
+      description: "API keys",
+    },
   },
 })
 
 const createRoute_ = createRoute({
-  method: 'post',
-  path: '/keys',
-  request: { body: { content: { 'application/json': { schema: CreateKeySchema } } } },
+  method: "post",
+  path: "/keys",
+  request: {
+    body: { content: { "application/json": { schema: CreateKeySchema } } },
+  },
   responses: {
-    201: { content: { 'application/json': { schema: ApiKeyCreateResponseSchema } }, description: 'Created API key (plaintext shown once)' },
+    201: {
+      content: { "application/json": { schema: ApiKeyCreateResponseSchema } },
+      description: "Created API key (plaintext shown once)",
+    },
   },
 })
 
 const deleteRoute = createRoute({
-  method: 'delete',
-  path: '/keys/:id',
+  method: "delete",
+  path: "/keys/:id",
   responses: {
-    204: { description: 'Revoked' },
+    204: { description: "Revoked" },
   },
 })
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 
-router.use('/keys', requireAuth)
-router.use('/keys/:id', requireAuth)
+router.use("/keys", requireAuth)
+router.use("/keys/:id", requireAuth)
 
 function toISOString(d: Date | null | string | undefined): string | null {
   if (!d) return null
@@ -93,17 +102,19 @@ function mapKey(k: {
 }
 
 router.openapi(listRoute, async (c) => {
-  const result = await authInstance.api.listApiKeys({ headers: c.req.raw.headers })
+  const result = await authInstance.api.listApiKeys({
+    headers: c.req.raw.headers,
+  })
   return c.json({ data: result.apiKeys.map(mapKey), nextCursor: null })
 })
 
 router.openapi(createRoute_, async (c) => {
-  const body = c.req.valid('json')
+  const body = c.req.valid("json")
   const result = await authInstance.api.createApiKey({
     body: {
       name: body.name,
       userId: c.var.user!.id,
-      prefix: body.mode === 'test' ? 'rk_test_' : 'rk_live_',
+      prefix: body.mode === "test" ? "rk_test_" : "rk_live_",
       metadata: { mode: body.mode },
     },
   })
@@ -116,7 +127,7 @@ router.openapi(deleteRoute, async (c) => {
     body: { keyId: id },
     headers: c.req.raw.headers,
   })
-  if (!result.success) throw Errors.notFound('api_key')
+  if (!result.success) throw Errors.notFound("api_key")
   return c.body(null, 204)
 })
 

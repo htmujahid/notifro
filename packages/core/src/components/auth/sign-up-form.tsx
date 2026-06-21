@@ -1,17 +1,20 @@
 import { useState } from "react"
-import { useForm } from "react-hook-form"
+
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Controller } from "react-hook-form"
-import { useNavigate } from "react-router"
-import { useQueryClient } from "@tanstack/react-query"
+import { useApp } from "@workspace/app/app/context"
+import { useAuth } from "@workspace/app/auth/context"
+import { buildAuthURL } from "@workspace/app/auth/deep-link"
+import { SESSION_QUERY_KEY } from "@workspace/app/auth/use-session"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
-import { useAuth } from "@workspace/app/auth/context"
-import { SESSION_QUERY_KEY } from "@workspace/app/auth/use-session"
-import { buildAuthURL } from "@workspace/app/auth/deep-link"
-import { useApp } from "@workspace/app/app/context"
-import { signUpSchema, type SignUpValues } from "../../schemas/auth"
+import { useForm } from "react-hook-form"
+import { Controller } from "react-hook-form"
+import { useNavigate } from "react-router"
+
+import { useQueryClient } from "@tanstack/react-query"
+
+import { type SignUpValues, signUpSchema } from "../../schemas/auth"
 import { GoogleIcon, OrDivider } from "./auth-icons"
 
 export function SignUpForm() {
@@ -60,8 +63,12 @@ export function SignUpForm() {
     <div className="flex flex-col gap-6">
       {/* Header */}
       <div className="flex flex-col gap-1 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">Create an account</h1>
-        <p className="text-sm text-muted-foreground">Get started with Renderical for free</p>
+        <h1 className="text-2xl font-semibold tracking-tight">
+          Create an account
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Get started with Renderical for free
+        </p>
       </div>
 
       {/* Google */}
@@ -79,7 +86,10 @@ export function SignUpForm() {
       <OrDivider />
 
       {/* Form */}
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-4">
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="flex flex-col gap-4"
+      >
         <Controller
           control={form.control}
           name="name"
@@ -95,7 +105,9 @@ export function SignUpForm() {
                 {...field}
               />
               {fieldState.error && (
-                <p className="text-xs text-destructive">{fieldState.error.message}</p>
+                <p className="text-xs text-destructive">
+                  {fieldState.error.message}
+                </p>
               )}
             </div>
           )}
@@ -116,7 +128,9 @@ export function SignUpForm() {
                 {...field}
               />
               {fieldState.error && (
-                <p className="text-xs text-destructive">{fieldState.error.message}</p>
+                <p className="text-xs text-destructive">
+                  {fieldState.error.message}
+                </p>
               )}
             </div>
           )}
@@ -136,13 +150,15 @@ export function SignUpForm() {
                 {...field}
               />
               {fieldState.error && (
-                <p className="text-xs text-destructive">{fieldState.error.message}</p>
+                <p className="text-xs text-destructive">
+                  {fieldState.error.message}
+                </p>
               )}
             </div>
           )}
         />
 
-{form.formState.errors.root && (
+        {form.formState.errors.root && (
           <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
             {form.formState.errors.root.message}
           </p>

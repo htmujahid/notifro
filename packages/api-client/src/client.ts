@@ -3,10 +3,13 @@ import type { ListParams } from "./types"
 
 function buildQueryString(params: ListParams): string {
   const entries = Object.entries(params).filter(
-    ([, v]) => v !== undefined && v !== "" && v !== null,
+    ([, v]) => v !== undefined && v !== "" && v !== null
   )
   if (entries.length === 0) return ""
-  return "?" + new URLSearchParams(entries.map(([k, v]) => [k, String(v)])).toString()
+  return (
+    "?" +
+    new URLSearchParams(entries.map(([k, v]) => [k, String(v)])).toString()
+  )
 }
 
 async function parseError(res: Response): Promise<never> {
@@ -16,7 +19,11 @@ async function parseError(res: Response): Promise<never> {
 
   try {
     const body = (await res.json()) as {
-      error?: { code?: string; message?: string; details?: { path?: string[]; message: string }[] }
+      error?: {
+        code?: string
+        message?: string
+        details?: { path?: string[]; message: string }[]
+      }
     }
     if (body.error) {
       code = body.error.code ?? code
@@ -42,7 +49,12 @@ export interface ApiClient {
 export function createApiClient(baseURL: string): ApiClient {
   const base = baseURL.replace(/\/$/, "")
 
-  async function request<T>(method: string, path: string, body?: unknown, params?: ListParams): Promise<T> {
+  async function request<T>(
+    method: string,
+    path: string,
+    body?: unknown,
+    params?: ListParams
+  ): Promise<T> {
     const qs = params ? buildQueryString(params) : ""
     const url = `${base}${path}${qs}`
 
@@ -69,10 +81,12 @@ export function createApiClient(baseURL: string): ApiClient {
 
   return {
     baseURL: base,
-    get: <T>(path: string, params?: ListParams) => request<T>("GET", path, undefined, params),
+    get: <T>(path: string, params?: ListParams) =>
+      request<T>("GET", path, undefined, params),
     post: <T>(path: string, body?: unknown) => request<T>("POST", path, body),
     patch: <T>(path: string, body?: unknown) => request<T>("PATCH", path, body),
     put: <T>(path: string, body?: unknown) => request<T>("PUT", path, body),
-    delete: <T>(path: string, body?: unknown) => request<T>("DELETE", path, body),
+    delete: <T>(path: string, body?: unknown) =>
+      request<T>("DELETE", path, body),
   }
 }

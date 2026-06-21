@@ -1,11 +1,11 @@
-export {};
+export {}
 
 declare global {
   interface DesktopBridge {
-    onDeepLink(callback: (url: string) => void): () => void;
+    onDeepLink(callback: (url: string) => void): () => void
   }
 
   interface Window {
-    desktop?: DesktopBridge;
+    desktop?: DesktopBridge
   }
 }

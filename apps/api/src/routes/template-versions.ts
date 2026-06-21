@@ -1,12 +1,13 @@
-import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
-import { requireAuth } from '../middleware/auth'
-import { listQuerySchema, applyListQuery } from '../lib/list-query'
-import { Errors, validationHook } from '../lib/errors'
-import type { AppEnv } from '../lib/types'
+import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
 
-const SORTABLE = { version: 'version', createdAt: 'createdAt' }
+import { Errors, validationHook } from "../lib/errors"
+import { applyListQuery, listQuerySchema } from "../lib/list-query"
+import type { AppEnv } from "../lib/types"
+import { requireAuth } from "../middleware/auth"
+
+const SORTABLE = { version: "version", createdAt: "createdAt" }
 const FILTERABLE = {}
-const DEFAULT_SORT = { key: 'version', order: 'desc' as const }
+const DEFAULT_SORT = { key: "version", order: "desc" as const }
 
 const VersionDtoSchema = z.object({
   id: z.string(),
@@ -20,26 +21,45 @@ const VersionDtoSchema = z.object({
 })
 
 const listVersionsRoute = createRoute({
-  method: 'get',
-  path: '/templates/:id/versions',
+  method: "get",
+  path: "/templates/:id/versions",
   request: {
-    query: listQuerySchema({ sortable: SORTABLE, filterable: FILTERABLE, defaultSort: DEFAULT_SORT }),
+    query: listQuerySchema({
+      sortable: SORTABLE,
+      filterable: FILTERABLE,
+      defaultSort: DEFAULT_SORT,
+    }),
   },
   responses: {
     200: {
-      content: { 'application/json': { schema: z.object({ data: z.array(VersionDtoSchema), nextCursor: z.string().nullable() }) } },
-      description: 'Version history',
+      content: {
+        "application/json": {
+          schema: z.object({
+            data: z.array(VersionDtoSchema),
+            nextCursor: z.string().nullable(),
+          }),
+        },
+      },
+      description: "Version history",
     },
   },
 })
 
 const restoreVersionRoute = createRoute({
-  method: 'post',
-  path: '/templates/:id/versions/:version/restore',
+  method: "post",
+  path: "/templates/:id/versions/:version/restore",
   responses: {
     200: {
-      content: { 'application/json': { schema: z.object({ id: z.string(), version: z.number(), message: z.string() }) } },
-      description: 'Restored version',
+      content: {
+        "application/json": {
+          schema: z.object({
+            id: z.string(),
+            version: z.number(),
+            message: z.string(),
+          }),
+        },
+      },
+      description: "Restored version",
     },
   },
 })
@@ -53,26 +73,26 @@ function now(): string {
 }
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
-router.use('*', requireAuth)
+router.use("*", requireAuth)
 
 router.openapi(listVersionsRoute, async (c) => {
   const { id } = c.req.param()
-  const parsed = c.req.valid('query')
+  const parsed = c.req.valid("query")
   const userId = c.var.user!.id
 
   const template = await c.var.db
-    .selectFrom('template')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
-    .select('id')
+    .selectFrom("template")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
+    .select("id")
     .executeTakeFirst()
 
-  if (!template) throw Errors.notFound('Template')
+  if (!template) throw Errors.notFound("Template")
 
   const baseQuery = c.var.db
-    .selectFrom('template_version')
-    .where('templateId', '=', id)
-    .where('userId', '=', userId)
+    .selectFrom("template_version")
+    .where("templateId", "=", id)
+    .where("userId", "=", userId)
     .selectAll()
 
   const { qb, getPage } = applyListQuery(baseQuery, parsed, {
@@ -84,7 +104,10 @@ router.openapi(listVersionsRoute, async (c) => {
   const rows = await qb.execute()
   const page = getPage(rows as Record<string, unknown>[])
 
-  return c.json({ data: page.data as z.infer<typeof VersionDtoSchema>[], nextCursor: page.nextCursor })
+  return c.json({
+    data: page.data as z.infer<typeof VersionDtoSchema>[],
+    nextCursor: page.nextCursor,
+  })
 })
 
 router.openapi(restoreVersionRoute, async (c) => {
@@ -93,33 +116,33 @@ router.openapi(restoreVersionRoute, async (c) => {
   const ts = now()
 
   const template = await c.var.db
-    .selectFrom('template')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
+    .selectFrom("template")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
     .selectAll()
     .executeTakeFirst()
 
-  if (!template) throw Errors.notFound('Template')
+  if (!template) throw Errors.notFound("Template")
 
   const versionRow = await c.var.db
-    .selectFrom('template_version')
-    .where('templateId', '=', id)
-    .where('version', '=', Number(version))
-    .where('userId', '=', userId)
+    .selectFrom("template_version")
+    .where("templateId", "=", id)
+    .where("version", "=", Number(version))
+    .where("userId", "=", userId)
     .selectAll()
     .executeTakeFirst()
 
-  if (!versionRow) throw Errors.notFound('Version')
+  if (!versionRow) throw Errors.notFound("Version")
 
   const maxVersionRow = await c.var.db
-    .selectFrom('template_version')
-    .where('templateId', '=', id)
-    .select(c.var.db.fn.max('version').as('maxVersion'))
+    .selectFrom("template_version")
+    .where("templateId", "=", id)
+    .select(c.var.db.fn.max("version").as("maxVersion"))
     .executeTakeFirst()
   const nextVersion = ((maxVersionRow?.maxVersion as number | null) ?? 0) + 1
 
   await c.var.db
-    .insertInto('template_version')
+    .insertInto("template_version")
     .values({
       id: newId(),
       userId,
@@ -133,18 +156,22 @@ router.openapi(restoreVersionRoute, async (c) => {
     .execute()
 
   await c.var.db
-    .updateTable('template')
+    .updateTable("template")
     .set({
       content: versionRow.content,
       localeStrings: versionRow.localeStrings,
       variables: versionRow.variables,
       updatedAt: ts,
     })
-    .where('id', '=', id)
-    .where('userId', '=', userId)
+    .where("id", "=", id)
+    .where("userId", "=", userId)
     .execute()
 
-  return c.json({ id, version: nextVersion, message: `Restored to version ${version}; new version is ${nextVersion}` })
+  return c.json({
+    id,
+    version: nextVersion,
+    message: `Restored to version ${version}; new version is ${nextVersion}`,
+  })
 })
 
 export default router

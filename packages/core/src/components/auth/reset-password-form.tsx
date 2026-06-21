@@ -1,12 +1,16 @@
-import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Controller } from "react-hook-form"
-import { useNavigate, useSearchParams } from "react-router"
+import { useAuth } from "@workspace/app/auth/context"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
-import { useAuth } from "@workspace/app/auth/context"
-import { resetPasswordSchema, type ResetPasswordValues } from "../../schemas/auth"
+import { useForm } from "react-hook-form"
+import { Controller } from "react-hook-form"
+import { useNavigate, useSearchParams } from "react-router"
+
+import {
+  type ResetPasswordValues,
+  resetPasswordSchema,
+} from "../../schemas/auth"
 
 export function ResetPasswordForm() {
   const auth = useAuth()
@@ -19,7 +23,10 @@ export function ResetPasswordForm() {
 
   async function handleSubmit(values: ResetPasswordValues) {
     const token = searchParams.get("token") ?? ""
-    const { error } = await auth.resetPassword({ newPassword: values.password, token })
+    const { error } = await auth.resetPassword({
+      newPassword: values.password,
+      token,
+    })
     if (error) {
       form.setError("root", { message: error.message })
       return
@@ -30,11 +37,18 @@ export function ResetPasswordForm() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">Reset password</h1>
-        <p className="text-sm text-muted-foreground">Choose a new password for your account</p>
+        <h1 className="text-2xl font-semibold tracking-tight">
+          Reset password
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Choose a new password for your account
+        </p>
       </div>
 
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="flex flex-col gap-4">
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="flex flex-col gap-4"
+      >
         <Controller
           control={form.control}
           name="password"
@@ -49,7 +63,9 @@ export function ResetPasswordForm() {
                 {...field}
               />
               {fieldState.error && (
-                <p className="text-xs text-destructive">{fieldState.error.message}</p>
+                <p className="text-xs text-destructive">
+                  {fieldState.error.message}
+                </p>
               )}
             </div>
           )}
@@ -69,7 +85,9 @@ export function ResetPasswordForm() {
                 {...field}
               />
               {fieldState.error && (
-                <p className="text-xs text-destructive">{fieldState.error.message}</p>
+                <p className="text-xs text-destructive">
+                  {fieldState.error.message}
+                </p>
               )}
             </div>
           )}
@@ -81,7 +99,11 @@ export function ResetPasswordForm() {
           </p>
         )}
 
-        <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={form.formState.isSubmitting}
+        >
           {form.formState.isSubmitting ? "Updating…" : "Update password"}
         </Button>
       </form>

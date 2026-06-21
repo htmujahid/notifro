@@ -1,4 +1,4 @@
-import { binding, type EmailFrom, type EmailUser } from '../binding'
+import { type EmailFrom, type EmailUser, binding } from "../binding"
 
 export async function sendTwoFactorOTPEmail({
   user,
@@ -13,7 +13,7 @@ export async function sendTwoFactorOTPEmail({
   await binding().send({
     to: user.email,
     from,
-    subject: 'Your verification code',
+    subject: "Your verification code",
     html: `
 <!DOCTYPE html>
 <html>

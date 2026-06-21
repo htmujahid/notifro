@@ -1,12 +1,17 @@
-import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useQueryClient } from "@tanstack/react-query"
+import { useAuth } from "@workspace/app/auth/context"
+import { SESSION_QUERY_KEY } from "@workspace/app/auth/use-session"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
-import { useAuth } from "@workspace/app/auth/context"
-import { SESSION_QUERY_KEY } from "@workspace/app/auth/use-session"
-import { twoFactorPasswordSchema, type TwoFactorPasswordValues } from "../../schemas/auth"
+import { Controller, useForm } from "react-hook-form"
+
+import { useQueryClient } from "@tanstack/react-query"
+
+import {
+  type TwoFactorPasswordValues,
+  twoFactorPasswordSchema,
+} from "../../schemas/auth"
 
 export function DisableFlow({ onDone }: { onDone: () => void }) {
   const auth = useAuth()
@@ -18,7 +23,9 @@ export function DisableFlow({ onDone }: { onDone: () => void }) {
   })
 
   async function handleDisable(values: TwoFactorPasswordValues) {
-    const { error } = await auth.twoFactor.disable({ password: values.password })
+    const { error } = await auth.twoFactor.disable({
+      password: values.password,
+    })
     if (error) {
       form.setError("root", { message: error.message })
       return
@@ -28,13 +35,18 @@ export function DisableFlow({ onDone }: { onDone: () => void }) {
   }
 
   return (
-    <form onSubmit={form.handleSubmit(handleDisable)} className="flex flex-col gap-4">
+    <form
+      onSubmit={form.handleSubmit(handleDisable)}
+      className="flex flex-col gap-4"
+    >
       <Controller
         control={form.control}
         name="password"
         render={({ field, fieldState }) => (
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="disable-password">Confirm your password to disable 2FA</Label>
+            <Label htmlFor="disable-password">
+              Confirm your password to disable 2FA
+            </Label>
             <Input
               id="disable-password"
               type="password"
@@ -43,7 +55,9 @@ export function DisableFlow({ onDone }: { onDone: () => void }) {
               {...field}
             />
             {fieldState.error && (
-              <p className="text-xs text-destructive">{fieldState.error.message}</p>
+              <p className="text-xs text-destructive">
+                {fieldState.error.message}
+              </p>
             )}
           </div>
         )}
@@ -54,7 +68,11 @@ export function DisableFlow({ onDone }: { onDone: () => void }) {
         </p>
       )}
       <div className="flex gap-2">
-        <Button type="submit" variant="destructive" disabled={form.formState.isSubmitting}>
+        <Button
+          type="submit"
+          variant="destructive"
+          disabled={form.formState.isSubmitting}
+        >
           {form.formState.isSubmitting ? "Disabling…" : "Disable 2FA"}
         </Button>
         <Button type="button" variant="outline" onClick={onDone}>

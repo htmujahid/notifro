@@ -33,8 +33,21 @@ export function MiniLineChart({ data }: { data: AnalyticsTimeseriesItem[] }) {
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-24" aria-hidden>
-      <path d={sentPath} fill="none" stroke="currentColor" strokeWidth="1.5" className="text-primary" />
-      <path d={deliveredPath} fill="none" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 2" className="text-muted-foreground" />
+      <path
+        d={sentPath}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        className="text-primary"
+      />
+      <path
+        d={deliveredPath}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeDasharray="4 2"
+        className="text-muted-foreground"
+      />
     </svg>
   )
 }

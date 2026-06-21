@@ -1,13 +1,17 @@
 import { Suspense, useEffect } from "react"
-import { createHashRouter, RouterProvider } from "react-router"
+
 import { App as CapacitorApp } from "@capacitor/app"
 import { Preferences } from "@capacitor/preferences"
+import { createApiClient } from "@workspace/api-client/client"
 import { AppProvider } from "@workspace/app/app/context"
 import { createMobileAuthClient } from "@workspace/app/auth/client.mobile"
-import { NATIVE_REDIRECT_URL, deepLinkToPath } from "@workspace/app/auth/deep-link"
-import { createApiClient } from "@workspace/api-client/client"
+import {
+  NATIVE_REDIRECT_URL,
+  deepLinkToPath,
+} from "@workspace/app/auth/deep-link"
 import { registerForPush } from "@workspace/mobile-shared/push"
 import { routes } from "@workspace/views/routes/ios"
+import { RouterProvider, createHashRouter } from "react-router"
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8787"
 const authClient = createMobileAuthClient(API_URL, Preferences)
@@ -27,7 +31,12 @@ export function App() {
   }, [])
 
   return (
-    <AppProvider platform="ios" authClient={authClient} apiBaseURL={API_URL} appBaseURL={NATIVE_REDIRECT_URL}>
+    <AppProvider
+      platform="ios"
+      authClient={authClient}
+      apiBaseURL={API_URL}
+      appBaseURL={NATIVE_REDIRECT_URL}
+    >
       <Suspense fallback={null}>
         <RouterProvider router={router} />
       </Suspense>

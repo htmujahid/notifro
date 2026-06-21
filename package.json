@@ -11,6 +11,7 @@
     "sdk:generate": "pnpm --filter @workspace/sdk run generate"
   },
   "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "turbo": "^2.9.15",

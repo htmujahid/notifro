@@ -10,7 +10,7 @@ const COOKIE_STORAGE_KEY = "better-auth.cookies"
 
 export function createMobileAuthClient(
   baseURL: string,
-  Preferences: CapacitorPreferences,
+  Preferences: CapacitorPreferences
 ) {
   return createBaseAuthClient(baseURL, {
     fetchOptions: {
@@ -25,7 +25,9 @@ export function createMobileAuthClient(
         const setCookie = context.response.headers.get("set-cookie")
         if (!setCookie) return
 
-        const { value: existing } = await Preferences.get({ key: COOKIE_STORAGE_KEY })
+        const { value: existing } = await Preferences.get({
+          key: COOKIE_STORAGE_KEY,
+        })
         const merged = mergeCookies(existing ?? "", setCookie)
         await Preferences.set({ key: COOKIE_STORAGE_KEY, value: merged })
       },
@@ -36,7 +38,10 @@ export function createMobileAuthClient(
 function mergeCookies(existing: string, setCookieHeader: string): string {
   const current: Record<string, string> = {}
 
-  for (const pair of existing.split(";").map((s) => s.trim()).filter(Boolean)) {
+  for (const pair of existing
+    .split(";")
+    .map((s) => s.trim())
+    .filter(Boolean)) {
     const [k, v] = pair.split("=")
     if (k) current[k.trim()] = v?.trim() ?? ""
   }

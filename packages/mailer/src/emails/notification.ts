@@ -1,5 +1,5 @@
-import { binding } from '../binding'
-import type { EmailFrom } from '../binding'
+import { binding } from "../binding"
+import type { EmailFrom } from "../binding"
 
 export async function sendNotificationEmail({
   to,
@@ -16,7 +16,14 @@ export async function sendNotificationEmail({
   text: string
   headers?: Record<string, string>
 }): Promise<void> {
-  const message: { from: EmailFrom; to: string; subject: string; html: string; text: string; headers?: Record<string, string> } = {
+  const message: {
+    from: EmailFrom
+    to: string
+    subject: string
+    html: string
+    text: string
+    headers?: Record<string, string>
+  } = {
     from,
     to,
     subject,
@@ -26,5 +33,7 @@ export async function sendNotificationEmail({
   if (headers) {
     message.headers = headers
   }
-  await binding().send(message as Parameters<ReturnType<typeof binding>['send']>[0])
+  await binding().send(
+    message as Parameters<ReturnType<typeof binding>["send"]>[0]
+  )
 }

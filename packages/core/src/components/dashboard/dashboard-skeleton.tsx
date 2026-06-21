@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardContent } from "@workspace/ui/components/card"
+import { Card, CardContent, CardHeader } from "@workspace/ui/components/card"
 import { Skeleton } from "@workspace/ui/components/skeleton"
 
 export function DashboardSkeleton() {

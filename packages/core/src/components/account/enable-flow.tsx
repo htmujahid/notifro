@@ -1,14 +1,25 @@
 import { useState } from "react"
-import { useForm, Controller } from "react-hook-form"
+
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useAuth } from "@workspace/app/auth/context"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@workspace/ui/components/input-otp"
 import { Label } from "@workspace/ui/components/label"
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@workspace/ui/components/input-otp"
-import { useAuth } from "@workspace/app/auth/context"
-import { twoFactorPasswordSchema, twoFactorVerifySchema, type TwoFactorPasswordValues, type TwoFactorVerifyValues } from "../../schemas/auth"
-import { CopyButton } from "./copy-button"
+import { Controller, useForm } from "react-hook-form"
+
+import {
+  type TwoFactorPasswordValues,
+  type TwoFactorVerifyValues,
+  twoFactorPasswordSchema,
+  twoFactorVerifySchema,
+} from "../../schemas/auth"
 import { BackupCodeGrid } from "./backup-code-grid"
+import { CopyButton } from "./copy-button"
 
 type EnableStep = "idle" | "password" | "setup" | "verify" | "backup-codes"
 
@@ -34,7 +45,9 @@ export function EnableFlow({ onDone }: { onDone: () => void }) {
   })
 
   async function handleEnable(values: TwoFactorPasswordValues) {
-    const { data, error } = await auth.twoFactor.enable({ password: values.password })
+    const { data, error } = await auth.twoFactor.enable({
+      password: values.password,
+    })
     if (error) {
       passwordForm.setError("root", { message: error.message })
       return
@@ -59,7 +72,10 @@ export function EnableFlow({ onDone }: { onDone: () => void }) {
 
   if (step === "password") {
     return (
-      <form onSubmit={passwordForm.handleSubmit(handleEnable)} className="flex flex-col gap-4">
+      <form
+        onSubmit={passwordForm.handleSubmit(handleEnable)}
+        className="flex flex-col gap-4"
+      >
         <Controller
           control={passwordForm.control}
           name="password"
@@ -74,7 +90,9 @@ export function EnableFlow({ onDone }: { onDone: () => void }) {
                 {...field}
               />
               {fieldState.error && (
-                <p className="text-xs text-destructive">{fieldState.error.message}</p>
+                <p className="text-xs text-destructive">
+                  {fieldState.error.message}
+                </p>
               )}
             </div>
           )}
@@ -100,18 +118,22 @@ export function EnableFlow({ onDone }: { onDone: () => void }) {
     return (
       <div className="flex flex-col gap-4">
         <p className="text-sm text-muted-foreground">
-          Open your authenticator app (Google Authenticator, Authy, etc.) and scan the QR code
-          or enter the key manually.
+          Open your authenticator app (Google Authenticator, Authy, etc.) and
+          scan the QR code or enter the key manually.
         </p>
         <div className="flex flex-col gap-1.5">
           <Label className="text-xs text-muted-foreground">Setup key</Label>
           <div className="flex items-center gap-2 rounded-md bg-muted px-3 py-2">
-            <span className="flex-1 break-all font-mono text-sm tracking-widest">{secret}</span>
+            <span className="flex-1 break-all font-mono text-sm tracking-widest">
+              {secret}
+            </span>
             <CopyButton text={secret} />
           </div>
         </div>
         <div className="flex flex-col gap-1.5">
-          <Label className="text-xs text-muted-foreground">Or open in authenticator app</Label>
+          <Label className="text-xs text-muted-foreground">
+            Or open in authenticator app
+          </Label>
           <a
             href={setupData.totpURI}
             className="text-sm underline-offset-4 hover:underline truncate"
@@ -126,16 +148,25 @@ export function EnableFlow({ onDone }: { onDone: () => void }) {
 
   if (step === "verify") {
     return (
-      <form onSubmit={verifyForm.handleSubmit(handleVerify)} className="flex flex-col gap-4">
+      <form
+        onSubmit={verifyForm.handleSubmit(handleVerify)}
+        className="flex flex-col gap-4"
+      >
         <p className="text-sm text-muted-foreground">
-          Enter the 6-digit code from your authenticator app to confirm the setup.
+          Enter the 6-digit code from your authenticator app to confirm the
+          setup.
         </p>
         <Controller
           control={verifyForm.control}
           name="code"
           render={({ field, fieldState }) => (
             <div className="flex flex-col items-start gap-2">
-              <InputOTP maxLength={6} value={field.value} onChange={field.onChange} autoFocus>
+              <InputOTP
+                maxLength={6}
+                value={field.value}
+                onChange={field.onChange}
+                autoFocus
+              >
                 <InputOTPGroup>
                   {Array.from({ length: 6 }, (_, i) => (
                     <InputOTPSlot key={i} index={i} />
@@ -143,7 +174,9 @@ export function EnableFlow({ onDone }: { onDone: () => void }) {
                 </InputOTPGroup>
               </InputOTP>
               {fieldState.error && (
-                <p className="text-xs text-destructive">{fieldState.error.message}</p>
+                <p className="text-xs text-destructive">
+                  {fieldState.error.message}
+                </p>
               )}
             </div>
           )}
@@ -157,7 +190,11 @@ export function EnableFlow({ onDone }: { onDone: () => void }) {
           <Button type="submit" disabled={verifyForm.formState.isSubmitting}>
             {verifyForm.formState.isSubmitting ? "Verifying…" : "Confirm"}
           </Button>
-          <Button type="button" variant="outline" onClick={() => setStep("setup")}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setStep("setup")}
+          >
             Back
           </Button>
         </div>
@@ -169,9 +206,12 @@ export function EnableFlow({ onDone }: { onDone: () => void }) {
     return (
       <div className="flex flex-col gap-4">
         <div>
-          <p className="text-sm font-medium">Two-factor authentication enabled!</p>
+          <p className="text-sm font-medium">
+            Two-factor authentication enabled!
+          </p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Save these backup codes somewhere safe. Each code can only be used once.
+            Save these backup codes somewhere safe. Each code can only be used
+            once.
           </p>
         </div>
         <BackupCodeGrid codes={setupData.backupCodes} />

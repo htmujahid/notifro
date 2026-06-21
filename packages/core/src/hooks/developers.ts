@@ -1,12 +1,26 @@
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useApiClient } from "@workspace/api-client/context"
-import type { ListParams, ListResponse, ApiKey, ApiKeyWithSecret, ApiRequestLog } from "@workspace/api-client/types"
+import type {
+  ApiKey,
+  ApiKeyWithSecret,
+  ApiRequestLog,
+  ListParams,
+  ListResponse,
+} from "@workspace/api-client/types"
+
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query"
 
 export const developerKeys = {
   all: ["developers"] as const,
   apiKeys: () => [...developerKeys.all, "keys"] as const,
-  apiKeyList: (params: ListParams) => [...developerKeys.apiKeys(), params] as const,
-  requestLog: (params: ListParams) => [...developerKeys.all, "request-log", params] as const,
+  apiKeyList: (params: ListParams) =>
+    [...developerKeys.apiKeys(), params] as const,
+  requestLog: (params: ListParams) =>
+    [...developerKeys.all, "request-log", params] as const,
 }
 
 export function useApiKeys(params: ListParams = {}) {
@@ -29,7 +43,8 @@ export function useCreateApiKey() {
   return useMutation({
     mutationFn: (body: { name: string; mode: "live" | "test" }) =>
       api.post<ApiKeyWithSecret>("/api/keys", body),
-    onSuccess: () => qc.invalidateQueries({ queryKey: developerKeys.apiKeys() }),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: developerKeys.apiKeys() }),
   })
 }
 
@@ -38,7 +53,8 @@ export function useRevokeApiKey() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (id: string) => api.delete(`/api/keys/${id}`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: developerKeys.apiKeys() }),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: developerKeys.apiKeys() }),
   })
 }
 
@@ -46,7 +62,8 @@ export function useRequestLog(params: ListParams = {}) {
   const api = useApiClient()
   return useQuery({
     queryKey: developerKeys.requestLog(params),
-    queryFn: () => api.get<ListResponse<ApiRequestLog>>("/api/request-log", params),
+    queryFn: () =>
+      api.get<ListResponse<ApiRequestLog>>("/api/request-log", params),
     refetchInterval: 30_000,
   })
 }

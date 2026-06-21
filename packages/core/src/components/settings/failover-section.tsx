@@ -1,8 +1,14 @@
 import { useState } from "react"
+
 import { Button } from "@workspace/ui/components/button"
 import { Card, CardContent } from "@workspace/ui/components/card"
 import { GitForkIcon, PlusIcon, TrashIcon } from "lucide-react"
-import { useProviderFallbacks, useCreateProviderFallback, useDeleteProviderFallback } from "../../hooks/failover"
+
+import {
+  useCreateProviderFallback,
+  useDeleteProviderFallback,
+  useProviderFallbacks,
+} from "../../hooks/failover"
 
 export function FailoverSection() {
   const { data } = useProviderFallbacks()
@@ -18,7 +24,11 @@ export function FailoverSection() {
   function handleCreate() {
     if (!channel || !primaryId || !fallbackId) return
     createFallback.mutate(
-      { channel, primaryConnectionId: primaryId, fallbackConnectionId: fallbackId },
+      {
+        channel,
+        primaryConnectionId: primaryId,
+        fallbackConnectionId: fallbackId,
+      },
       {
         onSuccess: () => {
           setChannel("")
@@ -26,7 +36,7 @@ export function FailoverSection() {
           setFallbackId("")
           setShowForm(false)
         },
-      },
+      }
     )
   }
 
@@ -36,12 +46,17 @@ export function FailoverSection() {
         <div>
           <h2 className="text-sm font-medium">Provider failover</h2>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            When a channel send fails with a non-retryable error, automatically retry with a fallback connection.
+            When a channel send fails with a non-retryable error, automatically
+            retry with a fallback connection.
           </p>
         </div>
         <div className="flex items-center gap-2">
           <GitForkIcon className="size-4 text-muted-foreground" />
-          <Button size="sm" className="gap-1.5" onClick={() => setShowForm((v) => !v)}>
+          <Button
+            size="sm"
+            className="gap-1.5"
+            onClick={() => setShowForm((v) => !v)}
+          >
             <PlusIcon className="size-3.5" />
             Add rule
           </Button>
@@ -70,7 +85,9 @@ export function FailoverSection() {
               />
             </div>
             <div className="flex flex-col gap-1">
-              <span className="text-xs font-medium">Fallback connection ID</span>
+              <span className="text-xs font-medium">
+                Fallback connection ID
+              </span>
               <input
                 className="rounded border border-input bg-background px-3 py-1.5 text-sm font-mono"
                 placeholder="connection UUID"
@@ -79,10 +96,23 @@ export function FailoverSection() {
               />
             </div>
             <div className="flex gap-2">
-              <Button size="sm" onClick={handleCreate} disabled={createFallback.isPending || !channel || !primaryId || !fallbackId}>
+              <Button
+                size="sm"
+                onClick={handleCreate}
+                disabled={
+                  createFallback.isPending ||
+                  !channel ||
+                  !primaryId ||
+                  !fallbackId
+                }
+              >
                 Save
               </Button>
-              <Button size="sm" variant="outline" onClick={() => setShowForm(false)}>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setShowForm(false)}
+              >
                 Cancel
               </Button>
             </div>
@@ -95,9 +125,15 @@ export function FailoverSection() {
           <table className="w-full text-sm">
             <thead className="bg-muted/50">
               <tr>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Channel</th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Primary</th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Fallback</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                  Channel
+                </th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                  Primary
+                </th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                  Fallback
+                </th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
@@ -105,8 +141,12 @@ export function FailoverSection() {
               {rules.map((rule) => (
                 <tr key={rule.id}>
                   <td className="px-4 py-3 font-medium">{rule.channel}</td>
-                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{rule.primaryConnectionId.slice(0, 8)}…</td>
-                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{rule.fallbackConnectionId.slice(0, 8)}…</td>
+                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
+                    {rule.primaryConnectionId.slice(0, 8)}…
+                  </td>
+                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
+                    {rule.fallbackConnectionId.slice(0, 8)}…
+                  </td>
                   <td className="px-4 py-3">
                     <button
                       className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"

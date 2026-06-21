@@ -1,6 +1,5 @@
 import * as React from "react"
-import { NavLink } from "react-router"
-import { MoreHorizontalIcon, FolderIcon, ShareIcon, Trash2Icon } from "lucide-react"
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +16,13 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@workspace/ui/components/sidebar"
+import {
+  FolderIcon,
+  MoreHorizontalIcon,
+  ShareIcon,
+  Trash2Icon,
+} from "lucide-react"
+import { NavLink } from "react-router"
 
 export function NavDocuments({
   items,
@@ -72,7 +78,6 @@ export function NavDocuments({
             </DropdownMenu>
           </SidebarMenuItem>
         ))}
-
       </SidebarMenu>
     </SidebarGroup>
   )

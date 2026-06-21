@@ -1,12 +1,18 @@
 import { useState } from "react"
+
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
 import { Textarea } from "@workspace/ui/components/textarea"
 import { PlusIcon } from "lucide-react"
+
 import { useCreateWebhook } from "../../hooks/webhooks"
 
-export function AddWebhookForm({ onCreated }: { onCreated: (secret: string) => void }) {
+export function AddWebhookForm({
+  onCreated,
+}: {
+  onCreated: (secret: string) => void
+}) {
   const create = useCreateWebhook()
   const [url, setUrl] = useState("")
   const [description, setDescription] = useState("")
@@ -52,7 +58,12 @@ export function AddWebhookForm({ onCreated }: { onCreated: (secret: string) => v
       </div>
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="wh-desc">Description (optional)</Label>
-        <Input id="wh-desc" placeholder="Production relay" value={description} onChange={(e) => setDescription(e.target.value)} />
+        <Input
+          id="wh-desc"
+          placeholder="Production relay"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
       </div>
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="wh-headers">Custom headers JSON (optional)</Label>
@@ -65,7 +76,12 @@ export function AddWebhookForm({ onCreated }: { onCreated: (secret: string) => v
         />
       </div>
       {error && <p className="text-sm text-destructive">{error}</p>}
-      <Button size="sm" onClick={handleCreate} disabled={create.isPending || !url} className="gap-1.5 self-start">
+      <Button
+        size="sm"
+        onClick={handleCreate}
+        disabled={create.isPending || !url}
+        className="gap-1.5 self-start"
+      >
         <PlusIcon className="size-4" />
         {create.isPending ? "Adding…" : "Add endpoint"}
       </Button>

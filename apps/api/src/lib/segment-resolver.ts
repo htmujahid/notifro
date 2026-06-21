@@ -1,7 +1,16 @@
-import { sql } from 'kysely'
-import type { AppDB } from '../db/client'
+import { sql } from "kysely"
 
-export type FilterOp = 'eq' | 'neq' | 'gt' | 'lt' | 'gte' | 'lte' | 'contains' | 'in'
+import type { AppDB } from "../db/client"
+
+export type FilterOp =
+  | "eq"
+  | "neq"
+  | "gt"
+  | "lt"
+  | "gte"
+  | "lte"
+  | "contains"
+  | "in"
 
 export type FilterClause = {
   field: string
@@ -16,43 +25,52 @@ export type FilterNode =
 
 const MAX_DEPTH = 5
 
-function buildSql(node: FilterNode, depth = 0): ReturnType<typeof sql<boolean>> {
+function buildSql(
+  node: FilterNode,
+  depth = 0
+): ReturnType<typeof sql<boolean>> {
   if (depth > MAX_DEPTH) return sql<boolean>`0`
 
-  if ('and' in node) {
+  if ("and" in node) {
     if ((node as { and: FilterNode[] }).and.length === 0) return sql<boolean>`1`
-    const parts = (node as { and: FilterNode[] }).and.map((n) => buildSql(n, depth + 1))
+    const parts = (node as { and: FilterNode[] }).and.map((n) =>
+      buildSql(n, depth + 1)
+    )
     return sql<boolean>`(${sql.join(parts, sql` AND `)})`
   }
 
-  if ('or' in node) {
+  if ("or" in node) {
     if ((node as { or: FilterNode[] }).or.length === 0) return sql<boolean>`0`
-    const parts = (node as { or: FilterNode[] }).or.map((n) => buildSql(n, depth + 1))
+    const parts = (node as { or: FilterNode[] }).or.map((n) =>
+      buildSql(n, depth + 1)
+    )
     return sql<boolean>`(${sql.join(parts, sql` OR `)})`
   }
 
   const c = node as FilterClause
-  const safeField = String(c.field).replace(/[^a-zA-Z0-9_.]/g, '').slice(0, 64)
+  const safeField = String(c.field)
+    .replace(/[^a-zA-Z0-9_.]/g, "")
+    .slice(0, 64)
   if (!safeField) return sql<boolean>`0`
   const path = `$.${safeField}`
   const val = c.value
 
   switch (c.op) {
-    case 'eq':
+    case "eq":
       return sql<boolean>`json_extract(attributes, ${path}) = ${val}`
-    case 'neq':
+    case "neq":
       return sql<boolean>`json_extract(attributes, ${path}) != ${val}`
-    case 'gt':
+    case "gt":
       return sql<boolean>`json_extract(attributes, ${path}) > ${val}`
-    case 'lt':
+    case "lt":
       return sql<boolean>`json_extract(attributes, ${path}) < ${val}`
-    case 'gte':
+    case "gte":
       return sql<boolean>`json_extract(attributes, ${path}) >= ${val}`
-    case 'lte':
+    case "lte":
       return sql<boolean>`json_extract(attributes, ${path}) <= ${val}`
-    case 'contains':
-      return sql<boolean>`json_extract(attributes, ${path}) like ${'%' + String(val) + '%'}`
-    case 'in': {
+    case "contains":
+      return sql<boolean>`json_extract(attributes, ${path}) like ${"%" + String(val) + "%"}`
+    case "in": {
       const vals = Array.isArray(val) ? val : [val]
       if (vals.length === 0) return sql<boolean>`0`
       return sql<boolean>`json_extract(attributes, ${path}) in (${sql.join(vals.map((v) => sql`${v}`))})`
@@ -71,12 +89,16 @@ export type ResolvedRecipient = {
   attributes: Record<string, unknown>
 }
 
-export async function resolveSegment(db: AppDB, userId: string, segmentId: string): Promise<ResolvedRecipient[]> {
+export async function resolveSegment(
+  db: AppDB,
+  userId: string,
+  segmentId: string
+): Promise<ResolvedRecipient[]> {
   const segment = await db
-    .selectFrom('segment')
-    .where('id', '=', segmentId)
-    .where('userId', '=', userId)
-    .select('filter')
+    .selectFrom("segment")
+    .where("id", "=", segmentId)
+    .where("userId", "=", userId)
+    .select("filter")
     .executeTakeFirst()
 
   if (!segment) return []
@@ -91,11 +113,11 @@ export async function resolveSegment(db: AppDB, userId: string, segmentId: strin
   const clause = buildSql(filter)
 
   const rows = await db
-    .selectFrom('recipient')
-    .where('userId', '=', userId)
+    .selectFrom("recipient")
+    .where("userId", "=", userId)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .where(clause as any)
-    .select(['id', 'email', 'phone', 'locale', 'timezone', 'attributes'])
+    .select(["id", "email", "phone", "locale", "timezone", "attributes"])
     .execute()
 
   return rows.map((r) => ({
@@ -104,31 +126,33 @@ export async function resolveSegment(db: AppDB, userId: string, segmentId: strin
     phone: r.phone,
     locale: r.locale,
     timezone: r.timezone,
-    attributes: r.attributes ? (JSON.parse(r.attributes) as Record<string, unknown>) : {},
+    attributes: r.attributes
+      ? (JSON.parse(r.attributes) as Record<string, unknown>)
+      : {},
   }))
 }
 
 export async function previewSegment(
   db: AppDB,
   userId: string,
-  filter: FilterNode,
+  filter: FilterNode
 ): Promise<{ count: number; sample: { id: string; email: string | null }[] }> {
   const clause = buildSql(filter)
 
   const [countRow, sampleRows] = await Promise.all([
     db
-      .selectFrom('recipient')
-      .where('userId', '=', userId)
+      .selectFrom("recipient")
+      .where("userId", "=", userId)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .where(clause as any)
-      .select(db.fn.countAll<number>().as('n'))
+      .select(db.fn.countAll<number>().as("n"))
       .executeTakeFirst(),
     db
-      .selectFrom('recipient')
-      .where('userId', '=', userId)
+      .selectFrom("recipient")
+      .where("userId", "=", userId)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .where(clause as any)
-      .select(['id', 'email'])
+      .select(["id", "email"])
       .limit(100)
       .execute(),
   ])
@@ -138,4 +162,3 @@ export async function previewSegment(
     sample: sampleRows,
   }
 }
-

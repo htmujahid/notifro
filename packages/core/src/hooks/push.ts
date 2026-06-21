@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react"
+import { useCallback, useEffect, useState } from "react"
+
 import { useApiClient } from "@workspace/api-client/context"
 
 function isWebPushSupported(): boolean {
@@ -11,7 +12,9 @@ function isWebPushSupported(): boolean {
 }
 
 function b64urlToUint8Array(b64: string): Uint8Array<ArrayBuffer> {
-  const padded = b64.replace(/-/g, "+").replace(/_/g, "/") + "===".slice(0, (4 - (b64.length % 4)) % 4)
+  const padded =
+    b64.replace(/-/g, "+").replace(/_/g, "/") +
+    "===".slice(0, (4 - (b64.length % 4)) % 4)
   const binary = atob(padded)
   const bytes = new Uint8Array(binary.length)
   for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
@@ -34,7 +37,7 @@ export function usePushRegistration(): UsePushRegistrationResult {
   const supported = isWebPushSupported()
 
   const [permission, setPermission] = useState<PushPermission>(
-    supported ? (Notification.permission as PushPermission) : "unsupported",
+    supported ? (Notification.permission as PushPermission) : "unsupported"
   )
   const [subscribed, setSubscribed] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -59,7 +62,9 @@ export function usePushRegistration(): UsePushRegistrationResult {
       setPermission(perm as PushPermission)
       if (perm !== "granted") return
 
-      const { publicKey } = await client.get<{ publicKey: string }>("/api/push/vapid-public-key")
+      const { publicKey } = await client.get<{ publicKey: string }>(
+        "/api/push/vapid-public-key"
+      )
 
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,

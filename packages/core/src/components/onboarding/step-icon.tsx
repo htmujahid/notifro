@@ -9,7 +9,11 @@ export function StepIcon({ done }: { done: boolean }) {
           : "bg-muted ring-border text-muted-foreground"
       }`}
     >
-      {done ? <CheckIcon className="size-4" /> : <span className="size-2 rounded-full bg-current opacity-40" />}
+      {done ? (
+        <CheckIcon className="size-4" />
+      ) : (
+        <span className="size-2 rounded-full bg-current opacity-40" />
+      )}
     </div>
   )
 }

@@ -1,9 +1,13 @@
-import { OpenAPIHono, createRoute, z } from '@hono/zod-openapi'
-import { requireAuth } from '../middleware/auth'
-import { Errors, validationHook } from '../lib/errors'
-import { signPreferenceToken, verifyPreferenceToken } from '../lib/preference-token'
-import { suppress, recordConsentEvent } from '../lib/suppress'
-import type { AppEnv } from '../lib/types'
+import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+
+import { Errors, validationHook } from "../lib/errors"
+import {
+  signPreferenceToken,
+  verifyPreferenceToken,
+} from "../lib/preference-token"
+import { recordConsentEvent, suppress } from "../lib/suppress"
+import type { AppEnv } from "../lib/types"
+import { requireAuth } from "../middleware/auth"
 
 const TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000
 
@@ -29,7 +33,7 @@ const TopicWithPrefSchema = z.object({
     z.object({
       channel: z.string(),
       optedIn: z.boolean(),
-    }),
+    })
   ),
 })
 
@@ -65,12 +69,12 @@ async function getSecret(env: CloudflareBindings): Promise<string | null> {
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 
 const generateTokenRoute = createRoute({
-  method: 'post',
-  path: '/preferences/token',
+  method: "post",
+  path: "/preferences/token",
   request: {
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: z.object({ recipientId: z.string() }),
         },
       },
@@ -78,30 +82,38 @@ const generateTokenRoute = createRoute({
   },
   responses: {
     200: {
-      content: { 'application/json': { schema: z.object({ token: z.string(), expiresAt: z.string() }) } },
-      description: 'Signed preference center token',
+      content: {
+        "application/json": {
+          schema: z.object({ token: z.string(), expiresAt: z.string() }),
+        },
+      },
+      description: "Signed preference center token",
     },
   },
 })
 
 const recipientPrefsRoute = createRoute({
-  method: 'get',
-  path: '/recipients/:id/preferences',
+  method: "get",
+  path: "/recipients/:id/preferences",
   responses: {
     200: {
-      content: { 'application/json': { schema: z.object({ data: z.array(PreferenceDtoSchema) }) } },
-      description: 'Preferences for a recipient',
+      content: {
+        "application/json": {
+          schema: z.object({ data: z.array(PreferenceDtoSchema) }),
+        },
+      },
+      description: "Preferences for a recipient",
     },
   },
 })
 
 const adminSetPreferenceRoute = createRoute({
-  method: 'put',
-  path: '/recipients/:id/preferences',
+  method: "put",
+  path: "/recipients/:id/preferences",
   request: {
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: z.object({
             preferences: z.array(UpdatePreferencesSchema),
           }),
@@ -111,55 +123,63 @@ const adminSetPreferenceRoute = createRoute({
   },
   responses: {
     200: {
-      content: { 'application/json': { schema: z.object({ updated: z.number() }) } },
-      description: 'Updated preferences',
+      content: {
+        "application/json": { schema: z.object({ updated: z.number() }) },
+      },
+      description: "Updated preferences",
     },
   },
 })
 
 const channelPriorityRoute = createRoute({
-  method: 'get',
-  path: '/recipients/:id/channel-priority',
+  method: "get",
+  path: "/recipients/:id/channel-priority",
   responses: {
-    200: { content: { 'application/json': { schema: ChannelPriorityDtoSchema } }, description: 'Channel priority' },
-    404: { description: 'Not set' },
+    200: {
+      content: { "application/json": { schema: ChannelPriorityDtoSchema } },
+      description: "Channel priority",
+    },
+    404: { description: "Not set" },
   },
 })
 
 const setChannelPriorityRoute = createRoute({
-  method: 'put',
-  path: '/recipients/:id/channel-priority',
+  method: "put",
+  path: "/recipients/:id/channel-priority",
   request: {
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: z.object({ order: z.array(z.string()).min(1) }),
         },
       },
     },
   },
   responses: {
-    200: { content: { 'application/json': { schema: ChannelPriorityDtoSchema } }, description: 'Channel priority updated' },
+    200: {
+      content: { "application/json": { schema: ChannelPriorityDtoSchema } },
+      description: "Channel priority updated",
+    },
   },
 })
 
 const authedRouter = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
-authedRouter.use('*', requireAuth)
+authedRouter.use("*", requireAuth)
 
 authedRouter.openapi(generateTokenRoute, async (c) => {
-  const { recipientId } = c.req.valid('json')
+  const { recipientId } = c.req.valid("json")
   const userId = c.var.user!.id
   const secret = await getSecret(c.env)
   if (!secret) throw Errors.internal()
 
   const recipient = await c.var.db
-    .selectFrom('recipient')
-    .where('id', '=', recipientId)
-    .where('userId', '=', userId)
-    .select('id')
+    .selectFrom("recipient")
+    .where("id", "=", recipientId)
+    .where("userId", "=", userId)
+    .select("id")
     .executeTakeFirst()
 
-  if (!recipient) throw Errors.notFound('Recipient')
+  if (!recipient) throw Errors.notFound("Recipient")
 
   const exp = Date.now() + TOKEN_TTL_MS
   const token = await signPreferenceToken({ recipientId, userId, exp }, secret)
@@ -171,17 +191,17 @@ authedRouter.openapi(recipientPrefsRoute, async (c) => {
   const userId = c.var.user!.id
 
   const recipient = await c.var.db
-    .selectFrom('recipient')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
-    .select('id')
+    .selectFrom("recipient")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
+    .select("id")
     .executeTakeFirst()
-  if (!recipient) throw Errors.notFound('Recipient')
+  if (!recipient) throw Errors.notFound("Recipient")
 
   const prefs = await c.var.db
-    .selectFrom('preference')
-    .where('recipientId', '=', id)
-    .where('userId', '=', userId)
+    .selectFrom("preference")
+    .where("recipientId", "=", id)
+    .where("userId", "=", userId)
     .selectAll()
     .execute()
 
@@ -190,36 +210,40 @@ authedRouter.openapi(recipientPrefsRoute, async (c) => {
 
 authedRouter.openapi(adminSetPreferenceRoute, async (c) => {
   const { id } = c.req.param()
-  const { preferences } = c.req.valid('json')
+  const { preferences } = c.req.valid("json")
   const userId = c.var.user!.id
   const ts = now()
 
   const recipient = await c.var.db
-    .selectFrom('recipient')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
-    .select('id')
+    .selectFrom("recipient")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
+    .select("id")
     .executeTakeFirst()
-  if (!recipient) throw Errors.notFound('Recipient')
+  if (!recipient) throw Errors.notFound("Recipient")
 
   for (const pref of preferences) {
     const existing = await c.var.db
-      .selectFrom('preference')
-      .where('recipientId', '=', id)
-      .where('channel', '=', pref.channel)
-      .where((eb) => (pref.topicId ? eb('topicId', '=', pref.topicId) : eb('topicId', 'is', null)))
-      .select('id')
+      .selectFrom("preference")
+      .where("recipientId", "=", id)
+      .where("channel", "=", pref.channel)
+      .where((eb) =>
+        pref.topicId
+          ? eb("topicId", "=", pref.topicId)
+          : eb("topicId", "is", null)
+      )
+      .select("id")
       .executeTakeFirst()
 
     if (existing) {
       await c.var.db
-        .updateTable('preference')
-        .set({ optedIn: pref.optedIn ? 1 : 0, source: 'admin', updatedAt: ts })
-        .where('id', '=', existing.id)
+        .updateTable("preference")
+        .set({ optedIn: pref.optedIn ? 1 : 0, source: "admin", updatedAt: ts })
+        .where("id", "=", existing.id)
         .execute()
     } else {
       await c.var.db
-        .insertInto('preference')
+        .insertInto("preference")
         .values({
           id: crypto.randomUUID(),
           userId,
@@ -227,7 +251,7 @@ authedRouter.openapi(adminSetPreferenceRoute, async (c) => {
           channel: pref.channel,
           topicId: pref.topicId ?? null,
           optedIn: pref.optedIn ? 1 : 0,
-          source: 'admin',
+          source: "admin",
           createdAt: ts,
           updatedAt: ts,
         })
@@ -243,58 +267,67 @@ authedRouter.openapi(channelPriorityRoute, async (c) => {
   const userId = c.var.user!.id
 
   const recipient = await c.var.db
-    .selectFrom('recipient')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
-    .select('id')
+    .selectFrom("recipient")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
+    .select("id")
     .executeTakeFirst()
-  if (!recipient) throw Errors.notFound('Recipient')
+  if (!recipient) throw Errors.notFound("Recipient")
 
   const cp = await c.var.db
-    .selectFrom('channel_priority')
-    .where('recipientId', '=', id)
-    .where('userId', '=', userId)
+    .selectFrom("channel_priority")
+    .where("recipientId", "=", id)
+    .where("userId", "=", userId)
     .selectAll()
     .executeTakeFirst()
 
-  if (!cp) throw Errors.notFound('Channel priority')
-  return c.json({ ...cp, order: JSON.parse(cp.order) as string[] } as z.infer<typeof ChannelPriorityDtoSchema>)
+  if (!cp) throw Errors.notFound("Channel priority")
+  return c.json({ ...cp, order: JSON.parse(cp.order) as string[] } as z.infer<
+    typeof ChannelPriorityDtoSchema
+  >)
 })
 
 authedRouter.openapi(setChannelPriorityRoute, async (c) => {
   const { id } = c.req.param()
-  const { order } = c.req.valid('json')
+  const { order } = c.req.valid("json")
   const userId = c.var.user!.id
   const ts = now()
 
   const recipient = await c.var.db
-    .selectFrom('recipient')
-    .where('id', '=', id)
-    .where('userId', '=', userId)
-    .select('id')
+    .selectFrom("recipient")
+    .where("id", "=", id)
+    .where("userId", "=", userId)
+    .select("id")
     .executeTakeFirst()
-  if (!recipient) throw Errors.notFound('Recipient')
+  if (!recipient) throw Errors.notFound("Recipient")
 
   const existing = await c.var.db
-    .selectFrom('channel_priority')
-    .where('recipientId', '=', id)
-    .where('userId', '=', userId)
-    .select('id')
+    .selectFrom("channel_priority")
+    .where("recipientId", "=", id)
+    .where("userId", "=", userId)
+    .select("id")
     .executeTakeFirst()
 
   if (existing) {
     await c.var.db
-      .updateTable('channel_priority')
+      .updateTable("channel_priority")
       .set({ order: JSON.stringify(order), updatedAt: ts })
-      .where('id', '=', existing.id)
+      .where("id", "=", existing.id)
       .execute()
-    const updated = await c.var.db.selectFrom('channel_priority').where('id', '=', existing.id).selectAll().executeTakeFirstOrThrow()
-    return c.json({ ...updated, order: JSON.parse(updated.order) as string[] } as z.infer<typeof ChannelPriorityDtoSchema>)
+    const updated = await c.var.db
+      .selectFrom("channel_priority")
+      .where("id", "=", existing.id)
+      .selectAll()
+      .executeTakeFirstOrThrow()
+    return c.json({
+      ...updated,
+      order: JSON.parse(updated.order) as string[],
+    } as z.infer<typeof ChannelPriorityDtoSchema>)
   }
 
   const newId = crypto.randomUUID()
   await c.var.db
-    .insertInto('channel_priority')
+    .insertInto("channel_priority")
     .values({
       id: newId,
       userId,
@@ -305,30 +338,40 @@ authedRouter.openapi(setChannelPriorityRoute, async (c) => {
     })
     .execute()
 
-  const created = await c.var.db.selectFrom('channel_priority').where('id', '=', newId).selectAll().executeTakeFirstOrThrow()
-  return c.json({ ...created, order: JSON.parse(created.order) as string[] } as z.infer<typeof ChannelPriorityDtoSchema>)
+  const created = await c.var.db
+    .selectFrom("channel_priority")
+    .where("id", "=", newId)
+    .selectAll()
+    .executeTakeFirstOrThrow()
+  return c.json({
+    ...created,
+    order: JSON.parse(created.order) as string[],
+  } as z.infer<typeof ChannelPriorityDtoSchema>)
 })
 
 const publicRouter = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 
 const prefCenterGetRoute = createRoute({
-  method: 'get',
-  path: '/preferences/center',
+  method: "get",
+  path: "/preferences/center",
   request: { query: z.object({ token: z.string() }) },
   responses: {
-    200: { content: { 'application/json': { schema: PreferenceCenterSchema } }, description: 'Preference center data' },
-    401: { description: 'Invalid or expired token' },
+    200: {
+      content: { "application/json": { schema: PreferenceCenterSchema } },
+      description: "Preference center data",
+    },
+    401: { description: "Invalid or expired token" },
   },
 })
 
 const prefCenterPostRoute = createRoute({
-  method: 'post',
-  path: '/preferences/center',
+  method: "post",
+  path: "/preferences/center",
   request: {
     query: z.object({ token: z.string() }),
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: z.object({
             preferences: z.array(UpdatePreferencesSchema),
           }),
@@ -337,35 +380,49 @@ const prefCenterPostRoute = createRoute({
     },
   },
   responses: {
-    200: { content: { 'application/json': { schema: z.object({ updated: z.number() }) } }, description: 'Preferences updated' },
-    401: { description: 'Invalid or expired token' },
+    200: {
+      content: {
+        "application/json": { schema: z.object({ updated: z.number() }) },
+      },
+      description: "Preferences updated",
+    },
+    401: { description: "Invalid or expired token" },
   },
 })
 
 const unsubscribeGetRoute = createRoute({
-  method: 'get',
-  path: '/unsubscribe',
+  method: "get",
+  path: "/unsubscribe",
   request: { query: z.object({ token: z.string() }) },
   responses: {
     200: {
       content: {
-        'application/json': {
-          schema: z.object({ recipientId: z.string(), email: z.string().nullable(), ok: z.boolean() }),
+        "application/json": {
+          schema: z.object({
+            recipientId: z.string(),
+            email: z.string().nullable(),
+            ok: z.boolean(),
+          }),
         },
       },
-      description: 'Token valid',
+      description: "Token valid",
     },
-    401: { description: 'Invalid or expired token' },
+    401: { description: "Invalid or expired token" },
   },
 })
 
 const unsubscribePostRoute = createRoute({
-  method: 'post',
-  path: '/unsubscribe',
+  method: "post",
+  path: "/unsubscribe",
   request: { query: z.object({ token: z.string() }) },
   responses: {
-    200: { content: { 'application/json': { schema: z.object({ ok: z.boolean() }) } }, description: 'Unsubscribed' },
-    401: { description: 'Invalid or expired token' },
+    200: {
+      content: {
+        "application/json": { schema: z.object({ ok: z.boolean() }) },
+      },
+      description: "Unsubscribed",
+    },
+    401: { description: "Invalid or expired token" },
   },
 })
 
@@ -376,27 +433,39 @@ async function verifyToken(c: { env: CloudflareBindings }, token: string) {
 }
 
 publicRouter.openapi(prefCenterGetRoute, async (c) => {
-  const { token } = c.req.valid('query')
+  const { token } = c.req.valid("query")
   const claims = await verifyToken(c, token)
   if (!claims) throw Errors.unauthenticated()
 
   const { recipientId, userId } = claims
 
   const topics = await c.var.db
-    .selectFrom('topic')
-    .where('userId', '=', userId)
+    .selectFrom("topic")
+    .where("userId", "=", userId)
     .selectAll()
     .execute()
 
   const prefs = await c.var.db
-    .selectFrom('preference')
-    .where('recipientId', '=', recipientId)
+    .selectFrom("preference")
+    .where("recipientId", "=", recipientId)
     .selectAll()
     .execute()
 
-  const prefMap = new Map(prefs.map((p) => [`${p.channel}:${p.topicId ?? ''}`, p.optedIn]))
+  const prefMap = new Map(
+    prefs.map((p) => [`${p.channel}:${p.topicId ?? ""}`, p.optedIn])
+  )
 
-  const ALL_CHANNELS = ['email', 'sms', 'push', 'in_app', 'slack', 'discord', 'teams', 'telegram', 'whatsapp']
+  const ALL_CHANNELS = [
+    "email",
+    "sms",
+    "push",
+    "in_app",
+    "slack",
+    "discord",
+    "teams",
+    "telegram",
+    "whatsapp",
+  ]
 
   const topicData = topics.map((t) => ({
     topicId: t.id,
@@ -406,7 +475,10 @@ publicRouter.openapi(prefCenterGetRoute, async (c) => {
     transactional: t.transactional,
     channels: ALL_CHANNELS.map((ch) => {
       const explicit = prefMap.get(`${ch}:${t.id}`)
-      return { channel: ch, optedIn: explicit !== undefined ? !!explicit : !!t.defaultOptIn }
+      return {
+        channel: ch,
+        optedIn: explicit !== undefined ? !!explicit : !!t.defaultOptIn,
+      }
     }),
   }))
 
@@ -419,8 +491,8 @@ publicRouter.openapi(prefCenterGetRoute, async (c) => {
 })
 
 publicRouter.openapi(prefCenterPostRoute, async (c) => {
-  const { token } = c.req.valid('query')
-  const { preferences } = c.req.valid('json')
+  const { token } = c.req.valid("query")
+  const { preferences } = c.req.valid("json")
   const claims = await verifyToken(c, token)
   if (!claims) throw Errors.unauthenticated()
 
@@ -429,22 +501,30 @@ publicRouter.openapi(prefCenterPostRoute, async (c) => {
 
   for (const pref of preferences) {
     const existing = await c.var.db
-      .selectFrom('preference')
-      .where('recipientId', '=', recipientId)
-      .where('channel', '=', pref.channel)
-      .where((eb) => (pref.topicId ? eb('topicId', '=', pref.topicId) : eb('topicId', 'is', null)))
-      .select('id')
+      .selectFrom("preference")
+      .where("recipientId", "=", recipientId)
+      .where("channel", "=", pref.channel)
+      .where((eb) =>
+        pref.topicId
+          ? eb("topicId", "=", pref.topicId)
+          : eb("topicId", "is", null)
+      )
+      .select("id")
       .executeTakeFirst()
 
     if (existing) {
       await c.var.db
-        .updateTable('preference')
-        .set({ optedIn: pref.optedIn ? 1 : 0, source: 'preference_center', updatedAt: ts })
-        .where('id', '=', existing.id)
+        .updateTable("preference")
+        .set({
+          optedIn: pref.optedIn ? 1 : 0,
+          source: "preference_center",
+          updatedAt: ts,
+        })
+        .where("id", "=", existing.id)
         .execute()
     } else {
       await c.var.db
-        .insertInto('preference')
+        .insertInto("preference")
         .values({
           id: crypto.randomUUID(),
           userId,
@@ -452,7 +532,7 @@ publicRouter.openapi(prefCenterPostRoute, async (c) => {
           channel: pref.channel,
           topicId: pref.topicId ?? null,
           optedIn: pref.optedIn ? 1 : 0,
-          source: 'preference_center',
+          source: "preference_center",
           createdAt: ts,
           updatedAt: ts,
         })
@@ -463,10 +543,10 @@ publicRouter.openapi(prefCenterPostRoute, async (c) => {
       c.var.db,
       userId,
       pref.channel,
-      pref.optedIn ? 'opt_in' : 'opt_out',
-      'preference_center',
+      pref.optedIn ? "opt_in" : "opt_out",
+      "preference_center",
       recipientId,
-      pref.topicId ?? null,
+      pref.topicId ?? null
     )
   }
 
@@ -474,48 +554,61 @@ publicRouter.openapi(prefCenterPostRoute, async (c) => {
 })
 
 publicRouter.openapi(unsubscribeGetRoute, async (c) => {
-  const { token } = c.req.valid('query')
+  const { token } = c.req.valid("query")
   const claims = await verifyToken(c, token)
   if (!claims) throw Errors.unauthenticated()
 
   const { recipientId } = claims
   const recipient = await c.var.db
-    .selectFrom('recipient')
-    .where('id', '=', recipientId)
-    .select(['id', 'email'])
+    .selectFrom("recipient")
+    .where("id", "=", recipientId)
+    .select(["id", "email"])
     .executeTakeFirst()
 
   return c.json({ recipientId, email: recipient?.email ?? null, ok: true })
 })
 
 publicRouter.openapi(unsubscribePostRoute, async (c) => {
-  const { token } = c.req.valid('query')
+  const { token } = c.req.valid("query")
   const claims = await verifyToken(c, token)
   if (!claims) throw Errors.unauthenticated()
 
   const { recipientId, userId } = claims
   const ts = now()
 
-  const ALL_CHANNELS = ['email', 'sms', 'push', 'in_app', 'slack', 'discord', 'teams', 'telegram', 'whatsapp', 'web_push', 'mobile_push', 'webhook']
+  const ALL_CHANNELS = [
+    "email",
+    "sms",
+    "push",
+    "in_app",
+    "slack",
+    "discord",
+    "teams",
+    "telegram",
+    "whatsapp",
+    "web_push",
+    "mobile_push",
+    "webhook",
+  ]
 
   for (const channel of ALL_CHANNELS) {
     const existing = await c.var.db
-      .selectFrom('preference')
-      .where('recipientId', '=', recipientId)
-      .where('channel', '=', channel)
-      .where('topicId', 'is', null)
-      .select('id')
+      .selectFrom("preference")
+      .where("recipientId", "=", recipientId)
+      .where("channel", "=", channel)
+      .where("topicId", "is", null)
+      .select("id")
       .executeTakeFirst()
 
     if (existing) {
       await c.var.db
-        .updateTable('preference')
-        .set({ optedIn: 0, source: 'unsubscribe_link', updatedAt: ts })
-        .where('id', '=', existing.id)
+        .updateTable("preference")
+        .set({ optedIn: 0, source: "unsubscribe_link", updatedAt: ts })
+        .where("id", "=", existing.id)
         .execute()
     } else {
       await c.var.db
-        .insertInto('preference')
+        .insertInto("preference")
         .values({
           id: crypto.randomUUID(),
           userId,
@@ -523,7 +616,7 @@ publicRouter.openapi(unsubscribePostRoute, async (c) => {
           channel,
           topicId: null,
           optedIn: 0,
-          source: 'unsubscribe_link',
+          source: "unsubscribe_link",
           createdAt: ts,
           updatedAt: ts,
         })
@@ -532,19 +625,26 @@ publicRouter.openapi(unsubscribePostRoute, async (c) => {
   }
 
   const recipient = await c.var.db
-    .selectFrom('recipient')
-    .where('id', '=', recipientId)
-    .select('email')
+    .selectFrom("recipient")
+    .where("id", "=", recipientId)
+    .select("email")
     .executeTakeFirst()
 
   if (recipient?.email) {
-    await suppress(c.var.db, userId, 'email', recipient.email, 'unsubscribe', recipientId)
+    await suppress(
+      c.var.db,
+      userId,
+      "email",
+      recipient.email,
+      "unsubscribe",
+      recipientId
+    )
   }
 
   return c.json({ ok: true })
 })
 
-router.route('', authedRouter)
-router.route('', publicRouter)
+router.route("", authedRouter)
+router.route("", publicRouter)
 
 export default router

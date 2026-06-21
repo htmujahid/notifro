@@ -23,21 +23,36 @@ interface PushNotificationsPlugin {
   checkPermissions(): Promise<PermissionStatus>
   requestPermissions(): Promise<PermissionStatus>
   register(): Promise<void>
-  addListener(event: "registration", cb: (token: TokenEvent) => void): Promise<PluginListenerHandle>
-  addListener(event: "registrationError", cb: (err: RegistrationError) => void): Promise<PluginListenerHandle>
+  addListener(
+    event: "registration",
+    cb: (token: TokenEvent) => void
+  ): Promise<PluginListenerHandle>
+  addListener(
+    event: "registrationError",
+    cb: (err: RegistrationError) => void
+  ): Promise<PluginListenerHandle>
 }
 
-const PushNotifications = registerPlugin<PushNotificationsPlugin>("PushNotifications")
+const PushNotifications =
+  registerPlugin<PushNotificationsPlugin>("PushNotifications")
 
-export async function registerForPush(api: ApiClient, platform: DevicePlatform): Promise<boolean> {
+export async function registerForPush(
+  api: ApiClient,
+  platform: DevicePlatform
+): Promise<boolean> {
   let permission = await PushNotifications.checkPermissions()
-  if (permission.receive === "prompt" || permission.receive === "prompt-with-rationale") {
+  if (
+    permission.receive === "prompt" ||
+    permission.receive === "prompt-with-rationale"
+  ) {
     permission = await PushNotifications.requestPermissions()
   }
   if (permission.receive !== "granted") return false
 
   await PushNotifications.addListener("registration", (token) => {
-    void api.post("/api/devices", { platform, token: token.value }).catch(() => {})
+    void api
+      .post("/api/devices", { platform, token: token.value })
+      .catch(() => {})
   })
   await PushNotifications.addListener("registrationError", () => {})
 
@@ -45,6 +60,9 @@ export async function registerForPush(api: ApiClient, platform: DevicePlatform):
   return true
 }
 
-export async function unregisterPush(api: ApiClient, token: string): Promise<void> {
+export async function unregisterPush(
+  api: ApiClient,
+  token: string
+): Promise<void> {
   await api.delete(`/api/devices/${encodeURIComponent(token)}`).catch(() => {})
 }

@@ -1,8 +1,20 @@
 import { useState } from "react"
-import { useNavigate } from "react-router"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card"
+
+import type { ChannelType } from "@workspace/api-client/types"
 import { Button } from "@workspace/ui/components/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@workspace/ui/components/dialog"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@workspace/ui/components/dialog"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
 import { Textarea } from "@workspace/ui/components/textarea"
@@ -10,24 +22,33 @@ import {
   ArrowRightIcon,
   BellIcon,
   CalendarIcon,
+  CheckCircleIcon,
   FileTextIcon,
   UsersIcon,
-  CheckCircleIcon,
   XCircleIcon,
 } from "lucide-react"
-import { useSendNotification, type NotificationWithDeliveries } from "../../hooks/notifications"
+import { useNavigate } from "react-router"
+
 import { useConnections } from "../../hooks/connections"
+import {
+  type NotificationWithDeliveries,
+  useSendNotification,
+} from "../../hooks/notifications"
 import { useWebhooks } from "../../hooks/webhooks"
-import type { ChannelType } from "@workspace/api-client/types"
 
 const CREATE_OPTIONS = [
   {
     title: "Notification",
-    description: "Send a one-off message to a specific channel or audience right now.",
+    description:
+      "Send a one-off message to a specific channel or audience right now.",
     icon: BellIcon,
     action: "compose" as const,
     cta: "New notification",
-    bullets: ["Pick any connected channel", "Target a single recipient", "Deliver immediately"],
+    bullets: [
+      "Pick any connected channel",
+      "Target a single recipient",
+      "Deliver immediately",
+    ],
   },
   {
     title: "Schedule",
@@ -36,7 +57,11 @@ const CREATE_OPTIONS = [
     action: "navigate" as const,
     url: "/schedules",
     cta: "New schedule",
-    bullets: ["Define a cron expression for recurrence", "Attach a template or write inline", "Pause, resume, or delete at any time"],
+    bullets: [
+      "Define a cron expression for recurrence",
+      "Attach a template or write inline",
+      "Pause, resume, or delete at any time",
+    ],
   },
   {
     title: "Template",
@@ -45,7 +70,11 @@ const CREATE_OPTIONS = [
     action: "navigate" as const,
     url: "/templates",
     cta: "New template",
-    bullets: ["Supports {{variable}} interpolation", "Shared across notifications and schedules", "Versioned — edits don't break existing sends"],
+    bullets: [
+      "Supports {{variable}} interpolation",
+      "Shared across notifications and schedules",
+      "Versioned — edits don't break existing sends",
+    ],
   },
   {
     title: "Audience",
@@ -54,7 +83,11 @@ const CREATE_OPTIONS = [
     action: "navigate" as const,
     url: "/audiences",
     cta: "New audience",
-    bullets: ["Static lists or dynamic rule-based groups", "Reference by name in any notification", "Size recalculated automatically for dynamic groups"],
+    bullets: [
+      "Static lists or dynamic rule-based groups",
+      "Reference by name in any notification",
+      "Size recalculated automatically for dynamic groups",
+    ],
   },
 ]
 
@@ -88,12 +121,17 @@ export function CreateView() {
   const { data: webhookData } = useWebhooks({ limit: 100 })
 
   const activeTypes = new Set(
-    (connData?.pages.flatMap((p) => p.data) ?? []).filter((c) => c.status === "active").map((c) => c.type),
+    (connData?.pages.flatMap((p) => p.data) ?? [])
+      .filter((c) => c.status === "active")
+      .map((c) => c.type)
   )
-  const hasEnabledWebhook = (webhookData?.pages.flatMap((p) => p.data) ?? []).some((w) => w.enabled)
+  const hasEnabledWebhook = (
+    webhookData?.pages.flatMap((p) => p.data) ?? []
+  ).some((w) => w.enabled)
 
   const available = ALL_CHANNELS.filter(({ type }) => {
-    if (type === "email" || type === "in_app" || type === "web_push") return true
+    if (type === "email" || type === "in_app" || type === "web_push")
+      return true
     if (type === "webhook") return hasEnabledWebhook
     return activeTypes.has(type)
   })
@@ -163,7 +201,14 @@ export function CreateView() {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {CREATE_OPTIONS.map((option) => {
-          const { title, description, icon: Icon, cta, bullets, action } = option
+          const {
+            title,
+            description,
+            icon: Icon,
+            cta,
+            bullets,
+            action,
+          } = option
           return (
             <Card key={title} size="sm" className="flex flex-col">
               <CardHeader>
@@ -176,7 +221,10 @@ export function CreateView() {
               <CardContent className="flex flex-1 flex-col justify-between gap-4">
                 <ul className="flex flex-col gap-1.5">
                   {bullets.map((b) => (
-                    <li key={b} className="flex items-start gap-2 text-xs text-muted-foreground">
+                    <li
+                      key={b}
+                      className="flex items-start gap-2 text-xs text-muted-foreground"
+                    >
                       <span className="mt-0.5 size-1 shrink-0 rounded-full bg-muted-foreground/50" />
                       {b}
                     </li>
@@ -213,22 +261,30 @@ export function CreateView() {
               <p className="text-sm font-medium">Notification sent</p>
               <div className="flex flex-col gap-2">
                 {result.deliveries.map((d) => (
-                  <div key={d.id} className="flex items-center gap-2 rounded-lg border p-3 text-sm">
+                  <div
+                    key={d.id}
+                    className="flex items-center gap-2 rounded-lg border p-3 text-sm"
+                  >
                     {d.status === "delivered" ? (
                       <CheckCircleIcon className="size-4 shrink-0 text-green-600" />
                     ) : (
                       <XCircleIcon className="size-4 shrink-0 text-destructive" />
                     )}
                     <div className="flex flex-col">
-                      <span className="font-medium capitalize">{d.channel.replace("_", " ")}</span>
+                      <span className="font-medium capitalize">
+                        {d.channel.replace("_", " ")}
+                      </span>
                       <span className="text-xs text-muted-foreground">
-                        {d.status}{d.error ? ` — ${d.error}` : ""}
+                        {d.status}
+                        {d.error ? ` — ${d.error}` : ""}
                       </span>
                     </div>
                   </div>
                 ))}
               </div>
-              <Button variant="outline" onClick={() => setOpen(false)}>Close</Button>
+              <Button variant="outline" onClick={() => setOpen(false)}>
+                Close
+              </Button>
             </div>
           ) : (
             <form onSubmit={handleSend} className="flex flex-col gap-4">
@@ -255,37 +311,71 @@ export function CreateView() {
                   })}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Only connected channels are shown. Add more on the Channels page.
+                  Only connected channels are shown. Add more on the Channels
+                  page.
                 </p>
               </div>
 
               {needsEmail && (
                 <div className="flex flex-col gap-1.5">
                   <Label htmlFor="to">Recipient email</Label>
-                  <Input id="to" type="email" placeholder="user@example.com" value={to} onChange={(e) => setTo(e.target.value)} />
+                  <Input
+                    id="to"
+                    type="email"
+                    placeholder="user@example.com"
+                    value={to}
+                    onChange={(e) => setTo(e.target.value)}
+                  />
                 </div>
               )}
               {needsPhone && (
                 <div className="flex flex-col gap-1.5">
                   <Label htmlFor="phone">Recipient phone</Label>
-                  <Input id="phone" placeholder="+15551234567" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                  <Input
+                    id="phone"
+                    placeholder="+15551234567"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                  />
                 </div>
               )}
 
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="subject">Subject / title</Label>
-                <Input id="subject" placeholder="Notification subject" value={subject} onChange={(e) => setSubject(e.target.value)} required />
+                <Input
+                  id="subject"
+                  placeholder="Notification subject"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  required
+                />
               </div>
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="body">Message</Label>
-                <Textarea id="body" placeholder="Write your message…" rows={4} value={body} onChange={(e) => setBody(e.target.value)} required />
+                <Textarea
+                  id="body"
+                  placeholder="Write your message…"
+                  rows={4}
+                  value={body}
+                  onChange={(e) => setBody(e.target.value)}
+                  required
+                />
               </div>
               {error && <p className="text-xs text-destructive">{error}</p>}
               <div className="flex gap-2">
-                <Button type="button" variant="outline" className="flex-1" onClick={() => setOpen(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => setOpen(false)}
+                >
                   Cancel
                 </Button>
-                <Button type="submit" className="flex-1" disabled={send.isPending}>
+                <Button
+                  type="submit"
+                  className="flex-1"
+                  disabled={send.isPending}
+                >
                   {send.isPending ? "Sending…" : "Send"}
                 </Button>
               </div>

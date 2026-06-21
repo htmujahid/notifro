@@ -1,8 +1,15 @@
-import { Link } from "react-router"
-import { ArrowRightIcon, BellIcon, RadioIcon, FileTextIcon, Loader2Icon } from "lucide-react"
 import { Button } from "@workspace/ui/components/button"
-import { useOverview, useSendTest, useOnboarding } from "../../hooks/overview"
+import {
+  ArrowRightIcon,
+  BellIcon,
+  FileTextIcon,
+  Loader2Icon,
+  RadioIcon,
+} from "lucide-react"
+import { Link } from "react-router"
 import { toast } from "sonner"
+
+import { useOnboarding, useOverview, useSendTest } from "../../hooks/overview"
 import { StepIcon } from "./step-icon"
 
 export function OnboardingView() {
@@ -53,13 +60,17 @@ export function OnboardingView() {
           onClick={() =>
             sendTest.mutate(undefined, {
               onSuccess: () =>
-                toast.success("Test notification delivered — check your inbox."),
+                toast.success(
+                  "Test notification delivered — check your inbox."
+                ),
               onError: (err) =>
                 toast.error(err instanceof Error ? err.message : "Send failed"),
             })
           }
         >
-          {sendTest.isPending ? <Loader2Icon className="mr-1 size-3 animate-spin" /> : null}
+          {sendTest.isPending ? (
+            <Loader2Icon className="mr-1 size-3 animate-spin" />
+          ) : null}
           Send test notification
         </Button>
       ),
@@ -75,7 +86,9 @@ export function OnboardingView() {
         <Link to="/templates">
           <Button
             size="sm"
-            onClick={() => onboarding.mutate({ step: "explore_templates", completed: true })}
+            onClick={() =>
+              onboarding.mutate({ step: "explore_templates", completed: true })
+            }
           >
             Go to Templates <ArrowRightIcon className="ml-1 size-3" />
           </Button>
@@ -90,10 +103,14 @@ export function OnboardingView() {
     <div className="flex flex-col gap-8 max-w-2xl">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight">Get started with Renderical</h1>
+          <h1 className="text-xl font-semibold tracking-tight">
+            Get started with Renderical
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Follow these steps to send your first notification.{" "}
-            <span className="font-medium text-foreground">{completedCount}/{STEPS.length} complete.</span>
+            <span className="font-medium text-foreground">
+              {completedCount}/{STEPS.length} complete.
+            </span>
           </p>
         </div>
         {(complete || dismissed) && (
@@ -117,11 +134,15 @@ export function OnboardingView() {
                   <div>
                     <div className="flex items-center gap-2">
                       <Icon className="size-4 text-muted-foreground" />
-                      <p className={`text-sm font-medium ${step.done ? "text-muted-foreground line-through" : "text-foreground"}`}>
+                      <p
+                        className={`text-sm font-medium ${step.done ? "text-muted-foreground line-through" : "text-foreground"}`}
+                      >
                         {step.label}
                       </p>
                     </div>
-                    <p className="mt-1 text-xs text-muted-foreground leading-relaxed">{step.description}</p>
+                    <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                      {step.description}
+                    </p>
                   </div>
                   {!step.done && (
                     <div className="shrink-0 mt-0.5">{step.cta}</div>
@@ -140,11 +161,16 @@ export function OnboardingView() {
             All done! Your notification pipeline is live.
           </p>
           <p className="mt-1 text-xs text-green-700/70 dark:text-green-400/70">
-            You can dismiss this checklist from the dashboard or continue to use it as a quick-reference.
+            You can dismiss this checklist from the dashboard or continue to use
+            it as a quick-reference.
           </p>
           <div className="mt-3 flex gap-2">
             <Link to="/">
-              <Button size="sm" variant="outline" onClick={() => onboarding.mutate({ dismiss: true })}>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => onboarding.mutate({ dismiss: true })}
+              >
                 Go to dashboard
               </Button>
             </Link>
