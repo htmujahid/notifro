@@ -202,13 +202,6 @@ export interface RecurringSendTable {
   updatedAt: string
 }
 
-export interface RecipientSendTimeTable {
-  userId: string
-  bestHourLocal: number
-  confidence: number
-  computedAt: string
-}
-
 export interface RecipientProfileTable {
   userId: string
   timezone: string | null
@@ -322,7 +315,6 @@ export interface DB {
   scheduled_message: ScheduledMessageTable
   recipient_profile: RecipientProfileTable
   recurring_send: RecurringSendTable
-  recipient_send_time: RecipientSendTimeTable
   recipient: RecipientTable
   segment: SegmentTable
   topic: TopicTable

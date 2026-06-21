@@ -142,7 +142,6 @@ export interface ComposePayload {
   deliveryWindowStart?: string
   deliveryWindowEnd?: string
   respectQuietHours?: boolean
-  sendTimeOptimized?: boolean
   topicKey?: string
 }
 

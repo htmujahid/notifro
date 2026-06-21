@@ -7,7 +7,6 @@ import { resolveSendConnection } from '../channels/resolve'
 import { ComposePayloadSchema } from '../compose/schema'
 import { resolveTemplate, renderTemplate } from '../lib/render-template'
 import { localToUtc } from '../scheduling/utils'
-import { getStoSendAt } from '../scheduling/sto'
 import { resolveSegment } from '../lib/segment-resolver'
 import { resolvePreferences } from '../lib/resolve-preferences'
 import type { AppEnv } from '../lib/types'
@@ -213,17 +212,11 @@ router.openapi(sendRoute, async (c) => {
     }
   }
 
-  let stoSendAt: string | undefined
-  if (payload.sendTimeOptimized && !payload.sendAt && !payload.sendAtLocal) {
-    stoSendAt = (await getStoSendAt(db, userId, new Date())).toISOString()
-  }
-
-  if (payload.sendAt || payload.sendAtLocal || stoSendAt) {
+  if (payload.sendAt || payload.sendAtLocal) {
     const tz = payload.timezoneHint ?? 'UTC'
-    const sendAtUtc = stoSendAt
-      ?? (payload.sendAt
-        ? new Date(payload.sendAt).toISOString()
-        : localToUtc(payload.sendAtLocal!, tz).toISOString())
+    const sendAtUtc = payload.sendAt
+      ? new Date(payload.sendAt).toISOString()
+      : localToUtc(payload.sendAtLocal!, tz).toISOString()
 
     if (new Date(sendAtUtc) <= new Date()) {
       throw Errors.badRequest('sendAt must be in the future')

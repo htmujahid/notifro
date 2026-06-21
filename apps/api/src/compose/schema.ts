@@ -128,7 +128,6 @@ export const ComposePayloadSchema = z.object({
   deliveryWindowStart: HHMM.optional(),
   deliveryWindowEnd: HHMM.optional(),
   respectQuietHours: z.boolean().optional().default(true),
-  sendTimeOptimized: z.boolean().optional().default(false),
   topicKey: z.string().optional(),
 })
 

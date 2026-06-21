@@ -29,7 +29,6 @@ import topicsRouter from './routes/topics'
 import preferencesRouter from './routes/preferences'
 import { handleDeliveryQueue } from './queue/consumer'
 import { handleScheduledSweep } from './scheduling/sweep'
-import { recomputeAllStoProfiles } from './scheduling/sto'
 import './channels/email'
 import './channels/in-app'
 import './channels/web-push/adapter'
@@ -168,11 +167,7 @@ export default {
   async queue(batch: MessageBatch<import('./queue/consumer').DeliveryQueueMessage>, env: CloudflareBindings) {
     await handleDeliveryQueue(batch, env)
   },
-  async scheduled(event: ScheduledEvent, env: CloudflareBindings, _ctx: ExecutionContext) {
-    if (event.cron === '0 * * * *') {
-      await recomputeAllStoProfiles(db(env.DB))
-    } else {
-      await handleScheduledSweep(env)
-    }
+  async scheduled(_event: ScheduledEvent, env: CloudflareBindings, _ctx: ExecutionContext) {
+    await handleScheduledSweep(env)
   },
 }
