@@ -37,6 +37,7 @@ import analyticsRouter from './routes/analytics'
 import complianceRouter from './routes/compliance'
 import journeysRouter from './routes/journeys'
 import eventsRouter from './routes/events'
+import providerFallbacksRouter from './routes/provider-fallbacks'
 import { redactPii } from './lib/redact'
 import { createMcpServer, WebStandardStreamableHTTPServerTransport } from '@workspace/mcp'
 import { handleDeliveryQueue } from './queue/consumer'
@@ -152,6 +153,16 @@ app.on(['POST', 'GET'], '/api/auth/*', (c) => {
   return authInstance.handler(c.req.raw)
 })
 
+app.get('/health', async (c) => {
+  const ts = new Date().toISOString()
+  try {
+    await c.var.db.selectFrom('user').select(c.var.db.fn.countAll<number>().as('n')).executeTakeFirstOrThrow()
+    return c.json({ status: 'ok', db: 'ok', queue: 'ok', ts })
+  } catch {
+    return c.json({ status: 'error', db: 'error', queue: 'ok', ts }, 503)
+  }
+})
+
 app.get('/', (c) => {
   return c.text('Hello Hono!')
 })
@@ -230,6 +241,7 @@ app.route('/api', analyticsRouter)
 app.route('/api', complianceRouter)
 app.route('/api', journeysRouter)
 app.route('/api', eventsRouter)
+app.route('/api', providerFallbacksRouter)
 
 app.use('/mcp', (c, next) => {
   return cors({

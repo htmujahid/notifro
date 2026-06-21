@@ -55,6 +55,7 @@
     "./hooks/mcp": "./src/hooks/mcp.ts",
     "./hooks/analytics": "./src/hooks/analytics.ts",
     "./hooks/compliance": "./src/hooks/compliance.ts",
-    "./hooks/journeys": "./src/hooks/journeys.ts"
+    "./hooks/journeys": "./src/hooks/journeys.ts",
+    "./hooks/failover": "./src/hooks/failover.ts"
   }
 }

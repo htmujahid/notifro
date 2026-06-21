@@ -406,6 +406,15 @@ export interface ConsentEventTable {
   createdAt: string
 }
 
+export interface ProviderFallbackTable {
+  id: string
+  userId: string
+  channel: string
+  primaryConnectionId: string
+  fallbackConnectionId: string
+  createdAt: string
+}
+
 export interface JourneyTable {
   id: string
   userId: string
@@ -476,4 +485,5 @@ export interface DB {
   journey: JourneyTable
   journey_run: JourneyRunTable
   journey_event: JourneyEventTable
+  provider_fallback: ProviderFallbackTable
 }

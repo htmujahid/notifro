@@ -20,6 +20,7 @@ interface __BaseEnv_CloudflareBindings {
 	TWILIO_ACCOUNT_SID: string;
 	TWILIO_AUTH_TOKEN: string;
 	TWILIO_FROM_NUMBER: string;
+	APNS_RELAY_URL: string | undefined;
 }
 declare namespace Cloudflare {
 	interface GlobalProps {

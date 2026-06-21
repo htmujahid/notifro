@@ -430,3 +430,12 @@ export interface JourneyEvent {
   payload: string
   createdAt: string
 }
+
+export interface ProviderFallback {
+  id: string
+  userId: string
+  channel: string
+  primaryConnectionId: string
+  fallbackConnectionId: string
+  createdAt: string
+}

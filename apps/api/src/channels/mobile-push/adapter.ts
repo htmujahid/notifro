@@ -86,7 +86,7 @@ const mobilePushAdapter: ChannelAdapter<Record<string, never>, MobilePushProvide
             errors.push(`${device.platform}: no APNs credentials`)
             continue
           }
-          const result = await sendApns(creds.apns, device.token, provider, TIMEOUT_MS)
+          const result = await sendApns(creds.apns, device.token, provider, TIMEOUT_MS, ctx.env?.APNS_RELAY_URL)
           if (result.ok) {
             anyOk = true
             if (!firstMessageId) firstMessageId = result.apnsId

@@ -5,7 +5,7 @@ import { renderTemplate } from '../lib/render-template'
 import { escalateChain } from '../lib/routing'
 import { isSuppressed } from '../lib/suppress'
 import { redactPii } from '../lib/redact'
-import type { ChannelType } from '../channels/types'
+import type { ChannelType, Connection } from '../channels/types'
 
 export interface DeliveryQueueMessage {
   deliveryId: string
@@ -13,6 +13,7 @@ export interface DeliveryQueueMessage {
   userId: string
   channel: string
   escalationCheck?: boolean
+  connectionId?: string
 }
 
 const MAX_ATTEMPTS = 5
@@ -96,7 +97,7 @@ async function processDelivery(
   msg: Message<DeliveryQueueMessage>,
   env: CloudflareBindings,
 ): Promise<void> {
-  const { deliveryId, notificationId, userId, channel, escalationCheck } = msg.body
+  const { deliveryId, notificationId, userId, channel, escalationCheck, connectionId } = msg.body
   const database = db(env.DB)
   const ts = new Date().toISOString()
 
@@ -166,7 +167,9 @@ async function processDelivery(
     return
   }
 
-  const conn = await resolveSendConnection(database, userId, channel as ChannelType, ts)
+  let conn = connectionId
+    ? (await database.selectFrom('connection').where('id', '=', connectionId).where('userId', '=', userId).selectAll().executeTakeFirst() ?? null) as Connection | null
+    : await resolveSendConnection(database, userId, channel as ChannelType, ts)
   if (!conn) {
     const payload = notification.payload
     await moveToDeadLetter(database, { ...delivery, attempts: delivery.attempts }, payload, `No active ${channel} connection`, ts)
@@ -280,6 +283,33 @@ async function processDelivery(
       .execute()
     msg.retry({ delaySeconds: delay })
     return
+  }
+
+  if (!isRetryable(sendError) && !connectionId) {
+    const fallback = await database
+      .selectFrom('provider_fallback')
+      .where('userId', '=', userId)
+      .where('channel', '=', channel)
+      .selectAll()
+      .executeTakeFirst()
+    if (fallback) {
+      const fbDeliveryId = crypto.randomUUID()
+      const dts = new Date().toISOString()
+      await database
+        .insertInto('delivery')
+        .values({
+          id: fbDeliveryId, userId, notificationId, channel,
+          recipient: delivery.recipient, status: 'queued',
+          providerMessageId: null, error: null, attempts: 0,
+          nextRetryAt: null, lastError: null,
+          deliveredAt: null, openedAt: null, clickedAt: null, bouncedAt: null,
+          recipientId: delivery.recipientId, variantId: null,
+          chainId: null, chainStepIndex: null, escalatedFromDeliveryId: null,
+          createdAt: dts, updatedAt: dts,
+        })
+        .execute()
+      await env.DELIVERY_Q.send({ deliveryId: fbDeliveryId, notificationId, userId, channel, connectionId: fallback.fallbackConnectionId })
+    }
   }
 
   await moveToDeadLetter(database, { ...delivery, attempts }, notification.payload, sendError ?? 'Send failed', ts)

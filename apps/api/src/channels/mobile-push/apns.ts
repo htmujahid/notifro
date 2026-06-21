@@ -67,6 +67,7 @@ export async function sendApns(
   deviceToken: string,
   payload: ApnsPayload,
   timeoutMs: number,
+  relayUrl?: string,
 ): Promise<ApnsSendResult> {
   const jwt = await buildJwt(creds)
   const body = JSON.stringify({
@@ -76,7 +77,8 @@ export async function sendApns(
     },
   })
 
-  const res = await fetch(`${APNS_HOST}/3/device/${deviceToken}`, {
+  const host = relayUrl ?? APNS_HOST
+  const res = await fetch(`${host}/3/device/${deviceToken}`, {
     method: 'POST',
     headers: {
       authorization: `bearer ${jwt}`,
