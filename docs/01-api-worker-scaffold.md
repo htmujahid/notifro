@@ -13,7 +13,7 @@ conventions, and the queue/cron entrypoints up front means every later milestone
 consumer branch rather than re-plumbing infrastructure.
 
 ## Current state
-- M00 provides the monorepo + `@workspace/api-client` (the typed client that consumes this Worker's `/doc`).
+- M00 provides the monorepo + `@renderical/api-client` (the typed client that consumes this Worker's `/doc`).
 - No backend exists yet.
 
 ## Scope (in)
@@ -51,7 +51,7 @@ consumer branch rather than re-plumbing infrastructure.
 ## Acceptance criteria
 - [x] `wrangler dev` boots the Worker; `/doc` and `/scalar` serve the API reference.
 - [x] D1, both KV namespaces, the Email binding, `DELIVERY_Q` + DLQ, and the cron trigger are all bound.
-- [x] `@workspace/api-client` can target the Worker and call `/api/*` routes.
+- [x] `@renderical/api-client` can target the Worker and call `/api/*` routes.
 - [x] The `fetch` / `queue` / `scheduled` entrypoints are all exported.
 
 ## Risks & notes

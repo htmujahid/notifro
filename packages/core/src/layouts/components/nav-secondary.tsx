@@ -6,7 +6,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@workspace/ui/components/sidebar"
+} from "@renderical/ui/components/sidebar"
 import { NavLink } from "react-router"
 
 type NavSecondaryItem =

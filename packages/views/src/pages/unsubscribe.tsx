@@ -1,4 +1,4 @@
-import { UnsubscribeView } from "@workspace/core/components/unsubscribe/unsubscribe-view"
+import { UnsubscribeView } from "@renderical/core/components/unsubscribe/unsubscribe-view"
 import { useSearchParams } from "react-router"
 
 export default function UnsubscribePage() {

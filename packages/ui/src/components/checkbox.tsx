@@ -1,6 +1,6 @@
 "use client"
 
-import { cn } from "@workspace/ui/lib/utils"
+import { cn } from "@renderical/ui/lib/utils"
 import { CheckIcon } from "lucide-react"
 
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"

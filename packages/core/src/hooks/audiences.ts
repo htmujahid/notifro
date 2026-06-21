@@ -1,11 +1,11 @@
-import { useApiClient } from "@workspace/api-client/context"
+import { useApiClient } from "@renderical/api-client/context"
 import type {
   ListParams,
   ListResponse,
   RecipientRecord,
   Segment,
   SegmentPreview,
-} from "@workspace/api-client/types"
+} from "@renderical/api-client/types"
 
 import {
   useInfiniteQuery,

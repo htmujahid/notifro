@@ -1,4 +1,4 @@
-import { cn } from "@workspace/ui/lib/utils"
+import { cn } from "@renderical/ui/lib/utils"
 
 import { Switch as SwitchPrimitive } from "@base-ui/react/switch"
 

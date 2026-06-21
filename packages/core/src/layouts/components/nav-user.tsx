@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar"
+import { Avatar, AvatarFallback } from "@renderical/ui/components/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,13 +7,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu"
+} from "@renderical/ui/components/dropdown-menu"
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@workspace/ui/components/sidebar"
+} from "@renderical/ui/components/sidebar"
 import {
   ChevronsUpDownIcon,
   KeyRoundIcon,

@@ -23,10 +23,10 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@workspace/api-client/*": ["../../packages/api-client/src/*"],
-      "@workspace/app/*": ["../../packages/app/src/*"],
-      "@workspace/ui/*": ["../../packages/ui/src/*"],
-      "@workspace/views/*": ["../../packages/views/src/*"]
+      "@renderical/api-client/*": ["../../packages/api-client/src/*"],
+      "@renderical/app/*": ["../../packages/app/src/*"],
+      "@renderical/ui/*": ["../../packages/ui/src/*"],
+      "@renderical/views/*": ["../../packages/views/src/*"]
     }
   },
   "include": ["src"]

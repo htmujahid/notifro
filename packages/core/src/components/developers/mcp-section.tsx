@@ -1,7 +1,7 @@
-import { useApiClient } from "@workspace/api-client/context"
-import { Badge } from "@workspace/ui/components/badge"
-import { Button } from "@workspace/ui/components/button"
-import { Card, CardContent } from "@workspace/ui/components/card"
+import { useApiClient } from "@renderical/api-client/context"
+import { Badge } from "@renderical/ui/components/badge"
+import { Button } from "@renderical/ui/components/button"
+import { Card, CardContent } from "@renderical/ui/components/card"
 import {
   BotIcon,
   CheckIcon,
@@ -99,7 +99,7 @@ export function McpSection() {
               Local stdio binary
             </p>
             <code className="block rounded bg-muted px-2 py-1 text-xs font-mono">
-              RENDERICAL_API_KEY=rk_… npx @workspace/mcp
+              RENDERICAL_API_KEY=rk_… npx @renderical/mcp
             </code>
           </div>
         </CardContent>

@@ -87,6 +87,6 @@ and a prerequisite for recurring sends (M24) and journeys (M35).
 
 ## Risks & notes
 - DST + IANA correctness: compute local↔UTC with a proper TZ library (the project already uses `date-fns`
-  in `@workspace/ui`); avoid fixed UTC offsets.
+  in `@renderical/ui`); avoid fixed UTC offsets.
 - The Cron sweep must be idempotent and bounded (page through due rows) so a slow minute doesn't double-enqueue.
 - Quiet-hours overrides must never silently swallow truly transactional/critical messages — make the policy explicit.

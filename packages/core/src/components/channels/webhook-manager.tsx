@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@renderical/ui/components/button"
 import {
   Dialog,
   DialogContent,
@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@workspace/ui/components/dialog"
+} from "@renderical/ui/components/dialog"
 import { CopyIcon } from "lucide-react"
 import { toast } from "sonner"
 

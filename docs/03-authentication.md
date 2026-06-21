@@ -17,7 +17,7 @@ the gate; better-auth owns it so milestones never hand-roll sessions or password
 
 ## Scope (in)
 - **better-auth config** (`apps/api/src/lib/auth.ts`): `createAuth(db)` with
-  - `emailAndPassword` (`requireEmailVerification: true`) → verification + reset emails via `@workspace/mailer`
+  - `emailAndPassword` (`requireEmailVerification: true`) → verification + reset emails via `@renderical/mailer`
   - `emailVerification` (`sendOnSignIn`, `autoSignInAfterVerification`)
   - `socialProviders.google` (`GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`)
   - `secondaryStorage: kvSecondaryStorage(env.KV)` — sessions + rate-limit counters in KV (min 60s TTL)

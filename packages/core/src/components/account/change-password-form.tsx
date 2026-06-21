@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useAuth } from "@workspace/app/auth/context"
-import { Button } from "@workspace/ui/components/button"
-import { Input } from "@workspace/ui/components/input"
-import { Label } from "@workspace/ui/components/label"
+import { useAuth } from "@renderical/app/auth/context"
+import { Button } from "@renderical/ui/components/button"
+import { Input } from "@renderical/ui/components/input"
+import { Label } from "@renderical/ui/components/label"
 import { Controller, useForm } from "react-hook-form"
 
 import {

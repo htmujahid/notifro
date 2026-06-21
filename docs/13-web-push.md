@@ -80,7 +80,7 @@ Session + `requireAuth` (M06); subscriptions are scoped to `session.user.id`.
 ## Frontend
 - `apps/web/public/sw.js`: `self.addEventListener('push', ...)` → `registration.showNotification(...)`;
   `notificationclick` → `clients.openWindow(url)`.
-- `@workspace/core` hook `usePushRegistration()` (`packages/core/src/hooks/push.ts`): registers the SW,
+- `@renderical/core` hook `usePushRegistration()` (`packages/core/src/hooks/push.ts`): registers the SW,
   requests `Notification.permission`, subscribes via `pushManager.subscribe({ applicationServerKey })`,
   and POSTs to `/api/push/subscribe`; exposes enable/disable used from `packages/views/src/pages/settings.tsx`
   (a "Browser notifications" toggle) and surfaced on `channels.tsx`.

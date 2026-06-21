@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { cn } from "@workspace/ui/lib/utils"
+import { cn } from "@renderical/ui/lib/utils"
 import { ChevronRightIcon, MoreHorizontalIcon } from "lucide-react"
 
 import { mergeProps } from "@base-ui/react/merge-props"

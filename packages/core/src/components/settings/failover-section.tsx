@@ -1,7 +1,7 @@
 import { useState } from "react"
 
-import { Button } from "@workspace/ui/components/button"
-import { Card, CardContent } from "@workspace/ui/components/card"
+import { Button } from "@renderical/ui/components/button"
+import { Card, CardContent } from "@renderical/ui/components/card"
 import { GitForkIcon, PlusIcon, TrashIcon } from "lucide-react"
 
 import {

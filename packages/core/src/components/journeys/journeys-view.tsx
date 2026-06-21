@@ -1,16 +1,16 @@
 import * as React from "react"
 
-import type { Journey } from "@workspace/api-client/types"
-import { Button } from "@workspace/ui/components/button"
+import type { Journey } from "@renderical/api-client/types"
+import { Button } from "@renderical/ui/components/button"
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@workspace/ui/components/dialog"
-import { Input } from "@workspace/ui/components/input"
-import { Label } from "@workspace/ui/components/label"
+} from "@renderical/ui/components/dialog"
+import { Input } from "@renderical/ui/components/input"
+import { Label } from "@renderical/ui/components/label"
 import {
   Table,
   TableBody,
@@ -18,8 +18,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@workspace/ui/components/table"
-import { Textarea } from "@workspace/ui/components/textarea"
+} from "@renderical/ui/components/table"
+import { Textarea } from "@renderical/ui/components/textarea"
 import { toast } from "sonner"
 
 import {

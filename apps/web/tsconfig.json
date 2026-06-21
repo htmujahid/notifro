@@ -7,8 +7,8 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"],
-      "@workspace/ui/*": ["../../packages/ui/src/*"],
-      "@workspace/views/*": ["../../packages/views/src/*"]
+      "@renderical/ui/*": ["../../packages/ui/src/*"],
+      "@renderical/views/*": ["../../packages/views/src/*"]
     }
   }
 }

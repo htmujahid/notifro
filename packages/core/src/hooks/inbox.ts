@@ -1,5 +1,5 @@
-import { useApiClient } from "@workspace/api-client/context"
-import type { ListResponse } from "@workspace/api-client/types"
+import { useApiClient } from "@renderical/api-client/context"
+import type { ListResponse } from "@renderical/api-client/types"
 
 import {
   useInfiniteQuery,

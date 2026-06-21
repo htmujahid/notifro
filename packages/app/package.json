@@ -1,5 +1,5 @@
 {
-  "name": "@workspace/app",
+  "name": "@renderical/app",
   "version": "0.0.0",
   "type": "module",
   "private": true,
@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.101.0",
-    "@workspace/api-client": "workspace:*",
-    "@workspace/ui-primitives": "workspace:*",
+    "@renderical/api-client": "workspace:*",
+    "@renderical/ui-primitives": "workspace:*",
     "better-auth": "^1.6.19",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"

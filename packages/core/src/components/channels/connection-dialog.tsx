@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@renderical/ui/components/button"
 import {
   Dialog,
   DialogContent,
@@ -8,10 +8,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@workspace/ui/components/dialog"
-import { Input } from "@workspace/ui/components/input"
-import { Label } from "@workspace/ui/components/label"
-import { Textarea } from "@workspace/ui/components/textarea"
+} from "@renderical/ui/components/dialog"
+import { Input } from "@renderical/ui/components/input"
+import { Label } from "@renderical/ui/components/label"
+import { Textarea } from "@renderical/ui/components/textarea"
 import { ActivityIcon, Trash2Icon } from "lucide-react"
 import { toast } from "sonner"
 

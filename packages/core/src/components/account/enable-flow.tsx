@@ -1,15 +1,15 @@
 import { useState } from "react"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useAuth } from "@workspace/app/auth/context"
-import { Button } from "@workspace/ui/components/button"
-import { Input } from "@workspace/ui/components/input"
+import { useAuth } from "@renderical/app/auth/context"
+import { Button } from "@renderical/ui/components/button"
+import { Input } from "@renderical/ui/components/input"
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
-} from "@workspace/ui/components/input-otp"
-import { Label } from "@workspace/ui/components/label"
+} from "@renderical/ui/components/input-otp"
+import { Label } from "@renderical/ui/components/label"
 import { Controller, useForm } from "react-hook-form"
 
 import {

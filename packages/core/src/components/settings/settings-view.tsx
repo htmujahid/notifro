@@ -1,6 +1,6 @@
-import { Button } from "@workspace/ui/components/button"
-import { Card, CardContent } from "@workspace/ui/components/card"
-import { Separator } from "@workspace/ui/components/separator"
+import { Button } from "@renderical/ui/components/button"
+import { Card, CardContent } from "@renderical/ui/components/card"
+import { Separator } from "@renderical/ui/components/separator"
 import { CopyIcon, RefreshCwIcon, TrashIcon } from "lucide-react"
 
 import { BrandKitSection } from "./brand-kit-section"

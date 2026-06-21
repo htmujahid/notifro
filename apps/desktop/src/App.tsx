@@ -1,12 +1,12 @@
 import { Suspense, useEffect } from "react"
 
-import { AppProvider } from "@workspace/app/app/context"
-import { createDesktopAuthClient } from "@workspace/app/auth/client.desktop"
+import { AppProvider } from "@renderical/app/app/context"
+import { createDesktopAuthClient } from "@renderical/app/auth/client.desktop"
 import {
   NATIVE_REDIRECT_URL,
   deepLinkToPath,
-} from "@workspace/app/auth/deep-link"
-import { routes } from "@workspace/views/routes/desktop"
+} from "@renderical/app/auth/deep-link"
+import { routes } from "@renderical/views/routes/desktop"
 import { RouterProvider, createHashRouter } from "react-router"
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8787"

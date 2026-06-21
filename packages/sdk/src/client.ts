@@ -4,7 +4,7 @@ import type {
   ApiRequestLog,
   ComposePayload,
   ListResponse,
-} from "@workspace/api-client/types"
+} from "@renderical/api-client/types"
 
 export interface RendericalClientOptions {
   baseUrl: string

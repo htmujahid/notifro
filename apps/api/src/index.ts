@@ -3,7 +3,7 @@ import { Scalar } from "@scalar/hono-api-reference"
 import {
   WebStandardStreamableHTTPServerTransport,
   createMcpServer,
-} from "@workspace/mcp"
+} from "@renderical/mcp"
 import { cors } from "hono/cors"
 
 import "./channels/discord"

@@ -1,15 +1,15 @@
 import { useState } from "react"
 
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@renderical/ui/components/button"
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@workspace/ui/components/empty"
-import { Input } from "@workspace/ui/components/input"
-import { Label } from "@workspace/ui/components/label"
+} from "@renderical/ui/components/empty"
+import { Input } from "@renderical/ui/components/input"
+import { Label } from "@renderical/ui/components/label"
 import { PlusIcon, TrashIcon, UsersIcon } from "lucide-react"
 
 import {

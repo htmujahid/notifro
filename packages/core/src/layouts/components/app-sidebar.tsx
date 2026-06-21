@@ -1,13 +1,13 @@
 import * as React from "react"
 
-import { useAuth } from "@workspace/app/auth/context"
-import { SESSION_QUERY_KEY, useSession } from "@workspace/app/auth/use-session"
+import { useAuth } from "@renderical/app/auth/context"
+import { SESSION_QUERY_KEY, useSession } from "@renderical/app/auth/use-session"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-} from "@workspace/ui/components/sidebar"
+} from "@renderical/ui/components/sidebar"
 import {
   BarChart3Icon,
   BellIcon,

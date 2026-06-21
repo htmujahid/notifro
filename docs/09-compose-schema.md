@@ -57,7 +57,7 @@ None — this is a payload/contract milestone.
 No standalone endpoints; `POST /api/notifications` (M10) accepts `ComposePayload` validated by this schema.
 
 ## Frontend
-Export inferred `ComposePayload` types via `@workspace/api-client` types so the Create page and template
+Export inferred `ComposePayload` types via `@renderical/api-client` types so the Create page and template
 builder author against the same shape.
 
 ## Implementation steps
@@ -65,14 +65,14 @@ builder author against the same shape.
 2. Create `apps/api/src/compose/transform.ts` with stub transforms for all channel types (7 at M09; M18–M20 add four more).
 3. Update `apps/api/src/channels/adapter.ts` to import the real `ComposePayload`.
 4. Add `renderPreview(payload, type)` in `apps/api/src/compose/preview.ts`.
-5. Re-export payload types from `@workspace/api-client` (`src/types.ts`).
+5. Re-export payload types from `@renderical/api-client` (`src/types.ts`).
 6. Run `pnpm typecheck`.
 
 ## Acceptance criteria
 - [x] `ComposePayload` parses a representative message and rejects malformed input with `422`.
 - [x] `getTransform(type)` exists for every `ChannelType`; unimplemented ones signal `not_implemented`.
 - [x] `ChannelAdapter.transform` is typed against `ComposePayload`; `pnpm typecheck` passes.
-- [x] `ComposePayload` types are importable from `@workspace/api-client`.
+- [x] `ComposePayload` types are importable from `@renderical/api-client`.
 
 ## Risks & notes
 - Keep the block model small but composable; resist channel-specific fields in the core payload.

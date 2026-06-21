@@ -1,4 +1,4 @@
-import { sendNotificationEmail } from "@workspace/mailer"
+import { sendNotificationEmail } from "@renderical/mailer"
 
 import { registerTransform } from "../compose/transform"
 import { signPreferenceToken } from "../lib/preference-token"

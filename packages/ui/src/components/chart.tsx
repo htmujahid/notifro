@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { cn } from "@workspace/ui/lib/utils"
+import { cn } from "@renderical/ui/lib/utils"
 import * as RechartsPrimitive from "recharts"
 import type { TooltipValueType } from "recharts"
 

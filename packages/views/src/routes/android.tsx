@@ -1,6 +1,6 @@
 import { lazy } from "react"
 
-import { ProtectedRoute } from "@workspace/core/components/protected-route"
+import { ProtectedRoute } from "@renderical/core/components/protected-route"
 import type { RouteObject } from "react-router"
 
 import {
@@ -9,8 +9,8 @@ import {
   sharedProtectedChildren,
 } from "./_shared"
 
-const RootLayout = lazy(() => import("@workspace/core/layouts/root-layout"))
-const AppLayout = lazy(() => import("@workspace/core/layouts/app-layout"))
+const RootLayout = lazy(() => import("@renderical/core/layouts/root-layout"))
+const AppLayout = lazy(() => import("@renderical/core/layouts/app-layout"))
 const DashboardPage = lazy(() => import("../pages/dashboard"))
 
 export const routes: RouteObject[] = [

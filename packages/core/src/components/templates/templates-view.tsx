@@ -1,4 +1,4 @@
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@renderical/ui/components/button"
 import {
   Empty,
   EmptyContent,
@@ -6,7 +6,7 @@ import {
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@workspace/ui/components/empty"
+} from "@renderical/ui/components/empty"
 import { FileTextIcon, PlusIcon } from "lucide-react"
 import { Link } from "react-router"
 

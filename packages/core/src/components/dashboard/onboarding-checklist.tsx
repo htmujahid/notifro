@@ -1,4 +1,4 @@
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@renderical/ui/components/button"
 import { ArrowRightIcon, CheckIcon, Loader2Icon } from "lucide-react"
 import { Link } from "react-router"
 import { toast } from "sonner"

@@ -1,7 +1,7 @@
 import * as React from "react"
 
-import { Button, buttonVariants } from "@workspace/ui/components/button"
-import { cn } from "@workspace/ui/lib/utils"
+import { Button, buttonVariants } from "@renderical/ui/components/button"
+import { cn } from "@renderical/ui/lib/utils"
 import {
   ChevronDownIcon,
   ChevronLeftIcon,

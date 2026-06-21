@@ -61,10 +61,10 @@ Session + `requireAuth` (M06), user-scoped.
 - **Checks**: limit cap; sort/filter keys resolved through the allow-list to known columns (unknown key/operator → `422`, never interpolated); filters parameter-bound and AND-ed with the mandatory user scope; the `secret` stays redacted to last 4 in every listed row; malformed cursor → `422`. Whichever store is chosen (reused `connection` or new `webhook_endpoint`), back the user scope + `enabled`/`q` columns with an index.
 
 ## Frontend
-- `@workspace/core` hooks (`packages/core/src/hooks/webhooks.ts`): `useWebhooks()`, `useCreateWebhook()`,
-  `useUpdateWebhook()`, `useDeleteWebhook()`, `useTestWebhook()` via `@workspace/api-client` (M07).
+- `@renderical/core` hooks (`packages/core/src/hooks/webhooks.ts`): `useWebhooks()`, `useCreateWebhook()`,
+  `useUpdateWebhook()`, `useDeleteWebhook()`, `useTestWebhook()` via `@renderical/api-client` (M07).
 - `packages/views/src/pages/channels.tsx`: replace the mock webhook card with a real list + an
-  "Add endpoint" dialog (`@workspace/ui` dialog), reveal-once secret display, enable/disable toggle,
+  "Add endpoint" dialog (`@renderical/ui` dialog), reveal-once secret display, enable/disable toggle,
   and a "Send test" button surfacing the response code.
 
 ## Implementation steps
@@ -76,7 +76,7 @@ Session + `requireAuth` (M06), user-scoped.
    each enabled endpoint with a sane timeout; map non-2xx / network error → `delivery.status='failed'` + `error`.
    Register under `webhook` in the M08 registry.
 4. Add `apps/api/src/routes/webhooks.ts` (CRUD + test). Generate secrets with `crypto.randomUUID()`/random bytes.
-5. Build the `@workspace/core` webhook hooks; wire `channels.tsx`.
+5. Build the `@renderical/core` webhook hooks; wire `channels.tsx`.
 6. Verify against a request-bin style endpoint that the signature validates with the shown secret.
 
 ## Acceptance criteria

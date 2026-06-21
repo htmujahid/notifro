@@ -13,24 +13,24 @@ template, see exactly how it lands in email vs. Slack, save a version, and roll 
 touching code. The brand kit guarantees consistent branding across every channel from one place.
 
 ## Current state
-- **M25** shipped the `template` table, the `@workspace/templating` render engine, template CRUD routes,
-  and `POST /api/templates/:id/render` (render-without-send) plus an `@workspace/api-client` helper.
+- **M25** shipped the `template` table, the `@renderical/templating` render engine, template CRUD routes,
+  and `POST /api/templates/:id/render` (render-without-send) plus an `@renderical/api-client` helper.
 - **M09** transforms turn a unified-compose payload into channel-final output (email HTML, Slack Block
   Kit, etc.) — these power the per-channel preview here.
 - `packages/views/src/pages/templates.tsx` is still the **mock** page (hardcoded list, local `useState`).
 - Routing pattern: pages live in `packages/views/src/pages`, are registered in
   `packages/views/src/routes/_shared.tsx` (`sharedProtectedChildren` already contains `templates`),
-  state/hooks live in `@workspace/core`, UI uses `@workspace/ui` (tabs, card, dialog, button, input,
+  state/hooks live in `@renderical/core`, UI uses `@renderical/ui` (tabs, card, dialog, button, input,
   resizable panels, code/preview surfaces).
 
 ## Scope (in)
 - **CRUD wiring**: replace the mock data in `templates.tsx` with real list/create/edit/delete via
-  `@workspace/core` hooks calling the M25 endpoints through `@workspace/api-client`.
+  `@renderical/core` hooks calling the M25 endpoints through `@renderical/api-client`.
 - **Visual builder**: an editor view (`/templates/:id`) with the M09 content blocks (text, markdown,
   buttons, images) editable per channel, plus a raw/expression mode for `{{variables}}`.
 - **Live multi-channel preview**: a side panel that calls `POST /api/templates/:id/render` with sample
   data and renders each channel's transformed output (email/Slack/Discord/etc.) in switchable tabs,
-  using `@workspace/ui` resizable panels.
+  using `@renderical/ui` resizable panels.
 - **Versioning + rollback**: every save creates a `template_version` snapshot; a version history drawer
   lets the user diff and **restore** a prior version (restore = new version equal to the old content).
 - **Snippet library**: user-scoped reusable content fragments (`snippet` table) insertable into any
@@ -124,7 +124,7 @@ All routes: `requireAuth`, user-scoped (M06).
   `useRenderPreview`, `useTemplateVersions`, `useRestoreVersion`, `useSnippets`, `useBrandKit` (TanStack
   Query + the M07 api-client).
 - `packages/core/src/components/templates/*` — builder editor, preview panel, version-history drawer,
-  snippet picker, brand-kit form. Compose from `@workspace/ui` primitives only.
+  snippet picker, brand-kit form. Compose from `@renderical/ui` primitives only.
 - Brand-kit editor surfaced in the existing `settings.tsx` page (new section).
 
 ## Implementation steps
@@ -132,11 +132,11 @@ All routes: `requireAuth`, user-scoped (M06).
    `wrangler d1 migrations apply DB --local`) and add their Kysely interfaces to the `DB` type (per M05).
 2. Add the versions/snippets/brand-kit routes; on every template update, snapshot a version.
 3. Update the M09/M10–M11, M13–M15 transforms to accept an optional resolved brand kit and apply logo/colors/fonts.
-4. Add the `@workspace/core` template hooks; build the builder, preview, history, snippet, brand-kit
-   components from `@workspace/ui`.
+4. Add the `@renderical/core` template hooks; build the builder, preview, history, snippet, brand-kit
+   components from `@renderical/ui`.
 5. Wire `templates.tsx` to the list hooks; add `template-edit.tsx` and register the `templates/:id` route.
 6. Implement live preview: debounce edits → `useRenderPreview` → render channel tabs.
-7. Verify across web and (smoke) desktop, since both render `@workspace/views`.
+7. Verify across web and (smoke) desktop, since both render `@renderical/views`.
 
 ## Acceptance criteria
 - [x] Templates list, create, edit, and delete work against the real API (no mock data remains in

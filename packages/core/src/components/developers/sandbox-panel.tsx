@@ -1,8 +1,8 @@
 import { useState } from "react"
 
-import { useApiClient } from "@workspace/api-client/context"
-import { Button } from "@workspace/ui/components/button"
-import { Card, CardContent } from "@workspace/ui/components/card"
+import { useApiClient } from "@renderical/api-client/context"
+import { Button } from "@renderical/ui/components/button"
+import { Card, CardContent } from "@renderical/ui/components/card"
 import { CodeIcon } from "lucide-react"
 
 export function SandboxPanel() {

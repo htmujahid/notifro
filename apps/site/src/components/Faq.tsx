@@ -3,7 +3,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@workspace/ui/components/accordion"
+} from "@renderical/ui/components/accordion"
 
 export interface FaqItem {
   q: string

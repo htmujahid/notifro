@@ -16,7 +16,7 @@ implementing one interface and registering it — not reworking the data model e
 ## Current state
 - The mock Channels page (`packages/views/src/pages/channels.tsx`) hardcodes a `CHANNELS` array with
   `connected` booleans and local `useState` toggles — no persistence.
-- `@workspace/mailer` already sends email via the Cloudflare `EMAIL` binding (the email channel's transport).
+- `@renderical/mailer` already sends email via the Cloudflare `EMAIL` binding (the email channel's transport).
 - M05 provides the typed Kysely client; M06 provides `requireAuth`, the error envelope, and route-module pattern.
 
 ## Scope (in)

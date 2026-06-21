@@ -1,4 +1,4 @@
-import { TwoFactorSettings } from "@workspace/core/components/account/two-factor-settings"
+import { TwoFactorSettings } from "@renderical/core/components/account/two-factor-settings"
 
 export default function AccountTwoFactorPage() {
   return (

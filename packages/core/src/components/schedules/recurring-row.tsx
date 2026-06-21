@@ -1,4 +1,4 @@
-import type { RecurringSend } from "@workspace/api-client/types"
+import type { RecurringSend } from "@renderical/api-client/types"
 import { ToggleLeftIcon, ToggleRightIcon, Trash2Icon } from "lucide-react"
 
 function formatCron(cron: string): string {

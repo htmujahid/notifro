@@ -10,7 +10,7 @@ The Renderical backend API — authentication, notification ingestion, and platf
 
 ## How it fits
 
-The standalone backend (`src/index.ts`). Auth configuration and Cloudflare bindings live in `src/lib/`. Transactional email is sent through [`@workspace/mailer`](../../packages/mailer). The client apps authenticate against this API using the platform auth clients in [`@workspace/app`](../../packages/app).
+The standalone backend (`src/index.ts`). Auth configuration and Cloudflare bindings live in `src/lib/`. Transactional email is sent through [`@renderical/mailer`](../../packages/mailer). The client apps authenticate against this API using the platform auth clients in [`@renderical/app`](../../packages/app).
 
 Bindings are typed as `CloudflareBindings` and passed to Hono:
 

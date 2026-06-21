@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { createRendericalClient } from "@workspace/sdk"
+import { createRendericalClient } from "@renderical/sdk"
 
 function getClient() {
   const apiKey = process.env.RENDERICAL_API_KEY
@@ -60,7 +60,7 @@ async function cmdSend(args: string[], sandbox: boolean) {
   const payload = {
     content: { subject, body: { text: body } },
     recipient: { type: "contact" as const, email: to },
-    channels: [channel as import("@workspace/api-client/types").ChannelType],
+    channels: [channel as import("@renderical/api-client/types").ChannelType],
     sandbox,
   }
 

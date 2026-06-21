@@ -2,8 +2,8 @@
 
 import * as React from "react"
 
-import { Button } from "@workspace/ui/components/button"
-import { cn } from "@workspace/ui/lib/utils"
+import { Button } from "@renderical/ui/components/button"
+import { cn } from "@renderical/ui/lib/utils"
 
 import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog"
 

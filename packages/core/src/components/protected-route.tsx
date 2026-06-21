@@ -1,4 +1,4 @@
-import { useSession } from "@workspace/app/auth/use-session"
+import { useSession } from "@renderical/app/auth/use-session"
 import { Navigate, Outlet, useLocation } from "react-router"
 
 export function ProtectedRoute() {

@@ -1,9 +1,9 @@
 import { useState } from "react"
 
-import type { ApiKeyWithSecret } from "@workspace/api-client/types"
-import { Badge } from "@workspace/ui/components/badge"
-import { Button } from "@workspace/ui/components/button"
-import { Card, CardContent } from "@workspace/ui/components/card"
+import type { ApiKeyWithSecret } from "@renderical/api-client/types"
+import { Badge } from "@renderical/ui/components/badge"
+import { Button } from "@renderical/ui/components/button"
+import { Card, CardContent } from "@renderical/ui/components/card"
 import { CopyIcon, KeyIcon, PlusIcon, TrashIcon } from "lucide-react"
 
 import {

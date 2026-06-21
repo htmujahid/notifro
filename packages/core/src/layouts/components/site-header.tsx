@@ -1,6 +1,6 @@
-import { Kbd } from "@workspace/ui/components/kbd"
-import { Separator } from "@workspace/ui/components/separator"
-import { SidebarTrigger } from "@workspace/ui/components/sidebar"
+import { Kbd } from "@renderical/ui/components/kbd"
+import { Separator } from "@renderical/ui/components/separator"
+import { SidebarTrigger } from "@renderical/ui/components/sidebar"
 import { BellIcon, SearchIcon } from "lucide-react"
 import { useNavigate } from "react-router"
 

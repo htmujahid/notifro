@@ -1,5 +1,5 @@
 {
-  "name": "@workspace/views",
+  "name": "@renderical/views",
   "version": "0.0.0",
   "type": "module",
   "private": true,
@@ -9,9 +9,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@workspace/api-client": "workspace:*",
-    "@workspace/core": "workspace:*",
-    "@workspace/ui": "workspace:*",
+    "@renderical/api-client": "workspace:*",
+    "@renderical/core": "workspace:*",
+    "@renderical/ui": "workspace:*",
     "lucide-react": "^1.21.0",
     "react-router": "^8.0.1",
     "sonner": "^2.0.7"

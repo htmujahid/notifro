@@ -8,7 +8,7 @@
     "strict": true,
     "noEmit": true,
     "paths": {
-      "@workspace/mobile-shared/*": ["./src/*"]
+      "@renderical/mobile-shared/*": ["./src/*"]
     }
   },
   "include": ["."],

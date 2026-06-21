@@ -1,7 +1,7 @@
 import { useState } from "react"
 
-import type { ListResponse } from "@workspace/api-client/types"
-import { Button } from "@workspace/ui/components/button"
+import type { ListResponse } from "@renderical/api-client/types"
+import { Button } from "@renderical/ui/components/button"
 import { BellOffIcon, CheckCheckIcon, PlusIcon } from "lucide-react"
 import { useNavigate } from "react-router"
 

@@ -1,4 +1,4 @@
-import type { AnalyticsTimeseriesItem } from "@workspace/api-client/types"
+import type { AnalyticsTimeseriesItem } from "@renderical/api-client/types"
 
 export function MiniLineChart({ data }: { data: AnalyticsTimeseriesItem[] }) {
   if (data.length < 2) {

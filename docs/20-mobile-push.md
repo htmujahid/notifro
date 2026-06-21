@@ -14,7 +14,7 @@ Deliver unified notifications to the native iOS and Android shells as real push 
 ## Current state
 
 - `ChannelType` is the 10-type union (the original 7 + `slack`, `discord`, `teams`) and does **not** include `mobile_push` — this milestone adds it.
-- `apps/ios` / `apps/android` are Capacitor + Vite + React shells rendering shared `@workspace/views`; `packages/mobile-shared` is a placeholder (README only) — this milestone gives it a `package.json` + first export.
+- `apps/ios` / `apps/android` are Capacitor + Vite + React shells rendering shared `@renderical/views`; `packages/mobile-shared` is a placeholder (README only) — this milestone gives it a `package.json` + first export.
 - M13 (web push) established the per-recipient fan-out + stale-subscription pruning pattern: store one subscription row per device, send one provider call per device, prune `404/410` (web push) / `BadDeviceToken`/`UNREGISTERED` (mobile). Mirror it.
 - Credentials are encrypted via `lib/crypto` + `CONNECTION_ENC_KEY`, decrypted at send with `ctx.env.CONNECTION_ENC_KEY`. Data is **user-scoped** (`userId` FK), not org-scoped.
 
@@ -81,7 +81,7 @@ Session + `requireAuth` (M06), user-scoped.
 4. `apps/api/src/channels/mobile-push/apns.ts` — `ES256` JWT signer (import the `.p8` PKCS#8 via WebCrypto) + HTTP/2 send to `/3/device/{token}`; cache the auth token ~1h per connection.
 5. `apps/api/src/channels/mobile-push/fcm.ts` — service-account → OAuth2 access token (cache ~1h) + HTTP v1 send to `/v1/projects/{id}/messages:send`.
 6. `apps/api/src/channels/mobile-push/adapter.ts` — `transform` (payload → APNs `aps` + FCM `message`, strip markdown to plain text); `send` resolves the recipient's active `device_token` rows, fans out one call per device (decrypt creds via `ctx.env.CONNECTION_ENC_KEY`), records one `delivery` outcome; on `BadDeviceToken`/`UNREGISTERED` set `device_token.active = 0`. Register in the M08 registry; `import './channels/mobile-push/adapter'` in `index.ts`.
-7. `packages/mobile-shared/` — add `package.json` (`@workspace/mobile-shared`) + `src/push.ts` exporting `registerForPush(api)` (permission → native token via `@capacitor/push-notifications` → `POST /api/devices`) and `unregisterPush(api)`; call `registerForPush` post-login in `apps/ios/src/App.tsx` + `apps/android/src/App.tsx`.
+7. `packages/mobile-shared/` — add `package.json` (`@renderical/mobile-shared`) + `src/push.ts` exporting `registerForPush(api)` (permission → native token via `@capacitor/push-notifications` → `POST /api/devices`) and `unregisterPush(api)`; call `registerForPush` post-login in `apps/ios/src/App.tsx` + `apps/android/src/App.tsx`.
 
 ---
 

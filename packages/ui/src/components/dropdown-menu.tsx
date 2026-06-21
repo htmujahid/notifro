@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { cn } from "@workspace/ui/lib/utils"
+import { cn } from "@renderical/ui/lib/utils"
 import { CheckIcon, ChevronRightIcon } from "lucide-react"
 
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"

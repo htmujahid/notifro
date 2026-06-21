@@ -4,7 +4,7 @@ The public marketing site for **Renderical**, the unified notification infrastru
 Built with [Astro](https://astro.build) and deployed on Cloudflare.
 
 It shares the design system with the rest of the monorepo: Tailwind v4 + shadcn theme
-from `@workspace/ui` (imported in `src/styles/app.css`), with the React integration
+from `@renderical/ui` (imported in `src/styles/app.css`), with the React integration
 enabled so UI components (e.g. the FAQ `Accordion`) can be used directly as Astro islands.
 Auth links point at the web app under `PUBLIC_FRONTEND_URL` (`/auth/sign-in`, `/auth/sign-up`).
 
@@ -32,13 +32,13 @@ src/
   config.ts            # Site metadata, nav, channels (auth URLs from PUBLIC_FRONTEND_URL)
   layouts/BaseLayout.astro
   components/          # Header, Footer, CtaBand, PageHeader (.astro) + Faq (React island)
-  styles/app.css       # Imports @workspace/ui theme + @source for this app
+  styles/app.css       # Imports @renderical/ui theme + @source for this app
   pages/               # One .astro file per route
 postcss.config.mjs     # Tailwind v4 via @tailwindcss/postcss
 ```
 
 Branding and shared content live in `src/config.ts`. Styling comes from the shared
-`@workspace/ui` shadcn theme — use the same Tailwind utilities and design tokens
+`@renderical/ui` shadcn theme — use the same Tailwind utilities and design tokens
 (`bg-card`, `text-muted-foreground`, `bg-primary`, …) as the other apps.
 
 ## Commands

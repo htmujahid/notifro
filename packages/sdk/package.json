@@ -1,5 +1,5 @@
 {
-  "name": "@workspace/sdk",
+  "name": "@renderical/sdk",
   "version": "0.0.0",
   "type": "module",
   "private": true,
@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@workspace/api-client": "workspace:*"
+    "@renderical/api-client": "workspace:*"
   },
   "devDependencies": {
     "@eslint/js": "^10",

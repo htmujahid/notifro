@@ -3,7 +3,7 @@ import {
   sendResetPasswordEmail,
   sendTwoFactorOTPEmail,
   sendVerificationEmail,
-} from "@workspace/mailer"
+} from "@renderical/mailer"
 import { betterAuth } from "better-auth"
 import { phoneNumber, twoFactor } from "better-auth/plugins"
 import { env } from "cloudflare:workers"

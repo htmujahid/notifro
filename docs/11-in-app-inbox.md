@@ -18,7 +18,7 @@ recipient-resolution path (notification → per-user message) that push and emai
 - `packages/views/src/pages/notifications.tsx` is mock-only (hardcoded list, local `useState`).
 - The app shell header is `packages/core/src/layouts/components/site-header.tsx` (rendered inside
   `app-layout.tsx`); there is no bell / unread indicator today.
-- Typed `@workspace/api-client` + query-hook conventions from **M07**; `notificationKeys` factory from M10.
+- Typed `@renderical/api-client` + query-hook conventions from **M07**; `notificationKeys` factory from M10.
 
 ## Scope (in)
 - `inbox_message` table (wrangler SQL migration + Kysely `DB` interface): addressed to a
@@ -96,7 +96,7 @@ All session + `requireAuth` (M06), and every query is additionally scoped to `us
 - `POST /api/inbox/read-all` — mark all the caller's unread as read.
 
 ## Frontend
-- `@workspace/core` hooks (`packages/core/src/hooks/inbox.ts`): `useInbox(filter)`,
+- `@renderical/core` hooks (`packages/core/src/hooks/inbox.ts`): `useInbox(filter)`,
   `useUnreadCount()` (with `refetchInterval: 30_000`), `useMarkRead()`, `useMarkAllRead()`. Add an
   `inboxKeys` query-key factory; invalidate on mutation.
 - `packages/views/src/pages/notifications.tsx`: replace mock list with `useInbox`; clicking a message
@@ -112,7 +112,7 @@ All session + `requireAuth` (M06), and every query is additionally scoped to `us
    M08 channel registry under key `in_app`.
 3. Add `apps/api/src/routes/inbox.ts` with the four routes (`createRoute`+`app.openapi`).
 4. Confirm `POST /api/notifications` with `channels:['in_app']` (M10 path) now produces inbox rows.
-5. Build the `@workspace/core` inbox hooks; wire `notifications.tsx` and the header bell.
+5. Build the `@renderical/core` inbox hooks; wire `notifications.tsx` and the header bell.
 6. Verify unread badge updates within the poll interval after a send and clears on read.
 
 ## Acceptance criteria

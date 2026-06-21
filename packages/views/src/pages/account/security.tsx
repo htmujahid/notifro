@@ -1,7 +1,7 @@
-import { ChangeEmailForm } from "@workspace/core/components/account/change-email-form"
-import { ChangePasswordForm } from "@workspace/core/components/account/change-password-form"
-import { DeleteAccountDialog } from "@workspace/core/components/account/delete-account-dialog"
-import { Separator } from "@workspace/ui/components/separator"
+import { ChangeEmailForm } from "@renderical/core/components/account/change-email-form"
+import { ChangePasswordForm } from "@renderical/core/components/account/change-password-form"
+import { DeleteAccountDialog } from "@renderical/core/components/account/delete-account-dialog"
+import { Separator } from "@renderical/ui/components/separator"
 
 export default function AccountSecurityPage() {
   return (

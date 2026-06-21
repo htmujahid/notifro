@@ -6,7 +6,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card"
+} from "@renderical/ui/components/card"
 import { BellIcon } from "lucide-react"
 
 import {

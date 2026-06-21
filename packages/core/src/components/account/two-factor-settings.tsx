@@ -1,7 +1,7 @@
 import { useState } from "react"
 
-import { SESSION_QUERY_KEY, useSession } from "@workspace/app/auth/use-session"
-import { Button } from "@workspace/ui/components/button"
+import { SESSION_QUERY_KEY, useSession } from "@renderical/app/auth/use-session"
+import { Button } from "@renderical/ui/components/button"
 
 import { useQueryClient } from "@tanstack/react-query"
 

@@ -14,8 +14,8 @@
     "components": "@/components",
     "hooks": "@/hooks",
     "lib": "@/lib",
-    "utils": "@workspace/ui/lib/utils",
-    "ui": "@workspace/ui/components"
+    "utils": "@renderical/ui/lib/utils",
+    "ui": "@renderical/ui/components"
   },
   "rtl": true,
   "menuColor": "default",

@@ -1,8 +1,8 @@
 import React from "react"
 
-import { Badge } from "@workspace/ui/components/badge"
-import { Button } from "@workspace/ui/components/button"
-import { Switch } from "@workspace/ui/components/switch"
+import { Badge } from "@renderical/ui/components/badge"
+import { Button } from "@renderical/ui/components/button"
+import { Switch } from "@renderical/ui/components/switch"
 import { GitBranchIcon, PlusIcon, RouteIcon, Trash2Icon } from "lucide-react"
 
 import {

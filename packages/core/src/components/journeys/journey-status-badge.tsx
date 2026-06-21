@@ -1,4 +1,4 @@
-import { Badge } from "@workspace/ui/components/badge"
+import { Badge } from "@renderical/ui/components/badge"
 
 export function JourneyStatusBadge({ status }: { status: string }) {
   const map: Record<string, string> = {

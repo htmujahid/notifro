@@ -8,12 +8,12 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@workspace/ui/components/dialog"
+} from "@renderical/ui/components/dialog"
 import {
   InputGroup,
   InputGroupAddon,
-} from "@workspace/ui/components/input-group"
-import { cn } from "@workspace/ui/lib/utils"
+} from "@renderical/ui/components/input-group"
+import { cn } from "@renderical/ui/lib/utils"
 import { Command as CommandPrimitive } from "cmdk"
 import { CheckIcon, SearchIcon } from "lucide-react"
 

@@ -14,9 +14,9 @@
     "deploy": "pnpm build && wrangler deploy"
   },
   "dependencies": {
-    "@workspace/app": "workspace:*",
-    "@workspace/ui": "workspace:*",
-    "@workspace/views": "workspace:*",
+    "@renderical/app": "workspace:*",
+    "@renderical/ui": "workspace:*",
+    "@renderical/views": "workspace:*",
     "lucide-react": "^1.21.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",

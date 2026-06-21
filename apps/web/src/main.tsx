@@ -1,6 +1,6 @@
 import { StrictMode } from "react"
 
-import "@workspace/ui/globals.css"
+import "@renderical/ui/globals.css"
 import { createRoot } from "react-dom/client"
 
 import { App } from "./App.tsx"

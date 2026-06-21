@@ -22,7 +22,7 @@ of hardcoded numbers and mock cards, with no guidance and no "you have nothing y
 - Channels/connections (M08), the `notification`/`delivery` pipeline + `POST /api/notifications` (M10), and
   the in-app inbox (M11) all exist. There is **no onboarding state, no empty-state component, no overview
   endpoint**.
-- Data-fetching convention = `@workspace/api-client` (M07) + TanStack Query hooks mirroring
+- Data-fetching convention = `@renderical/api-client` (M07) + TanStack Query hooks mirroring
   `packages/core/src/hooks/connections.ts`. Auth via better-auth + `requireAuth` (M06).
 
 ## Scope (in)
@@ -38,7 +38,7 @@ of hardcoded numbers and mock cards, with no guidance and no "you have nothing y
   delivery succeeded); dismissable once done.
 - **Wire `dashboard.tsx`** to `GET /api/overview`; show the onboarding checklist when incomplete, the
   metrics/recent-activity view when active.
-- **Reusable empty-state component** in `@workspace/ui` (or `@workspace/core`) and applied to the mock
+- **Reusable empty-state component** in `@renderical/ui` (or `@renderical/core`) and applied to the mock
   pages' "no data" cases (channels with no connections, logs with no sends, templates with none, etc.).
 
 ## Out of scope (deferred)
@@ -82,14 +82,14 @@ and extend the Kysely `DB` interface (per M05). Most checklist steps are **deriv
 
 ## Frontend
 - New hooks `packages/core/src/hooks/overview.ts`: `useOverview()`, `useSendTest()`, `useOnboarding()`
-  (mutation) — typed via `@workspace/api-client` (M07), `overviewKeys` query-key factory like
+  (mutation) — typed via `@renderical/api-client` (M07), `overviewKeys` query-key factory like
   `hooks/connections.ts`.
 - Wire `packages/views/src/pages/dashboard.tsx` (and the `home.*` variants): replace mock data with
   `useOverview()`; render `<OnboardingChecklist/>` when `onboarding.complete === false`, else the
   summary tiles + recent activity.
 - New `packages/views/src/pages/onboarding.tsx` + a route in `packages/views/src/routes/_shared.tsx`
   (`sharedProtectedChildren`).
-- New `<EmptyState/>` component (`@workspace/ui/components/empty-state`) — icon, title, body, primary CTA;
+- New `<EmptyState/>` component (`@renderical/ui/components/empty-state`) — icon, title, body, primary CTA;
   apply to channels/logs/templates/audiences/schedules pages' no-data branches.
 
 ## Implementation steps
@@ -97,7 +97,7 @@ and extend the Kysely `DB` interface (per M05). Most checklist steps are **deriv
 2. Build `apps/api/src/routes/overview.ts` (`GET /api/overview`, `POST /api/overview/test-send`,
    `PATCH /api/onboarding`) using `createRoute`+`app.openapi`, behind `requireAuth` (M06). Compute counts
    with Kysely aggregates; derive checklist steps from `connection`/`delivery` existence.
-3. Add the `overview` hooks in `@workspace/core`.
+3. Add the `overview` hooks in `@renderical/core`.
 4. Build `<EmptyState/>` and `<OnboardingChecklist/>`; wire `dashboard.tsx` + `home.*`.
 5. Add `onboarding.tsx` + register the route; make "send a test" call `POST /api/overview/test-send` and
    toast the result (`sonner`).
@@ -120,4 +120,4 @@ and extend the Kysely `DB` interface (per M05). Most checklist steps are **deriv
 - Derive checklist steps from real state wherever possible so the checklist can't lie (e.g. don't mark
   "channel connected" from a button click — check that a `connection` row exists).
 - The `home.web.tsx`/`home.desktop.tsx` variants exist for platform differences — wire the shared overview
-  data once (in `@workspace/core`) and let each variant render it, per the views/core split.
+  data once (in `@renderical/core`) and let each variant render it, per the views/core split.

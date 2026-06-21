@@ -2,9 +2,9 @@ import { lazy } from "react"
 
 import type { RouteObject } from "react-router"
 
-const AuthLayout = lazy(() => import("@workspace/core/layouts/auth-layout"))
+const AuthLayout = lazy(() => import("@renderical/core/layouts/auth-layout"))
 const AccountLayout = lazy(
-  () => import("@workspace/core/layouts/account-layout")
+  () => import("@renderical/core/layouts/account-layout")
 )
 const NotFoundPage = lazy(() => import("../pages/not-found"))
 const SignInPage = lazy(() => import("../pages/auth/sign-in"))

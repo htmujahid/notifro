@@ -5,7 +5,7 @@
 ## Goal
 Ship the first true end-to-end send: a composed notification persists as one `notification` row plus
 one `delivery` row per channel attempt. The **email channel uses the Cloudflare Email binding** via
-`@workspace/mailer` — no OAuth, no external SMTP credentials. The Create page actually sends;
+`@renderical/mailer` — no OAuth, no external SMTP credentials. The Create page actually sends;
 the Channels page shows the real email connection status.
 
 ## Why it matters
@@ -13,7 +13,7 @@ Email via the CF binding is zero-config for users: no account to link, no creden
 M08 connection lifecycle applies where relevant; for email the connection row requires no stored secrets.
 
 ## Current state
-- `@workspace/mailer` sends auth transactional emails (verify, reset, 2FA) via the CF `EMAIL` binding.
+- `@renderical/mailer` sends auth transactional emails (verify, reset, 2FA) via the CF `EMAIL` binding.
 - Channel registry + `ChannelAdapter` interface exist from M08; compose schema + transform stubs from M09.
 - `sendNotificationEmail` exported from `packages/mailer/src/index.ts` (uses `binding().send()`).
 
@@ -22,7 +22,7 @@ M08 connection lifecycle applies where relevant; for email the connection row re
 - `emailAdapter` implementing the M08 `ChannelAdapter` interface:
   - `validateConfig`: accepts optional `{ from?: string }` (falls back to `noreply@renderical.com`).
   - `transform`: `ComposePayload` → `{ to, from, subject, html, text }`.
-  - `send`: calls `sendNotificationEmail` from `@workspace/mailer` (CF Email binding). Returns `SendResult`.
+  - `send`: calls `sendNotificationEmail` from `@renderical/mailer` (CF Email binding). Returns `SendResult`.
   - `healthCheck`: validates the `from` config address if present.
 - `POST /api/notifications` — validate compose payload, create `notification`, fan out to email,
   create `delivery`, invoke adapter, persist status.

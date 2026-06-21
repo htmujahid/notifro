@@ -22,8 +22,8 @@ milestones are **Done**; these are reference docs for future changes, not a buil
   `apps/api/src/queue/consumer.ts`.
 - **Cron**: Cloudflare Workers cron triggers. Sweep handler in `apps/api/src/scheduling/sweep.ts` (advances
   due scheduled sends, recurring sends, and journey runs).
-- **Frontend packages**: `@workspace/views` (pages/routes), `@workspace/core` (hooks/components/layouts),
-  `@workspace/api-client` (typed client + shared types). UI from `@workspace/ui` (shadcn-generated — never
+- **Frontend packages**: `@renderical/views` (pages/routes), `@renderical/core` (hooks/components/layouts),
+  `@renderical/api-client` (typed client + shared types). UI from `@renderical/ui` (shadcn-generated — never
   edit `packages/ui/src/components/`).
 - **Channels**: 11 registered adapters in `apps/api/src/channels/` (`email | webhook | web_push | sms |
   whatsapp | telegram | slack | discord | teams | mobile_push | in_app`), self-registering via `index.ts`
@@ -55,7 +55,7 @@ milestones are **Done**; these are reference docs for future changes, not a buil
 | 04 | Two-factor, phone OTP & API-key auth               | 00    | M03                   | Done   |
 | 05 | Data layer (Kysely over D1, user-scoped)           | 0     | M03                   | Done   |
 | 06 | API conventions: errors, pagination, `requireAuth` | 0     | M05                   | Done   |
-| 07 | Typed API client (`@workspace/api-client`)         | 0     | M06                   | Done   |
+| 07 | Typed API client (`@renderical/api-client`)         | 0     | M06                   | Done   |
 | 08 | Channel registry & connection storage              | 1     | M05, M06              | Done   |
 | 09 | Unified compose schema & transform contract        | 1     | M08                   | Done   |
 | 10 | Email channel (CF Email binding) + delivery        | 1     | M08, M09              | Done   |

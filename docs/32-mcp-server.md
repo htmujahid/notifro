@@ -17,7 +17,7 @@ by an LLM, while approval gates keep destructive/sending actions under human con
 - M10 send pipeline, M28 preferences, and the template/analytics routes already exist for the tools to call.
 
 ## Scope (in)
-- **`@workspace/mcp`** package: a `createMcpServer(config)` factory exposing 9 tools (`list_channels`,
+- **`@renderical/mcp`** package: a `createMcpServer(config)` factory exposing 9 tools (`list_channels`,
   `send_notification`, `schedule_notification`, `get_delivery_status`, `manage_preferences`,
   `create_template`, `render_preview`, `query_analytics`, `approve_action`), 3 resources
   (`renderical://channels`, `://templates`, `://recent-deliveries`), and 3 prompts. Tools call the Worker
@@ -54,7 +54,7 @@ Plus the `/mcp` MCP transport endpoint (CORS-enabled, API-key auth).
 
 ## Implementation steps
 1. Migration + Kysely interfaces (per M05).
-2. Build `packages/mcp` (`tools.ts`, `resources.ts`, `prompts.ts`, `server.ts`, `bin.ts`); add `@workspace/mcp`
+2. Build `packages/mcp` (`tools.ts`, `resources.ts`, `prompts.ts`, `server.ts`, `bin.ts`); add `@renderical/mcp`
    to `apps/api`.
 3. Mount the `/mcp` route in `index.ts` with the Web Standards streamable transport (stateless) + CORS.
 4. MCP gate/pending CRUD routes; the approve endpoint replays the stored HTTP call with the caller's auth.

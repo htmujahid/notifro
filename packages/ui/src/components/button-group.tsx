@@ -1,5 +1,5 @@
-import { Separator } from "@workspace/ui/components/separator"
-import { cn } from "@workspace/ui/lib/utils"
+import { Separator } from "@renderical/ui/components/separator"
+import { cn } from "@renderical/ui/lib/utils"
 import { type VariantProps, cva } from "class-variance-authority"
 
 import { mergeProps } from "@base-ui/react/merge-props"

@@ -1,15 +1,15 @@
-# @workspace/api-client
+# @renderical/api-client
 
 Cookie-authenticated fetch client for Renderical product endpoints + TanStack Query hook conventions.
 
 ## Setup
 
-`AppProvider` (from `@workspace/app/app/context`) constructs the client once from `apiBaseURL` and exposes it via `ApiClientProvider`. Any component inside `AppProvider` can call `useApiClient()`.
+`AppProvider` (from `@renderical/app/app/context`) constructs the client once from `apiBaseURL` and exposes it via `ApiClientProvider`. Any component inside `AppProvider` can call `useApiClient()`.
 
 ## Client
 
 ```ts
-import { createApiClient } from "@workspace/api-client/client"
+import { createApiClient } from "@renderical/api-client/client"
 
 const api = createApiClient("http://localhost:8787")
 
@@ -34,7 +34,7 @@ await api.delete("/api/channels/123")
 Non-2xx responses throw `ApiClientError` with the server's `code`, `message`, and optional `details`.
 
 ```ts
-import { isApiError } from "@workspace/api-client/error"
+import { isApiError } from "@renderical/api-client/error"
 
 try {
   await api.get("/api/channels")
@@ -47,7 +47,7 @@ try {
 
 ## Hook convention
 
-All resource hooks live in `@workspace/core/hooks/<resource>.ts`. The pattern:
+All resource hooks live in `@renderical/core/hooks/<resource>.ts`. The pattern:
 
 ### Query-key factory
 

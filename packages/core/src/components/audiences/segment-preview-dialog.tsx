@@ -1,12 +1,12 @@
-import type { Segment } from "@workspace/api-client/types"
-import { Button } from "@workspace/ui/components/button"
+import type { Segment } from "@renderical/api-client/types"
+import { Button } from "@renderical/ui/components/button"
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@workspace/ui/components/dialog"
+} from "@renderical/ui/components/dialog"
 
 import { useSegmentPreview } from "../../hooks/audiences"
 

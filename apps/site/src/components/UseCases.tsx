@@ -3,7 +3,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@workspace/ui/components/tabs"
+} from "@renderical/ui/components/tabs"
 import {
   Bot,
   Check,

@@ -1,23 +1,23 @@
 import { useState } from "react"
 
-import type { ChannelType } from "@workspace/api-client/types"
-import { Button } from "@workspace/ui/components/button"
+import type { ChannelType } from "@renderical/api-client/types"
+import { Button } from "@renderical/ui/components/button"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card"
+} from "@renderical/ui/components/card"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@workspace/ui/components/dialog"
-import { Input } from "@workspace/ui/components/input"
-import { Label } from "@workspace/ui/components/label"
-import { Textarea } from "@workspace/ui/components/textarea"
+} from "@renderical/ui/components/dialog"
+import { Input } from "@renderical/ui/components/input"
+import { Label } from "@renderical/ui/components/label"
+import { Textarea } from "@renderical/ui/components/textarea"
 import {
   ArrowRightIcon,
   BellIcon,

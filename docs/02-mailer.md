@@ -3,7 +3,7 @@
 **Phase:** 00 (Foundation) · **Depends on:** M01 · **Status:** Done
 
 ## Goal
-Provide `@workspace/mailer`: a thin sender over the Cloudflare `send_email` binding with a console fallback
+Provide `@renderical/mailer`: a thin sender over the Cloudflare `send_email` binding with a console fallback
 for local dev, plus the transactional email templates the auth flows need.
 
 ## Why it matters

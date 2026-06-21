@@ -1,5 +1,5 @@
 {
-  "name": "@workspace/core",
+  "name": "@renderical/core",
   "version": "0.0.0",
   "type": "module",
   "private": true,
@@ -11,9 +11,9 @@
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
     "@tanstack/react-query": "^5.101.0",
-    "@workspace/api-client": "workspace:*",
-    "@workspace/app": "workspace:*",
-    "@workspace/ui": "workspace:*",
+    "@renderical/api-client": "workspace:*",
+    "@renderical/app": "workspace:*",
+    "@renderical/ui": "workspace:*",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "lucide-react": "^1.21.0",

@@ -1,4 +1,4 @@
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@renderical/ui/components/button"
 import { RefreshCwIcon, ScrollIcon } from "lucide-react"
 
 import { useRequestLog } from "../../hooks/developers"

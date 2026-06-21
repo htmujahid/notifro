@@ -1,4 +1,4 @@
-# @workspace/mobile-shared
+# @renderical/mobile-shared
 
 > 🚧 **Planned** — not yet implemented.
 

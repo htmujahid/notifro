@@ -2,24 +2,24 @@
 
 import * as React from "react"
 
-import { Button } from "@workspace/ui/components/button"
-import { Input } from "@workspace/ui/components/input"
-import { Separator } from "@workspace/ui/components/separator"
+import { Button } from "@renderical/ui/components/button"
+import { Input } from "@renderical/ui/components/input"
+import { Separator } from "@renderical/ui/components/separator"
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@workspace/ui/components/sheet"
-import { Skeleton } from "@workspace/ui/components/skeleton"
+} from "@renderical/ui/components/sheet"
+import { Skeleton } from "@renderical/ui/components/skeleton"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@workspace/ui/components/tooltip"
-import { useIsMobile } from "@workspace/ui/hooks/use-mobile"
-import { cn } from "@workspace/ui/lib/utils"
+} from "@renderical/ui/components/tooltip"
+import { useIsMobile } from "@renderical/ui/hooks/use-mobile"
+import { cn } from "@renderical/ui/lib/utils"
 import { type VariantProps, cva } from "class-variance-authority"
 import { PanelLeftIcon } from "lucide-react"
 

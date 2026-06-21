@@ -13,9 +13,9 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "paths": {
-      "@workspace/api-client/*": ["../../packages/api-client/src/*"],
-      "@workspace/app/*": ["../../packages/app/src/*"],
-      "@workspace/views/*": ["../../packages/views/src/*"]
+      "@renderical/api-client/*": ["../../packages/api-client/src/*"],
+      "@renderical/app/*": ["../../packages/app/src/*"],
+      "@renderical/views/*": ["../../packages/views/src/*"]
     }
   },
   "include": ["electron", "src", "forge.config.ts", "forge.env.d.ts", "vite.*.config.ts"]

@@ -1,4 +1,4 @@
-# @workspace/mailer
+# @renderical/mailer
 
 Transactional email for Renderical — templates and a sending binding for Cloudflare Workers.
 

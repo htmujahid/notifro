@@ -1,4 +1,4 @@
-import { cn } from "@workspace/ui/lib/utils"
+import { cn } from "@renderical/ui/lib/utils"
 
 /**
  * The Renderical brand mark — the stacked-layers glyph, drawn with `currentColor`

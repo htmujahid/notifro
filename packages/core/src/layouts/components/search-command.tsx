@@ -10,7 +10,7 @@ import {
   CommandList,
   CommandSeparator,
   CommandShortcut,
-} from "@workspace/ui/components/command"
+} from "@renderical/ui/components/command"
 import {
   BarChart3Icon,
   BellIcon,

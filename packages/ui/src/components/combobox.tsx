@@ -1,13 +1,13 @@
 import * as React from "react"
 
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@renderical/ui/components/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
-} from "@workspace/ui/components/input-group"
-import { cn } from "@workspace/ui/lib/utils"
+} from "@renderical/ui/components/input-group"
+import { cn } from "@renderical/ui/lib/utils"
 import { CheckIcon, ChevronDownIcon, XIcon } from "lucide-react"
 
 import { Combobox as ComboboxPrimitive } from "@base-ui/react"

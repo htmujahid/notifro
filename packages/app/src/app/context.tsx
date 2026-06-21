@@ -1,8 +1,8 @@
 import { createContext, useContext, useMemo } from "react"
 
-import { createApiClient } from "@workspace/api-client/client"
-import { ApiClientProvider } from "@workspace/api-client/context"
-import { ThemeProvider } from "@workspace/ui-primitives/components/theme-provider"
+import { createApiClient } from "@renderical/api-client/client"
+import { ApiClientProvider } from "@renderical/api-client/context"
+import { ThemeProvider } from "@renderical/ui-primitives/components/theme-provider"
 
 import type { AuthClient } from "../auth/client"
 import { AuthProvider } from "../auth/context"

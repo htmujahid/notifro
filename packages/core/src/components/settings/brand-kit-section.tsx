@@ -1,8 +1,8 @@
 import { useState } from "react"
 
-import { Button } from "@workspace/ui/components/button"
-import { Card, CardContent } from "@workspace/ui/components/card"
-import { Separator } from "@workspace/ui/components/separator"
+import { Button } from "@renderical/ui/components/button"
+import { Card, CardContent } from "@renderical/ui/components/card"
+import { Separator } from "@renderical/ui/components/separator"
 import { PaletteIcon } from "lucide-react"
 
 import { useBrandKit, useUpdateBrandKit } from "../../hooks/templates"

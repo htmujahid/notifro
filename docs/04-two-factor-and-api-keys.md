@@ -16,7 +16,7 @@ and MCP server (M32) call the platform programmatically. Both are better-auth pl
 
 ## Scope (in)
 - **twoFactor plugin** (`auth.ts`): TOTP + email OTP (6-digit, ~5 min) via `sendTwoFactorOTPEmail`
-  (`@workspace/mailer`); backup codes.
+  (`@renderical/mailer`); backup codes.
 - **phoneNumber plugin**: SMS OTP via Twilio (6-digit, 300s) — `sendOTP` POSTs the Twilio Messages API with
   `TWILIO_ACCOUNT_SID` / `TWILIO_AUTH_TOKEN` / `TWILIO_FROM_NUMBER`.
 - **apiKey plugin**: `defaultPrefix: 'rk_'`, `enableMetadata: true` (stores `{mode: 'live'|'test'}`).

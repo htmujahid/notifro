@@ -41,16 +41,16 @@ importers:
       '@capacitor/preferences':
         specifier: ^8.0.1
         version: 8.0.1(@capacitor/core@8.4.0)
-      '@workspace/api-client':
+      '@renderical/api-client':
         specifier: workspace:*
         version: link:../../packages/api-client
-      '@workspace/app':
+      '@renderical/app':
         specifier: workspace:*
         version: link:../../packages/app
-      '@workspace/mobile-shared':
+      '@renderical/mobile-shared':
         specifier: workspace:*
         version: link:../../packages/mobile-shared
-      '@workspace/views':
+      '@renderical/views':
         specifier: workspace:*
         version: link:../../packages/views
       react:
@@ -114,16 +114,16 @@ importers:
       '@scalar/hono-api-reference':
         specifier: ^0.11.4
         version: 0.11.4(hono@4.12.26)
-      '@workspace/i18n':
+      '@renderical/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
-      '@workspace/mailer':
+      '@renderical/mailer':
         specifier: workspace:*
         version: link:../../packages/mailer
-      '@workspace/mcp':
+      '@renderical/mcp':
         specifier: workspace:*
         version: link:../../packages/mcp
-      '@workspace/templating':
+      '@renderical/templating':
         specifier: workspace:*
         version: link:../../packages/templating
       better-auth:
@@ -145,10 +145,10 @@ importers:
 
   apps/desktop:
     dependencies:
-      '@workspace/app':
+      '@renderical/app':
         specifier: workspace:*
         version: link:../../packages/app
-      '@workspace/views':
+      '@renderical/views':
         specifier: workspace:*
         version: link:../../packages/views
       electron-squirrel-startup:
@@ -245,16 +245,16 @@ importers:
       '@capacitor/preferences':
         specifier: ^8.0.1
         version: 8.0.1(@capacitor/core@8.4.0)
-      '@workspace/api-client':
+      '@renderical/api-client':
         specifier: workspace:*
         version: link:../../packages/api-client
-      '@workspace/app':
+      '@renderical/app':
         specifier: workspace:*
         version: link:../../packages/app
-      '@workspace/mobile-shared':
+      '@renderical/mobile-shared':
         specifier: workspace:*
         version: link:../../packages/mobile-shared
-      '@workspace/views':
+      '@renderical/views':
         specifier: workspace:*
         version: link:../../packages/views
       react:
@@ -318,7 +318,7 @@ importers:
       '@astrojs/sitemap':
         specifier: ^3.7.3
         version: 3.7.3
-      '@workspace/ui':
+      '@renderical/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       astro:
@@ -355,13 +355,13 @@ importers:
 
   apps/web:
     dependencies:
-      '@workspace/app':
+      '@renderical/app':
         specifier: workspace:*
         version: link:../../packages/app
-      '@workspace/ui':
+      '@renderical/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@workspace/views':
+      '@renderical/views':
         specifier: workspace:*
         version: link:../../packages/views
       lucide-react:
@@ -459,10 +459,10 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.101.0
         version: 5.101.0(react@19.2.6)
-      '@workspace/api-client':
+      '@renderical/api-client':
         specifier: workspace:*
         version: link:../api-client
-      '@workspace/ui-primitives':
+      '@renderical/ui-primitives':
         specifier: workspace:*
         version: link:../ui-primitives
       better-auth:
@@ -505,7 +505,7 @@ importers:
 
   packages/cli:
     dependencies:
-      '@workspace/sdk':
+      '@renderical/sdk':
         specifier: workspace:*
         version: link:../sdk
     devDependencies:
@@ -536,13 +536,13 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.101.0
         version: 5.101.0(react@19.2.6)
-      '@workspace/api-client':
+      '@renderical/api-client':
         specifier: workspace:*
         version: link:../api-client
-      '@workspace/app':
+      '@renderical/app':
         specifier: workspace:*
         version: link:../app
-      '@workspace/ui':
+      '@renderical/ui':
         specifier: workspace:*
         version: link:../ui
       lucide-react:
@@ -658,7 +658,7 @@ importers:
       '@capacitor/core':
         specifier: ^8.4.0
         version: 8.4.0
-      '@workspace/api-client':
+      '@renderical/api-client':
         specifier: workspace:*
         version: link:../api-client
     devDependencies:
@@ -683,7 +683,7 @@ importers:
 
   packages/sdk:
     dependencies:
-      '@workspace/api-client':
+      '@renderical/api-client':
         specifier: workspace:*
         version: link:../api-client
     devDependencies:
@@ -878,13 +878,13 @@ importers:
 
   packages/views:
     dependencies:
-      '@workspace/api-client':
+      '@renderical/api-client':
         specifier: workspace:*
         version: link:../api-client
-      '@workspace/core':
+      '@renderical/core':
         specifier: workspace:*
         version: link:../core
-      '@workspace/ui':
+      '@renderical/ui':
         specifier: workspace:*
         version: link:../ui
       lucide-react:

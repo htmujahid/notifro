@@ -1,4 +1,4 @@
-@import "@workspace/ui/globals.css";
+@import "@renderical/ui/globals.css";
 
 /* Ensure Tailwind scans this app's templates for utility classes. */
 @source "../**/*.{astro,ts,tsx,mdx}";

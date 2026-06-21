@@ -1,4 +1,4 @@
-# @workspace/ui
+# @renderical/ui
 
 The shared **design system** — a Tailwind v4 + shadcn-based React component library, with hooks, utilities, and the theme used across every app.
 
@@ -19,4 +19,4 @@ React 19 + Tailwind CSS 4 + shadcn/ui (Base UI primitives), with lucide-react, r
 
 ## Used by
 
-`@workspace/views`, `@workspace/core`, `apps/site`, and any app needing components or the theme. For low-level unstyled primitives, see [`@workspace/ui-primitives`](../ui-primitives).
+`@renderical/views`, `@renderical/core`, `apps/site`, and any app needing components or the theme. For low-level unstyled primitives, see [`@renderical/ui-primitives`](../ui-primitives).

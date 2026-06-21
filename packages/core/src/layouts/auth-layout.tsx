@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 
-import { useSession } from "@workspace/app/auth/use-session"
+import { useSession } from "@renderical/app/auth/use-session"
 import { Navigate, Outlet } from "react-router"
 
 import { RendericalMark } from "../components/renderical-logo"

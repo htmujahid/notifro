@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader } from "@workspace/ui/components/card"
-import { Skeleton } from "@workspace/ui/components/skeleton"
+import { Card, CardContent, CardHeader } from "@renderical/ui/components/card"
+import { Skeleton } from "@renderical/ui/components/skeleton"
 
 export function DashboardSkeleton() {
   return (

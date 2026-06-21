@@ -1,20 +1,20 @@
-# @workspace/views
+# @renderical/views
 
 The **stateless presentation layer**. Shared pages, layouts, and route definitions rendered identically across every client — web, desktop, iOS, and Android.
 
 ## Role in the architecture
 
 ```
-apps/*  ──►  @workspace/app     (app-wide universal logic)
+apps/*  ──►  @renderical/app     (app-wide universal logic)
               │
               ▼
-        @workspace/core         (stateful logic: forms, queries, mutations)
+        @renderical/core         (stateful logic: forms, queries, mutations)
               │
               ▼
-        @workspace/views        (this package — pure, stateless UI)  ──►  @workspace/ui
+        @renderical/views        (this package — pure, stateless UI)  ──►  @renderical/ui
 ```
 
-Views are **presentation only**. They lay out screens and wire user intent to behavior handed down from [`@workspace/core`](../core); they do not own state, fetch data, or contain platform logic. Keeping them stateless is what lets the same page render on every platform.
+Views are **presentation only**. They lay out screens and wire user intent to behavior handed down from [`@renderical/core`](../core); they do not own state, fetch data, or contain platform logic. Keeping them stateless is what lets the same page render on every platform.
 
 ## What's here
 
@@ -24,7 +24,7 @@ Views are **presentation only**. They lay out screens and wire user intent to be
 
 ## Stack
 
-React 19 + React Router 8, styled via [`@workspace/ui`](../ui).
+React 19 + React Router 8, styled via [`@renderical/ui`](../ui).
 
 ## Used by
 

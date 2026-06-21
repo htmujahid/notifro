@@ -9,10 +9,10 @@
     "strict": true,
     "noEmit": true,
     "paths": {
-      "@workspace/app/*": ["./src/*"],
-      "@workspace/api-client/*": ["../api-client/src/*"],
-      "@workspace/core/*": ["../core/src/*"],
-      "@workspace/ui-primitives/*": ["../ui-primitives/src/*"]
+      "@renderical/app/*": ["./src/*"],
+      "@renderical/api-client/*": ["../api-client/src/*"],
+      "@renderical/core/*": ["../core/src/*"],
+      "@renderical/ui-primitives/*": ["../ui-primitives/src/*"]
     }
   },
   "include": ["."],

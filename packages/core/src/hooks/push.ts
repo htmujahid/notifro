@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react"
 
-import { useApiClient } from "@workspace/api-client/context"
+import { useApiClient } from "@renderical/api-client/context"
 
 function isWebPushSupported(): boolean {
   return (

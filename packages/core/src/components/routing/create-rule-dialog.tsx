@@ -1,17 +1,17 @@
 import React from "react"
 
-import type { FallbackChain } from "@workspace/api-client/types"
-import { Button } from "@workspace/ui/components/button"
+import type { FallbackChain } from "@renderical/api-client/types"
+import { Button } from "@renderical/ui/components/button"
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@workspace/ui/components/dialog"
-import { Input } from "@workspace/ui/components/input"
-import { Label } from "@workspace/ui/components/label"
-import { Switch } from "@workspace/ui/components/switch"
+} from "@renderical/ui/components/dialog"
+import { Input } from "@renderical/ui/components/input"
+import { Label } from "@renderical/ui/components/label"
+import { Switch } from "@renderical/ui/components/switch"
 
 import { useCreateRoutingRule } from "../../hooks/routing"
 import { CHANNELS } from "./chain-steps-editor"

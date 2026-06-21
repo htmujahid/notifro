@@ -134,7 +134,7 @@ Added to `DB`: `topic`, `preference`, `channel_priority`.
 5. Update the email transform to add the footer link + `List-Unsubscribe` / `List-Unsubscribe-Post` headers
    using a freshly signed token per recipient.
 6. Build the public `preferences.tsx` + `unsubscribe.tsx` pages and the Settings topic management UI; add
-   the public routes; add `@workspace/core` hooks.
+   the public routes; add `@renderical/core` hooks.
 
 ## Acceptance criteria
 - [x] An owner can define topics; a send referencing a topic respects each recipient's opt-out per channel.

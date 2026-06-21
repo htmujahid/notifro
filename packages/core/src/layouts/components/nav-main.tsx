@@ -1,13 +1,13 @@
 import * as React from "react"
 
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@renderical/ui/components/button"
 import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@workspace/ui/components/sidebar"
+} from "@renderical/ui/components/sidebar"
 import { CirclePlusIcon, InboxIcon } from "lucide-react"
 import { NavLink } from "react-router"
 

@@ -1,7 +1,7 @@
 import * as React from "react"
 
-import { toggleVariants } from "@workspace/ui/components/toggle"
-import { cn } from "@workspace/ui/lib/utils"
+import { toggleVariants } from "@renderical/ui/components/toggle"
+import { cn } from "@renderical/ui/lib/utils"
 import { type VariantProps } from "class-variance-authority"
 
 import { Toggle as TogglePrimitive } from "@base-ui/react/toggle"

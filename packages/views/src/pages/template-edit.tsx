@@ -1,4 +1,4 @@
-import { TemplateEditView } from "@workspace/core/components/templates/template-edit"
+import { TemplateEditView } from "@renderical/core/components/templates/template-edit"
 import { useParams } from "react-router"
 
 export default function TemplateEditPage() {

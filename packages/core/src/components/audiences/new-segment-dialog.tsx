@@ -1,15 +1,15 @@
 import { useState } from "react"
 
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@renderical/ui/components/button"
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@workspace/ui/components/dialog"
-import { Input } from "@workspace/ui/components/input"
-import { Label } from "@workspace/ui/components/label"
+} from "@renderical/ui/components/dialog"
+import { Input } from "@renderical/ui/components/input"
+import { Label } from "@renderical/ui/components/label"
 
 import { useCreateSegment } from "../../hooks/audiences"
 import { FilterBuilder } from "./filter-builder"

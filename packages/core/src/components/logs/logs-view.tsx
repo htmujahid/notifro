@@ -1,13 +1,13 @@
 import { useState } from "react"
 
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@renderical/ui/components/button"
 import {
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@workspace/ui/components/empty"
+} from "@renderical/ui/components/empty"
 import { RefreshCwIcon, ScrollIcon } from "lucide-react"
 
 const ALL_LOGS = [

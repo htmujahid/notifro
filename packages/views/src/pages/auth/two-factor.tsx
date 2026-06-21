@@ -1,4 +1,4 @@
-import { TwoFactorForm } from "@workspace/core/components/auth/two-factor-form"
+import { TwoFactorForm } from "@renderical/core/components/auth/two-factor-form"
 
 export default function TwoFactorPage() {
   return <TwoFactorForm />

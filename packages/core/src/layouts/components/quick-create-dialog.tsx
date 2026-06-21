@@ -4,7 +4,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@workspace/ui/components/dialog"
+} from "@renderical/ui/components/dialog"
 import { BellIcon, CalendarIcon, FileTextIcon, UsersIcon } from "lucide-react"
 import { useNavigate } from "react-router"
 

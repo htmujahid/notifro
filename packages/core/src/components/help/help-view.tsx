@@ -1,10 +1,10 @@
-import { Button } from "@workspace/ui/components/button"
+import { Button } from "@renderical/ui/components/button"
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@workspace/ui/components/card"
+} from "@renderical/ui/components/card"
 import {
   BookOpenIcon,
   FileTextIcon,
