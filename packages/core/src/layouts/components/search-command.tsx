@@ -14,7 +14,6 @@ import {
   Settings2Icon,
   ShieldIcon,
   UserIcon,
-  UsersIcon,
 } from "lucide-react"
 import { useNavigate } from "react-router"
 
@@ -89,10 +88,6 @@ export function SearchCommand({
             <CommandItem onSelect={() => run("/logs")}>
               <ScrollIcon />
               Logs
-            </CommandItem>
-            <CommandItem onSelect={() => run("/audiences")}>
-              <UsersIcon />
-              Audiences
             </CommandItem>
             <CommandItem onSelect={() => run("/analytics")}>
               <BarChart3Icon />

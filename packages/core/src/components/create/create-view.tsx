@@ -6,7 +6,6 @@ import {
   CalendarIcon,
   CheckCircleIcon,
   FileTextIcon,
-  UsersIcon,
   XCircleIcon,
 } from "lucide-react"
 import { useNavigate } from "react-router"
@@ -41,15 +40,14 @@ import { useWebhooks } from "../../hooks/webhooks"
 const CREATE_OPTIONS = [
   {
     title: "Notification",
-    description:
-      "Send a one-off message to a specific channel or audience right now.",
+    description: "Send a one-off message to a specific channel right now.",
     icon: BellIcon,
     action: "compose" as const,
     cta: "New notification",
     bullets: [
       "Pick any connected channel",
-      "Target a single recipient",
       "Deliver immediately",
+      "Appears in your notification log",
     ],
   },
   {
@@ -76,19 +74,6 @@ const CREATE_OPTIONS = [
       "Supports {{variable}} interpolation",
       "Shared across notifications and schedules",
       "Versioned — edits don't break existing sends",
-    ],
-  },
-  {
-    title: "Audience",
-    description: "Segment your recipients into a named, reusable group.",
-    icon: UsersIcon,
-    action: "navigate" as const,
-    url: "/audiences",
-    cta: "New audience",
-    bullets: [
-      "Static lists or dynamic rule-based groups",
-      "Reference by name in any notification",
-      "Size recalculated automatically for dynamic groups",
     ],
   },
 ]

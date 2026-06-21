@@ -18,14 +18,13 @@ export function SubscriptionsSection() {
   const [showForm, setShowForm] = useState(false)
   const [key, setKey] = useState("")
   const [name, setName] = useState("")
-  const [isTransactional, setIsTransactional] = useState(false)
 
   const topics = data?.pages.flatMap((p) => p.data) ?? []
 
   function handleCreate() {
     if (!key || !name) return
     createTopic.mutate(
-      { key, name, transactional: isTransactional, defaultOptIn: true },
+      { key, name, transactional: true, defaultOptIn: true },
       {
         onSuccess: () => {
           setKey("")
@@ -41,9 +40,9 @@ export function SubscriptionsSection() {
     <section className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-sm font-medium">Subscription topics</h2>
+          <h2 className="text-sm font-medium">Notification topics</h2>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            Define categories recipients can opt in or out of.
+            Tags for organizing notifications in logs and analytics.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -86,18 +85,6 @@ export function SubscriptionsSection() {
                 />
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <input
-                id="transactional"
-                type="checkbox"
-                checked={isTransactional}
-                onChange={(e) => setIsTransactional(e.target.checked)}
-                className="size-4 rounded border"
-              />
-              <label htmlFor="transactional" className="text-sm">
-                Transactional (never suppressed by preferences)
-              </label>
-            </div>
             <div className="flex gap-2">
               <Button
                 size="sm"
@@ -120,7 +107,7 @@ export function SubscriptionsSection() {
 
       {topics.length === 0 ? (
         <p className="text-sm text-muted-foreground">
-          No topics yet. Create one to let recipients manage their preferences.
+          No topics yet. Create one to tag notifications for filtering.
         </p>
       ) : (
         <div className="overflow-hidden rounded-xl ring-1 ring-foreground/10">
@@ -133,9 +120,6 @@ export function SubscriptionsSection() {
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground">
                   Name
                 </th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                  Type
-                </th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
@@ -146,9 +130,6 @@ export function SubscriptionsSection() {
                     {t.key}
                   </td>
                   <td className="px-4 py-3 font-medium">{t.name}</td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    {t.transactional ? "Transactional" : "Marketing"}
-                  </td>
                   <td className="px-4 py-3">
                     <div className="flex justify-end">
                       <button

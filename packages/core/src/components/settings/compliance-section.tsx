@@ -21,7 +21,7 @@ export function ComplianceSection() {
   const [channel, setChannel] = useState("")
   const [address, setAddress] = useState("")
   const [reason, setReason] = useState<
-    "hard_bounce" | "complaint" | "unsubscribe" | "manual"
+    "hard_bounce" | "complaint" | "manual"
   >("manual")
 
   const suppressions = suppData?.pages.flatMap((p) => p.data) ?? []
@@ -105,7 +105,6 @@ export function ComplianceSection() {
                     <option value="manual">Manual</option>
                     <option value="hard_bounce">Hard bounce</option>
                     <option value="complaint">Complaint</option>
-                    <option value="unsubscribe">Unsubscribe</option>
                   </select>
                 </div>
               </div>

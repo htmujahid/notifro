@@ -12,12 +12,9 @@ import {
   MoreHorizontalIcon,
   PlusIcon,
   RadioIcon,
-  RouteIcon,
   ScrollIcon,
   Settings2Icon,
   UserIcon,
-  UsersIcon,
-  WorkflowIcon,
 } from "lucide-react"
 import { NavLink, useNavigate } from "react-router"
 
@@ -35,10 +32,7 @@ const MORE_NAV = [
   { title: "Channels", url: "/channels", icon: RadioIcon },
   { title: "Templates", url: "/templates", icon: FileTextIcon },
   { title: "Logs", url: "/logs", icon: ScrollIcon },
-  { title: "Audiences", url: "/audiences", icon: UsersIcon },
   { title: "Analytics", url: "/analytics", icon: BarChart3Icon },
-  { title: "Routing", url: "/routing", icon: RouteIcon },
-  { title: "Journeys", url: "/journeys", icon: WorkflowIcon },
   { title: "Developers", url: "/developers", icon: CodeIcon },
 ]
 

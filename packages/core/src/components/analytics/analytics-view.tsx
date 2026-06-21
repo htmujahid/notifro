@@ -18,7 +18,6 @@ import {
   useAnalyticsChannels,
   useAnalyticsSummary,
   useAnalyticsTimeseries,
-  useAnalyticsTopTopics,
 } from "../../hooks/analytics"
 
 type Granularity = "hour" | "day" | "week"
@@ -59,21 +58,12 @@ export function AnalyticsView() {
     from: fromIso,
     to: toIso_,
   })
-  const { data: topics, isLoading: topicsLoading } = useAnalyticsTopTopics({
-    from: fromIso,
-    to: toIso_,
-  })
 
   const summaryStats = summary
     ? [
         { label: "Sent", value: summary.sent.toLocaleString() },
         { label: "Delivered", value: summary.delivered.toLocaleString() },
-        { label: "Opened", value: summary.opened.toLocaleString() },
-        { label: "Clicked", value: summary.clicked.toLocaleString() },
-        { label: "Bounced", value: summary.bounced.toLocaleString() },
         { label: "Delivery rate", value: pct(summary.deliveryRate) },
-        { label: "Open rate", value: pct(summary.openRate) },
-        { label: "Click rate", value: pct(summary.clickRate) },
       ]
     : null
 
@@ -84,7 +74,7 @@ export function AnalyticsView() {
     <div className="flex flex-col gap-6">
       <PageHeader
         title="Analytics"
-        description="Delivery performance and engagement across all channels."
+        description="Delivery status and performance across all channels."
         className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
       >
         <div className="flex flex-wrap items-center gap-2 text-sm">
@@ -128,13 +118,13 @@ export function AnalyticsView() {
       </PageHeader>
 
       {summaryLoading ? (
-        <StatCardGrid cols={8}>
-          {Array.from({ length: 8 }).map((_, i) => (
+        <StatCardGrid cols={3}>
+          {Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className="h-16 rounded-lg bg-muted animate-pulse" />
           ))}
         </StatCardGrid>
       ) : summaryStats ? (
-        <StatCardGrid cols={8}>
+        <StatCardGrid cols={3}>
           {summaryStats.map(({ label, value }) => (
             <StatCard key={label} label={label} value={value} size="sm" />
           ))}
@@ -205,114 +195,55 @@ export function AnalyticsView() {
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="flex flex-col gap-3">
-          <h2 className="text-sm font-medium">Delivery by channel</h2>
-          {channelsLoading ? (
-            <div className="h-32 rounded-xl bg-muted animate-pulse" />
-          ) : (channels?.data ?? []).length === 0 ? (
-            <p className="py-6 text-center text-sm text-muted-foreground">
-              No channel data.
-            </p>
-          ) : (
-            <div className="overflow-hidden rounded-xl ring-1 ring-foreground/10">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border bg-muted/40">
-                    <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                      Channel
-                    </th>
-                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">
-                      Sent
-                    </th>
-                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">
-                      Delivered
-                    </th>
-                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">
-                      Opened
-                    </th>
-                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">
-                      Rate
-                    </th>
+      <div className="flex flex-col gap-3">
+        <h2 className="text-sm font-medium">Delivery by channel</h2>
+        {channelsLoading ? (
+          <div className="h-32 rounded-xl bg-muted animate-pulse" />
+        ) : (channels?.data ?? []).length === 0 ? (
+          <p className="py-6 text-center text-sm text-muted-foreground">
+            No channel data.
+          </p>
+        ) : (
+          <div className="overflow-hidden rounded-xl ring-1 ring-foreground/10">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border bg-muted/40">
+                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">
+                    Channel
+                  </th>
+                  <th className="px-4 py-3 text-right font-medium text-muted-foreground">
+                    Sent
+                  </th>
+                  <th className="px-4 py-3 text-right font-medium text-muted-foreground">
+                    Delivered
+                  </th>
+                  <th className="px-4 py-3 text-right font-medium text-muted-foreground">
+                    Rate
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border bg-card">
+                {(channels?.data ?? []).map((row) => (
+                  <tr
+                    key={row.channel}
+                    className="transition-colors hover:bg-muted/30"
+                  >
+                    <td className="px-4 py-3 font-medium">{row.channel}</td>
+                    <td className="px-4 py-3 text-right text-muted-foreground">
+                      {row.sent.toLocaleString()}
+                    </td>
+                    <td className="px-4 py-3 text-right text-muted-foreground">
+                      {row.delivered.toLocaleString()}
+                    </td>
+                    <td className="px-4 py-3 text-right font-medium text-green-700 dark:text-green-400">
+                      {pct(row.deliveryRate)}
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-border bg-card">
-                  {(channels?.data ?? []).map((row) => (
-                    <tr
-                      key={row.channel}
-                      className="transition-colors hover:bg-muted/30"
-                    >
-                      <td className="px-4 py-3 font-medium">{row.channel}</td>
-                      <td className="px-4 py-3 text-right text-muted-foreground">
-                        {row.sent.toLocaleString()}
-                      </td>
-                      <td className="px-4 py-3 text-right text-muted-foreground">
-                        {row.delivered.toLocaleString()}
-                      </td>
-                      <td className="px-4 py-3 text-right text-muted-foreground">
-                        {row.opened.toLocaleString()}
-                      </td>
-                      <td className="px-4 py-3 text-right font-medium text-green-700 dark:text-green-400">
-                        {pct(row.deliveryRate)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-
-        <div className="flex flex-col gap-3">
-          <h2 className="text-sm font-medium">Top topics</h2>
-          {topicsLoading ? (
-            <div className="h-32 rounded-xl bg-muted animate-pulse" />
-          ) : (topics?.data ?? []).length === 0 ? (
-            <p className="py-6 text-center text-sm text-muted-foreground">
-              No topic data. Send notifications with a topicKey to see results.
-            </p>
-          ) : (
-            <div className="overflow-hidden rounded-xl ring-1 ring-foreground/10">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border bg-muted/40">
-                    <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                      Topic
-                    </th>
-                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">
-                      Sent
-                    </th>
-                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">
-                      Delivered
-                    </th>
-                    <th className="px-4 py-3 text-right font-medium text-muted-foreground">
-                      Rate
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border bg-card">
-                  {(topics?.data ?? []).map((row) => (
-                    <tr
-                      key={row.topicKey}
-                      className="transition-colors hover:bg-muted/30"
-                    >
-                      <td className="px-4 py-3 font-medium">{row.topicKey}</td>
-                      <td className="px-4 py-3 text-right text-muted-foreground">
-                        {row.sent.toLocaleString()}
-                      </td>
-                      <td className="px-4 py-3 text-right text-muted-foreground">
-                        {row.delivered.toLocaleString()}
-                      </td>
-                      <td className="px-4 py-3 text-right font-medium text-green-700 dark:text-green-400">
-                        {pct(row.deliveryRate)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   )

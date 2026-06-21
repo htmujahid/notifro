@@ -1,4 +1,4 @@
-import { BellIcon, CalendarIcon, FileTextIcon, UsersIcon } from "lucide-react"
+import { BellIcon, CalendarIcon, FileTextIcon } from "lucide-react"
 import { useNavigate } from "react-router"
 
 import { useApp } from "@renderical/app/app/context"
@@ -35,12 +35,6 @@ const OPTIONS = [
     description: "Create a reusable message template across channels.",
     icon: FileTextIcon,
     url: "/templates",
-  },
-  {
-    title: "Audience",
-    description: "Define a named group of recipients for targeting.",
-    icon: UsersIcon,
-    url: "/audiences",
   },
 ] as const
 

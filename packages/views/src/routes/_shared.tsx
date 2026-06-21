@@ -20,7 +20,6 @@ const CreatePage = lazy(() => import("../pages/create"))
 const TemplatesPage = lazy(() => import("../pages/templates"))
 const TemplateEditPage = lazy(() => import("../pages/template-edit"))
 const LogsPage = lazy(() => import("../pages/logs"))
-const AudiencesPage = lazy(() => import("../pages/audiences"))
 const AnalyticsPage = lazy(() => import("../pages/analytics"))
 const SettingsPage = lazy(() => import("../pages/settings"))
 const HelpPage = lazy(() => import("../pages/help"))
@@ -28,11 +27,7 @@ const OnboardingPage = lazy(() => import("../pages/onboarding"))
 const AccountProfilePage = lazy(() => import("../pages/account/profile"))
 const AccountSecurityPage = lazy(() => import("../pages/account/security"))
 const AccountTwoFactorPage = lazy(() => import("../pages/account/two-factor"))
-const PreferencesPage = lazy(() => import("../pages/preferences"))
-const UnsubscribePage = lazy(() => import("../pages/unsubscribe"))
-const RoutingPage = lazy(() => import("../pages/routing"))
 const DevelopersPage = lazy(() => import("../pages/developers"))
-const JourneysPage = lazy(() => import("../pages/journeys"))
 
 export const sharedAuthRoutes: RouteObject = {
   path: "auth",
@@ -55,10 +50,7 @@ export const sharedProtectedChildren: RouteObject[] = [
   { path: "templates", element: <TemplatesPage /> },
   { path: "templates/:id", element: <TemplateEditPage /> },
   { path: "logs", element: <LogsPage /> },
-  { path: "audiences", element: <AudiencesPage /> },
   { path: "analytics", element: <AnalyticsPage /> },
-  { path: "routing", element: <RoutingPage /> },
-  { path: "journeys", element: <JourneysPage /> },
   { path: "developers", element: <DevelopersPage /> },
   { path: "settings", element: <SettingsPage /> },
   { path: "help", element: <HelpPage /> },
@@ -74,10 +66,7 @@ export const sharedProtectedChildren: RouteObject[] = [
   },
 ]
 
-export const publicRoutes: RouteObject[] = [
-  { path: "preferences", element: <PreferencesPage /> },
-  { path: "unsubscribe", element: <UnsubscribePage /> },
-]
+export const publicRoutes: RouteObject[] = []
 
 export const notFoundRoute: RouteObject = {
   path: "*",

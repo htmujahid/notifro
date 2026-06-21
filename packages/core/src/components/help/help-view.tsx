@@ -27,11 +27,7 @@ const FAQS = [
   },
   {
     q: "How do schedules work?",
-    a: "Schedules use standard cron expressions to define recurrence. When a schedule triggers, Renderical evaluates the audience, renders the template, and dispatches to the configured channel.",
-  },
-  {
-    q: "What is an audience?",
-    a: "An audience is a named group of recipients. Static audiences are a fixed list; dynamic audiences re-evaluate a rule at send time (e.g. 'all users expiring in 7 days').",
+    a: "Schedules use standard cron expressions to define recurrence. When a schedule triggers, Renderical renders the template and dispatches to the configured channel.",
   },
   {
     q: "How do I use notification templates?",
