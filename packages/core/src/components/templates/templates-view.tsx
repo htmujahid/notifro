@@ -2,7 +2,7 @@ import { FileTextIcon, PlusIcon } from "lucide-react"
 import { Link } from "react-router"
 import { Button } from "@workspace/ui/components/button"
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from "@workspace/ui/components/empty"
-import { useTemplates, useDeleteTemplate } from "@workspace/core/hooks/templates"
+import { useTemplates, useDeleteTemplate } from "../../hooks/templates"
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })

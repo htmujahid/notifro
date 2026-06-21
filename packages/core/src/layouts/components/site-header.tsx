@@ -3,7 +3,7 @@ import { useNavigate } from "react-router"
 import { Separator } from "@workspace/ui/components/separator"
 import { SidebarTrigger } from "@workspace/ui/components/sidebar"
 import { Kbd } from "@workspace/ui/components/kbd"
-import { useUnreadCount } from "@workspace/core/hooks/inbox"
+import { useUnreadCount } from "../../hooks/inbox"
 
 export function SiteHeader({ onSearchOpen }: { onSearchOpen: () => void }) {
   const navigate = useNavigate()

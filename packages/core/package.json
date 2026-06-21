@@ -37,25 +37,6 @@
     "./schemas/auth": "./src/schemas/auth.ts",
     "./schemas/account": "./src/schemas/account.ts",
     "./components/*": "./src/components/*.tsx",
-    "./layouts/*": "./src/layouts/*.tsx",
-    "./hooks/hello": "./src/hooks/hello.ts",
-    "./hooks/connections": "./src/hooks/connections.ts",
-    "./hooks/notifications": "./src/hooks/notifications.ts",
-    "./hooks/inbox": "./src/hooks/inbox.ts",
-    "./hooks/overview": "./src/hooks/overview.ts",
-    "./hooks/push": "./src/hooks/push.ts",
-    "./hooks/webhooks": "./src/hooks/webhooks.ts",
-    "./hooks/schedules": "./src/hooks/schedules.ts",
-    "./hooks/templates": "./src/hooks/templates.ts",
-    "./hooks/audiences": "./src/hooks/audiences.ts",
-    "./hooks/preferences": "./src/hooks/preferences.ts",
-    "./hooks/routing": "./src/hooks/routing.ts",
-    "./hooks/rate-limits": "./src/hooks/rate-limits.ts",
-    "./hooks/developers": "./src/hooks/developers.ts",
-    "./hooks/mcp": "./src/hooks/mcp.ts",
-    "./hooks/analytics": "./src/hooks/analytics.ts",
-    "./hooks/compliance": "./src/hooks/compliance.ts",
-    "./hooks/journeys": "./src/hooks/journeys.ts",
-    "./hooks/failover": "./src/hooks/failover.ts"
+    "./layouts/*": "./src/layouts/*.tsx"
   }
 }
