@@ -313,6 +313,77 @@ export interface ChannelPriorityTable {
   updatedAt: string
 }
 
+export interface FrequencyCapTable {
+  id: string
+  userId: string
+  channel: string
+  topicId: string | null
+  maxCount: number
+  windowSeconds: number
+  overflowPolicy: string
+  digestKey: string | null
+  digestSchedule: string | null
+  digestTemplateId: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface DeliveryCounterTable {
+  id: string
+  userId: string
+  recipientId: string
+  channel: string
+  windowStart: string
+  count: number
+}
+
+export interface DigestRuleTable {
+  id: string
+  userId: string
+  channel: string
+  topicId: string | null
+  digestKey: string
+  schedule: string
+  templateId: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface DigestBucketTable {
+  id: string
+  userId: string
+  recipientId: string
+  channel: string
+  digestKey: string
+  schedule: string
+  templateId: string | null
+  status: string
+  nextFlushAt: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface DigestItemTable {
+  id: string
+  bucketId: string
+  notificationId: string
+  payload: string
+  createdAt: string
+}
+
+export interface ThrottleStateTable {
+  id: string
+  userId: string
+  recipientId: string
+  eventKey: string
+  windowSeconds: number
+  lastSentAt: string | null
+  debounceWindowSeconds: number | null
+  pendingUntil: string | null
+  createdAt: string
+  updatedAt: string
+}
+
 export interface DB {
   user: UserTable
   connection: ConnectionTable
@@ -340,4 +411,10 @@ export interface DB {
   topic: TopicTable
   preference: PreferenceTable
   channel_priority: ChannelPriorityTable
+  frequency_cap: FrequencyCapTable
+  delivery_counter: DeliveryCounterTable
+  digest_rule: DigestRuleTable
+  digest_bucket: DigestBucketTable
+  digest_item: DigestItemTable
+  throttle_state: ThrottleStateTable
 }

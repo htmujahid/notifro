@@ -10,6 +10,10 @@ import { localToUtc } from '../scheduling/utils'
 import { getStoSendAt } from '../scheduling/sto'
 import { resolveSegment, assignVariant } from '../lib/segment-resolver'
 import { resolvePreferences } from '../lib/resolve-preferences'
+import { checkFrequencyCap } from '../lib/check-frequency-cap'
+import { checkDigestRule } from '../lib/check-digest-rule'
+import { addToDigest } from '../lib/digest'
+import { checkThrottle } from '../lib/throttle'
 import type { AppEnv } from '../lib/types'
 import type { ChannelType } from '../channels/types'
 import type { DeliveryQueueMessage } from '../queue/consumer'
@@ -270,6 +274,18 @@ router.openapi(sendRoute, async (c) => {
   }
 
   const channels = payload.channels ?? ['email']
+
+  let resolvedTopicId: string | null = null
+  if (rawPayload.topicKey) {
+    const topicRow = await db
+      .selectFrom('topic')
+      .where('userId', '=', userId)
+      .where('key', '=', rawPayload.topicKey)
+      .select('id')
+      .executeTakeFirst()
+    resolvedTopicId = topicRow?.id ?? null
+  }
+
   const notifId = newId()
   const subject = payload.content?.subject ?? payload.content?.title ?? null
   const mode = isSegmentSend ? 'broadcast' : 'transactional'
@@ -377,6 +393,63 @@ router.openapi(sendRoute, async (c) => {
           continue
         }
 
+        if (rawPayload.eventKey && (rawPayload.throttleWindowSeconds || rawPayload.debounceWindowSeconds)) {
+          const winSec = rawPayload.throttleWindowSeconds ?? rawPayload.debounceWindowSeconds!
+          const throttleResult = await checkThrottle(db, userId, recip.id, rawPayload.eventKey, winSec, rawPayload.debounceWindowSeconds ?? null, dts)
+          if (throttleResult !== 'allow') {
+            const throttleErr = `throttle:${throttleResult}`
+            await db
+              .insertInto('delivery')
+              .values({
+                id: deliveryId, userId, notificationId: notifId, channel, recipient: recipientAddr,
+                status: 'skipped', providerMessageId: null, error: throttleErr,
+                attempts: 0, nextRetryAt: null, lastError: throttleErr,
+                deliveredAt: null, openedAt: null, clickedAt: null, bouncedAt: null,
+                recipientId: recip.id, variantId: null, createdAt: dts, updatedAt: dts,
+              })
+              .execute()
+            continue
+          }
+        }
+
+        const capResult = await checkFrequencyCap(db, userId, recip.id, channel, dts, resolvedTopicId)
+        if (capResult.action !== 'allow') {
+          if (capResult.action === 'digest') {
+            await addToDigest(db, userId, recip.id, channel, capResult.digestKey, capResult.schedule, capResult.templateId, notifId, JSON.stringify(payload), dts)
+          }
+          const capErr = capResult.action === 'defer'
+            ? `frequency_cap:deferred:${capResult.deferUntil}`
+            : capResult.action === 'digest' ? 'frequency_cap:digested' : 'frequency_cap:dropped'
+          await db
+            .insertInto('delivery')
+            .values({
+              id: deliveryId, userId, notificationId: notifId, channel, recipient: recipientAddr,
+              status: 'skipped', providerMessageId: null, error: capErr,
+              attempts: 0, nextRetryAt: null, lastError: capErr,
+              deliveredAt: null, openedAt: null, clickedAt: null, bouncedAt: null,
+              recipientId: recip.id, variantId: null, createdAt: dts, updatedAt: dts,
+            })
+            .execute()
+          continue
+        }
+
+        const digestRoute = await checkDigestRule(db, userId, channel, resolvedTopicId)
+        if (digestRoute.route === 'digest') {
+          await addToDigest(db, userId, recip.id, channel, digestRoute.digestKey, digestRoute.schedule, digestRoute.templateId, notifId, JSON.stringify(payload), dts)
+          const digestErr = 'digest_rule:buffered'
+          await db
+            .insertInto('delivery')
+            .values({
+              id: deliveryId, userId, notificationId: notifId, channel, recipient: recipientAddr,
+              status: 'skipped', providerMessageId: null, error: digestErr,
+              attempts: 0, nextRetryAt: null, lastError: digestErr,
+              deliveredAt: null, openedAt: null, clickedAt: null, bouncedAt: null,
+              recipientId: recip.id, variantId: null, createdAt: dts, updatedAt: dts,
+            })
+            .execute()
+          continue
+        }
+
         const conn = await resolveSendConnection(db, userId, channel as ChannelType, dts)
 
         let variantId: string | null = null
@@ -472,7 +545,8 @@ router.openapi(sendRoute, async (c) => {
       const recipientAddr = await resolveRecipientAddress(db, channel, payload.recipient as Record<string, unknown>)
 
       let nonSegmentRecipientId: string | null = null
-      if (recipientAddr && rawPayload.topicKey) {
+      const needsRecipientLookup = !!(rawPayload.topicKey || rawPayload.eventKey || rawPayload.throttleWindowSeconds || rawPayload.debounceWindowSeconds)
+      if (recipientAddr && needsRecipientLookup) {
         const recipRow = await db
           .selectFrom('recipient')
           .where('userId', '=', userId)
@@ -486,31 +560,15 @@ router.openapi(sendRoute, async (c) => {
           .executeTakeFirst()
         if (recipRow) {
           nonSegmentRecipientId = recipRow.id
-          const prefResult = await resolvePreferences(db, userId, recipRow.id, channel, rawPayload.topicKey)
-          if (!prefResult.allowed) {
-            await db
-              .insertInto('delivery')
-              .values({
-                id: deliveryId,
-                userId,
-                notificationId: notifId,
-                channel,
-                recipient: recipientAddr,
-                status: 'skipped',
-                providerMessageId: null,
-                error: prefResult.reason ?? 'preference:opted_out',
-                attempts: 0,
-                nextRetryAt: null,
-                lastError: prefResult.reason ?? 'preference:opted_out',
-                deliveredAt: null,
-                openedAt: null,
-                clickedAt: null,
-                bouncedAt: null,
-                createdAt: dts,
-                updatedAt: dts,
-              })
-              .execute()
-            deliveries.push({
+        }
+      }
+
+      if (nonSegmentRecipientId && rawPayload.topicKey) {
+        const prefResult = await resolvePreferences(db, userId, nonSegmentRecipientId, channel, rawPayload.topicKey)
+        if (!prefResult.allowed) {
+          await db
+            .insertInto('delivery')
+            .values({
               id: deliveryId,
               userId,
               notificationId: notifId,
@@ -526,13 +584,112 @@ router.openapi(sendRoute, async (c) => {
               openedAt: null,
               clickedAt: null,
               bouncedAt: null,
-              recipientId: null,
-              variantId: null,
               createdAt: dts,
               updatedAt: dts,
             })
-            continue
+            .execute()
+          deliveries.push({
+            id: deliveryId,
+            userId,
+            notificationId: notifId,
+            channel,
+            recipient: recipientAddr,
+            status: 'skipped',
+            providerMessageId: null,
+            error: prefResult.reason ?? 'preference:opted_out',
+            attempts: 0,
+            nextRetryAt: null,
+            lastError: prefResult.reason ?? 'preference:opted_out',
+            deliveredAt: null,
+            openedAt: null,
+            clickedAt: null,
+            bouncedAt: null,
+            recipientId: null,
+            variantId: null,
+            createdAt: dts,
+            updatedAt: dts,
+          })
+          continue
+        }
+      }
+
+      if (nonSegmentRecipientId && rawPayload.eventKey && (rawPayload.throttleWindowSeconds || rawPayload.debounceWindowSeconds)) {
+        const winSec = rawPayload.throttleWindowSeconds ?? rawPayload.debounceWindowSeconds!
+        const throttleResult = await checkThrottle(db, userId, nonSegmentRecipientId, rawPayload.eventKey, winSec, rawPayload.debounceWindowSeconds ?? null, dts)
+        if (throttleResult !== 'allow') {
+          const throttleErr = `throttle:${throttleResult}`
+          await db
+            .insertInto('delivery')
+            .values({
+              id: deliveryId, userId, notificationId: notifId, channel, recipient: recipientAddr,
+              status: 'skipped', providerMessageId: null, error: throttleErr,
+              attempts: 0, nextRetryAt: null, lastError: throttleErr,
+              deliveredAt: null, openedAt: null, clickedAt: null, bouncedAt: null,
+              createdAt: dts, updatedAt: dts,
+            })
+            .execute()
+          deliveries.push({
+            id: deliveryId, userId, notificationId: notifId, channel, recipient: recipientAddr,
+            status: 'skipped', providerMessageId: null, error: throttleErr, attempts: 0,
+            nextRetryAt: null, lastError: throttleErr, deliveredAt: null, openedAt: null,
+            clickedAt: null, bouncedAt: null, recipientId: nonSegmentRecipientId, variantId: null,
+            createdAt: dts, updatedAt: dts,
+          })
+          continue
+        }
+      }
+
+      if (nonSegmentRecipientId) {
+        const capResult = await checkFrequencyCap(db, userId, nonSegmentRecipientId, channel, dts, resolvedTopicId)
+        if (capResult.action !== 'allow') {
+          if (capResult.action === 'digest') {
+            await addToDigest(db, userId, nonSegmentRecipientId, channel, capResult.digestKey, capResult.schedule, capResult.templateId, notifId, JSON.stringify(payload), dts)
           }
+          const capErr = capResult.action === 'defer'
+            ? `frequency_cap:deferred:${capResult.deferUntil}`
+            : capResult.action === 'digest' ? 'frequency_cap:digested' : 'frequency_cap:dropped'
+          await db
+            .insertInto('delivery')
+            .values({
+              id: deliveryId, userId, notificationId: notifId, channel, recipient: recipientAddr,
+              status: 'skipped', providerMessageId: null, error: capErr,
+              attempts: 0, nextRetryAt: null, lastError: capErr,
+              deliveredAt: null, openedAt: null, clickedAt: null, bouncedAt: null,
+              createdAt: dts, updatedAt: dts,
+            })
+            .execute()
+          deliveries.push({
+            id: deliveryId, userId, notificationId: notifId, channel, recipient: recipientAddr,
+            status: 'skipped', providerMessageId: null, error: capErr, attempts: 0,
+            nextRetryAt: null, lastError: capErr, deliveredAt: null, openedAt: null,
+            clickedAt: null, bouncedAt: null, recipientId: nonSegmentRecipientId, variantId: null,
+            createdAt: dts, updatedAt: dts,
+          })
+          continue
+        }
+
+        const digestRoute = await checkDigestRule(db, userId, channel, resolvedTopicId)
+        if (digestRoute.route === 'digest') {
+          await addToDigest(db, userId, nonSegmentRecipientId, channel, digestRoute.digestKey, digestRoute.schedule, digestRoute.templateId, notifId, JSON.stringify(payload), dts)
+          const digestErr = 'digest_rule:buffered'
+          await db
+            .insertInto('delivery')
+            .values({
+              id: deliveryId, userId, notificationId: notifId, channel, recipient: recipientAddr,
+              status: 'skipped', providerMessageId: null, error: digestErr,
+              attempts: 0, nextRetryAt: null, lastError: digestErr,
+              deliveredAt: null, openedAt: null, clickedAt: null, bouncedAt: null,
+              createdAt: dts, updatedAt: dts,
+            })
+            .execute()
+          deliveries.push({
+            id: deliveryId, userId, notificationId: notifId, channel, recipient: recipientAddr,
+            status: 'skipped', providerMessageId: null, error: digestErr, attempts: 0,
+            nextRetryAt: null, lastError: digestErr, deliveredAt: null, openedAt: null,
+            clickedAt: null, bouncedAt: null, recipientId: nonSegmentRecipientId, variantId: null,
+            createdAt: dts, updatedAt: dts,
+          })
+          continue
         }
       }
 

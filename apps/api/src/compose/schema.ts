@@ -130,6 +130,9 @@ export const ComposePayloadSchema = z.object({
   respectQuietHours: z.boolean().optional().default(true),
   sendTimeOptimized: z.boolean().optional().default(false),
   topicKey: z.string().optional(),
+  eventKey: z.string().optional(),
+  throttleWindowSeconds: z.number().int().min(1).optional(),
+  debounceWindowSeconds: z.number().int().min(1).optional(),
 })
 
 export type ComposePayload = z.infer<typeof ComposePayloadSchema>

@@ -27,6 +27,8 @@ import recipientsRouter from './routes/recipients'
 import segmentsRouter from './routes/segments'
 import topicsRouter from './routes/topics'
 import preferencesRouter from './routes/preferences'
+import frequencyCapsRouter from './routes/frequency-caps'
+import digestRulesRouter from './routes/digest-rules'
 import { handleDeliveryQueue } from './queue/consumer'
 import { handleScheduledSweep } from './scheduling/sweep'
 import { recomputeAllStoProfiles } from './scheduling/sto'
@@ -156,6 +158,8 @@ app.route('/api', recipientsRouter)
 app.route('/api', segmentsRouter)
 app.route('/api', topicsRouter)
 app.route('/api', preferencesRouter)
+app.route('/api', frequencyCapsRouter)
+app.route('/api', digestRulesRouter)
 
 app.doc('/doc', {
   openapi: '3.0.0',

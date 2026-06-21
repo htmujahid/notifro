@@ -144,6 +144,9 @@ export interface ComposePayload {
   respectQuietHours?: boolean
   sendTimeOptimized?: boolean
   topicKey?: string
+  eventKey?: string
+  throttleWindowSeconds?: number
+  debounceWindowSeconds?: number
 }
 
 export interface ScheduledMessage {
@@ -251,6 +254,47 @@ export interface ChannelPriority {
   userId: string
   recipientId: string
   order: string[]
+  createdAt: string
+  updatedAt: string
+}
+
+export interface FrequencyCap {
+  id: string
+  userId: string
+  channel: string
+  topicId: string | null
+  maxCount: number
+  windowSeconds: number
+  overflowPolicy: string
+  digestKey: string | null
+  digestSchedule: string | null
+  digestTemplateId: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface DigestRule {
+  id: string
+  userId: string
+  channel: string
+  topicId: string | null
+  digestKey: string
+  schedule: string
+  templateId: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface DigestBucket {
+  id: string
+  userId: string
+  recipientId: string
+  channel: string
+  digestKey: string
+  schedule: string
+  templateId: string | null
+  status: string
+  nextFlushAt: string
   createdAt: string
   updatedAt: string
 }
