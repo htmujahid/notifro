@@ -29,7 +29,6 @@ export function SubscriptionsSection() {
         onSuccess: () => {
           setKey("")
           setName("")
-          setIsTransactional(false)
           setShowForm(false)
         },
       }

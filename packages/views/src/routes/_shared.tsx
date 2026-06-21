@@ -21,6 +21,9 @@ const TemplatesPage = lazy(() => import("../pages/templates"))
 const TemplateEditPage = lazy(() => import("../pages/template-edit"))
 const LogsPage = lazy(() => import("../pages/logs"))
 const AnalyticsPage = lazy(() => import("../pages/analytics"))
+const AudiencesPage = lazy(() => import("../pages/audiences"))
+const JourneysPage = lazy(() => import("../pages/journeys"))
+const RoutingPage = lazy(() => import("../pages/routing"))
 const SettingsPage = lazy(() => import("../pages/settings"))
 const HelpPage = lazy(() => import("../pages/help"))
 const OnboardingPage = lazy(() => import("../pages/onboarding"))
@@ -46,6 +49,9 @@ export const sharedProtectedChildren: RouteObject[] = [
   { path: "notifications", element: <NotificationsPage /> },
   { path: "schedules", element: <SchedulesPage /> },
   { path: "channels", element: <ChannelsPage /> },
+  { path: "audiences", element: <AudiencesPage /> },
+  { path: "journeys", element: <JourneysPage /> },
+  { path: "routing", element: <RoutingPage /> },
   { path: "create", element: <CreatePage /> },
   { path: "templates", element: <TemplatesPage /> },
   { path: "templates/:id", element: <TemplateEditPage /> },

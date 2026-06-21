@@ -9,8 +9,11 @@ import {
   FileTextIcon,
   LayoutDashboardIcon,
   RadioIcon,
+  RouteIcon,
   ScrollIcon,
   Settings2Icon,
+  UsersIcon,
+  WorkflowIcon,
 } from "lucide-react"
 import { Link, useNavigate } from "react-router"
 
@@ -57,6 +60,16 @@ const NAV_MAIN = [
     url: "/channels",
     icon: <RadioIcon className="size-4" />,
   },
+  {
+    title: "Audiences",
+    url: "/audiences",
+    icon: <UsersIcon className="size-4" />,
+  },
+  {
+    title: "Journeys",
+    url: "/journeys",
+    icon: <WorkflowIcon className="size-4" />,
+  },
 ]
 
 const NAV_SECONDARY = [
@@ -79,6 +92,11 @@ const NAV_DOCUMENTS = [
     name: "Analytics",
     url: "/analytics",
     icon: <BarChart3Icon className="size-4" />,
+  },
+  {
+    name: "Routing",
+    url: "/routing",
+    icon: <RouteIcon className="size-4" />,
   },
   {
     name: "Developers",

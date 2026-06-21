@@ -339,6 +339,45 @@ export interface ApiRequestLog {
   createdAt: string
 }
 
+export interface Delivery {
+  id: string
+  userId: string
+  notificationId: string
+  channel: string
+  recipient: string
+  status: string
+  providerMessageId: string | null
+  attempts: number
+  deliveredAt: string | null
+  openedAt: string | null
+  clickedAt: string | null
+  bouncedAt: string | null
+  lastError: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface DeadLetter {
+  id: string
+  userId: string
+  deliveryId: string
+  notificationId: string
+  channel: string
+  reason: string
+  errorCode: string | null
+  error: string
+  attempts: number
+  failedAt: string
+  createdAt: string
+}
+
+export interface DeliveryEvent {
+  id: string
+  type: string
+  at: string
+  meta: string
+}
+
 export interface AnalyticsSummary {
   sent: number
   delivered: number
