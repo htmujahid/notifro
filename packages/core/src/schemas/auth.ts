@@ -21,6 +21,7 @@ export const forgotPasswordSchema = z.object({
 
 export const resetPasswordSchema = z
   .object({
+    otp: z.string().length(6, { error: "Enter the 6-digit code" }),
     password: z
       .string()
       .min(8, { error: "Password must be at least 8 characters" }),
@@ -43,5 +44,6 @@ export type SignInValues = z.infer<typeof signInSchema>
 export type SignUpValues = z.infer<typeof signUpSchema>
 export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>
 export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>
+export type ResetPasswordOTPValues = z.infer<typeof resetPasswordSchema>
 export type TwoFactorVerifyValues = z.infer<typeof twoFactorVerifySchema>
 export type TwoFactorPasswordValues = z.infer<typeof twoFactorPasswordSchema>

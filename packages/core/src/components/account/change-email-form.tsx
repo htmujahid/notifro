@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useApp } from "@renderical/app/app/context"
 import { useAuth } from "@renderical/app/auth/context"
-import { buildAuthURL } from "@renderical/app/auth/deep-link"
 import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
@@ -24,7 +23,7 @@ export function ChangeEmailForm() {
   async function handleSubmit(values: ChangeEmailValues) {
     const { error } = await auth.changeEmail({
       newEmail: values.newEmail,
-      callbackURL: buildAuthURL(appBaseURL, "/"),
+      callbackURL: `${appBaseURL.replace(/\/$/, "")}/`,
     })
     if (error) {
       form.setError("root", { message: error.message })

@@ -1,6 +1,6 @@
 export type { EmailFrom, EmailUser } from "./binding"
-export { sendVerificationEmail } from "./emails/verify-email"
-export { sendResetPasswordEmail } from "./emails/reset-password"
+export { sendVerificationOTPEmail } from "./emails/verify-email-otp"
+export { sendResetPasswordOTPEmail } from "./emails/reset-password-otp"
 export { sendTwoFactorOTPEmail } from "./emails/two-factor-otp"
 export { sendInvitationEmail } from "./emails/invitation"
 export { sendNotificationEmail } from "./emails/notification"

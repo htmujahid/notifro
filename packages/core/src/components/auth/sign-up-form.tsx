@@ -3,7 +3,6 @@ import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useApp } from "@renderical/app/app/context"
 import { useAuth } from "@renderical/app/auth/context"
-import { buildAuthURL } from "@renderical/app/auth/deep-link"
 import { SESSION_QUERY_KEY } from "@renderical/app/auth/use-session"
 import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
@@ -19,7 +18,7 @@ import { GoogleIcon, OrDivider } from "./auth-icons"
 
 export function SignUpForm() {
   const auth = useAuth()
-  const { appBaseURL } = useApp()
+  const { appBaseURL, isWeb } = useApp()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [googleLoading, setGoogleLoading] = useState(false)
@@ -34,7 +33,7 @@ export function SignUpForm() {
     try {
       const { error } = await auth.signIn.social({
         provider: "google",
-        callbackURL: buildAuthURL(appBaseURL, "/"),
+        callbackURL: `${appBaseURL.replace(/\/$/, "")}/`,
       })
       if (error) form.setError("root", { message: error.message })
     } finally {
@@ -47,14 +46,13 @@ export function SignUpForm() {
       name: values.name,
       email: values.email,
       password: values.password,
-      callbackURL: buildAuthURL(appBaseURL, "/"),
     })
     if (error) {
       form.setError("root", { message: error.message })
       return
     }
     await queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY })
-    navigate("/auth/verify-email")
+    navigate(`/auth/verify-email?email=${encodeURIComponent(values.email)}`)
   }
 
   const busy = form.formState.isSubmitting || googleLoading
@@ -71,19 +69,22 @@ export function SignUpForm() {
         </p>
       </div>
 
-      {/* Google */}
-      <Button
-        type="button"
-        variant="outline"
-        className="w-full gap-2"
-        disabled={busy}
-        onClick={handleGoogleSignIn}
-      >
-        <GoogleIcon />
-        {googleLoading ? "Redirecting…" : "Continue with Google"}
-      </Button>
-
-      <OrDivider />
+      {/* Google — web only */}
+      {isWeb && (
+        <>
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full gap-2"
+            disabled={busy}
+            onClick={handleGoogleSignIn}
+          >
+            <GoogleIcon />
+            {googleLoading ? "Redirecting…" : "Continue with Google"}
+          </Button>
+          <OrDivider />
+        </>
+      )}
 
       {/* Form */}
       <form

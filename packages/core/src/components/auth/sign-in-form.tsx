@@ -3,7 +3,6 @@ import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useApp } from "@renderical/app/app/context"
 import { useAuth } from "@renderical/app/auth/context"
-import { buildAuthURL } from "@renderical/app/auth/deep-link"
 import { SESSION_QUERY_KEY } from "@renderical/app/auth/use-session"
 import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
@@ -19,7 +18,7 @@ import { GoogleIcon, OrDivider } from "./auth-icons"
 
 export function SignInForm() {
   const auth = useAuth()
-  const { appBaseURL } = useApp()
+  const { appBaseURL, isWeb } = useApp()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [searchParams] = useSearchParams()
@@ -34,9 +33,10 @@ export function SignInForm() {
   async function handleGoogleSignIn() {
     setGoogleLoading(true)
     try {
+      const base = appBaseURL.replace(/\/$/, "")
       const { error } = await auth.signIn.social({
         provider: "google",
-        callbackURL: buildAuthURL(appBaseURL, next),
+        callbackURL: next === "/" ? `${base}/` : `${base}${next}`,
       })
       if (error) form.setError("root", { message: error.message })
     } finally {
@@ -73,19 +73,22 @@ export function SignInForm() {
         </p>
       </div>
 
-      {/* Google */}
-      <Button
-        type="button"
-        variant="outline"
-        className="w-full gap-2"
-        disabled={busy}
-        onClick={handleGoogleSignIn}
-      >
-        <GoogleIcon />
-        {googleLoading ? "Redirecting…" : "Continue with Google"}
-      </Button>
-
-      <OrDivider />
+      {/* Google — web only */}
+      {isWeb && (
+        <>
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full gap-2"
+            disabled={busy}
+            onClick={handleGoogleSignIn}
+          >
+            <GoogleIcon />
+            {googleLoading ? "Redirecting…" : "Continue with Google"}
+          </Button>
+          <OrDivider />
+        </>
+      )}
 
       {/* Email / password form */}
       <form

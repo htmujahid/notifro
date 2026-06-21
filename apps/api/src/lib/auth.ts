@@ -1,11 +1,11 @@
 import { apiKey } from "@better-auth/api-key"
 import {
-  sendResetPasswordEmail,
+  sendResetPasswordOTPEmail,
   sendTwoFactorOTPEmail,
-  sendVerificationEmail,
+  sendVerificationOTPEmail,
 } from "@renderical/mailer"
 import { betterAuth } from "better-auth"
-import { phoneNumber, twoFactor } from "better-auth/plugins"
+import { emailOtp, phoneNumber, twoFactor } from "better-auth/plugins"
 import { env } from "cloudflare:workers"
 
 import { kvSecondaryStorage } from "./kv-storage"
@@ -24,41 +24,10 @@ export function createAuth(db: D1Database = mockD1) {
       window: 60,
       max: 100,
     },
-    trustedOrigins: [env.FRONTEND_URL, "renderical://", "renderical://**"],
+    trustedOrigins: [env.FRONTEND_URL],
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: true,
-      sendVerificationEmail: async ({
-        user,
-        url,
-      }: {
-        user: { email: string; name?: string | null }
-        url: string
-      }) => {
-        await sendVerificationEmail({ user, url, from: FROM })
-      },
-      sendResetPassword: async ({
-        user,
-        url,
-      }: {
-        user: { email: string; name?: string | null }
-        url: string
-      }) => {
-        await sendResetPasswordEmail({ user, url, from: FROM })
-      },
-    },
-    emailVerification: {
-      sendOnSignIn: true,
-      autoSignInAfterVerification: true,
-      sendVerificationEmail: async ({
-        user,
-        url,
-      }: {
-        user: { email: string; name?: string | null }
-        url: string
-      }) => {
-        await sendVerificationEmail({ user, url, from: FROM })
-      },
     },
     socialProviders: {
       google: {
@@ -67,6 +36,27 @@ export function createAuth(db: D1Database = mockD1) {
       },
     },
     plugins: [
+      emailOtp({
+        otpLength: 6,
+        expiresIn: 300,
+        overrideDefaultEmailVerification: true,
+        async sendVerificationOTP({
+          email,
+          otp,
+          type,
+        }: {
+          email: string
+          otp: string
+          type: "sign-in" | "email-verification" | "forget-password"
+        }) {
+          const user = { email }
+          if (type === "email-verification") {
+            await sendVerificationOTPEmail({ user, otp, from: FROM })
+          } else if (type === "forget-password") {
+            await sendResetPasswordOTPEmail({ user, otp, from: FROM })
+          }
+        },
+      }),
       twoFactor({
         otpOptions: {
           async sendOTP({

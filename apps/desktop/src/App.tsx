@@ -5,7 +5,7 @@ import { createDesktopAuthClient } from "@renderical/app/auth/client.desktop"
 import {
   NATIVE_REDIRECT_URL,
   deepLinkToPath,
-} from "@renderical/app/auth/deep-link"
+} from "@renderical/app/auth/native-url"
 import { routes } from "@renderical/views/routes/desktop"
 import { RouterProvider, createHashRouter } from "react-router"
 

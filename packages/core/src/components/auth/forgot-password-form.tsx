@@ -1,7 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useApp } from "@renderical/app/app/context"
 import { useAuth } from "@renderical/app/auth/context"
-import { buildAuthURL } from "@renderical/app/auth/deep-link"
 import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
@@ -16,7 +14,6 @@ import {
 
 export function ForgotPasswordForm() {
   const auth = useAuth()
-  const { appBaseURL } = useApp()
   const navigate = useNavigate()
   const form = useForm<ForgotPasswordValues>({
     resolver: zodResolver(forgotPasswordSchema),
@@ -24,54 +21,15 @@ export function ForgotPasswordForm() {
   })
 
   async function handleSubmit(values: ForgotPasswordValues) {
-    const { error } = await auth.requestPasswordReset({
+    const { error } = await auth.emailOtp.requestPasswordReset({
       email: values.email,
-      redirectTo: buildAuthURL(appBaseURL, "/auth/reset-password"),
     })
     if (error) {
       form.setError("root", { message: error.message })
+      return
     }
-  }
-
-  const sent = form.formState.isSubmitSuccessful && !form.formState.errors.root
-
-  if (sent) {
-    return (
-      <div className="flex flex-col items-center gap-6 text-center">
-        <div className="flex size-14 items-center justify-center rounded-full bg-muted">
-          <svg
-            className="size-7 text-foreground"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth="1.75"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-            />
-          </svg>
-        </div>
-        <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Check your inbox
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            We sent a reset link to{" "}
-            <span className="font-medium text-foreground">
-              {form.getValues("email")}
-            </span>
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => navigate("/auth/sign-in")}
-          className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-        >
-          Back to sign in
-        </button>
-      </div>
+    navigate(
+      `/auth/reset-password?email=${encodeURIComponent(values.email)}`
     )
   }
 
@@ -82,7 +40,7 @@ export function ForgotPasswordForm() {
           Forgot password?
         </h1>
         <p className="text-sm text-muted-foreground">
-          Enter your email and we&apos;ll send you a reset link
+          Enter your email and we&apos;ll send you a reset code
         </p>
       </div>
 
@@ -124,7 +82,7 @@ export function ForgotPasswordForm() {
           className="w-full"
           disabled={form.formState.isSubmitting}
         >
-          {form.formState.isSubmitting ? "Sending…" : "Send reset link"}
+          {form.formState.isSubmitting ? "Sending…" : "Send reset code"}
         </Button>
       </form>
 

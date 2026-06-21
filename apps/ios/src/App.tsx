@@ -8,7 +8,7 @@ import { createMobileAuthClient } from "@renderical/app/auth/client.mobile"
 import {
   NATIVE_REDIRECT_URL,
   deepLinkToPath,
-} from "@renderical/app/auth/deep-link"
+} from "@renderical/app/auth/native-url"
 import { registerForPush } from "@renderical/mobile-shared/push"
 import { routes } from "@renderical/views/routes/ios"
 import { RouterProvider, createHashRouter } from "react-router"

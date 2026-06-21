@@ -1,6 +1,10 @@
 import { createAuthClient } from "better-auth/client"
 import type { BetterAuthClientOptions } from "better-auth/client"
-import { phoneNumberClient, twoFactorClient } from "better-auth/client/plugins"
+import {
+  emailOtpClient,
+  phoneNumberClient,
+  twoFactorClient,
+} from "better-auth/client/plugins"
 
 export type { BetterAuthClientOptions }
 
@@ -11,7 +15,7 @@ export function createBaseAuthClient(
   return createAuthClient({
     baseURL,
     ...options,
-    plugins: [twoFactorClient(), phoneNumberClient()],
+    plugins: [emailOtpClient(), twoFactorClient(), phoneNumberClient()],
   })
 }
 
