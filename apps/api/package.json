@@ -13,7 +13,9 @@
   "dependencies": {
     "@hono/zod-openapi": "^1.4.0",
     "@scalar/hono-api-reference": "^0.11.4",
+    "@workspace/i18n": "workspace:*",
     "@workspace/mailer": "workspace:*",
+    "@workspace/templating": "workspace:*",
     "better-auth": "^1.6.19",
     "hono": "^4.12.26",
     "kysely": "^0.29.2",

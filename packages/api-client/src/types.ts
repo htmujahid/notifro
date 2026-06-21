@@ -60,9 +60,23 @@ export type Recipient =
     }
   | { type: 'segment'; segmentId: string }
 
+export interface Template {
+  id: string
+  userId: string
+  name: string
+  slug: string
+  description: string | null
+  defaultLocale: string
+  content: string
+  variables: string | null
+  localeStrings: string | null
+  createdAt: string
+  updatedAt: string
+}
+
 export interface ComposePayload {
   schemaVersion?: '1'
-  content: {
+  content?: {
     title?: string
     subject?: string
     body: { text?: string; markdown?: string }
@@ -80,6 +94,10 @@ export interface ComposePayload {
     tags?: string[]
     data?: Record<string, unknown>
   }
+  templateId?: string
+  templateSlug?: string
+  templateData?: Record<string, unknown>
+  templateLocale?: string
   idempotencyKey?: string
   recipient: Recipient
   channels?: ChannelType[]

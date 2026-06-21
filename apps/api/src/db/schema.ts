@@ -27,6 +27,20 @@ export interface ConnectionTable {
   updatedAt: string
 }
 
+export interface TemplateTable {
+  id: string
+  userId: string
+  name: string
+  slug: string
+  description: string | null
+  defaultLocale: string
+  content: string
+  variables: string | null
+  localeStrings: string | null
+  createdAt: string
+  updatedAt: string
+}
+
 export interface NotificationTable {
   id: string
   userId: string
@@ -35,6 +49,8 @@ export interface NotificationTable {
   channels: string
   mode: string
   status: string
+  templateId: string | null
+  templateData: string | null
   createdAt: string
   updatedAt: string
 }
@@ -200,6 +216,7 @@ export interface RecipientProfileTable {
 export interface DB {
   user: UserTable
   connection: ConnectionTable
+  template: TemplateTable
   notification: NotificationTable
   delivery: DeliveryTable
   delivery_event: DeliveryEventTable

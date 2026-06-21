@@ -8,6 +8,7 @@ import type { AppEnv } from './lib/types'
 import templateRouter from './routes/_template'
 import connectionsRouter from './routes/connections'
 import notificationsRouter from './routes/notifications'
+import templatesRouter from './routes/templates'
 import inboxRouter from './routes/inbox'
 import overviewRouter from './routes/overview'
 import pushRouter from './routes/push'
@@ -129,6 +130,7 @@ app.openapi(dbHealthRoute, async (c) => {
 app.route('/api', templateRouter)
 app.route('/api', connectionsRouter)
 app.route('/api', notificationsRouter)
+app.route('/api', templatesRouter)
 app.route('/api', inboxRouter)
 app.route('/api', overviewRouter)
 app.route('/api', pushRouter)

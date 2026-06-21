@@ -5,11 +5,24 @@ import { Errors, validationHook } from '../lib/errors'
 import { getAdapter } from '../channels/registry'
 import { resolveSendConnection } from '../channels/resolve'
 import { ComposePayloadSchema } from '../compose/schema'
+import { resolveTemplate, renderTemplate } from '../lib/render-template'
 import { localToUtc } from '../scheduling/utils'
 import { getStoSendAt } from '../scheduling/sto'
 import type { AppEnv } from '../lib/types'
 import type { ChannelType } from '../channels/types'
 import type { DeliveryQueueMessage } from '../queue/consumer'
+import type { ComposePayload } from '../compose/schema'
+
+const SendRequestSchema = ComposePayloadSchema.extend({
+  content: ComposePayloadSchema.shape.content.optional(),
+  templateId: z.string().optional(),
+  templateSlug: z.string().optional(),
+  templateData: z.record(z.string(), z.unknown()).optional(),
+  templateLocale: z.string().optional(),
+}).refine(
+  (v) => v.content !== undefined || v.templateId !== undefined || v.templateSlug !== undefined,
+  { message: 'Either content or templateId/templateSlug is required' },
+)
 
 const SORTABLE = { createdAt: 'createdAt', status: 'status' }
 const FILTERABLE = {
@@ -49,6 +62,8 @@ const NotificationDtoSchema = z.object({
   channels: z.string(),
   mode: z.string(),
   status: z.string(),
+  templateId: z.string().nullable(),
+  templateData: z.string().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
 })
@@ -72,7 +87,7 @@ const ScheduledResponseSchema = z.object({
 const sendRoute = createRoute({
   method: 'post',
   path: '/notifications',
-  request: { body: { content: { 'application/json': { schema: ComposePayloadSchema } } } },
+  request: { body: { content: { 'application/json': { schema: SendRequestSchema } } } },
   responses: {
     200: {
       content: { 'application/json': { schema: NotificationWithDeliveriesSchema } },
@@ -141,10 +156,28 @@ const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use('*', requireAuth)
 
 router.openapi(sendRoute, async (c) => {
-  const payload = c.req.valid('json')
+  const rawPayload = c.req.valid('json')
   const { db } = c.var
   const userId = c.var.user!.id
   const ts = now()
+
+  let resolvedTemplateId: string | null = null
+  let payload: ComposePayload
+
+  if (rawPayload.templateId || rawPayload.templateSlug) {
+    const template = await resolveTemplate(db, userId, {
+      templateId: rawPayload.templateId,
+      templateSlug: rawPayload.templateSlug,
+    })
+    const renderedContent = renderTemplate(template, rawPayload.templateData ?? {}, rawPayload.templateLocale)
+    resolvedTemplateId = template.id
+    payload = {
+      ...rawPayload,
+      content: renderedContent as ComposePayload['content'],
+    } as ComposePayload
+  } else {
+    payload = rawPayload as ComposePayload
+  }
 
   if (payload.idempotencyKey) {
     const existing = await db
@@ -232,6 +265,8 @@ router.openapi(sendRoute, async (c) => {
       channels: JSON.stringify(channels),
       mode: 'transactional',
       status: 'queued',
+      templateId: resolvedTemplateId,
+      templateData: resolvedTemplateId && rawPayload.templateData ? JSON.stringify(rawPayload.templateData) : null,
       createdAt: ts,
       updatedAt: ts,
     })
