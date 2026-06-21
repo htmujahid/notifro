@@ -6,13 +6,16 @@ export interface Timestamps {
 }
 
 export interface UserTable {
-  id: string
-  name: string
-  email: string
-  emailVerified: number
-  image: string | null
-  phoneNumber: string | null
-  phoneNumberVerified: number
+ id: string;
+ createdAt: Date;
+ updatedAt: Date;
+ email: string;
+ emailVerified: boolean;
+ name: string;
+ image?: string | null | undefined;
+ twoFactorEnabled: boolean | null | undefined;
+ phoneNumber?: string | null | undefined;
+ phoneNumberVerified?: boolean | null | undefined;
 }
 
 export interface ConnectionTable {

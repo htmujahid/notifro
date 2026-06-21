@@ -68,8 +68,7 @@ app.use("*", async (c, next) => {
         .selectAll()
         .executeTakeFirst()
       if (dbUser) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        c.set("user", dbUser as any)
+        c.set("user", dbUser)
         c.set("session", null)
         const meta = apiKey.metadata as { mode?: string } | null
         c.set(
