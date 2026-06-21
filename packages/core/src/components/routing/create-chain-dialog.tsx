@@ -1,17 +1,18 @@
 import React from "react"
 
 import { Button } from "@renderical/ui/components/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@renderical/ui/components/dialog"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 
 import { useCreateFallbackChain } from "../../hooks/routing"
+import {
+  ResponsiveModal,
+  ResponsiveModalBody,
+  ResponsiveModalContent,
+  ResponsiveModalFooter,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+} from "../responsive-modal"
 import { ChainStepsEditor } from "./chain-steps-editor"
 import type { StepItem } from "./chain-steps-editor"
 
@@ -49,12 +50,12 @@ export function CreateChainDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
-        <DialogHeader>
-          <DialogTitle>New fallback chain</DialogTitle>
-        </DialogHeader>
-        <div className="flex flex-col gap-4 py-2">
+    <ResponsiveModal open={open} onOpenChange={onOpenChange}>
+      <ResponsiveModalContent className="max-w-lg">
+        <ResponsiveModalHeader>
+          <ResponsiveModalTitle>New fallback chain</ResponsiveModalTitle>
+        </ResponsiveModalHeader>
+        <ResponsiveModalBody className="flex flex-col gap-4 py-2">
           <div className="flex flex-col gap-1.5">
             <Label>Name</Label>
             <Input
@@ -67,8 +68,8 @@ export function CreateChainDialog({
             <Label>Steps (in order)</Label>
             <ChainStepsEditor steps={steps} onChange={setSteps} />
           </div>
-        </div>
-        <DialogFooter>
+        </ResponsiveModalBody>
+        <ResponsiveModalFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
@@ -78,8 +79,8 @@ export function CreateChainDialog({
           >
             {create.isPending ? "Creating…" : "Create chain"}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </ResponsiveModalFooter>
+      </ResponsiveModalContent>
+    </ResponsiveModal>
   )
 }

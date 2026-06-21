@@ -2,12 +2,14 @@ import { Suspense } from "react"
 
 import { Navigate, Outlet } from "react-router"
 
+import { useApp } from "@renderical/app/app/context"
 import { useSession } from "@renderical/app/auth/use-session"
 
 import { RendericalMark } from "../components/renderical-logo"
 
 export default function AuthLayout() {
   const { data: session, isPending } = useSession()
+  const { isNative } = useApp()
 
   if (isPending) {
     return (
@@ -101,8 +103,16 @@ export default function AuthLayout() {
 
       {/* Right panel — scrollable form */}
       <main className="flex flex-1 flex-col overflow-y-auto">
-        {/* Mobile brand bar */}
-        <div className="flex shrink-0 items-center gap-2 border-b border-border px-6 py-4 lg:hidden">
+        {/* Mobile brand bar — safe-area-inset-top for notch on native apps */}
+        <div
+          className="flex shrink-0 items-center gap-2 border-b border-border px-6 lg:hidden"
+          style={{
+            paddingTop: isNative
+              ? "calc(env(safe-area-inset-top) + 1rem)"
+              : "1rem",
+            paddingBottom: "1rem",
+          }}
+        >
           <RendericalMark className="size-[18px]" />
           <span className="text-sm font-semibold tracking-tight">
             Renderical

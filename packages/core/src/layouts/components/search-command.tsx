@@ -18,6 +18,7 @@ import {
 } from "lucide-react"
 import { useNavigate } from "react-router"
 
+import { useApp } from "@renderical/app/app/context"
 import {
   Command,
   CommandDialog,
@@ -38,8 +39,10 @@ export function SearchCommand({
   onOpenChange: (open: boolean) => void
 }) {
   const navigate = useNavigate()
+  const { isMobile } = useApp()
 
   useEffect(() => {
+    if (isMobile) return
     function handleKeyDown(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
         e.preventDefault()
@@ -48,7 +51,7 @@ export function SearchCommand({
     }
     document.addEventListener("keydown", handleKeyDown)
     return () => document.removeEventListener("keydown", handleKeyDown)
-  }, [onOpenChange])
+  }, [onOpenChange, isMobile])
 
   function run(to: string) {
     navigate(to)

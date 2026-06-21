@@ -1,17 +1,18 @@
 import { useState } from "react"
 
 import { Button } from "@renderical/ui/components/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@renderical/ui/components/dialog"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 
 import { useCreateSegment } from "../../hooks/audiences"
+import {
+  ResponsiveModal,
+  ResponsiveModalBody,
+  ResponsiveModalContent,
+  ResponsiveModalFooter,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+} from "../responsive-modal"
 import { FilterBuilder } from "./filter-builder"
 import type { FilterClause } from "./filter-builder"
 
@@ -44,12 +45,12 @@ export function NewSegmentDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-lg">
-        <DialogHeader>
-          <DialogTitle>New audience segment</DialogTitle>
-        </DialogHeader>
-        <div className="flex flex-col gap-4 py-2">
+    <ResponsiveModal open={open} onOpenChange={(v) => !v && onClose()}>
+      <ResponsiveModalContent className="max-w-lg">
+        <ResponsiveModalHeader>
+          <ResponsiveModalTitle>New audience segment</ResponsiveModalTitle>
+        </ResponsiveModalHeader>
+        <ResponsiveModalBody className="flex flex-col gap-4 py-2">
           <div className="flex flex-col gap-1.5">
             <Label>Name</Label>
             <Input
@@ -62,8 +63,8 @@ export function NewSegmentDialog({
             <Label>Filter conditions (AND)</Label>
             <FilterBuilder clauses={clauses} onChange={setClauses} />
           </div>
-        </div>
-        <DialogFooter>
+        </ResponsiveModalBody>
+        <ResponsiveModalFooter>
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
@@ -73,8 +74,8 @@ export function NewSegmentDialog({
           >
             {createSegment.isPending ? "Creating…" : "Create segment"}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </ResponsiveModalFooter>
+      </ResponsiveModalContent>
+    </ResponsiveModal>
   )
 }

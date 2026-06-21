@@ -7,16 +7,18 @@ import { useQueryClient } from "@tanstack/react-query"
 import { useAuth } from "@renderical/app/auth/context"
 import { SESSION_QUERY_KEY } from "@renderical/app/auth/use-session"
 import { Button } from "@renderical/ui/components/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@renderical/ui/components/dialog"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
+
+import {
+  ResponsiveModal,
+  ResponsiveModalBody,
+  ResponsiveModalContent,
+  ResponsiveModalDescription,
+  ResponsiveModalFooter,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+} from "../responsive-modal"
 
 export function DeleteAccountDialog() {
   const auth = useAuth()
@@ -51,16 +53,16 @@ export function DeleteAccountDialog() {
       <Button variant="destructive" size="sm" onClick={() => setOpen(true)}>
         Delete account
       </Button>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete account</DialogTitle>
-            <DialogDescription>
+      <ResponsiveModal open={open} onOpenChange={setOpen}>
+        <ResponsiveModalContent>
+          <ResponsiveModalHeader>
+            <ResponsiveModalTitle>Delete account</ResponsiveModalTitle>
+            <ResponsiveModalDescription>
               This action is permanent and cannot be undone. All your data will
               be deleted.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex flex-col gap-3 py-2">
+            </ResponsiveModalDescription>
+          </ResponsiveModalHeader>
+          <ResponsiveModalBody className="flex flex-col gap-3 py-2">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="delete-password">
                 Password (if you have one)
@@ -78,8 +80,8 @@ export function DeleteAccountDialog() {
                 {error}
               </p>
             )}
-          </div>
-          <DialogFooter>
+          </ResponsiveModalBody>
+          <ResponsiveModalFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
@@ -90,9 +92,9 @@ export function DeleteAccountDialog() {
             >
               {loading ? "Deleting…" : "Delete my account"}
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </ResponsiveModalFooter>
+        </ResponsiveModalContent>
+      </ResponsiveModal>
     </>
   )
 }

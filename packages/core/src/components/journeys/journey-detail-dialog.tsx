@@ -4,13 +4,6 @@ import { toast } from "sonner"
 
 import type { Journey, JourneyRun } from "@renderical/api-client/types"
 import { Button } from "@renderical/ui/components/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@renderical/ui/components/dialog"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 import {
@@ -35,6 +28,14 @@ import {
   useJourneyRuns,
   useUpdateJourney,
 } from "../../hooks/journeys"
+import {
+  ResponsiveModal,
+  ResponsiveModalBody,
+  ResponsiveModalContent,
+  ResponsiveModalFooter,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+} from "../responsive-modal"
 import { JourneyStatusBadge } from "./journey-status-badge"
 
 const EXAMPLE_TRIGGER = JSON.stringify(
@@ -113,190 +114,195 @@ export function JourneyDetailDialog({
   }
 
   return (
-    <Dialog open onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+    <ResponsiveModal open onOpenChange={onClose}>
+      <ResponsiveModalContent className="max-h-[80vh] max-w-3xl overflow-y-auto">
+        <ResponsiveModalHeader>
+          <ResponsiveModalTitle className="flex items-center gap-2">
             {journey.name} <JourneyStatusBadge status={journey.status} />
-          </DialogTitle>
-        </DialogHeader>
+          </ResponsiveModalTitle>
+        </ResponsiveModalHeader>
 
-        <Tabs defaultValue="definition">
-          <TabsList>
-            <TabsTrigger value="definition">Definition</TabsTrigger>
-            <TabsTrigger value="runs">Runs ({runs.length})</TabsTrigger>
-            <TabsTrigger value="enroll">Enroll</TabsTrigger>
-          </TabsList>
+        <ResponsiveModalBody>
+          <Tabs defaultValue="definition">
+            <TabsList>
+              <TabsTrigger value="definition">Definition</TabsTrigger>
+              <TabsTrigger value="runs">Runs ({runs.length})</TabsTrigger>
+              <TabsTrigger value="enroll">Enroll</TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="definition" className="space-y-4 pt-2">
-            <div className="space-y-2">
-              <Label>Trigger</Label>
-              {editSteps ? (
-                <Textarea
-                  className="font-mono text-xs"
-                  rows={4}
-                  value={triggerValue}
-                  onChange={(e) => setTriggerValue(e.target.value)}
-                  placeholder={EXAMPLE_TRIGGER}
-                />
-              ) : (
-                <pre className="rounded bg-muted p-2 text-xs overflow-auto max-h-24">
-                  {journey.trigger ?? "(none)"}
-                </pre>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label>Steps (JSON)</Label>
-              {editSteps ? (
-                <Textarea
-                  className="font-mono text-xs"
-                  rows={12}
-                  value={stepsValue}
-                  onChange={(e) => setStepsValue(e.target.value)}
-                />
-              ) : (
-                <pre className="rounded bg-muted p-2 text-xs overflow-auto max-h-48">
-                  {(() => {
-                    try {
-                      return JSON.stringify(JSON.parse(journey.steps), null, 2)
-                    } catch {
-                      return journey.steps
-                    }
-                  })()}
-                </pre>
-              )}
-            </div>
-            <div className="flex gap-2">
-              {!editSteps ? (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setEditSteps(true)}
-                  disabled={journey.status === "active"}
-                >
-                  Edit
-                </Button>
-              ) : (
-                <>
-                  <Button
-                    size="sm"
-                    onClick={handleSaveEdit}
-                    disabled={update.isPending}
-                  >
-                    Save
-                  </Button>
+            <TabsContent value="definition" className="space-y-4 pt-2">
+              <div className="space-y-2">
+                <Label>Trigger</Label>
+                {editSteps ? (
+                  <Textarea
+                    className="font-mono text-xs"
+                    rows={4}
+                    value={triggerValue}
+                    onChange={(e) => setTriggerValue(e.target.value)}
+                    placeholder={EXAMPLE_TRIGGER}
+                  />
+                ) : (
+                  <pre className="max-h-24 overflow-auto rounded bg-muted p-2 text-xs">
+                    {journey.trigger ?? "(none)"}
+                  </pre>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label>Steps (JSON)</Label>
+                {editSteps ? (
+                  <Textarea
+                    className="font-mono text-xs"
+                    rows={12}
+                    value={stepsValue}
+                    onChange={(e) => setStepsValue(e.target.value)}
+                  />
+                ) : (
+                  <pre className="max-h-48 overflow-auto rounded bg-muted p-2 text-xs">
+                    {(() => {
+                      try {
+                        return JSON.stringify(JSON.parse(journey.steps), null, 2)
+                      } catch {
+                        return journey.steps
+                      }
+                    })()}
+                  </pre>
+                )}
+              </div>
+              <div className="flex gap-2">
+                {!editSteps ? (
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => {
-                      setEditSteps(false)
-                      setStepsValue(journey.steps)
-                      setTriggerValue(journey.trigger ?? "")
-                    }}
+                    onClick={() => setEditSteps(true)}
+                    disabled={journey.status === "active"}
                   >
-                    Cancel
+                    Edit
                   </Button>
-                </>
-              )}
-              {journey.status === "draft" || journey.status === "paused" ? (
-                <Button
-                  size="sm"
-                  onClick={handleActivate}
-                  disabled={activate.isPending}
-                >
-                  Activate
-                </Button>
-              ) : journey.status === "active" ? (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={handlePause}
-                  disabled={update.isPending}
-                >
-                  Pause
-                </Button>
-              ) : null}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="runs" className="pt-2">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Run ID</TableHead>
-                  <TableHead>Recipient</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Step</TableHead>
-                  <TableHead>Resume At</TableHead>
-                  <TableHead>Updated</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {runs.length === 0 && (
-                  <TableRow>
-                    <TableCell
-                      colSpan={6}
-                      className="text-center text-muted-foreground"
+                ) : (
+                  <>
+                    <Button
+                      size="sm"
+                      onClick={handleSaveEdit}
+                      disabled={update.isPending}
                     >
-                      No runs yet
-                    </TableCell>
-                  </TableRow>
+                      Save
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setEditSteps(false)
+                        setStepsValue(journey.steps)
+                        setTriggerValue(journey.trigger ?? "")
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </>
                 )}
-                {runs.map((run) => (
-                  <TableRow key={run.id}>
-                    <TableCell className="font-mono text-xs">
-                      {run.id.slice(0, 8)}…
-                    </TableCell>
-                    <TableCell className="font-mono text-xs">
-                      {run.recipientId.slice(0, 8)}…
-                    </TableCell>
-                    <TableCell>
-                      <JourneyStatusBadge status={run.status} />
-                    </TableCell>
-                    <TableCell className="font-mono text-xs">
-                      {run.currentStepId}
-                    </TableCell>
-                    <TableCell className="text-xs">
-                      {run.nextResumeAt
-                        ? new Date(run.nextResumeAt).toLocaleString()
-                        : "—"}
-                    </TableCell>
-                    <TableCell className="text-xs">
-                      {new Date(run.updatedAt).toLocaleString()}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TabsContent>
+                {journey.status === "draft" || journey.status === "paused" ? (
+                  <Button
+                    size="sm"
+                    onClick={handleActivate}
+                    disabled={activate.isPending}
+                  >
+                    Activate
+                  </Button>
+                ) : journey.status === "active" ? (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handlePause}
+                    disabled={update.isPending}
+                  >
+                    Pause
+                  </Button>
+                ) : null}
+              </div>
+            </TabsContent>
 
-          <TabsContent value="enroll" className="space-y-3 pt-2">
-            <p className="text-sm text-muted-foreground">
-              Manually enroll a recipient by their ID.
-            </p>
-            <div className="flex gap-2">
-              <Input
-                placeholder="Recipient ID"
-                value={enrollId}
-                onChange={(e) => setEnrollId(e.target.value)}
-                className="font-mono text-sm"
-              />
-              <Button
-                onClick={handleEnroll}
-                disabled={enroll.isPending || !enrollId.trim()}
-              >
-                Enroll
-              </Button>
-            </div>
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="runs" className="pt-2">
+              {/* Horizontal scroll on narrow screens (mobile) */}
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Run ID</TableHead>
+                      <TableHead>Recipient</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Step</TableHead>
+                      <TableHead>Resume At</TableHead>
+                      <TableHead>Updated</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {runs.length === 0 && (
+                      <TableRow>
+                        <TableCell
+                          colSpan={6}
+                          className="text-center text-muted-foreground"
+                        >
+                          No runs yet
+                        </TableCell>
+                      </TableRow>
+                    )}
+                    {runs.map((run) => (
+                      <TableRow key={run.id}>
+                        <TableCell className="font-mono text-xs">
+                          {run.id.slice(0, 8)}…
+                        </TableCell>
+                        <TableCell className="font-mono text-xs">
+                          {run.recipientId.slice(0, 8)}…
+                        </TableCell>
+                        <TableCell>
+                          <JourneyStatusBadge status={run.status} />
+                        </TableCell>
+                        <TableCell className="font-mono text-xs">
+                          {run.currentStepId}
+                        </TableCell>
+                        <TableCell className="text-xs">
+                          {run.nextResumeAt
+                            ? new Date(run.nextResumeAt).toLocaleString()
+                            : "—"}
+                        </TableCell>
+                        <TableCell className="text-xs">
+                          {new Date(run.updatedAt).toLocaleString()}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </TabsContent>
 
-        <DialogFooter>
+            <TabsContent value="enroll" className="space-y-3 pt-2">
+              <p className="text-sm text-muted-foreground">
+                Manually enroll a recipient by their ID.
+              </p>
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Recipient ID"
+                  value={enrollId}
+                  onChange={(e) => setEnrollId(e.target.value)}
+                  className="font-mono text-sm"
+                />
+                <Button
+                  onClick={handleEnroll}
+                  disabled={enroll.isPending || !enrollId.trim()}
+                >
+                  Enroll
+                </Button>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </ResponsiveModalBody>
+
+        <ResponsiveModalFooter>
           <Button variant="outline" onClick={onClose}>
             Close
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </ResponsiveModalFooter>
+      </ResponsiveModalContent>
+    </ResponsiveModal>
   )
 }

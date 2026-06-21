@@ -1,17 +1,9 @@
-import { useState } from "react"
+import React, { useState } from "react"
 
 import { ActivityIcon, Trash2Icon } from "lucide-react"
 import { toast } from "sonner"
 
 import { Button } from "@renderical/ui/components/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@renderical/ui/components/dialog"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 import { Textarea } from "@renderical/ui/components/textarea"
@@ -23,6 +15,14 @@ import {
   useDeleteConnection,
   useUpdateConnection,
 } from "../../hooks/connections"
+import {
+  ResponsiveModal,
+  ResponsiveModalBody,
+  ResponsiveModalContent,
+  ResponsiveModalDescription,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+} from "../responsive-modal"
 
 type FieldGroup = "config" | "credentials"
 
@@ -356,103 +356,107 @@ export function ConnectionDialog({
   const saving = create.isPending || update.isPending
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={trigger} />
-      <DialogContent className="max-h-[85vh] max-w-lg overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>
-            {existing ? `Manage ${form.title}` : `Connect ${form.title}`}
-          </DialogTitle>
-          <DialogDescription>{form.blurb}</DialogDescription>
-        </DialogHeader>
+    <>
+      <span onClick={() => setOpen(true)} style={{ display: "contents" }}>
+        {trigger}
+      </span>
+      <ResponsiveModal open={open} onOpenChange={setOpen}>
+        <ResponsiveModalContent className="max-h-[85vh] max-w-lg overflow-y-auto">
+          <ResponsiveModalHeader>
+            <ResponsiveModalTitle>
+              {existing ? `Manage ${form.title}` : `Connect ${form.title}`}
+            </ResponsiveModalTitle>
+            <ResponsiveModalDescription>{form.blurb}</ResponsiveModalDescription>
+          </ResponsiveModalHeader>
 
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="conn-name">Connection name</Label>
-            <Input
-              id="conn-name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
+          <ResponsiveModalBody className="flex flex-col gap-3">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="conn-name">Connection name</Label>
+              <Input
+                id="conn-name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
 
-          {form.fields.map((f) => (
-            <div key={f.key} className="flex flex-col gap-1.5">
-              <Label htmlFor={`conn-${f.key}`}>{f.label}</Label>
-              {f.multiline ? (
-                <Textarea
-                  id={`conn-${f.key}`}
-                  placeholder={f.placeholder}
-                  rows={3}
-                  value={values[f.key] ?? ""}
-                  onChange={(e) =>
-                    setValues((v) => ({ ...v, [f.key]: e.target.value }))
-                  }
-                />
-              ) : (
-                <Input
-                  id={`conn-${f.key}`}
-                  type={f.secret ? "password" : "text"}
-                  placeholder={
-                    existing && f.secret
-                      ? "•••••• (leave blank to keep)"
-                      : f.placeholder
-                  }
-                  value={values[f.key] ?? ""}
-                  onChange={(e) =>
-                    setValues((v) => ({ ...v, [f.key]: e.target.value }))
-                  }
-                />
-              )}
-              {f.help && (
-                <p className="text-xs text-muted-foreground">{f.help}</p>
+            {form.fields.map((f) => (
+              <div key={f.key} className="flex flex-col gap-1.5">
+                <Label htmlFor={`conn-${f.key}`}>{f.label}</Label>
+                {f.multiline ? (
+                  <Textarea
+                    id={`conn-${f.key}`}
+                    placeholder={f.placeholder}
+                    rows={3}
+                    value={values[f.key] ?? ""}
+                    onChange={(e) =>
+                      setValues((v) => ({ ...v, [f.key]: e.target.value }))
+                    }
+                  />
+                ) : (
+                  <Input
+                    id={`conn-${f.key}`}
+                    type={f.secret ? "password" : "text"}
+                    placeholder={
+                      existing && f.secret
+                        ? "•••••• (leave blank to keep)"
+                        : f.placeholder
+                    }
+                    value={values[f.key] ?? ""}
+                    onChange={(e) =>
+                      setValues((v) => ({ ...v, [f.key]: e.target.value }))
+                    }
+                  />
+                )}
+                {f.help && (
+                  <p className="text-xs text-muted-foreground">{f.help}</p>
+                )}
+              </div>
+            ))}
+
+            {existing && (
+              <p className="text-xs text-muted-foreground">
+                Secrets are stored encrypted and never shown again. Leave secret
+                fields blank to keep the current values.
+              </p>
+            )}
+            {error && <p className="text-sm text-destructive">{error}</p>}
+
+            <div className="flex flex-wrap gap-2 pb-1 pt-1">
+              <Button
+                size="sm"
+                onClick={handleSubmit}
+                disabled={saving || missingRequired}
+              >
+                {saving ? "Saving…" : existing ? "Save changes" : "Connect"}
+              </Button>
+              {existing && (
+                <>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="gap-1.5"
+                    onClick={handleTest}
+                    disabled={health.isPending}
+                  >
+                    <ActivityIcon className="size-4" />
+                    {health.isPending ? "Testing…" : "Test"}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="gap-1.5 text-destructive hover:text-destructive"
+                    onClick={handleDelete}
+                    disabled={remove.isPending}
+                  >
+                    <Trash2Icon className="size-4" />
+                    Disconnect
+                  </Button>
+                </>
               )}
             </div>
-          ))}
-
-          {existing && (
-            <p className="text-xs text-muted-foreground">
-              Secrets are stored encrypted and never shown again. Leave secret
-              fields blank to keep the current values.
-            </p>
-          )}
-          {error && <p className="text-sm text-destructive">{error}</p>}
-
-          <div className="flex flex-wrap gap-2 pt-1">
-            <Button
-              size="sm"
-              onClick={handleSubmit}
-              disabled={saving || missingRequired}
-            >
-              {saving ? "Saving…" : existing ? "Save changes" : "Connect"}
-            </Button>
-            {existing && (
-              <>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="gap-1.5"
-                  onClick={handleTest}
-                  disabled={health.isPending}
-                >
-                  <ActivityIcon className="size-4" />
-                  {health.isPending ? "Testing…" : "Test"}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="gap-1.5 text-destructive hover:text-destructive"
-                  onClick={handleDelete}
-                  disabled={remove.isPending}
-                >
-                  <Trash2Icon className="size-4" />
-                  Disconnect
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+          </ResponsiveModalBody>
+        </ResponsiveModalContent>
+      </ResponsiveModal>
+    </>
   )
 }

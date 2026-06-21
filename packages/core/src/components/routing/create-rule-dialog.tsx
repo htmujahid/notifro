@@ -2,18 +2,19 @@ import React from "react"
 
 import type { FallbackChain } from "@renderical/api-client/types"
 import { Button } from "@renderical/ui/components/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@renderical/ui/components/dialog"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 import { Switch } from "@renderical/ui/components/switch"
 
 import { useCreateRoutingRule } from "../../hooks/routing"
+import {
+  ResponsiveModal,
+  ResponsiveModalBody,
+  ResponsiveModalContent,
+  ResponsiveModalFooter,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+} from "../responsive-modal"
 import { CHANNELS } from "./chain-steps-editor"
 
 export function CreateRuleDialog({
@@ -59,12 +60,12 @@ export function CreateRuleDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>New routing rule</DialogTitle>
-        </DialogHeader>
-        <div className="flex flex-col gap-4 py-2">
+    <ResponsiveModal open={open} onOpenChange={onOpenChange}>
+      <ResponsiveModalContent className="max-w-md">
+        <ResponsiveModalHeader>
+          <ResponsiveModalTitle>New routing rule</ResponsiveModalTitle>
+        </ResponsiveModalHeader>
+        <ResponsiveModalBody className="flex flex-col gap-4 py-2">
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
               <Label>Priority</Label>
@@ -140,8 +141,8 @@ export function CreateRuleDialog({
               </select>
             )}
           </div>
-        </div>
-        <DialogFooter>
+        </ResponsiveModalBody>
+        <ResponsiveModalFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
@@ -153,8 +154,8 @@ export function CreateRuleDialog({
           >
             {create.isPending ? "Creating…" : "Create rule"}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </ResponsiveModalFooter>
+      </ResponsiveModalContent>
+    </ResponsiveModal>
   )
 }

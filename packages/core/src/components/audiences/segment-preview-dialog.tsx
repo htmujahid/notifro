@@ -1,14 +1,15 @@
 import type { Segment } from "@renderical/api-client/types"
 import { Button } from "@renderical/ui/components/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@renderical/ui/components/dialog"
 
 import { useSegmentPreview } from "../../hooks/audiences"
+import {
+  ResponsiveModal,
+  ResponsiveModalBody,
+  ResponsiveModalContent,
+  ResponsiveModalFooter,
+  ResponsiveModalHeader,
+  ResponsiveModalTitle,
+} from "../responsive-modal"
 
 export function SegmentPreviewDialog({
   segment,
@@ -19,31 +20,31 @@ export function SegmentPreviewDialog({
 }) {
   const { data, isLoading } = useSegmentPreview(segment.id)
   return (
-    <Dialog open onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-lg">
-        <DialogHeader>
-          <DialogTitle>Preview: {segment.name}</DialogTitle>
-        </DialogHeader>
-        <div className="py-2">
+    <ResponsiveModal open onOpenChange={(v) => !v && onClose()}>
+      <ResponsiveModalContent className="max-w-lg">
+        <ResponsiveModalHeader>
+          <ResponsiveModalTitle>Preview: {segment.name}</ResponsiveModalTitle>
+        </ResponsiveModalHeader>
+        <ResponsiveModalBody className="py-2">
           {isLoading ? (
             <p className="text-sm text-muted-foreground">Loading…</p>
           ) : (
             <>
-              <p className="text-sm text-muted-foreground mb-3">
+              <p className="mb-3 text-sm text-muted-foreground">
                 <span className="font-semibold text-foreground">
                   {data?.count ?? 0}
                 </span>{" "}
                 matching recipients
               </p>
               {(data?.sample ?? []).length > 0 && (
-                <div className="rounded-md border overflow-hidden">
+                <div className="overflow-hidden rounded-md border">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-muted/40 border-b">
-                        <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">
+                      <tr className="border-b bg-muted/40">
+                        <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">
                           ID
                         </th>
-                        <th className="px-3 py-2 text-left text-xs text-muted-foreground font-medium">
+                        <th className="px-3 py-2 text-left text-xs font-medium text-muted-foreground">
                           Email
                         </th>
                       </tr>
@@ -62,7 +63,7 @@ export function SegmentPreviewDialog({
                     </tbody>
                   </table>
                   {data!.count > data!.sample.length && (
-                    <p className="px-3 py-2 text-xs text-muted-foreground border-t">
+                    <p className="border-t px-3 py-2 text-xs text-muted-foreground">
                       +{data!.count - data!.sample.length} more not shown
                     </p>
                   )}
@@ -70,13 +71,13 @@ export function SegmentPreviewDialog({
               )}
             </>
           )}
-        </div>
-        <DialogFooter>
+        </ResponsiveModalBody>
+        <ResponsiveModalFooter>
           <Button variant="outline" onClick={onClose}>
             Close
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </ResponsiveModalFooter>
+      </ResponsiveModalContent>
+    </ResponsiveModal>
   )
 }
