@@ -4,6 +4,7 @@ import { resolveSendConnection } from '../channels/resolve'
 import type { ChannelType } from '../channels/types'
 import type { DeliveryQueueMessage } from '../queue/consumer'
 import { isInQuietHours, isInDeliveryWindow, nextAllowedTime, nextWindowStart } from './utils'
+import { nextCronRun } from './cron'
 
 export async function handleScheduledSweep(env: CloudflareBindings): Promise<void> {
   const database = db(env.DB)
@@ -127,6 +128,61 @@ export async function handleScheduledSweep(env: CloudflareBindings): Promise<voi
       .updateTable('scheduled_message')
       .set({ status: 'enqueued', notificationId: notifId, updatedAt: dts })
       .where('id', '=', msg.id)
+      .execute()
+  }
+
+  const dueRecurring = await database
+    .selectFrom('recurring_send')
+    .where('enabled', '=', 1)
+    .where('nextRunAt', '<=', ts)
+    .selectAll()
+    .orderBy('nextRunAt', 'asc')
+    .limit(50)
+    .execute()
+
+  for (const recurring of dueRecurring) {
+    const runAt = recurring.nextRunAt
+    const scheduledId = crypto.randomUUID()
+    const rdts = new Date().toISOString()
+
+    await database
+      .insertInto('scheduled_message')
+      .values({
+        id: scheduledId,
+        userId: recurring.userId,
+        payload: recurring.payload,
+        channels: recurring.channels,
+        sendAt: runAt,
+        status: 'pending',
+        timezone: recurring.timezone,
+        quietHoursStart: null,
+        quietHoursEnd: null,
+        deliveryWindowStart: null,
+        deliveryWindowEnd: null,
+        respectQuietHours: 1,
+        notificationId: null,
+        recurringSendId: recurring.id,
+        createdAt: rdts,
+        updatedAt: rdts,
+      })
+      .execute()
+
+    let nextRunAt: string
+    try {
+      nextRunAt = nextCronRun(recurring.cron, new Date(runAt), recurring.timezone).toISOString()
+    } catch {
+      await database
+        .updateTable('recurring_send')
+        .set({ enabled: 0, lastRunAt: runAt, updatedAt: rdts })
+        .where('id', '=', recurring.id)
+        .execute()
+      continue
+    }
+
+    await database
+      .updateTable('recurring_send')
+      .set({ nextRunAt, lastRunAt: runAt, updatedAt: rdts })
+      .where('id', '=', recurring.id)
       .execute()
   }
 }

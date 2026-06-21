@@ -163,8 +163,30 @@ export interface ScheduledMessageTable {
   deliveryWindowEnd: string | null
   respectQuietHours: number
   notificationId: string | null
+  recurringSendId: string | null
   createdAt: string
   updatedAt: string
+}
+
+export interface RecurringSendTable {
+  id: string
+  userId: string
+  payload: string
+  channels: string
+  cron: string
+  timezone: string
+  nextRunAt: string
+  lastRunAt: string | null
+  enabled: number
+  createdAt: string
+  updatedAt: string
+}
+
+export interface RecipientSendTimeTable {
+  userId: string
+  bestHourLocal: number
+  confidence: number
+  computedAt: string
 }
 
 export interface RecipientProfileTable {
@@ -190,4 +212,6 @@ export interface DB {
   dead_letter: DeadLetterTable
   scheduled_message: ScheduledMessageTable
   recipient_profile: RecipientProfileTable
+  recurring_send: RecurringSendTable
+  recipient_send_time: RecipientSendTimeTable
 }

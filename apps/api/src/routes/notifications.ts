@@ -6,6 +6,7 @@ import { getAdapter } from '../channels/registry'
 import { resolveSendConnection } from '../channels/resolve'
 import { ComposePayloadSchema } from '../compose/schema'
 import { localToUtc } from '../scheduling/utils'
+import { getStoSendAt } from '../scheduling/sto'
 import type { AppEnv } from '../lib/types'
 import type { ChannelType } from '../channels/types'
 import type { DeliveryQueueMessage } from '../queue/consumer'
@@ -174,11 +175,17 @@ router.openapi(sendRoute, async (c) => {
     }
   }
 
-  if (payload.sendAt || payload.sendAtLocal) {
+  let stoSendAt: string | undefined
+  if (payload.sendTimeOptimized && !payload.sendAt && !payload.sendAtLocal) {
+    stoSendAt = (await getStoSendAt(db, userId, new Date())).toISOString()
+  }
+
+  if (payload.sendAt || payload.sendAtLocal || stoSendAt) {
     const tz = payload.timezoneHint ?? 'UTC'
-    const sendAtUtc = payload.sendAt
-      ? new Date(payload.sendAt).toISOString()
-      : localToUtc(payload.sendAtLocal!, tz).toISOString()
+    const sendAtUtc = stoSendAt
+      ?? (payload.sendAt
+        ? new Date(payload.sendAt).toISOString()
+        : localToUtc(payload.sendAtLocal!, tz).toISOString())
 
     if (new Date(sendAtUtc) <= new Date()) {
       throw Errors.badRequest('sendAt must be in the future')
@@ -201,6 +208,7 @@ router.openapi(sendRoute, async (c) => {
         deliveryWindowEnd: payload.deliveryWindowEnd ?? null,
         respectQuietHours: payload.respectQuietHours !== false ? 1 : 0,
         notificationId: null,
+        recurringSendId: null,
         createdAt: ts,
         updatedAt: ts,
       })

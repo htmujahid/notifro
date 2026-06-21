@@ -166,6 +166,7 @@ router.openapi(testSendRoute, async (c) => {
     trackOpens: false,
     trackClicks: false,
     respectQuietHours: true,
+    sendTimeOptimized: false,
   }
 
   const syntheticConn: Connection = {

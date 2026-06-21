@@ -94,6 +94,7 @@ export interface ComposePayload {
   deliveryWindowStart?: string
   deliveryWindowEnd?: string
   respectQuietHours?: boolean
+  sendTimeOptimized?: boolean
 }
 
 export interface ScheduledMessage {
@@ -108,6 +109,20 @@ export interface ScheduledMessage {
   deliveryWindowEnd: string | null
   respectQuietHours: number
   notificationId: string | null
+  recurringSendId: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface RecurringSend {
+  id: string
+  userId: string
+  cron: string
+  timezone: string
+  channels: string
+  nextRunAt: string
+  lastRunAt: string | null
+  enabled: number
   createdAt: string
   updatedAt: string
 }

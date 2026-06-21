@@ -26,6 +26,7 @@ const ScheduledMessageDtoSchema = z.object({
   deliveryWindowEnd: z.string().nullable(),
   respectQuietHours: z.number(),
   notificationId: z.string().nullable(),
+  recurringSendId: z.string().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
 })
@@ -67,7 +68,7 @@ router.openapi(listRoute, async (c) => {
     .select([
       'id', 'userId', 'sendAt', 'status', 'timezone',
       'quietHoursStart', 'quietHoursEnd', 'deliveryWindowStart', 'deliveryWindowEnd',
-      'respectQuietHours', 'notificationId', 'createdAt', 'updatedAt',
+      'respectQuietHours', 'notificationId', 'recurringSendId', 'createdAt', 'updatedAt',
     ])
 
   const { qb, getPage } = applyListQuery(baseQuery, parsed, {
