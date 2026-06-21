@@ -143,9 +143,9 @@ export function ChannelsView() {
             const { name, description, icon: Icon } = meta
             const conn = connections.find((c) => c.type === type)
 
-            let connected = false
-            let detail = ""
-            let actionNode: React.ReactNode = null
+            let connected: boolean
+            let detail: string
+            let actionNode: React.ReactNode
 
             if (ALWAYS_ON.has(type)) {
               connected = true
