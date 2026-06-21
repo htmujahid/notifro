@@ -29,6 +29,7 @@ import topicsRouter from './routes/topics'
 import preferencesRouter from './routes/preferences'
 import routingRouter from './routes/routing'
 import chainsRouter from './routes/chains'
+import rateLimitsRouter from './routes/rate-limits'
 import { handleDeliveryQueue } from './queue/consumer'
 import { handleScheduledSweep } from './scheduling/sweep'
 import './channels/email'
@@ -159,6 +160,7 @@ app.route('/api', topicsRouter)
 app.route('/api', preferencesRouter)
 app.route('/api', routingRouter)
 app.route('/api', chainsRouter)
+app.route('/api', rateLimitsRouter)
 app.doc('/doc', {
   openapi: '3.0.0',
   info: { title: 'Renderical API', version: '1.0.0' },

@@ -49,6 +49,7 @@
     "./hooks/templates": "./src/hooks/templates.ts",
     "./hooks/audiences": "./src/hooks/audiences.ts",
     "./hooks/preferences": "./src/hooks/preferences.ts",
-    "./hooks/routing": "./src/hooks/routing.ts"
+    "./hooks/routing": "./src/hooks/routing.ts",
+    "./hooks/rate-limits": "./src/hooks/rate-limits.ts"
   }
 }

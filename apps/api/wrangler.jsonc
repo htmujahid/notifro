@@ -16,6 +16,10 @@
     {
       "binding": "KV",
       "id": "<run: wrangler kv namespace create renderical-auth>"
+    },
+    {
+      "binding": "RATE_LIMIT_KV",
+      "id": "8b79545ed2724dfa976c798915bbe8cc"
     }
   ],
   "send_email": [

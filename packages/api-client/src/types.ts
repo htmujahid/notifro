@@ -271,6 +271,16 @@ export interface RoutingRule {
   updatedAt: string
 }
 
+export interface RateLimitRule {
+  id: string
+  userId: string
+  channel: string
+  maxCount: number
+  windowSeconds: number
+  createdAt: string
+  updatedAt: string
+}
+
 export interface PreferenceCenter {
   recipientId: string
   topics: Array<{

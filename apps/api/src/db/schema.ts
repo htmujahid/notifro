@@ -319,6 +319,16 @@ export interface ChannelPriorityTable {
   updatedAt: string
 }
 
+export interface RateLimitRuleTable {
+  id: string
+  userId: string
+  channel: string
+  maxCount: number
+  windowSeconds: number
+  createdAt: string
+  updatedAt: string
+}
+
 export interface DB {
   user: UserTable
   connection: ConnectionTable
@@ -346,4 +356,5 @@ export interface DB {
   channel_priority: ChannelPriorityTable
   fallback_chain: FallbackChainTable
   routing_rule: RoutingRuleTable
+  rate_limit_rule: RateLimitRuleTable
 }

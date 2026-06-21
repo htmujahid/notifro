@@ -3,6 +3,7 @@
 // Runtime types generated with workerd@1.20260617.1 2026-06-18 nodejs_compat
 interface __BaseEnv_CloudflareBindings {
 	KV: KVNamespace;
+	RATE_LIMIT_KV: KVNamespace;
 	DB: D1Database;
 	EMAIL: SendEmail;
 	DELIVERY_Q: Queue;

@@ -2,20 +2,14 @@ import { useState } from "react"
 import { Button } from "@workspace/ui/components/button"
 import { Card, CardContent } from "@workspace/ui/components/card"
 import { Separator } from "@workspace/ui/components/separator"
-import { CopyIcon, RefreshCwIcon, TrashIcon, PaletteIcon, BookmarkIcon, PlusIcon } from "lucide-react"
+import { CopyIcon, RefreshCwIcon, TrashIcon, PaletteIcon, BookmarkIcon, PlusIcon, GaugeIcon } from "lucide-react"
 import { useBrandKit, useUpdateBrandKit } from "@workspace/core/hooks/templates"
 import { useTopics, useCreateTopic, useDeleteTopic } from "@workspace/core/hooks/preferences"
+import { useRateLimits, useUpsertRateLimit, useDeleteRateLimit } from "@workspace/core/hooks/rate-limits"
 
 const API_KEYS = [
   { id: "key_01", name: "Production", prefix: "rnd_live_k8xP...m3Qa", created: "Jan 12, 2026", lastUsed: "Jun 19, 2026" },
   { id: "key_02", name: "Development", prefix: "rnd_test_aZ2Y...w9Lk", created: "Mar 4, 2026", lastUsed: "Jun 18, 2026" },
-]
-
-const RATE_LIMITS = [
-  { channel: "Email", limit: "10,000 / day", used: "1,284", pct: 13 },
-  { channel: "Slack", limit: "5,000 / day", used: "842", pct: 17 },
-  { channel: "Push", limit: "50,000 / day", used: "3,210", pct: 6 },
-  { channel: "Webhook", limit: "20,000 / day", used: "438", pct: 2 },
 ]
 
 function SubscriptionsSection() {
@@ -127,6 +121,135 @@ function SubscriptionsSection() {
                       <button
                         className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
                         onClick={() => deleteTopic.mutate(t.id)}
+                      >
+                        <TrashIcon className="size-3.5" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  )
+}
+
+function RateLimitsSection() {
+  const { data } = useRateLimits()
+  const upsert = useUpsertRateLimit()
+  const deleteRule = useDeleteRateLimit()
+  const [showForm, setShowForm] = useState(false)
+  const [channel, setChannel] = useState("")
+  const [maxCount, setMaxCount] = useState("")
+  const [windowSeconds, setWindowSeconds] = useState("")
+
+  const rules = data?.pages.flatMap((p) => p.data) ?? []
+
+  function handleCreate() {
+    const mc = parseInt(maxCount, 10)
+    const ws = parseInt(windowSeconds, 10)
+    if (!channel || isNaN(mc) || isNaN(ws)) return
+    upsert.mutate(
+      { channel, maxCount: mc, windowSeconds: ws },
+      {
+        onSuccess: () => {
+          setChannel("")
+          setMaxCount("")
+          setWindowSeconds("")
+          setShowForm(false)
+        },
+      },
+    )
+  }
+
+  return (
+    <section className="flex flex-col gap-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-sm font-medium">Rate limits</h2>
+          <p className="mt-0.5 text-xs text-muted-foreground">Limit how many notifications can be sent per channel per time window.</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <GaugeIcon className="size-4 text-muted-foreground" />
+          <Button size="sm" className="gap-1.5" onClick={() => setShowForm((v) => !v)}>
+            <PlusIcon className="size-3.5" />
+            Add rule
+          </Button>
+        </div>
+      </div>
+
+      {showForm && (
+        <Card size="sm">
+          <CardContent className="flex flex-col gap-3">
+            <div className="flex gap-3">
+              <div className="flex flex-1 flex-col gap-1">
+                <label className="text-xs font-medium text-muted-foreground">Channel</label>
+                <input
+                  className="rounded-md border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  placeholder="email"
+                  value={channel}
+                  onChange={(e) => setChannel(e.target.value)}
+                />
+              </div>
+              <div className="flex flex-1 flex-col gap-1">
+                <label className="text-xs font-medium text-muted-foreground">Max count</label>
+                <input
+                  type="number"
+                  min={1}
+                  className="rounded-md border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  placeholder="100"
+                  value={maxCount}
+                  onChange={(e) => setMaxCount(e.target.value)}
+                />
+              </div>
+              <div className="flex flex-1 flex-col gap-1">
+                <label className="text-xs font-medium text-muted-foreground">Window (seconds)</label>
+                <input
+                  type="number"
+                  min={1}
+                  className="rounded-md border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  placeholder="3600"
+                  value={windowSeconds}
+                  onChange={(e) => setWindowSeconds(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button size="sm" disabled={upsert.isPending || !channel || !maxCount || !windowSeconds} onClick={handleCreate}>
+                Save
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => setShowForm(false)}>Cancel</Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {rules.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No rate limit rules. Add one to cap sends per channel per window.</p>
+      ) : (
+        <div className="overflow-hidden rounded-xl ring-1 ring-foreground/10">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border bg-muted/40">
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Channel</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Max sends</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Window</th>
+                <th className="px-4 py-3" />
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border bg-card">
+              {rules.map((r) => (
+                <tr key={r.id}>
+                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{r.channel}</td>
+                  <td className="px-4 py-3 font-medium">{r.maxCount}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{r.windowSeconds}s</td>
+                  <td className="px-4 py-3">
+                    <div className="flex justify-end">
+                      <button
+                        className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+                        onClick={() => deleteRule.mutate(r.id)}
                       >
                         <TrashIcon className="size-3.5" />
                       </button>
@@ -288,27 +411,7 @@ export default function SettingsPage() {
         </div>
       </section>
 
-      <section className="flex flex-col gap-4">
-        <div>
-          <h2 className="text-sm font-medium">Rate limits</h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">Current usage against your plan limits. Resets daily at midnight UTC.</p>
-        </div>
-        <div className="flex flex-col gap-3">
-          {RATE_LIMITS.map((r) => (
-            <div key={r.channel} className="flex items-center gap-4 rounded-xl bg-card px-5 py-4 ring-1 ring-foreground/10">
-              <div className="w-20 shrink-0 text-sm font-medium">{r.channel}</div>
-              <div className="flex flex-1 flex-col gap-1.5">
-                <div className="h-1.5 overflow-hidden rounded-full bg-muted">
-                  <div className="h-full rounded-full bg-primary" style={{ width: `${r.pct}%` }} />
-                </div>
-              </div>
-              <div className="shrink-0 text-right text-xs text-muted-foreground">
-                <span className="font-medium text-foreground">{r.used}</span> / {r.limit}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      <RateLimitsSection />
 
       <SubscriptionsSection />
 

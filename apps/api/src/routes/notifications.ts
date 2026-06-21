@@ -9,6 +9,7 @@ import { resolveTemplate, renderTemplate } from '../lib/render-template'
 import { localToUtc } from '../scheduling/utils'
 import { resolveSegment } from '../lib/segment-resolver'
 import { resolvePreferences } from '../lib/resolve-preferences'
+import { checkRateLimit } from '../lib/rate-limit'
 import { resolveRoute } from '../lib/routing'
 import type { AppEnv } from '../lib/types'
 import type { ChannelType } from '../channels/types'
@@ -370,6 +371,35 @@ router.openapi(sendRoute, async (c) => {
           continue
         }
 
+        const rlResult = await checkRateLimit(c.env.RATE_LIMIT_KV, db, userId, channel, Date.now())
+        if (rlResult === 'exceeded') {
+          await db
+            .insertInto('delivery')
+            .values({
+              id: deliveryId,
+              userId,
+              notificationId: notifId,
+              channel,
+              recipient: recipientAddr,
+              status: 'skipped',
+              providerMessageId: null,
+              error: 'rate_limit:exceeded',
+              attempts: 0,
+              nextRetryAt: null,
+              lastError: 'rate_limit:exceeded',
+              deliveredAt: null,
+              openedAt: null,
+              clickedAt: null,
+              bouncedAt: null,
+              recipientId: recip.id,
+              variantId: null,
+              createdAt: dts,
+              updatedAt: dts,
+            })
+            .execute()
+          continue
+        }
+
         const conn = await resolveSendConnection(db, userId, channel as ChannelType, dts)
 
         if (!conn) {
@@ -531,6 +561,57 @@ router.openapi(sendRoute, async (c) => {
           })
           continue
         }
+      }
+
+      const rlResult = await checkRateLimit(c.env.RATE_LIMIT_KV, db, userId, channel, Date.now())
+      if (rlResult === 'exceeded') {
+        await db
+          .insertInto('delivery')
+          .values({
+            id: deliveryId,
+            userId,
+            notificationId: notifId,
+            channel,
+            recipient: recipientAddr,
+            status: 'skipped',
+            providerMessageId: null,
+            error: 'rate_limit:exceeded',
+            attempts: 0,
+            nextRetryAt: null,
+            lastError: 'rate_limit:exceeded',
+            deliveredAt: null,
+            openedAt: null,
+            clickedAt: null,
+            bouncedAt: null,
+            createdAt: dts,
+            updatedAt: dts,
+          })
+          .execute()
+        deliveries.push({
+          id: deliveryId,
+          userId,
+          notificationId: notifId,
+          channel,
+          recipient: recipientAddr,
+          status: 'skipped',
+          providerMessageId: null,
+          error: 'rate_limit:exceeded',
+          attempts: 0,
+          nextRetryAt: null,
+          lastError: 'rate_limit:exceeded',
+          deliveredAt: null,
+          openedAt: null,
+          clickedAt: null,
+          bouncedAt: null,
+          recipientId: null,
+          variantId: null,
+          chainId: null,
+          chainStepIndex: null,
+          escalatedFromDeliveryId: null,
+          createdAt: dts,
+          updatedAt: dts,
+        })
+        continue
       }
 
       if (!adapter) {
