@@ -1,13 +1,5 @@
 import { cn } from "@renderical/ui/lib/utils"
 
-/**
- * The Renderical brand mark — the stacked-layers glyph, drawn with `currentColor`
- * so it inherits the surrounding text color (foreground when inline, or
- * primary-foreground inside a primary tile). This is the canonical logo used
- * everywhere: app shell, favicons, app icons, and OG images.
- *
- * Override the size with `className` (e.g. `size-4`).
- */
 export function RendericalMark({ className }: { className?: string }) {
   return (
     <svg
