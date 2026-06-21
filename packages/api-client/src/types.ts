@@ -206,17 +206,6 @@ export interface Segment {
   updatedAt: string
 }
 
-export interface MessageVariant {
-  id: string
-  userId: string
-  notificationId: string
-  label: string
-  weight: number
-  payload: string
-  createdAt: string
-  updatedAt: string
-}
-
 export interface SegmentPreview {
   count: number
   sample: { id: string; email: string | null }[]

@@ -269,17 +269,6 @@ export interface SegmentTable {
   updatedAt: string
 }
 
-export interface MessageVariantTable {
-  id: string
-  userId: string
-  notificationId: string
-  label: string
-  weight: number
-  payload: string
-  createdAt: string
-  updatedAt: string
-}
-
 export interface TopicTable {
   id: string
   userId: string
@@ -336,7 +325,6 @@ export interface DB {
   recipient_send_time: RecipientSendTimeTable
   recipient: RecipientTable
   segment: SegmentTable
-  message_variant: MessageVariantTable
   topic: TopicTable
   preference: PreferenceTable
   channel_priority: ChannelPriorityTable

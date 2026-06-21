@@ -8,24 +8,12 @@ import { ComposePayloadSchema } from '../compose/schema'
 import { resolveTemplate, renderTemplate } from '../lib/render-template'
 import { localToUtc } from '../scheduling/utils'
 import { getStoSendAt } from '../scheduling/sto'
-import { resolveSegment, assignVariant } from '../lib/segment-resolver'
+import { resolveSegment } from '../lib/segment-resolver'
 import { resolvePreferences } from '../lib/resolve-preferences'
 import type { AppEnv } from '../lib/types'
 import type { ChannelType } from '../channels/types'
 import type { DeliveryQueueMessage } from '../queue/consumer'
 import type { ComposePayload } from '../compose/schema'
-
-const VariantSchema = z.object({
-  label: z.string().min(1).max(20),
-  weight: z.number().int().min(1).max(99).optional().default(50),
-  content: z
-    .object({
-      title: z.string().optional(),
-      subject: z.string().optional(),
-      body: z.object({ text: z.string().optional(), markdown: z.string().optional() }).optional(),
-    })
-    .optional(),
-})
 
 const SendRequestSchema = ComposePayloadSchema.extend({
   content: ComposePayloadSchema.shape.content.optional(),
@@ -33,7 +21,6 @@ const SendRequestSchema = ComposePayloadSchema.extend({
   templateSlug: z.string().optional(),
   templateData: z.record(z.string(), z.unknown()).optional(),
   templateLocale: z.string().optional(),
-  variants: z.array(VariantSchema).optional(),
   topicKey: z.string().optional(),
 }).refine(
   (v) => v.content !== undefined || v.templateId !== undefined || v.templateSlug !== undefined,
@@ -292,29 +279,6 @@ router.openapi(sendRoute, async (c) => {
     })
     .execute()
 
-  const variantDefs = rawPayload.variants ?? []
-  const variantRows: { id: string; label: string; weight: number; content?: Record<string, unknown> }[] = []
-
-  if (variantDefs.length > 0) {
-    for (const v of variantDefs) {
-      const vid = newId()
-      await db
-        .insertInto('message_variant')
-        .values({
-          id: vid,
-          userId,
-          notificationId: notifId,
-          label: v.label,
-          weight: v.weight ?? 50,
-          payload: JSON.stringify(v),
-          createdAt: ts,
-          updatedAt: ts,
-        })
-        .execute()
-      variantRows.push({ id: vid, label: v.label, weight: v.weight ?? 50, content: v.content as Record<string, unknown> | undefined })
-    }
-  }
-
   type DeliveryRow = {
     id: string
     userId: string
@@ -380,12 +344,6 @@ router.openapi(sendRoute, async (c) => {
 
         const conn = await resolveSendConnection(db, userId, channel as ChannelType, dts)
 
-        let variantId: string | null = null
-        if (variantRows.length > 0) {
-          const chosen = await assignVariant(notifId, recip.id, variantRows)
-          variantId = chosen.id
-        }
-
         if (!conn) {
           await db
             .insertInto('delivery')
@@ -406,7 +364,7 @@ router.openapi(sendRoute, async (c) => {
               clickedAt: null,
               bouncedAt: null,
               recipientId: recip.id,
-              variantId,
+              variantId: null,
               createdAt: dts,
               updatedAt: dts,
             })
@@ -433,7 +391,7 @@ router.openapi(sendRoute, async (c) => {
             clickedAt: null,
             bouncedAt: null,
             recipientId: recip.id,
-            variantId,
+            variantId: null,
             createdAt: dts,
             updatedAt: dts,
           })
@@ -458,7 +416,7 @@ router.openapi(sendRoute, async (c) => {
           clickedAt: null,
           bouncedAt: null,
           recipientId: recip.id,
-          variantId,
+          variantId: null,
           createdAt: dts,
           updatedAt: dts,
         })

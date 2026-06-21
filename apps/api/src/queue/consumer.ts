@@ -165,20 +165,6 @@ async function processDelivery(
     }
   }
 
-  if (delivery.variantId) {
-    const variant = await database
-      .selectFrom('message_variant')
-      .where('id', '=', delivery.variantId)
-      .select('payload')
-      .executeTakeFirst()
-    if (variant) {
-      const variantData = JSON.parse(variant.payload) as { content?: Record<string, unknown> }
-      if (variantData.content && payload.content) {
-        payload = { ...payload, content: { ...payload.content, ...variantData.content } }
-      }
-    }
-  }
-
   let ok = false
   let providerMessageId: string | null = null
   let sendError: string | null = null

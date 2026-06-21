@@ -139,23 +139,3 @@ export async function previewSegment(
   }
 }
 
-export async function assignVariant<T extends { id: string; weight: number }>(
-  notificationId: string,
-  recipientId: string,
-  variants: T[],
-): Promise<T> {
-  const key = `${notificationId}:${recipientId}`
-  const encoder = new TextEncoder()
-  const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(key))
-  const bytes = new Uint8Array(hashBuffer)
-  const uint32 = (((bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | bytes[3]) >>> 0)
-  const totalWeight = variants.reduce((s, v) => s + v.weight, 0)
-  const slot = uint32 % totalWeight
-
-  let cumulative = 0
-  for (const v of variants) {
-    cumulative += v.weight
-    if (slot < cumulative) return v
-  }
-  return variants[variants.length - 1]
-}
