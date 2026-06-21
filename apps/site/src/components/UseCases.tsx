@@ -54,7 +54,7 @@ const cases: UseCase[] = [
     points: [
       "Priority-based routing rules",
       "Quiet hours & DND windows",
-      "Throttle/debounce to avoid storms",
+      "Per-channel rate limiting",
     ],
     rows: [
       { channel: "Slack", status: "Delivered", tone: "delivered" },
@@ -69,9 +69,9 @@ const cases: UseCase[] = [
     title: "Onboarding, digests & re-engagement",
     desc: "Multi-step journeys with delays and branching. Personalize content per recipient, A/B test variants, and send at each person's most active time.",
     points: [
-      "Multi-step journeys with delays",
-      "A/B testing & dynamic content",
-      "Send-time optimization per recipient",
+      "Multi-step journeys with delays and branching",
+      "Dynamic content & audience segmentation",
+      "Timezone-aware scheduling per recipient",
     ],
     rows: [
       { channel: "Email", status: "Opened", tone: "opened" },

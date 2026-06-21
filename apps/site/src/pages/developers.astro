@@ -6,20 +6,20 @@ import { buttonVariants } from "@workspace/ui/components/button";
 import { Code2, Boxes, Webhook, FlaskConical, Terminal, ScrollText, Check } from "lucide-react";
 
 const dx = [
-  { icon: Code2, title: "REST & GraphQL APIs", text: "First-class REST and GraphQL, fully typed and documented." },
-  { icon: Boxes, title: "SDKs", text: "Native SDKs for JavaScript/TypeScript, Python, Go, Ruby, and PHP." },
-  { icon: Webhook, title: "Webhook ingestion", text: "Drive sends from any event source with signed webhooks." },
-  { icon: FlaskConical, title: "Sandbox / test mode", text: "Safe test sends with per-channel message previews." },
-  { icon: Terminal, title: "CLI", text: "Test, preview, and tail logs from your terminal." },
-  { icon: ScrollText, title: "API logs & inspector", text: "Detailed request logs to debug any delivery." },
+  { icon: Code2, title: "REST API", text: "Typed REST API with consistent error envelopes, keyset pagination, and idempotency keys." },
+  { icon: Boxes, title: "TypeScript SDK", text: "Typed JS/TS client with send(), preview(), listDeliveries(), and key management built in." },
+  { icon: Webhook, title: "Webhook ingestion", text: "Drive sends from any event source with signed delivery webhooks." },
+  { icon: FlaskConical, title: "Sandbox / test mode", text: "Pass a test-mode API key or the X-Renderical-Sandbox header to get per-channel previews without real delivery." },
+  { icon: Terminal, title: "CLI", text: "Send, preview, tail logs, and manage keys directly from your terminal via the @renderical/cli package." },
+  { icon: ScrollText, title: "Request log & inspector", text: "Every API call is logged with method, path, status, and latency — debug any delivery in seconds." },
 ];
 ---
 
-<BaseLayout title="Developers" description="REST & GraphQL APIs, SDKs for major languages, a CLI, webhook ingestion, sandbox mode, and a native MCP server — built for developer experience.">
+<BaseLayout title="Developers" description="REST API, TypeScript SDK, CLI, webhook ingestion, sandbox mode, and a native MCP server — built for developer experience.">
   <PageHeader
     eyebrow="Developers"
     title="Built for the way you ship"
-    lead="Typed SDKs, REST and GraphQL, a CLI, sandbox mode, and a native MCP server. Send your first notification in under five minutes."
+    lead="TypeScript SDK, REST API, a CLI, sandbox mode, and a native MCP server. Send your first notification in minutes."
   />
 
   <!-- Quickstart -->
@@ -28,28 +28,29 @@ const dx = [
       <div class="grid items-center gap-12 lg:grid-cols-2">
         <div>
           <p class="text-sm font-semibold text-primary">Quickstart</p>
-          <h2 class="mt-2 text-3xl font-semibold tracking-tight">Send in three lines</h2>
+          <h2 class="mt-2 text-3xl font-semibold tracking-tight">Send in minutes</h2>
           <p class="mt-4 text-muted-foreground">
             Install the SDK, set your API key, and call <code class="rounded bg-muted px-1.5 py-0.5 text-sm">send</code>.
             Channels, fallback, and idempotency are all part of one payload.
           </p>
           <ul class="mt-6 space-y-3 text-sm">
-            <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span>Idempotency keys to prevent duplicates</span></li>
-            <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span>Per-channel previews in sandbox mode</span></li>
-            <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span>Delivery status via polling or webhooks</span></li>
+            <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span>API keys: live and test modes</span></li>
+            <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span>Sandbox mode: per-channel previews without real delivery</span></li>
+            <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span>Delivery status via polling or webhook callbacks</span></li>
           </ul>
         </div>
         <div class="rounded-xl border bg-card p-5 font-mono text-sm leading-relaxed">
-          <pre class="overflow-x-auto text-muted-foreground"><code><span class="text-muted-foreground/60">$ npm install @renderical/node</span>
+          <pre class="overflow-x-auto text-muted-foreground"><code><span class="text-muted-foreground/60">$ npm install @renderical/sdk</span>
 
-import {'{'} Renderical {'}'} from <span class="text-primary">"@renderical/node"</span>;
-const rc = new <span class="text-foreground">Renderical</span>(process.env.RC_KEY);
+import {'{'} createRendericalClient {'}'} from <span class="text-primary">"@renderical/sdk"</span>;
+const rc = <span class="text-foreground">createRendericalClient</span>({'{'}
+  apiKey: process.env.<span class="text-primary">RENDERICAL_API_KEY</span>,
+{'}'});
 
 await rc.<span class="text-foreground">send</span>({'{'}
-  to: <span class="text-primary">"u_8a21"</span>,
+  to: <span class="text-primary">"user@example.com"</span>,
   template: <span class="text-primary">"welcome"</span>,
   channels: [<span class="text-primary">"email"</span>, <span class="text-primary">"push"</span>],
-  fallback: <span class="text-foreground">true</span>,
 {'}'});</code></pre>
         </div>
       </div>
@@ -85,8 +86,11 @@ await rc.<span class="text-foreground">send</span>({'{'}
 {'{'}
   <span class="text-foreground">"mcpServers"</span>: {'{'}
     <span class="text-foreground">"renderical"</span>: {'{'}
-      <span class="text-foreground">"url"</span>: <span class="text-primary">"https://mcp.renderical.com"</span>,
-      <span class="text-foreground">"auth"</span>: <span class="text-primary">"oauth"</span>
+      <span class="text-foreground">"type"</span>: <span class="text-primary">"http"</span>,
+      <span class="text-foreground">"url"</span>: <span class="text-primary">"https://your-worker.workers.dev/mcp"</span>,
+      <span class="text-foreground">"headers"</span>: {'{'}
+        <span class="text-foreground">"Authorization"</span>: <span class="text-primary">"Bearer rk_live_..."</span>
+      {'}'}
     {'}'}
   {'}'}
 {'}'}</code></pre>
@@ -95,9 +99,8 @@ await rc.<span class="text-foreground">send</span>({'{'}
           <p class="text-sm font-semibold text-primary">MCP server</p>
           <h2 class="mt-2 text-3xl font-semibold tracking-tight">Wire up agents in seconds</h2>
           <p class="mt-4 text-muted-foreground">
-            Point any MCP client at the hosted server, authenticate with OAuth, and your agent can
-            send, schedule, and query analytics within granted scopes. Prefer local? Run the stdio
-            server for self-hosted and dev.
+            Point any MCP client at the hosted endpoint, authenticate with your API key, and your agent can
+            send, schedule, and query analytics. Prefer local? Run the stdio binary with <code class="rounded bg-muted px-1.5 py-0.5 text-sm">RENDERICAL_API_KEY</code> for self-hosted and dev setups.
           </p>
           <div class="mt-6">
             <a href="/mcp" class={buttonVariants({ variant: "outline" })}>MCP server details</a>

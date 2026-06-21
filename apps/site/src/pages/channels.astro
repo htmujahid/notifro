@@ -12,6 +12,8 @@ import {
   Bell,
   Webhook,
   MessageCircle,
+  Phone,
+  Send,
   Check,
 } from "lucide-react";
 
@@ -25,6 +27,8 @@ const channels = [
   { name: "In-App Inbox", icon: Bell, transform: "Drop-in feed", note: "Embeddable notification feed with read state." },
   { name: "Webhooks", icon: Webhook, transform: "Signed JSON", note: "Generic signed webhooks with replay protection." },
   { name: "SMS", icon: MessageCircle, transform: "Plain text", note: "Reliable fallback tier across major SMS providers." },
+  { name: "WhatsApp", icon: Phone, transform: "Template messages", note: "Reach users on WhatsApp with rich template messages via Twilio." },
+  { name: "Telegram", icon: Send, transform: "Bot messages", note: "Deliver messages to users and groups via a Telegram bot token." },
 ];
 ---
 
@@ -78,6 +82,8 @@ const channels = [
 rules: [
   {'{'} if: <span class="text-primary">"priority == high"</span>,
     then: <span class="text-primary">"slack,push"</span> {'}'},
+  {'{'} if: <span class="text-primary">"messageType == transactional"</span>,
+    then: <span class="text-primary">"email"</span> {'}'},
 ]</code></pre>
         </div>
       </div>

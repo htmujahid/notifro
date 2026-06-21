@@ -4,47 +4,45 @@ import PageHeader from "../components/PageHeader.astro";
 import CtaBand from "../components/CtaBand.astro";
 import { site } from "../config";
 import { buttonVariants } from "@workspace/ui/components/button";
-import { Brain, ShieldCheck, Hand, Building2, Check } from "lucide-react";
+import { Brain, ShieldCheck, Hand, Check } from "lucide-react";
 
 const tools = [
-  ["send_notification", "Compose and deliver across one or more channels."],
-  ["schedule_notification", "Set send-at, recurring, or send-time-optimized delivery."],
+  ["send_notification", "Compose and deliver across one or more channels. Checks approval gates before sending."],
+  ["schedule_notification", "Set a future send-at time for timezone-aware scheduled delivery."],
   ["list_channels", "Discover connected and healthy channels."],
-  ["get_channel_status", "Check the health and scopes of a connection."],
-  ["manage_connection", "Initiate OAuth, check scopes, trigger re-auth."],
-  ["get_delivery_status", "Query queued / sent / delivered / failed state."],
-  ["manage_preferences", "Read and update recipient channel + topic preferences."],
-  ["create_template", "Build a template with variables and localization."],
-  ["render_preview", "Preview a template per channel before sending."],
-  ["query_analytics", "Pull engagement, delivery, and cost metrics."],
+  ["get_delivery_status", "Query queued / sent / delivered / failed state for a notification."],
+  ["manage_preferences", "Read and update recipient channel and topic preferences."],
+  ["create_template", "Build a template with variables, conditionals, and localization."],
+  ["render_preview", "Preview a template rendered per channel before sending."],
+  ["query_analytics", "Pull delivery, engagement, and cost metrics."],
+  ["approve_action", "Approve or reject a pending MCP action that required human sign-off."],
 ];
 
 const standout = [
   { icon: Brain, title: "Agentic sending", text: "An agent decides what to send, which channel, and when — your routing and fallback logic runs underneath, consistent with API and UI sends." },
-  { icon: ShieldCheck, title: "Scope-aware safety", text: "The server enforces the same scope-based OAuth permissions. Agents act only within the boundaries each connected account has granted." },
+  { icon: ShieldCheck, title: "API-key scoped safety", text: "The server enforces the same API-key permissions you granted. Agents act only within those boundaries — no broader access than the key allows." },
   { icon: Hand, title: "Human-in-the-loop", text: "Preview-before-send and approval-gate tools prevent agents from blasting messages unchecked. Nothing ships without your guardrails." },
-  { icon: Building2, title: "Multi-tenant isolation", text: "Each agent session is bound to the right credentials and tenant, so isolation carries through from the API all the way to the agent." },
+  { icon: ShieldCheck, title: "Rate-limited and idempotent", text: "KV-backed rate limiting at the MCP layer prevents agent loops from duplicating sends or running away. Every call is audited." },
 ];
 
 const resources = [
-  ["Connected accounts", "Each account and its granted OAuth scopes."],
-  ["Templates", "Available templates and their variables."],
-  ["Segments", "Recipient segments and attributes."],
-  ["Delivery logs", "Recent deliveries and failures for context."],
+  ["Channels", "Connected channels and their current health (renderical://channels)"],
+  ["Templates", "Available templates and their variable schemas (renderical://templates)"],
+  ["Recent deliveries", "Last 20 deliveries for delivery-status context (renderical://recent-deliveries)"],
 ];
 
 const prompts = [
-  ["Notify with fallback", "“Notify a user across their preferred channel with fallback.”"],
-  ["Schedule a digest", "“Schedule a digest summary for a segment.”"],
-  ["Diagnose & retry", "“Diagnose why a notification failed and retry.”"],
+  ["send-notification-help", "How do I send a notification across channels with fallback?"],
+  ["check-delivery-status", "Check delivery status for recent notifications."],
+  ["setup-approval-gates", "Help me set up approval gates for agent sends."],
 ];
 ---
 
-<BaseLayout title="MCP Server" description="Expose your notification infrastructure as an MCP server so AI agents can compose, schedule, and deliver — scope-aware, with preview and approval gates, full audit, and multi-tenant isolation.">
+<BaseLayout title="MCP Server" description="Expose your notification infrastructure as an MCP server so AI agents can compose, schedule, and deliver — API-key authenticated, with approval gates, rate limiting, and full audit.">
   <PageHeader
     eyebrow="MCP server layer"
     title="Your notification stack, as an MCP server"
-    lead="Let Claude, IDE assistants, and custom agents compose, schedule, and deliver notifications in natural language — using your routing, fallback, and OAuth scopes underneath. No manual API wiring."
+    lead="Let Claude, IDE assistants, and custom agents compose, schedule, and deliver notifications in natural language — using your routing, fallback, and rate-limiting logic underneath. No manual API wiring."
   />
 
   <!-- Standout -->
@@ -119,7 +117,7 @@ const prompts = [
       <div class="mt-10 grid gap-5 sm:grid-cols-3">
         <div class="rounded-xl border bg-card p-6">
           <h3 class="font-semibold">Remote MCP</h3>
-          <p class="mt-1.5 text-sm text-muted-foreground">Hosted and OAuth-authenticated for SaaS users — connect from Claude or any MCP client.</p>
+          <p class="mt-1.5 text-sm text-muted-foreground">Hosted on Cloudflare Workers, API-key authenticated — connect from Claude, any MCP client, or IDE assistant.</p>
         </div>
         <div class="rounded-xl border bg-card p-6">
           <h3 class="font-semibold">Local / stdio MCP</h3>
@@ -138,6 +136,6 @@ const prompts = [
 
   <CtaBand
     title="Give your agents a safe way to notify"
-    text="Connect the Renderical MCP server and let agents send within the scopes you grant — fully audited, rate-limited, and preview-gated."
+    text="Connect the Renderical MCP server and let agents send with your API key — fully audited, rate-limited, and preview-gated."
   />
 </BaseLayout>

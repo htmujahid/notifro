@@ -27,6 +27,8 @@ import {
   Users,
   Gamepad2,
   MessageCircle,
+  Phone,
+  Send,
   Star,
   Quote,
 } from "lucide-react";
@@ -41,6 +43,8 @@ const channelTiles = [
   { name: "In-App", icon: Bell },
   { name: "Webhooks", icon: Webhook },
   { name: "SMS", icon: MessageCircle },
+  { name: "WhatsApp", icon: Phone },
+  { name: "Telegram", icon: Send },
 ];
 
 const testimonials = [
@@ -51,9 +55,9 @@ const testimonials = [
 
 const faqs = [
   { q: "What is Renderical?", a: "Unified notification infrastructure. You compose a message once and Renderical transforms and delivers it across every channel — Slack, email, Teams, Discord, push, in-app, webhooks, and SMS." },
-  { q: "How is it different from an email or push service?", a: "Those cover one channel. Renderical normalizes every channel behind one API, adds fallback chains, scope-based OAuth, a preference center, and a native MCP server so a single integration replaces five tools." },
-  { q: "Can AI agents send notifications?", a: "Yes. The native MCP server exposes sending, scheduling, and analytics as tools that agents call — enforced against granted OAuth scopes, with preview and approval gates, idempotency, and full audit logging." },
-  { q: "Can I self-host?", a: "Enterprise plans include a self-hosted / on-prem deployment option, with the same compose API and a local stdio MCP server." },
+  { q: "How is it different from an email or push service?", a: "Those cover one channel. Renderical normalizes every channel behind one API, adds routing rules, fallback chains, rate limiting, a preference center, and a native MCP server so a single integration replaces five tools." },
+  { q: "Can AI agents send notifications?", a: "Yes. The native MCP server exposes sending, scheduling, and analytics as tools that agents call — authenticated with API keys, with preview and approval gates, idempotency, and full audit logging." },
+  { q: "Can I self-host?", a: "Yes. The entire stack runs on Cloudflare Workers (D1, Queues, KV). Deploy to your own Cloudflare account and run the MCP server as a local stdio binary." },
 ];
 ---
 
@@ -74,8 +78,8 @@ const faqs = [
       </h1>
       <p class="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground text-pretty">
         {site.name} normalizes every channel behind one compose-once API — Slack, email, Teams,
-        Discord, push, and in-app — with fallback chains, scope-based OAuth, and a built-in
-        preference center. One integration replaces five.
+        Discord, WhatsApp, Telegram, push, and in-app — with routing rules, fallback chains,
+        rate limiting, and a built-in preference center. One integration replaces five.
       </p>
       <div class="mt-8 flex flex-wrap justify-center gap-3">
         <a href={site.signupUrl} class={buttonVariants({ size: "lg" })}>Start free</a>
@@ -137,8 +141,8 @@ const faqs = [
     <div class="mx-auto max-w-6xl px-6 py-10">
       <p class="text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">One API for every channel teams ship on</p>
       <div class="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-base font-semibold text-muted-foreground/70">
-        <span>Slack</span><span>Gmail</span><span>Teams</span><span>Discord</span>
-        <span>APNs</span><span>FCM</span><span>Web Push</span><span>Webhooks</span>
+        <span>Slack</span><span>Email</span><span>Teams</span><span>Discord</span>
+        <span>WhatsApp</span><span>Telegram</span><span>APNs/FCM</span><span>Webhooks</span>
       </div>
     </div>
   </section>
@@ -149,7 +153,7 @@ const faqs = [
       <div class="mx-auto max-w-2xl text-center">
         <p class="text-sm font-semibold text-primary">The platform</p>
         <h2 class="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Everything the five tools did — in one</h2>
-        <p class="mt-3 text-muted-foreground">Delivery, preferences, OAuth, reliability, and agentic sending, behind a single API.</p>
+        <p class="mt-3 text-muted-foreground">Delivery, routing rules, rate limiting, compliance, and agentic sending, behind a single API.</p>
       </div>
 
       <div class="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -273,7 +277,7 @@ const faqs = [
       </div>
       <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          [Lock, "Connect your channels", "Authorize providers with scoped OAuth. Tokens are stored, refreshed, and rotated automatically."],
+          [Lock, "Connect your channels", "Add a channel connection with an API key or bot token. Credentials are AES-GCM encrypted at rest."],
           [Layers, "Build a template", "Design once in the visual builder with variables and localization. Preview every channel live."],
           [Clock, "Send or schedule", "Call the API, fire a webhook, or let an agent invoke an MCP tool. Add send-at, quiet hours, and fallback."],
           [BarChart3, "Track & optimize", "Watch delivery, opens, clicks, and cost per channel. Get alerted on anomalies and bounces."],
@@ -296,7 +300,7 @@ const faqs = [
     <div class="mx-auto max-w-6xl px-6">
       <div class="rounded-2xl border bg-primary/5 px-6 py-12">
         <div class="grid gap-8 text-center sm:grid-cols-2 lg:grid-cols-4">
-          {[["9+", "Channels, one API"], ["99.99%", "Delivery uptime SLA"], ["10", "Native MCP tools"], ["SOC 2", "Type II certified"]].map(([num, lbl]) => (
+          {[["11+", "Channels, one API"], ["99.99%", "Delivery uptime SLA"], ["9", "Native MCP tools"], ["Edge-native", "Cloudflare Workers"]].map(([num, lbl]) => (
             <div>
               <div class="text-4xl font-semibold tracking-tight text-primary">{num}</div>
               <div class="mt-1 text-sm text-muted-foreground">{lbl}</div>
