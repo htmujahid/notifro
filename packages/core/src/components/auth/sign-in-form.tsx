@@ -1,7 +1,8 @@
+import { useNavigate, useSearchParams } from "react-router"
+
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Controller } from "react-hook-form"
-import { useNavigate, useSearchParams } from "react-router"
 
 import { useApp } from "@notifro/app/app/context"
 import { Button } from "@notifro/ui/components/button"

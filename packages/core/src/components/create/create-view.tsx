@@ -1,5 +1,7 @@
 import { useState } from "react"
 
+import { useNavigate } from "react-router"
+
 import {
   ArrowRightIcon,
   BellIcon,
@@ -8,7 +10,6 @@ import {
   FileTextIcon,
   XCircleIcon,
 } from "lucide-react"
-import { useNavigate } from "react-router"
 
 import type { ChannelType } from "@notifro/api-client/types"
 import { PageHeader } from "@notifro/ui-primitives/components/page-header"

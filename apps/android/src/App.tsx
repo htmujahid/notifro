@@ -1,8 +1,9 @@
 import { Suspense, useEffect } from "react"
 
+import { RouterProvider, createHashRouter } from "react-router"
+
 import { App as CapacitorApp } from "@capacitor/app"
 import { Preferences } from "@capacitor/preferences"
-import { RouterProvider, createHashRouter } from "react-router"
 
 import { AppProvider } from "@notifro/app/app/context"
 import { createMobileAuthClient } from "@notifro/app/auth/client.mobile"

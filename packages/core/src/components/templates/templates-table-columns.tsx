@@ -1,5 +1,6 @@
-import { FileTextIcon } from "lucide-react"
 import { Link } from "react-router"
+
+import { FileTextIcon } from "lucide-react"
 
 import { type ColumnDef } from "@notifro/ui-primitives/components/data-table"
 import { DataTableColumnHeader } from "@notifro/ui-primitives/components/data-table-column-header"

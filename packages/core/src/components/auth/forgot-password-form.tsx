@@ -1,7 +1,8 @@
+import { useNavigate } from "react-router"
+
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Controller } from "react-hook-form"
-import { useNavigate } from "react-router"
 
 import { Button } from "@notifro/ui/components/button"
 import { Input } from "@notifro/ui/components/input"

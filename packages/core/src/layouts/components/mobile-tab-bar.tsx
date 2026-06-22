@@ -1,5 +1,7 @@
 import * as React from "react"
 
+import { NavLink, useNavigate } from "react-router"
+
 import {
   BarChart3Icon,
   BellIcon,
@@ -16,7 +18,6 @@ import {
   Settings2Icon,
   UserIcon,
 } from "lucide-react"
-import { NavLink, useNavigate } from "react-router"
 
 import { useSession } from "@notifro/app/auth/use-session"
 import { Avatar, AvatarFallback } from "@notifro/ui/components/avatar"

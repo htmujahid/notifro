@@ -1,5 +1,6 @@
-import { BellIcon, SearchIcon } from "lucide-react"
 import { useNavigate } from "react-router"
+
+import { BellIcon, SearchIcon } from "lucide-react"
 
 import { useApp } from "@notifro/app/app/context"
 import { Kbd } from "@notifro/ui/components/kbd"

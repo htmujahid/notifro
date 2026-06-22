@@ -1,3 +1,5 @@
+import { Link } from "react-router"
+
 import {
   ArrowRightIcon,
   BellIcon,
@@ -5,7 +7,6 @@ import {
   Loader2Icon,
   RadioIcon,
 } from "lucide-react"
-import { Link } from "react-router"
 import { toast } from "sonner"
 
 import { Button } from "@notifro/ui/components/button"
@@ -61,9 +62,7 @@ export function OnboardingView() {
           onClick={() =>
             sendTest.mutate(undefined, {
               onSuccess: () =>
-                toast.success(
-                  "Test notification delivered. Check your inbox."
-                ),
+                toast.success("Test notification delivered. Check your inbox."),
               onError: (err) =>
                 toast.error(err instanceof Error ? err.message : "Send failed"),
             })

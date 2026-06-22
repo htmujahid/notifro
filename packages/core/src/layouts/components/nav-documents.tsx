@@ -1,12 +1,13 @@
 import * as React from "react"
 
+import { NavLink } from "react-router"
+
 import {
   FolderIcon,
   MoreHorizontalIcon,
   ShareIcon,
   Trash2Icon,
 } from "lucide-react"
-import { NavLink } from "react-router"
 
 import {
   DropdownMenu,

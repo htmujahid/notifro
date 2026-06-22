@@ -85,8 +85,7 @@ export function useTableQueryState({
 
   const onPaginationChange = useCallback<OnChangeFn<PaginationState>>(
     (updater) => {
-      const next =
-        typeof updater === "function" ? updater(pagination) : updater
+      const next = typeof updater === "function" ? updater(pagination) : updater
       setState({ page: next.pageIndex + 1, perPage: next.pageSize })
     },
     [pagination, setState]

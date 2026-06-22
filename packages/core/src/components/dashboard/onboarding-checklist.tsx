@@ -1,5 +1,6 @@
-import { ArrowRightIcon, CheckIcon, Loader2Icon } from "lucide-react"
 import { Link } from "react-router"
+
+import { ArrowRightIcon, CheckIcon, Loader2Icon } from "lucide-react"
 import { toast } from "sonner"
 
 import { Button } from "@notifro/ui/components/button"
@@ -46,9 +47,7 @@ export function OnboardingChecklist() {
           onClick={() =>
             sendTest.mutate(undefined, {
               onSuccess: () =>
-                toast.success(
-                  "Test notification delivered. Check your inbox."
-                ),
+                toast.success("Test notification delivered. Check your inbox."),
               onError: (err) =>
                 toast.error(err instanceof Error ? err.message : "Send failed"),
             })

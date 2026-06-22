@@ -1,7 +1,8 @@
 import * as React from "react"
 
-import { CirclePlusIcon, InboxIcon } from "lucide-react"
 import { NavLink } from "react-router"
+
+import { CirclePlusIcon, InboxIcon } from "lucide-react"
 
 import { Button } from "@notifro/ui/components/button"
 import {

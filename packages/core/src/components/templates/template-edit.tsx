@@ -1,7 +1,8 @@
 import { useState } from "react"
 
-import { EyeIcon, HistoryIcon, SaveIcon } from "lucide-react"
 import { useNavigate } from "react-router"
+
+import { EyeIcon, HistoryIcon, SaveIcon } from "lucide-react"
 
 import { Button } from "@notifro/ui/components/button"
 

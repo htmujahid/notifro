@@ -1,5 +1,6 @@
-import { BellIcon, SearchIcon } from "lucide-react"
 import { useNavigate } from "react-router"
+
+import { BellIcon, SearchIcon } from "lucide-react"
 
 import { NotifroMark } from "../../components/notifro-logo"
 import { useUnreadCount } from "../../queries/inbox"

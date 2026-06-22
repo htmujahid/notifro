@@ -5,10 +5,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
-import type {
-  ApiClient,
-  InferResponseType,
-} from "@notifro/api-client/client"
+import type { ApiClient, InferResponseType } from "@notifro/api-client/client"
 import { toQuery, unwrap } from "@notifro/api-client/client"
 import { useApiClient } from "@notifro/api-client/context"
 

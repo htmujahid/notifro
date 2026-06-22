@@ -1,5 +1,6 @@
-import { BellIcon, CalendarIcon, FileTextIcon } from "lucide-react"
 import { useNavigate } from "react-router"
+
+import { BellIcon, CalendarIcon, FileTextIcon } from "lucide-react"
 
 import { useApp } from "@notifro/app/app/context"
 import {

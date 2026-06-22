@@ -2,9 +2,7 @@ import { lazy } from "react"
 
 import type { RouteObject } from "react-router"
 
-const AccountLayout = lazy(
-  () => import("@notifro/core/layouts/account-layout")
-)
+const AccountLayout = lazy(() => import("@notifro/core/layouts/account-layout"))
 const NotificationsPage = lazy(() => import("../../pages/notifications"))
 const SchedulesPage = lazy(() => import("../../pages/schedules"))
 const ChannelsPage = lazy(() => import("../../pages/channels"))

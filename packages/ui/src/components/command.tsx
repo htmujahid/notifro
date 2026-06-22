@@ -12,10 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@notifro/ui/components/dialog"
-import {
-  InputGroup,
-  InputGroupAddon,
-} from "@notifro/ui/components/input-group"
+import { InputGroup, InputGroupAddon } from "@notifro/ui/components/input-group"
 import { cn } from "@notifro/ui/lib/utils"
 
 function Command({

@@ -1,7 +1,8 @@
 import { useState } from "react"
 
-import { BellOffIcon, CheckCheckIcon, PlusIcon } from "lucide-react"
 import { useNavigate } from "react-router"
+
+import { BellOffIcon, CheckCheckIcon, PlusIcon } from "lucide-react"
 
 import type { ListResponse } from "@notifro/api-client/types"
 import { PageHeader } from "@notifro/ui-primitives/components/page-header"

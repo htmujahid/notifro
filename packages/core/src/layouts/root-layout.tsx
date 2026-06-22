@@ -1,7 +1,8 @@
 import { Suspense } from "react"
 
-import { NuqsAdapter } from "nuqs/adapters/react-router/v7"
 import { Outlet } from "react-router"
+
+import { NuqsAdapter } from "nuqs/adapters/react-router/v7"
 
 export default function RootLayout() {
   return (

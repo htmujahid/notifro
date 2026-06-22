@@ -114,9 +114,7 @@ export default function AuthLayout() {
           }}
         >
           <NotifroMark className="size-[18px]" />
-          <span className="text-sm font-semibold tracking-tight">
-            Notifro
-          </span>
+          <span className="text-sm font-semibold tracking-tight">Notifro</span>
         </div>
 
         <div className="flex flex-1 items-center justify-center px-6 py-10 sm:px-10">

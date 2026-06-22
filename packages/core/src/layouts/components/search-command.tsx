@@ -1,5 +1,7 @@
 import { useEffect } from "react"
 
+import { useNavigate } from "react-router"
+
 import {
   BarChart3Icon,
   BellIcon,
@@ -16,7 +18,6 @@ import {
   ShieldIcon,
   UserIcon,
 } from "lucide-react"
-import { useNavigate } from "react-router"
 
 import { useApp } from "@notifro/app/app/context"
 import {
