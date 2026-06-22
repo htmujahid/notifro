@@ -1,7 +1,7 @@
-export { createRendericalClient } from "./client"
+export { createNotifroClient } from "./client"
 export type {
-  RendericalClient,
-  RendericalClientOptions,
+  NotifroClient,
+  NotifroClientOptions,
   SendOptions,
   SendResult,
 } from "./client"

@@ -14,8 +14,8 @@
     "components": "@/components",
     "hooks": "@/hooks",
     "lib": "@/lib",
-    "utils": "@renderical/ui/lib/utils",
-    "ui": "@renderical/ui/components"
+    "utils": "@notifro/ui/lib/utils",
+    "ui": "@notifro/ui/components"
   },
   "rtl": true,
   "menuColor": "default",

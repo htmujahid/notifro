@@ -2,20 +2,20 @@ const FRONTEND_URL =
   import.meta.env.PUBLIC_FRONTEND_URL ?? "http://localhost:5173"
 
 export const site = {
-  name: "Renderical",
+  name: "Notifro",
   tagline: "Compose once. Deliver everywhere.",
   description:
-    "Renderical is unified notification infrastructure. One compose-once API delivers across Slack, email, Teams, Discord, WhatsApp, Telegram, web push, webhooks, and in-app — with routing rules, fallback chains, scheduling, rate limiting, and a native MCP server for AI agents.",
-  url: "https://renderical.com",
-  email: "hello@renderical.com",
+    "Notifro is unified notification infrastructure. One compose-once API delivers across Slack, email, Teams, Discord, WhatsApp, Telegram, web push, webhooks, and in-app — with routing rules, fallback chains, scheduling, rate limiting, and a native MCP server for AI agents.",
+  url: "https://notifro.com",
+  email: "hello@notifro.com",
   frontendUrl: FRONTEND_URL,
   signinUrl: `${FRONTEND_URL}/auth/sign-in`,
   signupUrl: `${FRONTEND_URL}/auth/sign-up`,
-  repoUrl: "https://github.com/htmujahid/renderical",
+  repoUrl: "https://github.com/htmujahid/notifro",
   selfHostUrl: "/self-host",
   docsUrl: "/developers",
   ogImage: "/og.png", // 1200×630, resolved to an absolute URL in BaseLayout
-  twitter: "@renderical", // Twitter/X handle for twitter:site & twitter:creator
+  twitter: "@notifro", // Twitter/X handle for twitter:site & twitter:creator
   locale: "en_US",
   themeColor: "#FFFFFF",
 }

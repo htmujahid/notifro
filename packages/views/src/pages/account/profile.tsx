@@ -1,6 +1,6 @@
-import { PhoneNumberForm } from "@renderical/core/components/account/phone-number-form"
-import { ProfileForm } from "@renderical/core/components/account/profile-form"
-import { Separator } from "@renderical/ui/components/separator"
+import { PhoneNumberForm } from "@notifro/core/components/account/phone-number-form"
+import { ProfileForm } from "@notifro/core/components/account/profile-form"
+import { Separator } from "@notifro/ui/components/separator"
 
 export default function AccountProfilePage() {
   return (

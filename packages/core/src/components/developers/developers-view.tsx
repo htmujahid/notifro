@@ -1,4 +1,4 @@
-import { PageHeader } from "@renderical/ui-primitives/components/page-header"
+import { PageHeader } from "@notifro/ui-primitives/components/page-header"
 
 import { ApiKeysSection } from "./api-keys-section"
 import { McpSection } from "./mcp-section"

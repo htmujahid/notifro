@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from "@capacitor/cli"
 
 const config: CapacitorConfig = {
-  appId: "com.renderical.ios",
+  appId: "com.notifro.ios",
   appName: "ios",
   webDir: "dist",
 }

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
-import { useAuth } from "@renderical/app/auth/context"
+import { useAuth } from "@notifro/app/auth/context"
 
 export const apiKeyKeys = {
   all: ["developers"] as const,

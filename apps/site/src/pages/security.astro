@@ -49,7 +49,7 @@ const mcpSafety = [
 ];
 ---
 
-<BaseLayout title="Security" description="Encrypted credentials, PII redaction, two-factor auth, scoped API keys, signed webhooks, idempotency, audit logging, and a self-hosted option — Renderical's security, exactly as built.">
+<BaseLayout title="Security" description="Encrypted credentials, PII redaction, two-factor auth, scoped API keys, signed webhooks, idempotency, audit logging, and a self-hosted option — Notifro's security, exactly as built.">
   <!-- Header -->
   <section class="relative overflow-hidden border-b">
     <div class="pointer-events-none absolute inset-0 bg-dots mask-radial opacity-60"></div>
@@ -183,8 +183,8 @@ const mcpSafety = [
           </div>
           <div class="space-y-1 p-5 font-mono text-xs text-muted-foreground">
             <div><span class="text-foreground">POST</span> /your/webhook</div>
-            <div>X-Renderical-Signature: <span class="text-primary">t=1718,v1=9f86d0…</span></div>
-            <div>X-Renderical-Timestamp: <span class="text-foreground">1718900000</span></div>
+            <div>X-Notifro-Signature: <span class="text-primary">t=1718,v1=9f86d0…</span></div>
+            <div>X-Notifro-Timestamp: <span class="text-foreground">1718900000</span></div>
             <div class="pt-2 text-muted-foreground/70">// HMAC-SHA256 · replay-safe · idempotent</div>
           </div>
         </div>

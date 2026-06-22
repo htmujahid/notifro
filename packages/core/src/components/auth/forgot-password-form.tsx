@@ -3,9 +3,9 @@ import { useForm } from "react-hook-form"
 import { Controller } from "react-hook-form"
 import { useNavigate } from "react-router"
 
-import { Button } from "@renderical/ui/components/button"
-import { Input } from "@renderical/ui/components/input"
-import { Label } from "@renderical/ui/components/label"
+import { Button } from "@notifro/ui/components/button"
+import { Input } from "@notifro/ui/components/input"
+import { Label } from "@notifro/ui/components/label"
 
 import { useForgotPassword } from "../../queries/auth"
 import {

@@ -18,8 +18,8 @@
     "@capacitor/app": "^8.0.1",
     "@capacitor/core": "^8.4.0",
     "@capacitor/preferences": "^8.0.1",
-    "@renderical/app": "workspace:*",
-    "@renderical/views": "workspace:*",
+    "@notifro/app": "workspace:*",
+    "@notifro/views": "workspace:*",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-router": "^8.0.1"

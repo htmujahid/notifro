@@ -1,4 +1,4 @@
-import { TwoFactorSettings } from "@renderical/core/components/account/two-factor-settings"
+import { TwoFactorSettings } from "@notifro/core/components/account/two-factor-settings"
 
 export default function AccountTwoFactorPage() {
   return (

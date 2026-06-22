@@ -2,9 +2,9 @@ import type {
   ApiRequestLog,
   ComposePayload,
   ListResponse,
-} from "@renderical/api-client/types"
+} from "@notifro/api-client/types"
 
-export interface RendericalClientOptions {
+export interface NotifroClientOptions {
   baseUrl: string
   apiKey: string
 }
@@ -45,7 +45,7 @@ async function parseError(res: Response): Promise<never> {
   throw err
 }
 
-export function createRendericalClient(options: RendericalClientOptions) {
+export function createNotifroClient(options: NotifroClientOptions) {
   const base = options.baseUrl.replace(/\/$/, "")
   const apiKey = options.apiKey
 
@@ -107,4 +107,4 @@ export function createRendericalClient(options: RendericalClientOptions) {
   }
 }
 
-export type RendericalClient = ReturnType<typeof createRendericalClient>
+export type NotifroClient = ReturnType<typeof createNotifroClient>

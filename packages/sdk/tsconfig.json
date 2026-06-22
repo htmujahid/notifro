@@ -8,7 +8,7 @@
     "strict": true,
     "noEmit": true,
     "paths": {
-      "@renderical/api-client/*": ["../api-client/src/*"]
+      "@notifro/api-client/*": ["../api-client/src/*"]
     }
   },
   "include": ["."],

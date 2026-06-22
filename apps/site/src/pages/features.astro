@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import CtaBand from "../components/CtaBand.astro";
-import { buttonVariants } from "@renderical/ui/components/button";
+import { buttonVariants } from "@notifro/ui/components/button";
 import {
   Layers,
   Clock,
@@ -89,7 +89,7 @@ const bars = [38, 62, 50, 78, 55, 88, 70, 64];
             <span class="size-2.5 rounded-full bg-muted-foreground/20"></span>
             <span class="size-2.5 rounded-full bg-muted-foreground/20"></span>
             <span class="size-2.5 rounded-full bg-muted-foreground/20"></span>
-            <span class="ml-2 font-mono text-xs text-muted-foreground">renderical.send()</span>
+            <span class="ml-2 font-mono text-xs text-muted-foreground">notifro.send()</span>
           </div>
           <div class="p-5">
             <div class="rounded-lg bg-muted/60 p-3 font-mono text-xs text-muted-foreground">
@@ -120,7 +120,7 @@ const bars = [38, 62, 50, 78, 55, 88, 70, 64];
       <div class="mx-auto max-w-2xl text-center">
         <span class="inline-flex items-center gap-2 rounded-lg border bg-background px-2.5 py-1 text-xs font-semibold text-muted-foreground"><Globe className="size-3.5" /> Multi-channel delivery</span>
         <h2 class="mt-4 text-3xl font-semibold tracking-tight">One payload, every destination</h2>
-        <p class="mt-3 text-muted-foreground">Connect a channel once; Renderical handles the transform and rate-aware throttling.</p>
+        <p class="mt-3 text-muted-foreground">Connect a channel once; Notifro handles the transform and rate-aware throttling.</p>
       </div>
       <div class="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {channelTiles.map((c) => (
@@ -354,11 +354,11 @@ const bars = [38, 62, 50, 78, 55, 88, 70, 64];
           </ul>
         </div>
         <div class="rounded-xl border bg-card p-5 font-mono text-sm leading-relaxed">
-          <pre class="overflow-x-auto text-muted-foreground"><code><span class="text-muted-foreground/60">$ npm install @renderical/sdk</span>
+          <pre class="overflow-x-auto text-muted-foreground"><code><span class="text-muted-foreground/60">$ npm install @notifro/sdk</span>
 
-import {'{'} createRendericalClient {'}'} from <span class="text-primary">"@renderical/sdk"</span>;
-const rc = <span class="text-foreground">createRendericalClient</span>({'{'}
-  apiKey: process.env.<span class="text-primary">RENDERICAL_API_KEY</span>,
+import {'{'} createNotifroClient {'}'} from <span class="text-primary">"@notifro/sdk"</span>;
+const rc = <span class="text-foreground">createNotifroClient</span>({'{'}
+  apiKey: process.env.<span class="text-primary">NOTIFRO_API_KEY</span>,
 {'}'});
 
 await rc.<span class="text-foreground">send</span>({'{'}

@@ -18,9 +18,9 @@ import {
 } from "lucide-react"
 import { NavLink, useNavigate } from "react-router"
 
-import { useSession } from "@renderical/app/auth/use-session"
-import { Avatar, AvatarFallback } from "@renderical/ui/components/avatar"
-import { Drawer, DrawerContent } from "@renderical/ui/components/drawer"
+import { useSession } from "@notifro/app/auth/use-session"
+import { Avatar, AvatarFallback } from "@notifro/ui/components/avatar"
+import { Drawer, DrawerContent } from "@notifro/ui/components/drawer"
 
 import { useSignOut } from "../../queries/auth"
 import { useUnreadCount } from "../../queries/inbox"

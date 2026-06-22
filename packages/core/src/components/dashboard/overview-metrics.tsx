@@ -5,11 +5,11 @@ import {
   RadioIcon,
 } from "lucide-react"
 
-import { PageHeader } from "@renderical/ui-primitives/components/page-header"
+import { PageHeader } from "@notifro/ui-primitives/components/page-header"
 import {
   StatCard,
   StatCardGrid,
-} from "@renderical/ui-primitives/components/stat-card"
+} from "@notifro/ui-primitives/components/stat-card"
 
 import { useOverview } from "../../queries/overview"
 import { AnalyticsSection } from "./analytics-section"

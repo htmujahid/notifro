@@ -1,20 +1,20 @@
-# @renderical/views
+# @notifro/views
 
 The **stateless presentation layer**. Shared pages, layouts, and route definitions rendered identically across every client — web, desktop, iOS, and Android.
 
 ## Role in the architecture
 
 ```
-apps/*  ──►  @renderical/app     (app-wide universal logic)
+apps/*  ──►  @notifro/app     (app-wide universal logic)
               │
               ▼
-        @renderical/core         (stateful logic: forms, queries, mutations)
+        @notifro/core         (stateful logic: forms, queries, mutations)
               │
               ▼
-        @renderical/views        (this package — pure, stateless UI)  ──►  @renderical/ui
+        @notifro/views        (this package — pure, stateless UI)  ──►  @notifro/ui
 ```
 
-Views are **presentation only**. They lay out screens and wire user intent to behavior handed down from [`@renderical/core`](../core); they do not own state, fetch data, or contain platform logic. Keeping them stateless is what lets the same page render on every platform.
+Views are **presentation only**. They lay out screens and wire user intent to behavior handed down from [`@notifro/core`](../core); they do not own state, fetch data, or contain platform logic. Keeping them stateless is what lets the same page render on every platform.
 
 ## What's here
 
@@ -24,7 +24,7 @@ Views are **presentation only**. They lay out screens and wire user intent to be
 
 ## Stack
 
-React 19 + React Router 8, styled via [`@renderical/ui`](../ui).
+React 19 + React Router 8, styled via [`@notifro/ui`](../ui).
 
 ## Used by
 

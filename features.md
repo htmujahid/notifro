@@ -1,4 +1,4 @@
-# Renderical — Feature Reference
+# Notifro — Feature Reference
 
 > Single-user, cross-platform notification infrastructure running on Cloudflare edge.
 > Organised by module / package. Each section lists what is **implemented**, key files, data models, and integration points.
@@ -45,7 +45,7 @@
 ## Monorepo Structure
 
 ```
-renderical/
+notifro/
 ├── apps/
 │   ├── api/          # Cloudflare Worker — all backend logic
 │   ├── web/          # Vite + React SPA
@@ -59,7 +59,7 @@ renderical/
     ├── app/          # Auth client adapters (web / desktop / mobile)
     ├── api-client/   # Typed HTTP client for frontend use
     ├── sdk/          # Public TypeScript SDK
-    ├── cli/          # `renderical` CLI
+    ├── cli/          # `notifro` CLI
     ├── mcp/          # MCP (Model Context Protocol) server
     ├── mailer/       # Transactional email templates (CF Email)
     ├── templating/   # Mustache-style template engine
@@ -352,7 +352,7 @@ Files: `apps/api/src/routes/request-log.ts`
 
 **Endpoint:** `POST/GET/DELETE /mcp` — requires `rk_`-prefixed API key.
 
-Uses `@modelcontextprotocol/sdk` via the `@renderical/mcp` package. Serves a Streamable HTTP transport (stateless, `enableJsonResponse: true`).
+Uses `@modelcontextprotocol/sdk` via the `@notifro/mcp` package. Serves a Streamable HTTP transport (stateless, `enableJsonResponse: true`).
 
 **Tools registered:**
 
@@ -370,7 +370,7 @@ Uses `@modelcontextprotocol/sdk` via the `@renderical/mcp` package. Serves a Str
 
 **MCP pending actions** (`mcp_pending_action` table): Stores serialised action payload with `status` (pending → approved/rejected) and `expiresAt`.
 
-**MCP Resources:** `renderical://channels`, `renderical://templates`, `renderical://recent-deliveries`
+**MCP Resources:** `notifro://channels`, `notifro://templates`, `notifro://recent-deliveries`
 
 **MCP Prompts:** Registered in `packages/mcp/src/prompts.ts`
 
@@ -498,7 +498,7 @@ Feature-level React components and data hooks used across all app targets.
 - `LogsView` — raw delivery log with filters
 - `HelpView` + `FaqItem` — FAQ accordion
 - `ProtectedRoute` — session guard wrapper
-- `RendericalLogo` — SVG brand logo
+- `NotifroLogo` — SVG brand logo
 
 ### Queries (`queries/`)
 
@@ -597,7 +597,7 @@ Provides a unified auth client and app context that adapts per platform.
 
 ## packages/mailer — Transactional Email
 
-Cloudflare Email binding wrapper. All emails sent from `noreply@renderical.com`.
+Cloudflare Email binding wrapper. All emails sent from `noreply@notifro.com`.
 
 | Export | Template |
 |---|---|
@@ -613,7 +613,7 @@ Files: `packages/mailer/src/emails/`, `packages/mailer/src/binding.ts`
 
 ## packages/mcp — MCP Server Package
 
-Standalone `@renderical/mcp` package that exposes a `createMcpServer(config)` function.
+Standalone `@notifro/mcp` package that exposes a `createMcpServer(config)` function.
 
 | Module | Purpose |
 |---|---|
@@ -623,13 +623,13 @@ Standalone `@renderical/mcp` package that exposes a `createMcpServer(config)` fu
 | `prompts.ts` | Registers MCP prompts |
 | `bin.ts` | CLI entry for running as a standalone MCP server process |
 
-The MCP package calls back to the Renderical REST API using the supplied `apiKey`, making it fully stateless.
+The MCP package calls back to the Notifro REST API using the supplied `apiKey`, making it fully stateless.
 
 ---
 
 ## packages/sdk — TypeScript SDK
 
-`createRendericalClient(options)` — isomorphic fetch-based client.
+`createNotifroClient(options)` — isomorphic fetch-based client.
 
 | Method | Description |
 |---|---|
@@ -645,16 +645,16 @@ Files: `packages/sdk/src/client.ts`, `packages/sdk/src/index.ts`
 
 ## packages/cli — CLI Tool
 
-`renderical` binary (Node.js).
+`notifro` binary (Node.js).
 
 ```
-renderical send    --channel <ch> --to <addr> --subject <s> --body <b>
-renderical logs    [--limit <n>]
+notifro send    --channel <ch> --to <addr> --subject <s> --body <b>
+notifro logs    [--limit <n>]
 ```
 
-Env vars: `RENDERICAL_API_KEY` (required), `RENDERICAL_BASE_URL` (default `http://localhost:8787`).
+Env vars: `NOTIFRO_API_KEY` (required), `NOTIFRO_BASE_URL` (default `http://localhost:8787`).
 
-Uses `@renderical/sdk` under the hood.
+Uses `@notifro/sdk` under the hood.
 
 Files: `packages/cli/src/index.ts`
 
@@ -687,7 +687,7 @@ Tests: `packages/templating/src/engine.test.ts`
 
 ## packages/api-client — Frontend API Client
 
-Typed `fetch` wrapper used by `@renderical/core` hooks.
+Typed `fetch` wrapper used by `@notifro/core` hooks.
 
 | Module | Purpose |
 |---|---|

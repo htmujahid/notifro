@@ -5,7 +5,7 @@ import { cors } from "hono/cors"
 import {
   WebStandardStreamableHTTPServerTransport,
   createMcpServer,
-} from "@renderical/mcp"
+} from "@notifro/mcp"
 
 import { authInstance } from "../lib/auth"
 import { redactPii } from "../lib/redact"
@@ -201,10 +201,10 @@ export function registerRoutes(app: OpenAPIHono<AppEnv>) {
 
   app.doc("/doc", {
     openapi: "3.0.0",
-    info: { title: "Renderical API", version: "1.0.0" },
+    info: { title: "Notifro API", version: "1.0.0" },
   })
 
-  app.get("/scalar", Scalar({ url: "/doc", title: "Renderical API" }))
+  app.get("/scalar", Scalar({ url: "/doc", title: "Notifro API" }))
 
   return routes
 }

@@ -8,24 +8,24 @@ import { PanelLeftIcon } from "lucide-react"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 
-import { Button } from "@renderical/ui/components/button"
-import { Input } from "@renderical/ui/components/input"
-import { Separator } from "@renderical/ui/components/separator"
+import { Button } from "@notifro/ui/components/button"
+import { Input } from "@notifro/ui/components/input"
+import { Separator } from "@notifro/ui/components/separator"
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@renderical/ui/components/sheet"
-import { Skeleton } from "@renderical/ui/components/skeleton"
+} from "@notifro/ui/components/sheet"
+import { Skeleton } from "@notifro/ui/components/skeleton"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@renderical/ui/components/tooltip"
-import { useIsMobile } from "@renderical/ui/hooks/use-mobile"
-import { cn } from "@renderical/ui/lib/utils"
+} from "@notifro/ui/components/tooltip"
+import { useIsMobile } from "@notifro/ui/hooks/use-mobile"
+import { cn } from "@notifro/ui/lib/utils"
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7

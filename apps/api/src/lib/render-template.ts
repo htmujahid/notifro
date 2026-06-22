@@ -1,5 +1,5 @@
-import { getLocaleStrings, resolveLocale } from "@renderical/i18n"
-import { renderValue } from "@renderical/templating"
+import { getLocaleStrings, resolveLocale } from "@notifro/i18n"
+import { renderValue } from "@notifro/templating"
 
 import type { AppDB } from "../db/client"
 import { Errors } from "./errors"

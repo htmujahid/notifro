@@ -3,7 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/PageHeader.astro";
 import CtaBand from "../components/CtaBand.astro";
 import { site } from "../config";
-import { buttonVariants } from "@renderical/ui/components/button";
+import { buttonVariants } from "@notifro/ui/components/button";
 import { Brain, ShieldCheck, Hand, Check } from "lucide-react";
 
 const tools = [
@@ -24,9 +24,9 @@ const standout = [
 ];
 
 const resources = [
-  ["Channels", "Connected channels and their current health (renderical://channels)"],
-  ["Templates", "Available templates and their variable schemas (renderical://templates)"],
-  ["Recent deliveries", "Last 20 deliveries for delivery-status context (renderical://recent-deliveries)"],
+  ["Channels", "Connected channels and their current health (notifro://channels)"],
+  ["Templates", "Available templates and their variable schemas (notifro://templates)"],
+  ["Recent deliveries", "Last 20 deliveries for delivery-status context (notifro://recent-deliveries)"],
 ];
 
 const prompts = [
@@ -134,6 +134,6 @@ const prompts = [
 
   <CtaBand
     title="Give your agents a safe way to notify"
-    text="Connect the Renderical MCP server and let agents send with your API key — fully audited, rate-limited, and preview-gated."
+    text="Connect the Notifro MCP server and let agents send with your API key — fully audited, rate-limited, and preview-gated."
   />
 </BaseLayout>

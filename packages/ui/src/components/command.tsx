@@ -11,12 +11,12 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@renderical/ui/components/dialog"
+} from "@notifro/ui/components/dialog"
 import {
   InputGroup,
   InputGroupAddon,
-} from "@renderical/ui/components/input-group"
-import { cn } from "@renderical/ui/lib/utils"
+} from "@notifro/ui/components/input-group"
+import { cn } from "@notifro/ui/lib/utils"
 
 function Command({
   className,

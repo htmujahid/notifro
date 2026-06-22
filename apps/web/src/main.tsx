@@ -2,7 +2,7 @@ import { StrictMode } from "react"
 
 import { createRoot } from "react-dom/client"
 
-import "@renderical/ui/globals.css"
+import "@notifro/ui/globals.css"
 
 import { App } from "./App.tsx"
 

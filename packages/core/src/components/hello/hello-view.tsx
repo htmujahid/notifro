@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 
-import { unwrap } from "@renderical/api-client/client"
-import { useApiClient } from "@renderical/api-client/context"
+import { unwrap } from "@notifro/api-client/client"
+import { useApiClient } from "@notifro/api-client/context"
 
 export function HelloView() {
   const client = useApiClient()

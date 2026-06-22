@@ -1,8 +1,8 @@
 import { SendIcon, Trash2Icon } from "lucide-react"
 import { toast } from "sonner"
 
-import { Button } from "@renderical/ui/components/button"
-import { Switch } from "@renderical/ui/components/switch"
+import { Button } from "@notifro/ui/components/button"
+import { Switch } from "@notifro/ui/components/switch"
 
 import {
   type WebhookEndpoint,

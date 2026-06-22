@@ -6,7 +6,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@renderical/ui/components/card"
+} from "@notifro/ui/components/card"
 
 import {
   useAnalyticsSummary,

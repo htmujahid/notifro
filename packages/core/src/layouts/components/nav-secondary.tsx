@@ -8,7 +8,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@renderical/ui/components/sidebar"
+} from "@notifro/ui/components/sidebar"
 
 type NavSecondaryItem =
   | { title: string; url: string; icon: React.ReactNode; onClick?: never }

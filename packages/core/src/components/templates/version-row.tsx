@@ -1,7 +1,7 @@
 import { RotateCcwIcon } from "lucide-react"
 
-import type { TemplateVersion } from "@renderical/api-client/types"
-import { Button } from "@renderical/ui/components/button"
+import type { TemplateVersion } from "@notifro/api-client/types"
+import { Button } from "@notifro/ui/components/button"
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleString(undefined, {

@@ -1,11 +1,11 @@
 import { useMemo } from "react"
 
-import { DataTable } from "@renderical/ui-primitives/components/data-table"
-import { DataTableToolbar } from "@renderical/ui-primitives/components/data-table-toolbar"
+import { DataTable } from "@notifro/ui-primitives/components/data-table"
+import { DataTableToolbar } from "@notifro/ui-primitives/components/data-table-toolbar"
 import {
   type ManualTableState,
   useDataTable,
-} from "@renderical/ui-primitives/components/use-data-table"
+} from "@notifro/ui-primitives/components/use-data-table"
 
 import { type Template, getTemplatesColumns } from "./templates-table-columns"
 

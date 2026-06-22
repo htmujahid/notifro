@@ -21,8 +21,8 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@renderical/ui/components/dropdown-menu"
-import { cn } from "@renderical/ui/lib/utils"
+} from "@notifro/ui/components/dropdown-menu"
+import { cn } from "@notifro/ui/lib/utils"
 
 function Menubar({ className, ...props }: MenubarPrimitive.Props) {
   return (

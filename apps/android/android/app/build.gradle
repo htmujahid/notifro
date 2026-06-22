@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "com.renderical.android"
+    namespace = "com.notifro.android"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.renderical.android"
+        applicationId "com.notifro.android"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

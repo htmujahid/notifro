@@ -1,10 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 
-import { useApp } from "@renderical/app/app/context"
-import { Button } from "@renderical/ui/components/button"
-import { Input } from "@renderical/ui/components/input"
-import { Label } from "@renderical/ui/components/label"
+import { useApp } from "@notifro/app/app/context"
+import { Button } from "@notifro/ui/components/button"
+import { Input } from "@notifro/ui/components/input"
+import { Label } from "@notifro/ui/components/label"
 
 import { useChangeEmail } from "../../queries/auth"
 import {

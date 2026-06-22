@@ -1,6 +1,6 @@
-# @renderical/mailer
+# @notifro/mailer
 
-Transactional email for Renderical — templates and a sending binding for Cloudflare Workers.
+Transactional email for Notifro — templates and a sending binding for Cloudflare Workers.
 
 ## What's here
 

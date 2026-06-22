@@ -3,10 +3,10 @@ import { useForm } from "react-hook-form"
 import { Controller } from "react-hook-form"
 import { useNavigate, useSearchParams } from "react-router"
 
-import { useApp } from "@renderical/app/app/context"
-import { Button } from "@renderical/ui/components/button"
-import { Input } from "@renderical/ui/components/input"
-import { Label } from "@renderical/ui/components/label"
+import { useApp } from "@notifro/app/app/context"
+import { Button } from "@notifro/ui/components/button"
+import { Input } from "@notifro/ui/components/input"
+import { Label } from "@notifro/ui/components/label"
 
 import { useSignInEmail, useSignInSocial } from "../../queries/auth"
 import { type SignInValues, signInSchema } from "../../schemas/auth"
@@ -59,7 +59,7 @@ export function SignInForm() {
       <div className="flex flex-col gap-1 text-center">
         <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
         <p className="text-sm text-muted-foreground">
-          Sign in to your Renderical account
+          Sign in to your Notifro account
         </p>
       </div>
 

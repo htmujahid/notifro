@@ -1,4 +1,4 @@
-import { AnalyticsView } from "@renderical/core/components/analytics/analytics-view"
+import { AnalyticsView } from "@notifro/core/components/analytics/analytics-view"
 
 export default function AnalyticsPage() {
   return <AnalyticsView />

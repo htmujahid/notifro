@@ -2,10 +2,10 @@ import React from "react"
 
 import { GitBranchIcon, PlusIcon, RouteIcon, Trash2Icon } from "lucide-react"
 
-import { PageHeader } from "@renderical/ui-primitives/components/page-header"
-import { SectionHeader } from "@renderical/ui-primitives/components/section-header"
-import { Badge } from "@renderical/ui/components/badge"
-import { Button } from "@renderical/ui/components/button"
+import { PageHeader } from "@notifro/ui-primitives/components/page-header"
+import { SectionHeader } from "@notifro/ui-primitives/components/section-header"
+import { Badge } from "@notifro/ui/components/badge"
+import { Button } from "@notifro/ui/components/button"
 
 import { useTableQueryState } from "../../hooks/use-table-query-state"
 import {

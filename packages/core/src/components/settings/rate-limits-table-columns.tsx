@@ -1,8 +1,8 @@
 import { TrashIcon } from "lucide-react"
 
-import type { RateLimitRule } from "@renderical/api-client/types"
-import { type ColumnDef } from "@renderical/ui-primitives/components/data-table"
-import { DataTableColumnHeader } from "@renderical/ui-primitives/components/data-table-column-header"
+import type { RateLimitRule } from "@notifro/api-client/types"
+import { type ColumnDef } from "@notifro/ui-primitives/components/data-table"
+import { DataTableColumnHeader } from "@notifro/ui-primitives/components/data-table-column-header"
 
 interface RateLimitsColumnsOptions {
   onDelete: (id: string) => void

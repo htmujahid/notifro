@@ -11,11 +11,11 @@
   },
   "iconLibrary": "lucide",
   "aliases": {
-    "components": "@renderical/ui/components",
-    "utils": "@renderical/ui/lib/utils",
-    "hooks": "@renderical/ui/hooks",
-    "lib": "@renderical/ui/lib",
-    "ui": "@renderical/ui/components"
+    "components": "@notifro/ui/components",
+    "utils": "@notifro/ui/lib/utils",
+    "hooks": "@notifro/ui/hooks",
+    "lib": "@notifro/ui/lib",
+    "ui": "@notifro/ui/components"
   },
   "rtl": true,
   "menuColor": "default",

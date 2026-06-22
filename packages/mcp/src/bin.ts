@@ -3,14 +3,14 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 
 import { createMcpServer } from "./server.js"
 
-const apiKey = process.env.RENDERICAL_API_KEY
+const apiKey = process.env.NOTIFRO_API_KEY
 if (!apiKey) {
   process.stderr.write(
-    "Error: RENDERICAL_API_KEY environment variable is required\n"
+    "Error: NOTIFRO_API_KEY environment variable is required\n"
   )
   process.exit(1)
 }
-const baseUrl = process.env.RENDERICAL_BASE_URL ?? "http://localhost:8787"
+const baseUrl = process.env.NOTIFRO_BASE_URL ?? "http://localhost:8787"
 
 const server = createMcpServer({ baseUrl, apiKey })
 const transport = new StdioServerTransport()

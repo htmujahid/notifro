@@ -7,8 +7,8 @@ import {
   Trash2Icon,
 } from "lucide-react"
 
-import { PageHeader } from "@renderical/ui-primitives/components/page-header"
-import { Button } from "@renderical/ui/components/button"
+import { PageHeader } from "@notifro/ui-primitives/components/page-header"
+import { Button } from "@notifro/ui/components/button"
 import {
   Empty,
   EmptyContent,
@@ -16,7 +16,7 @@ import {
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@renderical/ui/components/empty"
+} from "@notifro/ui/components/empty"
 
 import {
   useCancelSchedule,

@@ -1,8 +1,8 @@
 import { Link } from "react-router"
 
-import { Button } from "@renderical/ui/components/button"
-import { Card, CardContent } from "@renderical/ui/components/card"
-import { Separator } from "@renderical/ui/components/separator"
+import { Button } from "@notifro/ui/components/button"
+import { Card, CardContent } from "@notifro/ui/components/card"
+import { Separator } from "@notifro/ui/components/separator"
 
 import { BrandKitSection } from "./brand-kit-section"
 import { FailoverSection } from "./failover-section"
@@ -35,7 +35,7 @@ export function SettingsView() {
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-sm">Renderical</span>
+                <span className="text-sm">Notifro</span>
                 <Button size="sm" variant="outline">
                   Edit
                 </Button>
@@ -65,7 +65,7 @@ export function SettingsView() {
           <div>
             <h2 className="text-sm font-medium">API keys</h2>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              Create and manage keys to authenticate requests to the Renderical
+              Create and manage keys to authenticate requests to the Notifro
               API.
             </p>
           </div>

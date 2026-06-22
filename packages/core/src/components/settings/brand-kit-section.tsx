@@ -2,9 +2,9 @@ import { useState } from "react"
 
 import { PaletteIcon } from "lucide-react"
 
-import { Button } from "@renderical/ui/components/button"
-import { Card, CardContent } from "@renderical/ui/components/card"
-import { Separator } from "@renderical/ui/components/separator"
+import { Button } from "@notifro/ui/components/button"
+import { Card, CardContent } from "@notifro/ui/components/card"
+import { Separator } from "@notifro/ui/components/separator"
 
 import { useBrandKit, useUpdateBrandKit } from "../../queries/templates"
 

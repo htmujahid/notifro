@@ -1,5 +1,5 @@
-import { type ColumnDef } from "@renderical/ui-primitives/components/data-table"
-import { DataTableColumnHeader } from "@renderical/ui-primitives/components/data-table-column-header"
+import { type ColumnDef } from "@notifro/ui-primitives/components/data-table"
+import { DataTableColumnHeader } from "@notifro/ui-primitives/components/data-table-column-header"
 
 export type RecentNotification = {
   id: string

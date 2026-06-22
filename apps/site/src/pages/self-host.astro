@@ -3,7 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/PageHeader.astro";
 import CtaBand from "../components/CtaBand.astro";
 import { site } from "../config";
-import { buttonVariants } from "@renderical/ui/components/button";
+import { buttonVariants } from "@notifro/ui/components/button";
 import GithubMark from "../components/GithubMark.astro";
 import {
   Boxes,
@@ -39,10 +39,10 @@ const steps = [
   {
     n: 1,
     title: "Clone the repo & install",
-    body: "Renderical is a pnpm + Turborepo monorepo. Clone it, install, and authenticate Wrangler against your Cloudflare account.",
+    body: "Notifro is a pnpm + Turborepo monorepo. Clone it, install, and authenticate Wrangler against your Cloudflare account.",
     code: [
-      "git clone https://github.com/htmujahid/renderical.git",
-      "cd renderical",
+      "git clone https://github.com/htmujahid/notifro.git",
+      "cd notifro",
       "pnpm install",
       "npx wrangler login",
     ],
@@ -53,9 +53,9 @@ const steps = [
     body: "From apps/api, create the D1 database, both KV namespaces, and the two queues. Copy each id Wrangler prints back — you'll paste them in the next step.",
     code: [
       "cd apps/api",
-      "npx wrangler d1 create renderical",
-      "npx wrangler kv namespace create renderical-auth",
-      "npx wrangler kv namespace create renderical-rate-limit",
+      "npx wrangler d1 create notifro",
+      "npx wrangler kv namespace create notifro-auth",
+      "npx wrangler kv namespace create notifro-rate-limit",
       "npx wrangler queues create delivery-queue",
       "npx wrangler queues create delivery-dlq",
     ],
@@ -66,7 +66,7 @@ const steps = [
     body: "Open apps/api/wrangler.jsonc and paste the D1 database_id and the two KV ids. Bindings are DB (data), KV (auth sessions), and RATE_LIMIT_KV (rate limiting). The queue and cron config is already set.",
     code: [
       '"d1_databases": [',
-      '  { "binding": "DB", "database_name": "renderical", "database_id": "<your-d1-id>", "migrations_dir": "migrations" }',
+      '  { "binding": "DB", "database_name": "notifro", "database_id": "<your-d1-id>", "migrations_dir": "migrations" }',
       '],',
       '"kv_namespaces": [',
       '  { "binding": "KV", "id": "<auth-kv-id>" },',
@@ -129,13 +129,13 @@ const steps = [
   {
     n: 9,
     title: "Connect the MCP server",
-    body: "The hosted MCP endpoint lives at /mcp on your API Worker and authenticates with an rk_ API key. Prefer local? Run the stdio server from @renderical/mcp with your key.",
+    body: "The hosted MCP endpoint lives at /mcp on your API Worker and authenticates with an rk_ API key. Prefer local? Run the stdio server from @notifro/mcp with your key.",
     code: [
       "# remote: point any MCP client at",
       "https://api.your-domain.com/mcp   (Authorization: Bearer rk_live_...)",
       "",
       "# local stdio server:",
-      "RENDERICAL_API_KEY=rk_live_... RENDERICAL_BASE_URL=https://api.your-domain.com npx @renderical/mcp",
+      "NOTIFRO_API_KEY=rk_live_... NOTIFRO_BASE_URL=https://api.your-domain.com npx @notifro/mcp",
     ],
   },
 ];
@@ -166,11 +166,11 @@ const secrets = [
 
 <BaseLayout
   title="Self-host"
-  description="A step-by-step guide to self-hosting Renderical on your own Cloudflare account — Workers, D1, KV, Queues, Email, and cron. Open source, fully under your control."
+  description="A step-by-step guide to self-hosting Notifro on your own Cloudflare account — Workers, D1, KV, Queues, Email, and cron. Open source, fully under your control."
 >
   <PageHeader
     eyebrow="Self-host"
-    title="Run Renderical on your own Cloudflare account"
+    title="Run Notifro on your own Cloudflare account"
     lead="The whole stack is open source and edge-native. Deploy the API Worker, dashboard, and MCP server to your own Cloudflare — your data, your credentials, your infrastructure."
   />
 
@@ -322,6 +322,6 @@ const secrets = [
 
   <CtaBand
     title="Your stack, your edge"
-    text="Clone Renderical, deploy it to your own Cloudflare account, and own every notification you send."
+    text="Clone Notifro, deploy it to your own Cloudflare account, and own every notification you send."
   />
 </BaseLayout>

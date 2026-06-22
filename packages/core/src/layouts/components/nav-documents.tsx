@@ -14,7 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@renderical/ui/components/dropdown-menu"
+} from "@notifro/ui/components/dropdown-menu"
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -23,7 +23,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@renderical/ui/components/sidebar"
+} from "@notifro/ui/components/sidebar"
 
 export function NavDocuments({
   items,

@@ -1,8 +1,8 @@
 import { PlusIcon, Trash2Icon } from "lucide-react"
 
-import { Button } from "@renderical/ui/components/button"
-import { Input } from "@renderical/ui/components/input"
-import { Label } from "@renderical/ui/components/label"
+import { Button } from "@notifro/ui/components/button"
+import { Input } from "@notifro/ui/components/input"
+import { Label } from "@notifro/ui/components/label"
 
 export const CHANNELS = [
   "email",

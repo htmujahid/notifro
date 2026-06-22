@@ -2,17 +2,17 @@ import { useState } from "react"
 
 import { BellIcon } from "lucide-react"
 
-import { PageHeader } from "@renderical/ui-primitives/components/page-header"
+import { PageHeader } from "@notifro/ui-primitives/components/page-header"
 import {
   StatCard,
   StatCardGrid,
-} from "@renderical/ui-primitives/components/stat-card"
+} from "@notifro/ui-primitives/components/stat-card"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-} from "@renderical/ui/components/card"
+} from "@notifro/ui/components/card"
 
 import {
   useAnalyticsChannels,

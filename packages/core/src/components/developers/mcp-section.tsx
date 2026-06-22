@@ -7,10 +7,10 @@ import {
   XIcon,
 } from "lucide-react"
 
-import { useApiClient } from "@renderical/api-client/context"
-import { Badge } from "@renderical/ui/components/badge"
-import { Button } from "@renderical/ui/components/button"
-import { Card, CardContent } from "@renderical/ui/components/card"
+import { useApiClient } from "@notifro/api-client/context"
+import { Badge } from "@notifro/ui/components/badge"
+import { Button } from "@notifro/ui/components/button"
+import { Card, CardContent } from "@notifro/ui/components/card"
 
 import {
   useApproveMcpAction,
@@ -100,7 +100,7 @@ export function McpSection() {
               Local stdio binary
             </p>
             <code className="block rounded bg-muted px-2 py-1 text-xs font-mono">
-              RENDERICAL_API_KEY=rk_… npx @renderical/mcp
+              NOTIFRO_API_KEY=rk_… npx @notifro/mcp
             </code>
           </div>
         </CardContent>

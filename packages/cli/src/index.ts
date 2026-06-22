@@ -1,28 +1,28 @@
 #!/usr/bin/env node
-import { createRendericalClient } from "@renderical/sdk"
+import { createNotifroClient } from "@notifro/sdk"
 
 function getClient() {
-  const apiKey = process.env.RENDERICAL_API_KEY
+  const apiKey = process.env.NOTIFRO_API_KEY
   if (!apiKey) {
-    console.error("Error: RENDERICAL_API_KEY environment variable is required")
+    console.error("Error: NOTIFRO_API_KEY environment variable is required")
     process.exit(1)
   }
-  const baseUrl = process.env.RENDERICAL_BASE_URL ?? "http://localhost:8787"
-  return createRendericalClient({ baseUrl, apiKey })
+  const baseUrl = process.env.NOTIFRO_BASE_URL ?? "http://localhost:8787"
+  return createNotifroClient({ baseUrl, apiKey })
 }
 
 function usage() {
-  console.log(`renderical <command> [options]
+  console.log(`notifro <command> [options]
 
 Commands:
   send --channel <ch> --to <addr> --subject <s> --body <b>
   logs [--limit <n>]
 
-API keys are managed from the Renderical dashboard.
+API keys are managed from the Notifro dashboard.
 
 Environment:
-  RENDERICAL_API_KEY   Your Renderical API key (required)
-  RENDERICAL_BASE_URL  API base URL (default: http://localhost:8787)
+  NOTIFRO_API_KEY   Your Notifro API key (required)
+  NOTIFRO_BASE_URL  API base URL (default: http://localhost:8787)
 `)
 }
 
@@ -59,7 +59,7 @@ async function cmdSend(args: string[]) {
   const payload = {
     content: { subject, body: { text: body } },
     recipient: { type: "contact" as const, email: to },
-    channels: [channel as import("@renderical/api-client/types").ChannelType],
+    channels: [channel as import("@notifro/api-client/types").ChannelType],
   }
 
   const result = await client.send(payload)

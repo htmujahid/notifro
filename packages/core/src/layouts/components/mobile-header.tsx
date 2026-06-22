@@ -1,7 +1,7 @@
 import { BellIcon, SearchIcon } from "lucide-react"
 import { useNavigate } from "react-router"
 
-import { RendericalMark } from "../../components/renderical-logo"
+import { NotifroMark } from "../../components/notifro-logo"
 import { useUnreadCount } from "../../queries/inbox"
 
 export function MobileHeader({ onSearchOpen }: { onSearchOpen: () => void }) {
@@ -15,8 +15,8 @@ export function MobileHeader({ onSearchOpen }: { onSearchOpen: () => void }) {
       style={{ paddingTop: "calc(env(safe-area-inset-top) + 0.75rem)" }}
     >
       <div className="flex items-center gap-2">
-        <RendericalMark className="size-[18px]" />
-        <span className="text-sm font-semibold tracking-tight">Renderical</span>
+        <NotifroMark className="size-[18px]" />
+        <span className="text-sm font-semibold tracking-tight">Notifro</span>
       </div>
       <div className="flex items-center gap-1">
         <button

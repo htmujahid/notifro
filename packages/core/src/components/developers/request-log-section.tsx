@@ -1,6 +1,6 @@
 import { RefreshCwIcon, ScrollIcon } from "lucide-react"
 
-import { Button } from "@renderical/ui/components/button"
+import { Button } from "@notifro/ui/components/button"
 
 import { useRequestLog } from "../../queries/request-log"
 

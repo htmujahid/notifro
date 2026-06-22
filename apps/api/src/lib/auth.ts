@@ -7,16 +7,16 @@ import {
   sendResetPasswordOTPEmail,
   sendTwoFactorOTPEmail,
   sendVerificationOTPEmail,
-} from "@renderical/mailer"
+} from "@notifro/mailer"
 
 import { kvSecondaryStorage } from "./kv-storage"
 import { mockD1 } from "./mock-db"
 
-const FROM = { email: "noreply@renderical.com", name: "Renderical" }
+const FROM = { email: "noreply@notifro.com", name: "Notifro" }
 
 export function createAuth(db: D1Database = mockD1) {
   return betterAuth({
-    appName: "Renderical",
+    appName: "Notifro",
     database: db,
     secondaryStorage: kvSecondaryStorage(env.KV),
     rateLimit: {
@@ -92,7 +92,7 @@ export function createAuth(db: D1Database = mockD1) {
               body: new URLSearchParams({
                 To: to,
                 From: from,
-                Body: `Your Renderical verification code: ${code}`,
+                Body: `Your Notifro verification code: ${code}`,
               }),
             }
           )

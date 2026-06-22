@@ -2,10 +2,10 @@ import { Suspense } from "react"
 
 import { Navigate, Outlet } from "react-router"
 
-import { useApp } from "@renderical/app/app/context"
-import { useSession } from "@renderical/app/auth/use-session"
+import { useApp } from "@notifro/app/app/context"
+import { useSession } from "@notifro/app/auth/use-session"
 
-import { RendericalMark } from "../components/renderical-logo"
+import { NotifroMark } from "../components/notifro-logo"
 
 export default function AuthLayout() {
   const { data: session, isPending } = useSession()
@@ -30,9 +30,9 @@ export default function AuthLayout() {
         <div className="flex flex-col h-full px-10 xl:px-14 py-10">
           {/* Brand */}
           <div className="flex items-center gap-2 text-foreground">
-            <RendericalMark className="size-[18px]" />
+            <NotifroMark className="size-[18px]" />
             <span className="font-semibold tracking-tight text-sm">
-              Renderical
+              Notifro
             </span>
           </div>
 
@@ -113,9 +113,9 @@ export default function AuthLayout() {
             paddingBottom: "1rem",
           }}
         >
-          <RendericalMark className="size-[18px]" />
+          <NotifroMark className="size-[18px]" />
           <span className="text-sm font-semibold tracking-tight">
-            Renderical
+            Notifro
           </span>
         </div>
 

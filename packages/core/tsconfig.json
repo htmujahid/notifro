@@ -9,11 +9,11 @@
     "strict": true,
     "noEmit": true,
     "paths": {
-      "@renderical/core/*": ["./src/*"],
-      "@renderical/api-client/*": ["../api-client/src/*"],
-      "@renderical/app/*": ["../app/src/*"],
-      "@renderical/ui/*": ["../ui/src/*"],
-      "@renderical/ui-primitives/*": ["../ui-primitives/src/*"]
+      "@notifro/core/*": ["./src/*"],
+      "@notifro/api-client/*": ["../api-client/src/*"],
+      "@notifro/app/*": ["../app/src/*"],
+      "@notifro/ui/*": ["../ui/src/*"],
+      "@notifro/ui-primitives/*": ["../ui-primitives/src/*"]
     }
   },
   "include": ["."],

@@ -196,7 +196,7 @@ export default router
       schemaVersion: "1",
       event: "webhook.test",
       content: {
-        title: "Renderical test",
+        title: "Notifro test",
         body: { text: "This is a test webhook delivery." },
       },
       recipient: { type: "user", userId },

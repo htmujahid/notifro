@@ -13,9 +13,9 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "paths": {
-      "@renderical/api-client/*": ["../../packages/api-client/src/*"],
-      "@renderical/app/*": ["../../packages/app/src/*"],
-      "@renderical/views/*": ["../../packages/views/src/*"]
+      "@notifro/api-client/*": ["../../packages/api-client/src/*"],
+      "@notifro/app/*": ["../../packages/app/src/*"],
+      "@notifro/views/*": ["../../packages/views/src/*"]
     }
   },
   "include": ["electron", "src", "forge.config.ts", "forge.env.d.ts", "vite.*.config.ts"]

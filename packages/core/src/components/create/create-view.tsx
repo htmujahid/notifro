@@ -10,25 +10,25 @@ import {
 } from "lucide-react"
 import { useNavigate } from "react-router"
 
-import type { ChannelType } from "@renderical/api-client/types"
-import { PageHeader } from "@renderical/ui-primitives/components/page-header"
-import { Button } from "@renderical/ui/components/button"
+import type { ChannelType } from "@notifro/api-client/types"
+import { PageHeader } from "@notifro/ui-primitives/components/page-header"
+import { Button } from "@notifro/ui/components/button"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@renderical/ui/components/card"
+} from "@notifro/ui/components/card"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@renderical/ui/components/dialog"
-import { Input } from "@renderical/ui/components/input"
-import { Label } from "@renderical/ui/components/label"
-import { Textarea } from "@renderical/ui/components/textarea"
+} from "@notifro/ui/components/dialog"
+import { Input } from "@notifro/ui/components/input"
+import { Label } from "@notifro/ui/components/label"
+import { Textarea } from "@notifro/ui/components/textarea"
 
 import { useConnections } from "../../queries/connections"
 import {
@@ -180,7 +180,7 @@ export function CreateView() {
     <div className="flex flex-col gap-6">
       <PageHeader
         title="Create"
-        description="Choose what you'd like to build in Renderical."
+        description="Choose what you'd like to build in Notifro."
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

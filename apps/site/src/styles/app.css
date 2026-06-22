@@ -1,4 +1,4 @@
-@import "@renderical/ui/globals.css";
+@import "@notifro/ui/globals.css";
 
 /* Ensure Tailwind scans this app's templates for utility classes. */
 @source "../**/*.{astro,ts,tsx,mdx}";

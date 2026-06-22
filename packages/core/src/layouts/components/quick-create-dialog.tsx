@@ -1,21 +1,21 @@
 import { BellIcon, CalendarIcon, FileTextIcon } from "lucide-react"
 import { useNavigate } from "react-router"
 
-import { useApp } from "@renderical/app/app/context"
+import { useApp } from "@notifro/app/app/context"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@renderical/ui/components/dialog"
+} from "@notifro/ui/components/dialog"
 import {
   Drawer,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
   DrawerTitle,
-} from "@renderical/ui/components/drawer"
+} from "@notifro/ui/components/drawer"
 
 const OPTIONS = [
   {

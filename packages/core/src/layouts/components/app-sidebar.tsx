@@ -15,8 +15,8 @@ import {
 } from "lucide-react"
 import { Link, useNavigate } from "react-router"
 
-import { useSession } from "@renderical/app/auth/use-session"
-import { RendericalMark } from "@renderical/core/components/renderical-logo"
+import { useSession } from "@notifro/app/auth/use-session"
+import { NotifroMark } from "@notifro/core/components/notifro-logo"
 import {
   Sidebar,
   SidebarContent,
@@ -25,7 +25,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@renderical/ui/components/sidebar"
+} from "@notifro/ui/components/sidebar"
 
 import { useSignOut } from "../../queries/auth"
 import { NavDocuments } from "./nav-documents"
@@ -123,7 +123,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 className="data-[slot=sidebar-menu-button]:p-1.5!"
                 render={<Link to="/" />}
               >
-                <RendericalMark className="size-[18px]" />
+                <NotifroMark className="size-[18px]" />
                 <span className="text-sm">Notifro</span>
               </SidebarMenuButton>
             </SidebarMenuItem>

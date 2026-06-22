@@ -4,14 +4,14 @@ import { CheckIcon, ChevronDownIcon, XIcon } from "lucide-react"
 
 import { Combobox as ComboboxPrimitive } from "@base-ui/react"
 
-import { Button } from "@renderical/ui/components/button"
+import { Button } from "@notifro/ui/components/button"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
-} from "@renderical/ui/components/input-group"
-import { cn } from "@renderical/ui/lib/utils"
+} from "@notifro/ui/components/input-group"
+import { cn } from "@notifro/ui/lib/utils"
 
 const Combobox = ComboboxPrimitive.Root
 

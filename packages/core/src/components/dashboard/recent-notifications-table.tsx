@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 
-import { DataTable } from "@renderical/ui-primitives/components/data-table"
-import { useDataTable } from "@renderical/ui-primitives/components/use-data-table"
+import { DataTable } from "@notifro/ui-primitives/components/data-table"
+import { useDataTable } from "@notifro/ui-primitives/components/use-data-table"
 
 import {
   type RecentNotification,

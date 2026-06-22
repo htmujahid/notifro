@@ -1,11 +1,11 @@
 import { GitBranchIcon, Trash2Icon } from "lucide-react"
 
-import type { RoutingRule } from "@renderical/api-client/types"
-import { type ColumnDef } from "@renderical/ui-primitives/components/data-table"
-import { DataTableColumnHeader } from "@renderical/ui-primitives/components/data-table-column-header"
-import { Badge } from "@renderical/ui/components/badge"
-import { Button } from "@renderical/ui/components/button"
-import { Switch } from "@renderical/ui/components/switch"
+import type { RoutingRule } from "@notifro/api-client/types"
+import { type ColumnDef } from "@notifro/ui-primitives/components/data-table"
+import { DataTableColumnHeader } from "@notifro/ui-primitives/components/data-table-column-header"
+import { Badge } from "@notifro/ui/components/badge"
+import { Button } from "@notifro/ui/components/button"
+import { Switch } from "@notifro/ui/components/switch"
 
 function matchSummary(match: string): string {
   const parsed = (() => {

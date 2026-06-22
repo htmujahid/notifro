@@ -12,7 +12,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@renderical/ui/components/tabs"
+} from "@notifro/ui/components/tabs"
 
 interface UseCase {
   id: string

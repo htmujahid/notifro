@@ -23,10 +23,10 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@renderical/api-client/*": ["../../packages/api-client/src/*"],
-      "@renderical/app/*": ["../../packages/app/src/*"],
-      "@renderical/ui/*": ["../../packages/ui/src/*"],
-      "@renderical/views/*": ["../../packages/views/src/*"]
+      "@notifro/api-client/*": ["../../packages/api-client/src/*"],
+      "@notifro/app/*": ["../../packages/app/src/*"],
+      "@notifro/ui/*": ["../../packages/ui/src/*"],
+      "@notifro/views/*": ["../../packages/views/src/*"]
     }
   },
   "include": ["src"]

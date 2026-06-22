@@ -5,7 +5,7 @@ import type { McpConfig } from "./server.js"
 export function registerResources(server: McpServer, config: McpConfig): void {
   server.resource(
     "channels",
-    "renderical://channels",
+    "notifro://channels",
     { description: "Active notification channels" },
     async () => {
       const res = await fetch(`${config.baseUrl}/api/connections`, {
@@ -15,7 +15,7 @@ export function registerResources(server: McpServer, config: McpConfig): void {
       return {
         contents: [
           {
-            uri: "renderical://channels",
+            uri: "notifro://channels",
             text: JSON.stringify(data.data, null, 2),
             mimeType: "application/json",
           },
@@ -26,7 +26,7 @@ export function registerResources(server: McpServer, config: McpConfig): void {
 
   server.resource(
     "templates",
-    "renderical://templates",
+    "notifro://templates",
     { description: "Notification templates" },
     async () => {
       const res = await fetch(`${config.baseUrl}/api/templates`, {
@@ -36,7 +36,7 @@ export function registerResources(server: McpServer, config: McpConfig): void {
       return {
         contents: [
           {
-            uri: "renderical://templates",
+            uri: "notifro://templates",
             text: JSON.stringify(data.data, null, 2),
             mimeType: "application/json",
           },
@@ -47,7 +47,7 @@ export function registerResources(server: McpServer, config: McpConfig): void {
 
   server.resource(
     "recent-deliveries",
-    "renderical://recent-deliveries",
+    "notifro://recent-deliveries",
     { description: "Most recent delivery records" },
     async () => {
       const res = await fetch(`${config.baseUrl}/api/deliveries?limit=20`, {
@@ -57,7 +57,7 @@ export function registerResources(server: McpServer, config: McpConfig): void {
       return {
         contents: [
           {
-            uri: "renderical://recent-deliveries",
+            uri: "notifro://recent-deliveries",
             text: JSON.stringify(data.data, null, 2),
             mimeType: "application/json",
           },

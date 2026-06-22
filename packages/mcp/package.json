@@ -1,10 +1,10 @@
 {
-  "name": "@renderical/mcp",
+  "name": "@notifro/mcp",
   "version": "0.0.0",
   "type": "module",
   "private": true,
   "bin": {
-    "renderical-mcp": "./src/bin.ts"
+    "notifro-mcp": "./src/bin.ts"
   },
   "scripts": {
     "lint": "eslint",

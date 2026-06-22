@@ -2,10 +2,10 @@ import { useState } from "react"
 
 import { PlusIcon } from "lucide-react"
 
-import { Button } from "@renderical/ui/components/button"
-import { Input } from "@renderical/ui/components/input"
-import { Label } from "@renderical/ui/components/label"
-import { Textarea } from "@renderical/ui/components/textarea"
+import { Button } from "@notifro/ui/components/button"
+import { Input } from "@notifro/ui/components/input"
+import { Label } from "@notifro/ui/components/label"
+import { Textarea } from "@notifro/ui/components/textarea"
 
 import { useCreateWebhook } from "../../queries/webhooks"
 
@@ -52,7 +52,7 @@ export function AddWebhookForm({
         <Label htmlFor="wh-url">Endpoint URL</Label>
         <Input
           id="wh-url"
-          placeholder="https://example.com/queries/renderical"
+          placeholder="https://example.com/queries/notifro"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
         />

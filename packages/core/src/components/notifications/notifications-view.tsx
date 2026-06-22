@@ -3,9 +3,9 @@ import { useState } from "react"
 import { BellOffIcon, CheckCheckIcon, PlusIcon } from "lucide-react"
 import { useNavigate } from "react-router"
 
-import type { ListResponse } from "@renderical/api-client/types"
-import { PageHeader } from "@renderical/ui-primitives/components/page-header"
-import { Button } from "@renderical/ui/components/button"
+import type { ListResponse } from "@notifro/api-client/types"
+import { PageHeader } from "@notifro/ui-primitives/components/page-header"
+import { Button } from "@notifro/ui/components/button"
 
 import { useInbox, useMarkAllRead, useMarkRead } from "../../queries/inbox"
 import type { InboxFilter, InboxMessage } from "../../queries/inbox"

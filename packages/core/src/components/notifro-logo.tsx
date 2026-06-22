@@ -1,12 +1,12 @@
-import { cn } from "@renderical/ui/lib/utils"
+import { cn } from "@notifro/ui/lib/utils"
 
-export function RendericalMark({ className }: { className?: string }) {
+export function NotifroMark({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
       fill="none"
       role="img"
-      aria-label="Renderical"
+      aria-label="Notifro"
       className={cn("size-5", className)}
     >
       <path
@@ -34,7 +34,7 @@ export function RendericalMark({ className }: { className?: string }) {
   )
 }
 
-export function RendericalWordmark({ className }: { className?: string }) {
+export function NotifroWordmark({ className }: { className?: string }) {
   return (
     <span
       className={cn(
@@ -42,8 +42,8 @@ export function RendericalWordmark({ className }: { className?: string }) {
         className
       )}
     >
-      <RendericalMark className="size-[18px]" />
-      <span className="text-sm">Renderical</span>
+      <NotifroMark className="size-[18px]" />
+      <span className="text-sm">Notifro</span>
     </span>
   )
 }

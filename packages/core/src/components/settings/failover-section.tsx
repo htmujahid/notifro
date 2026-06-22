@@ -2,8 +2,8 @@ import { useState } from "react"
 
 import { GitForkIcon, PlusIcon } from "lucide-react"
 
-import { Button } from "@renderical/ui/components/button"
-import { Card, CardContent } from "@renderical/ui/components/card"
+import { Button } from "@notifro/ui/components/button"
+import { Card, CardContent } from "@notifro/ui/components/card"
 
 import {
   useCreateProviderFallback,

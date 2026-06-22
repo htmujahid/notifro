@@ -1,6 +1,6 @@
 {
-  "name": "Renderical",
-  "short_name": "Renderical",
+  "name": "Notifro",
+  "short_name": "Notifro",
   "description": "Unified notification infrastructure — compose once, deliver everywhere.",
   "start_url": "/",
   "display": "standalone",

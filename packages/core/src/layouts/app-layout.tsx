@@ -2,12 +2,12 @@ import { Suspense, useState } from "react"
 
 import { Outlet } from "react-router"
 
-import { useApp } from "@renderical/app/app/context"
+import { useApp } from "@notifro/app/app/context"
 import {
   SidebarInset,
   SidebarProvider,
-} from "@renderical/ui/components/sidebar"
-import { Toaster } from "@renderical/ui/components/sonner"
+} from "@notifro/ui/components/sidebar"
+import { Toaster } from "@notifro/ui/components/sonner"
 
 import { AppSidebar } from "./components/app-sidebar"
 import { MobileHeader } from "./components/mobile-header"

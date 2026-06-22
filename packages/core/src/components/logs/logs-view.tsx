@@ -1,7 +1,7 @@
 import { RefreshCwIcon } from "lucide-react"
 
-import { PageHeader } from "@renderical/ui-primitives/components/page-header"
-import { Button } from "@renderical/ui/components/button"
+import { PageHeader } from "@notifro/ui-primitives/components/page-header"
+import { Button } from "@notifro/ui/components/button"
 
 import { useTableQueryState } from "../../hooks/use-table-query-state"
 import { useDeliveries, useRetryDelivery } from "../../queries/deliveries"

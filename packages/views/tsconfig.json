@@ -9,9 +9,9 @@
     "strict": true,
     "noEmit": true,
     "paths": {
-      "@renderical/views/*": ["./src/*"],
-      "@renderical/core/*": ["../core/src/*"],
-      "@renderical/ui/*": ["../ui/src/*"]
+      "@notifro/views/*": ["./src/*"],
+      "@notifro/core/*": ["../core/src/*"],
+      "@notifro/ui/*": ["../ui/src/*"]
     }
   },
   "include": ["."],

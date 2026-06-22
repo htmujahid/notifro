@@ -1,10 +1,10 @@
 {
-  "name": "@renderical/cli",
+  "name": "@notifro/cli",
   "version": "0.0.0",
   "type": "module",
   "private": true,
   "bin": {
-    "renderical": "./src/index.ts"
+    "notifro": "./src/index.ts"
   },
   "scripts": {
     "lint": "eslint",
@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@renderical/sdk": "workspace:*"
+    "@notifro/sdk": "workspace:*"
   },
   "devDependencies": {
     "@eslint/js": "^10",

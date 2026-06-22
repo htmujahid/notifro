@@ -9,9 +9,9 @@
     "noEmit": true,
     "types": ["node"],
     "paths": {
-      "@renderical/sdk": ["../sdk/src/index.ts"],
-      "@renderical/sdk/*": ["../sdk/src/*"],
-      "@renderical/api-client/*": ["../api-client/src/*"]
+      "@notifro/sdk": ["../sdk/src/index.ts"],
+      "@notifro/sdk/*": ["../sdk/src/*"],
+      "@notifro/api-client/*": ["../api-client/src/*"]
     }
   },
   "include": ["."],

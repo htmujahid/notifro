@@ -7,7 +7,7 @@ EMAIL_LOG_ONLY=true # Set to true to log emails to console instead of sending (l
 CONNECTION_ENC_KEY= # 32-byte AES-GCM key, base64-encoded. Generate: openssl rand -base64 32
 VAPID_PUBLIC_KEY= # base64url P-256 uncompressed public key (65 bytes). Generate: node -e "const {subtle}=globalThis.crypto;subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign']).then(k=>subtle.exportKey('jwk',k.publicKey)).then(j=>console.log(Buffer.from('04'+Buffer.from(j.x,'base64').toString('hex')+Buffer.from(j.y,'base64').toString('hex'),'hex').toString('base64url')))"
 VAPID_PRIVATE_KEY= # base64url raw P-256 private scalar (32 bytes). Generate via the same keypair: subtle.exportKey('jwk',k.privateKey).then(j=>console.log(j.d))
-VAPID_SUBJECT=mailto:admin@renderical.com # Identifies your push service contact
+VAPID_SUBJECT=mailto:admin@notifro.com # Identifies your push service contact
 TWILIO_ACCOUNT_SID= # Twilio Account SID (for phone number OTP verification)
 TWILIO_AUTH_TOKEN= # Twilio Auth Token
 TWILIO_FROM_NUMBER= # Twilio phone number used to send OTP codes (e.g. +15551234567)

@@ -1,6 +1,6 @@
 # api
 
-The Renderical backend API — authentication, notification ingestion, and platform endpoints, running on Cloudflare Workers.
+The Notifro backend API — authentication, notification ingestion, and platform endpoints, running on Cloudflare Workers.
 
 ## Stack
 
@@ -10,7 +10,7 @@ The Renderical backend API — authentication, notification ingestion, and platf
 
 ## How it fits
 
-The standalone backend (`src/index.ts`). Auth configuration and Cloudflare bindings live in `src/lib/`. Transactional email is sent through [`@renderical/mailer`](../../packages/mailer). The client apps authenticate against this API using the platform auth clients in [`@renderical/app`](../../packages/app).
+The standalone backend (`src/index.ts`). Auth configuration and Cloudflare bindings live in `src/lib/`. Transactional email is sent through [`@notifro/mailer`](../../packages/mailer). The client apps authenticate against this API using the platform auth clients in [`@notifro/app`](../../packages/app).
 
 Bindings are typed as `CloudflareBindings` and passed to Hono:
 

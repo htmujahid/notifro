@@ -1,4 +1,4 @@
-import { ResetPasswordForm } from "@renderical/core/components/auth/reset-password-form"
+import { ResetPasswordForm } from "@notifro/core/components/auth/reset-password-form"
 
 export default function ResetPasswordPage() {
   return <ResetPasswordForm />

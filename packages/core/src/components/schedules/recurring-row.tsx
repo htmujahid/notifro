@@ -1,6 +1,6 @@
 import { ToggleLeftIcon, ToggleRightIcon, Trash2Icon } from "lucide-react"
 
-import type { RecurringSend } from "@renderical/api-client/types"
+import type { RecurringSend } from "@notifro/api-client/types"
 
 function formatCron(cron: string): string {
   const parts = cron.trim().split(/\s+/)

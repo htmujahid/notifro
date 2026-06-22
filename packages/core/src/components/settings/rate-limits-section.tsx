@@ -2,8 +2,8 @@ import { useState } from "react"
 
 import { GaugeIcon, PlusIcon } from "lucide-react"
 
-import { Button } from "@renderical/ui/components/button"
-import { Card, CardContent } from "@renderical/ui/components/card"
+import { Button } from "@notifro/ui/components/button"
+import { Card, CardContent } from "@notifro/ui/components/card"
 
 import { useTableQueryState } from "../../hooks/use-table-query-state"
 import {

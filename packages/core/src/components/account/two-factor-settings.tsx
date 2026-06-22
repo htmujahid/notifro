@@ -2,8 +2,8 @@ import { useState } from "react"
 
 import { useQueryClient } from "@tanstack/react-query"
 
-import { SESSION_QUERY_KEY, useSession } from "@renderical/app/auth/use-session"
-import { Button } from "@renderical/ui/components/button"
+import { SESSION_QUERY_KEY, useSession } from "@notifro/app/auth/use-session"
+import { Button } from "@notifro/ui/components/button"
 
 import { DisableFlow } from "./disable-flow"
 import { EnableFlow } from "./enable-flow"

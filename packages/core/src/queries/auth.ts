@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
-import { useAuth } from "@renderical/app/auth/context"
-import { SESSION_QUERY_KEY } from "@renderical/app/auth/use-session"
+import { useAuth } from "@notifro/app/auth/context"
+import { SESSION_QUERY_KEY } from "@notifro/app/auth/use-session"
 
 export function useSignInEmail() {
   const auth = useAuth()

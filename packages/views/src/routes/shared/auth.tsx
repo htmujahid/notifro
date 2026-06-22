@@ -2,7 +2,7 @@ import { lazy } from "react"
 
 import type { RouteObject } from "react-router"
 
-const AuthLayout = lazy(() => import("@renderical/core/layouts/auth-layout"))
+const AuthLayout = lazy(() => import("@notifro/core/layouts/auth-layout"))
 const SignInPage = lazy(() => import("../../pages/auth/sign-in"))
 const SignUpPage = lazy(() => import("../../pages/auth/sign-up"))
 const ForgotPasswordPage = lazy(

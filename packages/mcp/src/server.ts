@@ -12,7 +12,7 @@ export interface McpConfig {
 }
 
 export function createMcpServer(config: McpConfig): McpServer {
-  const server = new McpServer({ name: "renderical", version: "1.0.0" })
+  const server = new McpServer({ name: "notifro", version: "1.0.0" })
   registerTools(server, config)
   registerResources(server, config)
   registerPrompts(server)

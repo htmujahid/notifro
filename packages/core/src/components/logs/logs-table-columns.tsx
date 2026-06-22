@@ -1,9 +1,9 @@
 import { RotateCwIcon } from "lucide-react"
 
-import type { Delivery } from "@renderical/api-client/types"
-import { type ColumnDef } from "@renderical/ui-primitives/components/data-table"
-import { DataTableColumnHeader } from "@renderical/ui-primitives/components/data-table-column-header"
-import { Button } from "@renderical/ui/components/button"
+import type { Delivery } from "@notifro/api-client/types"
+import { type ColumnDef } from "@notifro/ui-primitives/components/data-table"
+import { DataTableColumnHeader } from "@notifro/ui-primitives/components/data-table-column-header"
+import { Button } from "@notifro/ui/components/button"
 
 const STATUS_STYLES: Record<string, string> = {
   delivered: "bg-green-500/10 text-green-700 dark:text-green-400",

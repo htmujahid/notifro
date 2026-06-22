@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader } from "@renderical/ui/components/card"
-import { Skeleton } from "@renderical/ui/components/skeleton"
+import { Card, CardContent, CardHeader } from "@notifro/ui/components/card"
+import { Skeleton } from "@notifro/ui/components/skeleton"
 
 export function DashboardSkeleton() {
   return (

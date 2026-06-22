@@ -1,8 +1,8 @@
 import { useMemo } from "react"
 
-import type { AnalyticsChannelRow } from "@renderical/api-client/types"
-import { DataTable } from "@renderical/ui-primitives/components/data-table"
-import { useDataTable } from "@renderical/ui-primitives/components/use-data-table"
+import type { AnalyticsChannelRow } from "@notifro/api-client/types"
+import { DataTable } from "@notifro/ui-primitives/components/data-table"
+import { useDataTable } from "@notifro/ui-primitives/components/use-data-table"
 
 import { getAnalyticsChannelsColumns } from "./analytics-channels-table-columns"
 

@@ -1,4 +1,4 @@
-import { sendNotificationEmail } from "@renderical/mailer"
+import { sendNotificationEmail } from "@notifro/mailer"
 
 import { registerTransform } from "../compose/transform"
 import { signTrackingToken } from "../lib/tracking"
@@ -20,7 +20,7 @@ interface EmailConfig {
   [key: string]: unknown
 }
 
-const DEFAULT_FROM = { email: "noreply@renderical.com", name: "Renderical" }
+const DEFAULT_FROM = { email: "noreply@notifro.com", name: "Notifro" }
 
 function esc(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")

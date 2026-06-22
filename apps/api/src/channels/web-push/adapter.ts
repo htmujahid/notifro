@@ -42,7 +42,7 @@ const webPushAdapter: ChannelAdapter<Record<string, never>, WebPushProvider> = {
     }
 
     const { VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT } = ctx.env
-    const subject = VAPID_SUBJECT ?? "mailto:admin@renderical.com"
+    const subject = VAPID_SUBJECT ?? "mailto:admin@notifro.com"
 
     const subscriptions = await ctx.db
       .selectFrom("push_subscription")

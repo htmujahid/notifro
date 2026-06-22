@@ -1,5 +1,5 @@
 {
-  "name": "@renderical/ui-primitives",
+  "name": "@notifro/ui-primitives",
   "version": "0.0.0",
   "type": "module",
   "private": true,
@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@renderical/ui": "workspace:*",
+    "@notifro/ui": "workspace:*",
     "@tanstack/react-table": "^8.21.3",
     "lucide-react": "^1.21.0",
     "react": "^19.2.6",

@@ -1,4 +1,4 @@
-import { SchedulesView } from "@renderical/core/components/schedules/schedules-view"
+import { SchedulesView } from "@notifro/core/components/schedules/schedules-view"
 
 export default function SchedulesPage() {
   return <SchedulesView />

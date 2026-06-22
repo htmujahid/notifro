@@ -3,7 +3,7 @@ import { ChevronDownIcon } from "lucide-react"
 
 import { NavigationMenu as NavigationMenuPrimitive } from "@base-ui/react/navigation-menu"
 
-import { cn } from "@renderical/ui/lib/utils"
+import { cn } from "@notifro/ui/lib/utils"
 
 function NavigationMenu({
   align = "start",

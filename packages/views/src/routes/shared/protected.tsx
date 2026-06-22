@@ -3,7 +3,7 @@ import { lazy } from "react"
 import type { RouteObject } from "react-router"
 
 const AccountLayout = lazy(
-  () => import("@renderical/core/layouts/account-layout")
+  () => import("@notifro/core/layouts/account-layout")
 )
 const NotificationsPage = lazy(() => import("../../pages/notifications"))
 const SchedulesPage = lazy(() => import("../../pages/schedules"))

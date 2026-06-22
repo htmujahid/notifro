@@ -5,11 +5,11 @@ import { useNavigate } from "react-router"
 
 import { useQueryClient } from "@tanstack/react-query"
 
-import { useApp } from "@renderical/app/app/context"
-import { SESSION_QUERY_KEY } from "@renderical/app/auth/use-session"
-import { Button } from "@renderical/ui/components/button"
-import { Input } from "@renderical/ui/components/input"
-import { Label } from "@renderical/ui/components/label"
+import { useApp } from "@notifro/app/app/context"
+import { SESSION_QUERY_KEY } from "@notifro/app/auth/use-session"
+import { Button } from "@notifro/ui/components/button"
+import { Input } from "@notifro/ui/components/input"
+import { Label } from "@notifro/ui/components/label"
 
 import { useSignInSocial, useSignUpEmail } from "../../queries/auth"
 import { type SignUpValues, signUpSchema } from "../../schemas/auth"
@@ -60,7 +60,7 @@ export function SignUpForm() {
           Create an account
         </h1>
         <p className="text-sm text-muted-foreground">
-          Get started with Renderical for free
+          Get started with Notifro for free
         </p>
       </div>
 

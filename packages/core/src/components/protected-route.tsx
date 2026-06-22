@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from "react-router"
 
-import { useSession } from "@renderical/app/auth/use-session"
+import { useSession } from "@notifro/app/auth/use-session"
 
 export function ProtectedRoute() {
   const { data: session, isPending } = useSession()

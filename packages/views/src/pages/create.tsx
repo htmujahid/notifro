@@ -1,4 +1,4 @@
-import { CreateView } from "@renderical/core/components/create/create-view"
+import { CreateView } from "@notifro/core/components/create/create-view"
 
 export default function CreatePage() {
   return <CreateView />

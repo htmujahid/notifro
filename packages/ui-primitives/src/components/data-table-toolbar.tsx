@@ -4,18 +4,18 @@ import { SearchIcon, SlidersHorizontalIcon } from "lucide-react"
 
 import { type Table } from "@tanstack/react-table"
 
-import { Button } from "@renderical/ui/components/button"
+import { Button } from "@notifro/ui/components/button"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@renderical/ui/components/dropdown-menu"
+} from "@notifro/ui/components/dropdown-menu"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@renderical/ui/components/input-group"
+} from "@notifro/ui/components/input-group"
 
 declare module "@tanstack/react-table" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

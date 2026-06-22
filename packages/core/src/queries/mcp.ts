@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
-import type { ApiClient, InferRequestType } from "@renderical/api-client/client"
-import { unwrap } from "@renderical/api-client/client"
-import { useApiClient } from "@renderical/api-client/context"
+import type { ApiClient, InferRequestType } from "@notifro/api-client/client"
+import { unwrap } from "@notifro/api-client/client"
+import { useApiClient } from "@notifro/api-client/context"
 
 export const mcpKeys = {
   all: ["mcp"] as const,

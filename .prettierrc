@@ -8,13 +8,13 @@
   "importOrder": [
     "^react$",
     "^react-dom$",
-    "next$",
+    "^react-router$",
     "<THIRD_PARTY_MODULES>",
     "^@base-ui/",
     "^@fontsource-variable/",
     "^@lexical/",
     "^@tanstack/",
-    "^@renderical/",
+    "^@notifro/",
     "^@/",
     "^[./]"
   ],

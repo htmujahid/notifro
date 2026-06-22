@@ -5,7 +5,7 @@ import sitemap from "@astrojs/sitemap"
 import { defineConfig } from "astro/config"
 
 export default defineConfig({
-  site: "https://renderical.com",
+  site: "https://notifro.com",
   adapter: cloudflare(),
   integrations: [react(), sitemap()],
 })

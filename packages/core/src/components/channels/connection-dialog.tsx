@@ -3,10 +3,10 @@ import React, { useState } from "react"
 import { ActivityIcon, Trash2Icon } from "lucide-react"
 import { toast } from "sonner"
 
-import { Button } from "@renderical/ui/components/button"
-import { Input } from "@renderical/ui/components/input"
-import { Label } from "@renderical/ui/components/label"
-import { Textarea } from "@renderical/ui/components/textarea"
+import { Button } from "@notifro/ui/components/button"
+import { Input } from "@notifro/ui/components/input"
+import { Label } from "@notifro/ui/components/label"
+import { Textarea } from "@notifro/ui/components/textarea"
 
 import {
   type Connection,
@@ -114,7 +114,7 @@ export const CHANNEL_FORMS: Record<string, ChannelForm> = {
       {
         key: "username",
         label: "Override username (optional)",
-        placeholder: "Renderical",
+        placeholder: "Notifro",
         group: "config",
       },
       {

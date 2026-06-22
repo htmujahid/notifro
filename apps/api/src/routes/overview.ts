@@ -151,7 +151,7 @@ export default router
       content: {
         title: "Test notification",
         body: {
-          text: "Your Renderical setup is working. Notifications are delivering successfully.",
+          text: "Your Notifro setup is working. Notifications are delivering successfully.",
         },
       },
       metadata: { priority: "normal" as const },

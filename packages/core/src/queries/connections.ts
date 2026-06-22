@@ -8,10 +8,10 @@ import type {
   ApiClient,
   InferRequestType,
   InferResponseType,
-} from "@renderical/api-client/client"
-import { toQuery, unwrap } from "@renderical/api-client/client"
-import { useApiClient } from "@renderical/api-client/context"
-import type { ListParams } from "@renderical/api-client/types"
+} from "@notifro/api-client/client"
+import { toQuery, unwrap } from "@notifro/api-client/client"
+import { useApiClient } from "@notifro/api-client/context"
+import type { ListParams } from "@notifro/api-client/types"
 
 export type Connection = InferResponseType<
   ApiClient["api"]["connections"]["$get"],

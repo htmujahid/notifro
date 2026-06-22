@@ -1,4 +1,4 @@
-export const APP_SCHEME = "renderical"
+export const APP_SCHEME = "notifro"
 
 export const NATIVE_REDIRECT_URL = `${APP_SCHEME}://`
 

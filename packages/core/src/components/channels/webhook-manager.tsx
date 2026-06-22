@@ -3,7 +3,7 @@ import { useState } from "react"
 import { CopyIcon } from "lucide-react"
 import { toast } from "sonner"
 
-import { Button } from "@renderical/ui/components/button"
+import { Button } from "@notifro/ui/components/button"
 
 import { useWebhooks } from "../../queries/webhooks"
 import {
@@ -60,7 +60,7 @@ export function WebhookManager({ trigger }: { trigger: React.ReactElement }) {
                 </p>
                 <p className="text-xs text-muted-foreground">
                   Store this now. Use it to verify the{" "}
-                  <code>X-Renderical-Signature</code> header.
+                  <code>X-Notifro-Signature</code> header.
                 </p>
                 <div className="flex items-center gap-2">
                   <code className="min-w-0 flex-1 truncate rounded bg-muted px-2 py-1 text-xs">

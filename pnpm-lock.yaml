@@ -41,10 +41,10 @@ importers:
       '@capacitor/preferences':
         specifier: ^8.0.1
         version: 8.0.1(@capacitor/core@8.4.0)
-      '@renderical/app':
+      '@notifro/app':
         specifier: workspace:*
         version: link:../../packages/app
-      '@renderical/views':
+      '@notifro/views':
         specifier: workspace:*
         version: link:../../packages/views
       react:
@@ -105,16 +105,16 @@ importers:
       '@hono/zod-openapi':
         specifier: ^1.4.0
         version: 1.4.0(hono@4.12.26)(zod@4.4.3)
-      '@renderical/i18n':
+      '@notifro/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
-      '@renderical/mailer':
+      '@notifro/mailer':
         specifier: workspace:*
         version: link:../../packages/mailer
-      '@renderical/mcp':
+      '@notifro/mcp':
         specifier: workspace:*
         version: link:../../packages/mcp
-      '@renderical/templating':
+      '@notifro/templating':
         specifier: workspace:*
         version: link:../../packages/templating
       '@scalar/hono-api-reference':
@@ -139,10 +139,10 @@ importers:
 
   apps/desktop:
     dependencies:
-      '@renderical/app':
+      '@notifro/app':
         specifier: workspace:*
         version: link:../../packages/app
-      '@renderical/views':
+      '@notifro/views':
         specifier: workspace:*
         version: link:../../packages/views
       electron-squirrel-startup:
@@ -239,10 +239,10 @@ importers:
       '@capacitor/preferences':
         specifier: ^8.0.1
         version: 8.0.1(@capacitor/core@8.4.0)
-      '@renderical/app':
+      '@notifro/app':
         specifier: workspace:*
         version: link:../../packages/app
-      '@renderical/views':
+      '@notifro/views':
         specifier: workspace:*
         version: link:../../packages/views
       react:
@@ -306,7 +306,7 @@ importers:
       '@astrojs/sitemap':
         specifier: ^3.7.3
         version: 3.7.3
-      '@renderical/ui':
+      '@notifro/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       astro:
@@ -343,13 +343,13 @@ importers:
 
   apps/web:
     dependencies:
-      '@renderical/app':
+      '@notifro/app':
         specifier: workspace:*
         version: link:../../packages/app
-      '@renderical/ui':
+      '@notifro/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@renderical/views':
+      '@notifro/views':
         specifier: workspace:*
         version: link:../../packages/views
       lucide-react:
@@ -453,10 +453,10 @@ importers:
       '@better-auth/api-key':
         specifier: ^1.6.20
         version: 1.6.20(@better-auth/core@1.6.20(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.1)(@cloudflare/workers-types@4.20260617.1)(better-call@1.3.6(zod@4.4.3))(jose@6.2.3)(kysely@0.29.2)(nanostores@1.3.0))(@better-auth/utils@0.4.2)(better-auth@1.6.19(@cloudflare/workers-types@4.20260617.1)(next@16.2.6(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(better-call@1.3.6(zod@4.4.3))
-      '@renderical/api-client':
+      '@notifro/api-client':
         specifier: workspace:*
         version: link:../api-client
-      '@renderical/ui-primitives':
+      '@notifro/ui-primitives':
         specifier: workspace:*
         version: link:../ui-primitives
       '@tanstack/react-query':
@@ -502,7 +502,7 @@ importers:
 
   packages/cli:
     dependencies:
-      '@renderical/sdk':
+      '@notifro/sdk':
         specifier: workspace:*
         version: link:../sdk
     devDependencies:
@@ -530,16 +530,16 @@ importers:
       '@hookform/resolvers':
         specifier: ^3.9.0
         version: 3.10.0(react-hook-form@7.79.0(react@19.2.6))
-      '@renderical/api-client':
+      '@notifro/api-client':
         specifier: workspace:*
         version: link:../api-client
-      '@renderical/app':
+      '@notifro/app':
         specifier: workspace:*
         version: link:../app
-      '@renderical/ui':
+      '@notifro/ui':
         specifier: workspace:*
         version: link:../ui
-      '@renderical/ui-primitives':
+      '@notifro/ui-primitives':
         specifier: workspace:*
         version: link:../ui-primitives
       '@tanstack/react-query':
@@ -661,7 +661,7 @@ importers:
 
   packages/sdk:
     dependencies:
-      '@renderical/api-client':
+      '@notifro/api-client':
         specifier: workspace:*
         version: link:../api-client
     devDependencies:
@@ -816,7 +816,7 @@ importers:
 
   packages/ui-primitives:
     dependencies:
-      '@renderical/ui':
+      '@notifro/ui':
         specifier: workspace:*
         version: link:../ui
       '@tanstack/react-table':
@@ -865,13 +865,13 @@ importers:
 
   packages/views:
     dependencies:
-      '@renderical/api-client':
+      '@notifro/api-client':
         specifier: workspace:*
         version: link:../api-client
-      '@renderical/core':
+      '@notifro/core':
         specifier: workspace:*
         version: link:../core
-      '@renderical/ui':
+      '@notifro/ui':
         specifier: workspace:*
         version: link:../ui
       lucide-react:

@@ -12,13 +12,13 @@ self.addEventListener('push', (e) => {
     data = { title: e.data.text() }
   }
 
-  const title = data.title ?? 'Renderical'
+  const title = data.title ?? 'Notifro'
   const options = {
     body: data.body,
     icon: data.icon ?? '/icon-192.png',
     badge: '/favicon.ico',
     data: { url: data.url ?? '/' },
-    tag: 'renderical-notification',
+    tag: 'notifro-notification',
   }
 
   e.waitUntil(self.registration.showNotification(title, options))

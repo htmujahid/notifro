@@ -1,4 +1,4 @@
-import { TwoFactorForm } from "@renderical/core/components/auth/two-factor-form"
+import { TwoFactorForm } from "@notifro/core/components/auth/two-factor-form"
 
 export default function TwoFactorPage() {
   return <TwoFactorForm />

@@ -1,6 +1,6 @@
 # web
 
-The Renderical web dashboard — a React single-page app where users compose notifications, manage delivery channels, and configure preferences.
+The Notifro web dashboard — a React single-page app where users compose notifications, manage delivery channels, and configure preferences.
 
 ## Stack
 
@@ -10,9 +10,9 @@ The Renderical web dashboard — a React single-page app where users compose not
 
 A thin shell that wires platform concerns (browser routing, web auth client) into shared workspace code:
 
-- [`@renderical/app`](../../packages/app) — app-wide universal logic (auth, context)
-- [`@renderical/views`](../../packages/views) — shared pages and route definitions (consumes `./routes/web`)
-- [`@renderical/ui`](../../packages/ui) — component library
+- [`@notifro/app`](../../packages/app) — app-wide universal logic (auth, context)
+- [`@notifro/views`](../../packages/views) — shared pages and route definitions (consumes `./routes/web`)
+- [`@notifro/ui`](../../packages/ui) — component library
 
 Most of the UI and behavior lives in the shared packages; this app mainly provides the entry point (`src/main.tsx`), web-specific hooks, and lib glue.
 

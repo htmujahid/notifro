@@ -1,4 +1,4 @@
-import { cn } from "@renderical/ui/lib/utils"
+import { cn } from "@notifro/ui/lib/utils"
 
 function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (

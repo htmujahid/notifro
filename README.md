@@ -1,9 +1,9 @@
-# Renderical
+# Notifro
 
 **Unified notification infrastructure — compose once, deliver everywhere.**
 
-Renderical normalizes ten channels behind a single compose-once API. Write a message once and
-Renderical transforms and delivers it across Slack, email, Microsoft Teams, Discord, WhatsApp,
+Notifro normalizes ten channels behind a single compose-once API. Write a message once and
+Notifro transforms and delivers it across Slack, email, Microsoft Teams, Discord, WhatsApp,
 Telegram, web push, webhooks, in-app inbox, and SMS — with routing rules, fallback chains,
 provider failover, scheduling, rate limiting, and a **native MCP server** so AI agents can send
 safely. It runs entirely on Cloudflare's edge and is fully self-hostable.
@@ -39,12 +39,12 @@ safely. It runs entirely on Cloudflare's edge and is fully self-hostable.
 
 ## MCP server
 
-Renderical exposes the platform at `POST /mcp` (authenticated with an `rk_` API key), available
-hosted (Streamable HTTP) and local (stdio via `@renderical/mcp`).
+Notifro exposes the platform at `POST /mcp` (authenticated with an `rk_` API key), available
+hosted (Streamable HTTP) and local (stdio via `@notifro/mcp`).
 
 - **Tools** — `send_notification`, `schedule_notification`, `list_channels`,
   `get_delivery_status`, `create_template`, `render_preview`, `query_analytics`, `approve_action`.
-- **Resources** — `renderical://channels`, `renderical://templates`, `renderical://recent-deliveries`.
+- **Resources** — `notifro://channels`, `notifro://templates`, `notifro://recent-deliveries`.
 - **Safety** — per-tool approval gates, key-scoped access, KV rate limiting, idempotency, and
   every call written to the request log.
 
@@ -69,7 +69,7 @@ packages/
   app          → cross-platform auth + app context
   api-client   → typed HTTP client
   sdk          → public TypeScript SDK
-  cli          → `renderical` CLI
+  cli          → `notifro` CLI
   mcp          → MCP server package
   mailer       → transactional email templates
   templating   → Mustache-style template engine
@@ -91,14 +91,14 @@ pnpm typecheck
 
 ## Self-hosting
 
-Renderical deploys to your own Cloudflare account: a D1 database, two KV namespaces, a delivery
+Notifro deploys to your own Cloudflare account: a D1 database, two KV namespaces, a delivery
 queue + dead-letter queue, the Email send binding, and an every-minute cron trigger. In short:
 
 ```bash
 cd apps/api
-npx wrangler d1 create renderical
-npx wrangler kv namespace create renderical-auth
-npx wrangler kv namespace create renderical-rate-limit
+npx wrangler d1 create notifro
+npx wrangler kv namespace create notifro-auth
+npx wrangler kv namespace create notifro-rate-limit
 npx wrangler queues create delivery-queue
 npx wrangler queues create delivery-dlq
 # paste the ids into apps/api/wrangler.jsonc, then set secrets:

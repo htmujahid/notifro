@@ -1,5 +1,5 @@
 {
-  "name": "renderical",
+  "name": "notifro",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -8,7 +8,7 @@
     "lint": "turbo lint",
     "format": "turbo format",
     "typecheck": "turbo typecheck",
-    "sdk:generate": "pnpm --filter @renderical/sdk run generate"
+    "sdk:generate": "pnpm --filter @notifro/sdk run generate"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",

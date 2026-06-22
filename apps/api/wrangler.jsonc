@@ -7,7 +7,7 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "renderical",
+      "database_name": "notifro",
       "database_id": "d844dea1-52e5-4cb5-a6e9-26e125e79560",
       "migrations_dir": "migrations"
     }
@@ -15,7 +15,7 @@
   "kv_namespaces": [
     {
       "binding": "KV",
-      "id": "<run: wrangler kv namespace create renderical-auth>"
+      "id": "<run: wrangler kv namespace create notifro-auth>"
     },
     {
       "binding": "RATE_LIMIT_KV",

@@ -2,7 +2,7 @@ import { ArrowRightIcon, CheckIcon, Loader2Icon } from "lucide-react"
 import { Link } from "react-router"
 import { toast } from "sonner"
 
-import { Button } from "@renderical/ui/components/button"
+import { Button } from "@notifro/ui/components/button"
 
 import { useOnboarding, useOverview, useSendTest } from "../../queries/overview"
 import { DashboardSkeleton } from "./dashboard-skeleton"
@@ -90,7 +90,7 @@ export function OnboardingChecklist() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-xl font-semibold tracking-tight">
-            Get started with Renderical
+            Get started with Notifro
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Complete these steps to send your first notification.{" "}

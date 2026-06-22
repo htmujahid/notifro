@@ -6,9 +6,9 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
-import { toQuery, unwrap } from "@renderical/api-client/client"
-import { useApiClient } from "@renderical/api-client/context"
-import type { ListParams } from "@renderical/api-client/types"
+import { toQuery, unwrap } from "@notifro/api-client/client"
+import { useApiClient } from "@notifro/api-client/context"
+import type { ListParams } from "@notifro/api-client/types"
 
 export const deliveryKeys = {
   all: ["deliveries"] as const,

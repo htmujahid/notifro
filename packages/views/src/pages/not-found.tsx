@@ -1,7 +1,7 @@
 import { Link } from "react-router"
 
-import { RendericalMark } from "@renderical/core/components/renderical-logo"
-import { buttonVariants } from "@renderical/ui/components/button"
+import { NotifroMark } from "@notifro/core/components/notifro-logo"
+import { buttonVariants } from "@notifro/ui/components/button"
 
 export default function NotFoundPage() {
   return (
@@ -29,9 +29,9 @@ export default function NotFoundPage() {
       {/* brand */}
       <div className="mb-8 flex items-center gap-2 text-foreground">
         <div className="flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
-          <RendericalMark className="size-4" />
+          <NotifroMark className="size-4" />
         </div>
-        <span className="text-sm font-semibold tracking-tight">Renderical</span>
+        <span className="text-sm font-semibold tracking-tight">Notifro</span>
       </div>
 
       {/* animated status badge */}

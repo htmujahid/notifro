@@ -6,7 +6,7 @@ import {
   UserIcon,
 } from "lucide-react"
 
-import { Avatar, AvatarFallback } from "@renderical/ui/components/avatar"
+import { Avatar, AvatarFallback } from "@notifro/ui/components/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,13 +15,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@renderical/ui/components/dropdown-menu"
+} from "@notifro/ui/components/dropdown-menu"
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@renderical/ui/components/sidebar"
+} from "@notifro/ui/components/sidebar"
 
 export function NavUser({
   user,

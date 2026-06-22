@@ -8,9 +8,9 @@ import {
 import type {
   ApiClient,
   InferResponseType,
-} from "@renderical/api-client/client"
-import { toQuery, unwrap } from "@renderical/api-client/client"
-import { useApiClient } from "@renderical/api-client/context"
+} from "@notifro/api-client/client"
+import { toQuery, unwrap } from "@notifro/api-client/client"
+import { useApiClient } from "@notifro/api-client/context"
 
 export type InboxFilter = "all" | "unread" | "read"
 export type InboxMessage = InferResponseType<

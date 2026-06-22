@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
   Table as UITable,
-} from "@renderical/ui/components/table"
+} from "@notifro/ui/components/table"
 
 import { DataTablePagination } from "./data-table-pagination"
 

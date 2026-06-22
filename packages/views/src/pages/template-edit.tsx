@@ -1,6 +1,6 @@
 import { useParams } from "react-router"
 
-import { TemplateEditView } from "@renderical/core/components/templates/template-edit"
+import { TemplateEditView } from "@notifro/core/components/templates/template-edit"
 
 export default function TemplateEditPage() {
   const { id } = useParams<{ id: string }>()

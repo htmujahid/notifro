@@ -1,7 +1,7 @@
 import { FileTextIcon, PlusIcon } from "lucide-react"
 import { Link } from "react-router"
 
-import { PageHeader } from "@renderical/ui-primitives/components/page-header"
+import { PageHeader } from "@notifro/ui-primitives/components/page-header"
 import {
   Empty,
   EmptyContent,
@@ -9,7 +9,7 @@ import {
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@renderical/ui/components/empty"
+} from "@notifro/ui/components/empty"
 
 import { useTableQueryState } from "../../hooks/use-table-query-state"
 import { useTemplates } from "../../queries/templates"

@@ -1,10 +1,10 @@
 import React from "react"
 
-import type { FallbackChain } from "@renderical/api-client/types"
-import { Button } from "@renderical/ui/components/button"
-import { Input } from "@renderical/ui/components/input"
-import { Label } from "@renderical/ui/components/label"
-import { Switch } from "@renderical/ui/components/switch"
+import type { FallbackChain } from "@notifro/api-client/types"
+import { Button } from "@notifro/ui/components/button"
+import { Input } from "@notifro/ui/components/input"
+import { Label } from "@notifro/ui/components/label"
+import { Switch } from "@notifro/ui/components/switch"
 
 import { useCreateRoutingRule } from "../../queries/routing"
 import {

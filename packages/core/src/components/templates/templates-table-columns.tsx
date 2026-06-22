@@ -1,9 +1,9 @@
 import { FileTextIcon } from "lucide-react"
 import { Link } from "react-router"
 
-import { type ColumnDef } from "@renderical/ui-primitives/components/data-table"
-import { DataTableColumnHeader } from "@renderical/ui-primitives/components/data-table-column-header"
-import { Button } from "@renderical/ui/components/button"
+import { type ColumnDef } from "@notifro/ui-primitives/components/data-table"
+import { DataTableColumnHeader } from "@notifro/ui-primitives/components/data-table-column-header"
+import { Button } from "@notifro/ui/components/button"
 
 import { useDeleteTemplate } from "../../queries/templates"
 

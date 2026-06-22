@@ -1,13 +1,13 @@
 import { type Table } from "@tanstack/react-table"
 
-import { Field, FieldLabel } from "@renderical/ui/components/field"
+import { Field, FieldLabel } from "@notifro/ui/components/field"
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
   PaginationNext,
   PaginationPrevious,
-} from "@renderical/ui/components/pagination"
+} from "@notifro/ui/components/pagination"
 import {
   Select,
   SelectContent,
@@ -15,7 +15,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@renderical/ui/components/select"
+} from "@notifro/ui/components/select"
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>

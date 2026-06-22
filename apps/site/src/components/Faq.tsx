@@ -3,7 +3,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@renderical/ui/components/accordion"
+} from "@notifro/ui/components/accordion"
 
 export interface FaqItem {
   q: string

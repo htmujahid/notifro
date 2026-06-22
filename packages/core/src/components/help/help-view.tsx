@@ -5,14 +5,14 @@ import {
   VideoIcon,
 } from "lucide-react"
 
-import { PageHeader } from "@renderical/ui-primitives/components/page-header"
-import { Button } from "@renderical/ui/components/button"
+import { PageHeader } from "@notifro/ui-primitives/components/page-header"
+import { Button } from "@notifro/ui/components/button"
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@renderical/ui/components/card"
+} from "@notifro/ui/components/card"
 
 import { FaqItem } from "./faq-item"
 
@@ -22,12 +22,12 @@ const FAQS = [
     a: "Go to Notifications, click 'New notification', choose a channel, fill in your message and recipient, then hit Send. Your notification is delivered in seconds.",
   },
   {
-    q: "What channels does Renderical support?",
-    a: "Renderical supports Email (via Cloudflare Email), Slack, Push (Web Push API), and Webhooks. More channels including SMS and Teams are on the roadmap.",
+    q: "What channels does Notifro support?",
+    a: "Notifro supports Email (via Cloudflare Email), Slack, Push (Web Push API), and Webhooks. More channels including SMS and Teams are on the roadmap.",
   },
   {
     q: "How do schedules work?",
-    a: "Schedules use standard cron expressions to define recurrence. When a schedule triggers, Renderical renders the template and dispatches to the configured channel.",
+    a: "Schedules use standard cron expressions to define recurrence. When a schedule triggers, Notifro renders the template and dispatches to the configured channel.",
   },
   {
     q: "How do I use notification templates?",
@@ -71,7 +71,7 @@ export function HelpView() {
     <div className="flex flex-col gap-8">
       <PageHeader
         title="Help & Support"
-        description="Guides, FAQs, and resources to get the most out of Renderical."
+        description="Guides, FAQs, and resources to get the most out of Notifro."
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

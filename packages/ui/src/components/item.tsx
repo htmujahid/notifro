@@ -5,8 +5,8 @@ import { type VariantProps, cva } from "class-variance-authority"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 
-import { Separator } from "@renderical/ui/components/separator"
-import { cn } from "@renderical/ui/lib/utils"
+import { Separator } from "@notifro/ui/components/separator"
+import { cn } from "@notifro/ui/lib/utils"
 
 function ItemGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (

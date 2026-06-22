@@ -2,7 +2,7 @@ import { BrowserWindow, app } from "electron"
 import started from "electron-squirrel-startup"
 import path from "node:path"
 
-const APP_SCHEME = "renderical"
+const APP_SCHEME = "notifro"
 const DEEP_LINK_CHANNEL = "deep-link"
 
 if (started) {

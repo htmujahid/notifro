@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 
-import { unwrap } from "@renderical/api-client/client"
-import { useApiClient } from "@renderical/api-client/context"
+import { unwrap } from "@notifro/api-client/client"
+import { useApiClient } from "@notifro/api-client/context"
 
 function isWebPushSupported(): boolean {
   return (

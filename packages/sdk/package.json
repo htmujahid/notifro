@@ -1,5 +1,5 @@
 {
-  "name": "@renderical/sdk",
+  "name": "@notifro/sdk",
   "version": "0.0.0",
   "type": "module",
   "private": true,
@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@renderical/api-client": "workspace:*"
+    "@notifro/api-client": "workspace:*"
   },
   "devDependencies": {
     "@eslint/js": "^10",

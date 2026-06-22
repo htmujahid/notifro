@@ -1,4 +1,4 @@
-import { NotificationsView } from "@renderical/core/components/notifications/notifications-view"
+import { NotificationsView } from "@notifro/core/components/notifications/notifications-view"
 
 export default function NotificationsPage() {
   return <NotificationsView />

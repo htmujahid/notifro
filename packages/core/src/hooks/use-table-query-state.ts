@@ -13,8 +13,8 @@ import type {
   SortingState,
 } from "@tanstack/react-table"
 
-import type { ListParams } from "@renderical/api-client/types"
-import type { ManualTableState } from "@renderical/ui-primitives/components/use-data-table"
+import type { ListParams } from "@notifro/api-client/types"
+import type { ManualTableState } from "@notifro/ui-primitives/components/use-data-table"
 
 interface UseTableQueryStateOptions {
   defaultSort: string

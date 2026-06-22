@@ -18,7 +18,7 @@ import {
 } from "lucide-react"
 import { useNavigate } from "react-router"
 
-import { useApp } from "@renderical/app/app/context"
+import { useApp } from "@notifro/app/app/context"
 import {
   Command,
   CommandDialog,
@@ -29,7 +29,7 @@ import {
   CommandList,
   CommandSeparator,
   CommandShortcut,
-} from "@renderical/ui/components/command"
+} from "@notifro/ui/components/command"
 
 export function SearchCommand({
   open,

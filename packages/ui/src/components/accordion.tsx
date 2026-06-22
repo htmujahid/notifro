@@ -2,7 +2,7 @@ import { ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion"
 
-import { cn } from "@renderical/ui/lib/utils"
+import { cn } from "@notifro/ui/lib/utils"
 
 function Accordion({ className, ...props }: AccordionPrimitive.Root.Props) {
   return (

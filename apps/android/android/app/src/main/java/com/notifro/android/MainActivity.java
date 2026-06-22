@@ -1,4 +1,4 @@
-package com.renderical.android;
+package com.notifro.android;
 
 import com.getcapacitor.BridgeActivity;
 

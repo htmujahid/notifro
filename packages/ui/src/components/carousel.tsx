@@ -7,8 +7,8 @@ import useEmblaCarousel, {
 } from "embla-carousel-react"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 
-import { Button } from "@renderical/ui/components/button"
-import { cn } from "@renderical/ui/lib/utils"
+import { Button } from "@notifro/ui/components/button"
+import { cn } from "@notifro/ui/lib/utils"
 
 type CarouselApi = UseEmblaCarouselType[1]
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>

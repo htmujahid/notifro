@@ -2,7 +2,7 @@
 
 import * as ResizablePrimitive from "react-resizable-panels"
 
-import { cn } from "@renderical/ui/lib/utils"
+import { cn } from "@notifro/ui/lib/utils"
 
 function ResizablePanelGroup({
   className,

@@ -6,15 +6,15 @@ import { useNavigate, useSearchParams } from "react-router"
 
 import { useQueryClient } from "@tanstack/react-query"
 
-import { SESSION_QUERY_KEY } from "@renderical/app/auth/use-session"
-import { Button } from "@renderical/ui/components/button"
-import { Input } from "@renderical/ui/components/input"
+import { SESSION_QUERY_KEY } from "@notifro/app/auth/use-session"
+import { Button } from "@notifro/ui/components/button"
+import { Input } from "@notifro/ui/components/input"
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
-} from "@renderical/ui/components/input-otp"
-import { Label } from "@renderical/ui/components/label"
+} from "@notifro/ui/components/input-otp"
+import { Label } from "@notifro/ui/components/label"
 
 import {
   useTwoFactorSendOtp,

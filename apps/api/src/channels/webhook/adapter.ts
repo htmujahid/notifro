@@ -37,9 +37,9 @@ export async function postWebhook(
       headers: {
         ...(headers ?? {}),
         "Content-Type": "application/json",
-        "X-Renderical-Signature": `sha256=${signature}`,
-        "X-Renderical-Timestamp": timestamp,
-        "X-Renderical-Delivery": deliveryId,
+        "X-Notifro-Signature": `sha256=${signature}`,
+        "X-Notifro-Timestamp": timestamp,
+        "X-Notifro-Delivery": deliveryId,
       },
       body: rawBody,
     })

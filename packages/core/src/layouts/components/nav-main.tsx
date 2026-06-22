@@ -3,14 +3,14 @@ import * as React from "react"
 import { CirclePlusIcon, InboxIcon } from "lucide-react"
 import { NavLink } from "react-router"
 
-import { Button } from "@renderical/ui/components/button"
+import { Button } from "@notifro/ui/components/button"
 import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@renderical/ui/components/sidebar"
+} from "@notifro/ui/components/sidebar"
 
 export function NavMain({
   items,

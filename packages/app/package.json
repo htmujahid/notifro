@@ -1,5 +1,5 @@
 {
-  "name": "@renderical/app",
+  "name": "@notifro/app",
   "version": "0.0.0",
   "type": "module",
   "private": true,
@@ -11,8 +11,8 @@
   "dependencies": {
     "@tanstack/react-query": "^5.101.0",
     "@better-auth/api-key": "^1.6.20",
-    "@renderical/api-client": "workspace:*",
-    "@renderical/ui-primitives": "workspace:*",
+    "@notifro/api-client": "workspace:*",
+    "@notifro/ui-primitives": "workspace:*",
     "better-auth": "^1.6.19",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"

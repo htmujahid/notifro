@@ -1,8 +1,8 @@
 import { useMemo } from "react"
 
-import type { ProviderFallback } from "@renderical/api-client/types"
-import { DataTable } from "@renderical/ui-primitives/components/data-table"
-import { useDataTable } from "@renderical/ui-primitives/components/use-data-table"
+import type { ProviderFallback } from "@notifro/api-client/types"
+import { DataTable } from "@notifro/ui-primitives/components/data-table"
+import { useDataTable } from "@notifro/ui-primitives/components/use-data-table"
 
 import { getFailoverColumns } from "./failover-table-columns"
 

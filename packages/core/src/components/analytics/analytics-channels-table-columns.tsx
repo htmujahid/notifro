@@ -1,6 +1,6 @@
-import type { AnalyticsChannelRow } from "@renderical/api-client/types"
-import { type ColumnDef } from "@renderical/ui-primitives/components/data-table"
-import { DataTableColumnHeader } from "@renderical/ui-primitives/components/data-table-column-header"
+import type { AnalyticsChannelRow } from "@notifro/api-client/types"
+import { type ColumnDef } from "@notifro/ui-primitives/components/data-table"
+import { DataTableColumnHeader } from "@notifro/ui-primitives/components/data-table-column-header"
 
 function pct(n: number): string {
   return `${n.toFixed(1)}%`

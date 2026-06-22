@@ -3,10 +3,10 @@ import { useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 
-import { useSession } from "@renderical/app/auth/use-session"
-import { Button } from "@renderical/ui/components/button"
-import { Input } from "@renderical/ui/components/input"
-import { Label } from "@renderical/ui/components/label"
+import { useSession } from "@notifro/app/auth/use-session"
+import { Button } from "@notifro/ui/components/button"
+import { Input } from "@notifro/ui/components/input"
+import { Label } from "@notifro/ui/components/label"
 
 import { useUpdateUser } from "../../queries/auth"
 import {

@@ -2,14 +2,14 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/PageHeader.astro";
 import CtaBand from "../components/CtaBand.astro";
-import { buttonVariants } from "@renderical/ui/components/button";
+import { buttonVariants } from "@notifro/ui/components/button";
 import { Code2, Boxes, Webhook, Terminal, ScrollText, Check } from "lucide-react";
 
 const dx = [
   { icon: Code2, title: "REST API", text: "Typed REST API (OpenAPI + Scalar reference) with consistent error envelopes, pagination, and idempotency keys." },
   { icon: Boxes, title: "TypeScript SDK", text: "Isomorphic client with send(), listDeliveries(), and requestLog() — errors carry a typed .code." },
   { icon: Webhook, title: "Webhook ingestion", text: "Drive sends from any event source, and receive provider status callbacks on inbound receipts." },
-  { icon: Terminal, title: "CLI", text: "Send and view logs directly from your terminal via the @renderical/cli package." },
+  { icon: Terminal, title: "CLI", text: "Send and view logs directly from your terminal via the @notifro/cli package." },
   { icon: ScrollText, title: "Request log & inspector", text: "Every authenticated API call is logged with method, path, status, and latency — debug any delivery in seconds." },
 ];
 ---
@@ -39,11 +39,11 @@ const dx = [
           </ul>
         </div>
         <div class="rounded-xl border bg-card p-5 font-mono text-sm leading-relaxed">
-          <pre class="overflow-x-auto text-muted-foreground"><code><span class="text-muted-foreground/60">$ npm install @renderical/sdk</span>
+          <pre class="overflow-x-auto text-muted-foreground"><code><span class="text-muted-foreground/60">$ npm install @notifro/sdk</span>
 
-import {'{'} createRendericalClient {'}'} from <span class="text-primary">"@renderical/sdk"</span>;
-const rc = <span class="text-foreground">createRendericalClient</span>({'{'}
-  apiKey: process.env.<span class="text-primary">RENDERICAL_API_KEY</span>,
+import {'{'} createNotifroClient {'}'} from <span class="text-primary">"@notifro/sdk"</span>;
+const rc = <span class="text-foreground">createNotifroClient</span>({'{'}
+  apiKey: process.env.<span class="text-primary">NOTIFRO_API_KEY</span>,
 {'}'});
 
 await rc.<span class="text-foreground">send</span>({'{'}
@@ -84,7 +84,7 @@ await rc.<span class="text-foreground">send</span>({'{'}
           <pre class="overflow-x-auto text-muted-foreground"><code><span class="text-muted-foreground/60">// claude_desktop_config.json</span>
 {'{'}
   <span class="text-foreground">"mcpServers"</span>: {'{'}
-    <span class="text-foreground">"renderical"</span>: {'{'}
+    <span class="text-foreground">"notifro"</span>: {'{'}
       <span class="text-foreground">"type"</span>: <span class="text-primary">"http"</span>,
       <span class="text-foreground">"url"</span>: <span class="text-primary">"https://your-worker.workers.dev/mcp"</span>,
       <span class="text-foreground">"headers"</span>: {'{'}
@@ -99,7 +99,7 @@ await rc.<span class="text-foreground">send</span>({'{'}
           <h2 class="mt-2 text-3xl font-semibold tracking-tight">Wire up agents in seconds</h2>
           <p class="mt-4 text-muted-foreground">
             Point any MCP client at the hosted endpoint, authenticate with your API key, and your agent can
-            send, schedule, and query analytics. Prefer local? Run the stdio binary with <code class="rounded bg-muted px-1.5 py-0.5 text-sm">RENDERICAL_API_KEY</code> for self-hosted and dev setups.
+            send, schedule, and query analytics. Prefer local? Run the stdio binary with <code class="rounded bg-muted px-1.5 py-0.5 text-sm">NOTIFRO_API_KEY</code> for self-hosted and dev setups.
           </p>
           <div class="mt-6">
             <a href="/mcp" class={buttonVariants({ variant: "outline" })}>MCP server details</a>
