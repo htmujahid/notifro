@@ -2,101 +2,103 @@
 
 **Unified notification infrastructure — compose once, deliver everywhere.**
 
-Renderical normalizes every channel behind a single compose-once API. Write a message once
-and Renderical transforms and delivers it across Slack, email, Microsoft Teams, Discord,
-web push, in-app inbox, webhooks, and SMS — with fallback chains, scope-based OAuth,
-and a **native MCP server** so AI agents can send safely. One
-integration replaces the five tools teams stitch together today.
+Renderical normalizes ten channels behind a single compose-once API. Write a message once and
+Renderical transforms and delivers it across Slack, email, Microsoft Teams, Discord, WhatsApp,
+Telegram, web push, webhooks, in-app inbox, and SMS — with routing rules, fallback chains,
+provider failover, scheduling, rate limiting, and a **native MCP server** so AI agents can send
+safely. It runs entirely on Cloudflare's edge and is fully self-hostable.
 
-## Core features
+## Features
 
-- **Single compose API** — one normalized payload, automatically transformed into Slack
-  Block Kit, responsive HTML email, Teams adaptive cards, Discord embeds, and push payloads.
-  Rich content (text, markdown, buttons, images, attachments, interactive components) and a
-  template engine with variables, conditionals, loops, and localization.
-- **Fallback chains** — try push → fall back to email → fall back to SMS, with routing rules
-  by user, message type, priority, or time.
-- **Multi-channel delivery** — Slack, Gmail/SMTP, Teams, Discord, web push, in-app
-  inbox, generic webhooks, and SMS. Broadcast, targeted, and transactional modes with
-  rate-aware throttling.
-- **Scheduling & timing** — send-at with timezone awareness, recurring/cron sends, send-time
-  optimization, quiet hours / DND, and time-window delivery.
-- **Scope-based OAuth & connected accounts** — granular per-provider scopes, token storage,
-  refresh and rotation, per-account permission introspection, connection health monitoring,
-  and multi-tenant credential isolation.
-- **Reliability** — automatic retries with backoff, dead-letter queue, idempotency keys,
-  full delivery status tracking (queued → sent → delivered → opened → clicked → failed),
-  webhook receipts, and bounce handling.
-- **Personalization & orchestration** — segmentation, dynamic content, A/B testing, locale/TZ
-  auto-detection, multi-step journeys, trigger-based automation, and throttle/debounce.
-- **Analytics & observability** — per-channel delivery/open/engagement metrics, funnel and
-  conversion tracking, real-time dashboards with anomaly alerting, cost tracking, and audit logs.
-- **Templates & content** — visual builder with live multi-channel preview, versioning and
-  rollback, a shared snippet library, and a brand kit applied across channels.
-- **Security & compliance** — encryption, PII redaction, RBAC, SSO/SAML, IP allowlisting,
-  signed webhooks with replay protection, SOC 2 / HIPAA / GDPR posture, data residency,
-  suppression lists, and a consent ledger.
-- **Smart / AI** — AI-assisted drafting and tone adjustment, smart channel selection,
-  send-time prediction, and anomaly detection on engagement drops.
-- **Operational** — provider failover, multi-region delivery, cost-optimized routing, and a
-  self-hosted / on-prem deployment option.
+- **Compose-once API** — one normalized payload, transformed per channel (Slack Block Kit,
+  HTML email, Teams adaptive cards, Discord embeds, web push, …). Content blocks plus a
+  template engine with variables, conditionals, loops, and i18n.
+- **10 channels** — Slack, email (SMTP/SendGrid/Resend), Teams, Discord, WhatsApp, Telegram,
+  web push (VAPID), webhooks (HMAC-signed), SMS (Twilio), and an in-app inbox.
+- **Routing & fallback** — priority-ordered routing rules, ordered fallback chains, and
+  per-channel provider failover, with dry-run route resolution.
+- **Scheduling** — send-at with timezone awareness, recurring (cron) sends, quiet hours,
+  delivery windows, and per-channel rate limiting — driven by a cron-trigger sweep.
+- **Reliability** — a Cloudflare Queue with exponential-backoff retries, a dead-letter queue,
+  idempotency keys, PII redaction, delivery events (delivered/opened/clicked/bounced), open &
+  click tracking, and inbound provider receipts.
+- **Templates & content** — template editor, version history with restore, and a brand kit.
+- **Analytics** — delivery stats by channel, status, and date; top topics; and an overview
+  dashboard, backed by a full API request log.
+- **Auth & keys** — better-auth with email + password, email OTP, Google OAuth, 2FA
+  (TOTP / email OTP / backup codes), phone verification (Twilio), and scoped `rk_` API keys.
+- **Native MCP server** — agents send, schedule, preview, template, and query analytics within
+  granted scopes, behind approval gates and rate limits.
 
-## MCP server layer
+## MCP server
 
-Renderical exposes the entire platform as an MCP server so AI agents (Claude, IDE assistants,
-custom agents) can compose, schedule, and deliver notifications in natural language — using the
-same routing, fallback, and OAuth scopes underneath. Available as **remote MCP** (hosted,
-OAuth-authenticated) and **local/stdio MCP** (self-hosted/dev).
+Renderical exposes the platform at `POST /mcp` (authenticated with an `rk_` API key), available
+hosted (Streamable HTTP) and local (stdio via `@renderical/mcp`).
 
 - **Tools** — `send_notification`, `schedule_notification`, `list_channels`,
-  `get_channel_status`, `manage_connection`, `get_delivery_status`,
-  `create_template`, `render_preview`, `query_analytics`.
-- **Resources** — connected accounts and scopes, templates and variables, recipient segments,
-  recent delivery logs and failures.
-- **Prompts** — "Notify a user across their preferred channel with fallback", "Schedule a
-  digest summary for a segment", "Diagnose why a notification failed and retry".
-- **Safety** — per-tool scope enforcement tied to connected-account OAuth scopes, preview and
-  approval gates (human-in-the-loop), rate limiting and idempotency at the MCP layer, and every
-  agent-initiated send written to the same audit log as API/UI sends.
+  `get_delivery_status`, `create_template`, `render_preview`, `query_analytics`, `approve_action`.
+- **Resources** — `renderical://channels`, `renderical://templates`, `renderical://recent-deliveries`.
+- **Safety** — per-tool approval gates, key-scoped access, KV rate limiting, idempotency, and
+  every call written to the request log.
+
+## Tech stack
+
+Cloudflare Workers · Hono · React 19 · better-auth · Kysely · D1 · Queues · KV · Cloudflare
+Email · `@hono/zod-openapi` + Scalar. Tooling: pnpm workspaces + Turborepo.
 
 ## Monorepo layout
 
-Turborepo + pnpm workspaces.
-
 ```
 apps/
-  site      → Marketing site (Astro, Cloudflare) — landing & marketing pages
-  web       → Web app / dashboard
-  admin     → Admin console
-  api       → Backend API
-  desktop   → Desktop app
-  ios       → iOS app
-  android   → Android app
+  api       → Cloudflare Worker — all backend logic (compose, queue, cron, MCP, auth)
+  web       → React 19 SPA dashboard
+  site      → Astro marketing site
+  desktop   → Electron (Forge) wrapper
+  ios       → Capacitor iOS wrapper
+  android   → Capacitor Android wrapper
 packages/
-  analytics, app, auth, core, i18n, mailer,
-  payments, ui, ui-primitives, views
-```
-
-### Marketing site (`apps/site`)
-
-Astro site for Renderical's public pages. Pages: home, features, channels, MCP server,
-developers, security, about, contact, changelog, status, blog, and legal
-(privacy, terms, DPA).
-
-```bash
-cd apps/site
-npm install
-npm run dev      # local dev server
-npm run build    # static build (Cloudflare adapter)
-npm run preview  # preview the build
+  core         → feature-level UI components & TanStack Query hooks
+  views        → page components & platform routers
+  app          → cross-platform auth + app context
+  api-client   → typed HTTP client
+  sdk          → public TypeScript SDK
+  cli          → `renderical` CLI
+  mcp          → MCP server package
+  mailer       → transactional email templates
+  templating   → Mustache-style template engine
+  ui           → shadcn UI primitives
+  ui-primitives→ theme provider
+  i18n         → internationalisation stubs
 ```
 
 ## Development
 
 ```bash
 pnpm install
-pnpm dev         # turbo dev across apps
-pnpm build       # turbo build
+pnpm --filter api db:migrate   # apply migrations to a local D1
+pnpm dev                       # turbo dev: api (:8787) + web (:5173) + site (:4321)
+pnpm build                     # turbo build
 pnpm lint
 pnpm typecheck
 ```
+
+## Self-hosting
+
+Renderical deploys to your own Cloudflare account: a D1 database, two KV namespaces, a delivery
+queue + dead-letter queue, the Email send binding, and an every-minute cron trigger. In short:
+
+```bash
+cd apps/api
+npx wrangler d1 create renderical
+npx wrangler kv namespace create renderical-auth
+npx wrangler kv namespace create renderical-rate-limit
+npx wrangler queues create delivery-queue
+npx wrangler queues create delivery-dlq
+# paste the ids into apps/api/wrangler.jsonc, then set secrets:
+npx wrangler secret put CONNECTION_ENC_KEY   # + FRONTEND_URL, GOOGLE_*, TWILIO_*, VAPID_PUBLIC_KEY
+pnpm --filter api db:migrate:remote
+pnpm --filter api deploy
+```
+
+Point the web app at your API (`VITE_API_URL`) and deploy `apps/web` (and optionally `apps/site`)
+to Cloudflare Pages. The full walkthrough lives on the marketing site's **Self-host** page.
