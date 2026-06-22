@@ -4,6 +4,7 @@ import PageHeader from "../components/PageHeader.astro";
 import CtaBand from "../components/CtaBand.astro";
 import { site } from "../config";
 import { buttonVariants } from "@renderical/ui/components/button";
+import GithubMark from "../components/GithubMark.astro";
 import {
   Boxes,
   Database,
@@ -14,7 +15,6 @@ import {
   Mail,
   Terminal,
   Check,
-  Github,
   ListChecks,
 } from "lucide-react";
 
@@ -178,7 +178,7 @@ const secrets = [
   <section class="border-b py-10">
     <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-3 px-6">
       <a href={site.repoUrl} target="_blank" rel="noopener" class={`${buttonVariants({ size: "lg" })} gap-1.5`}>
-        <Github className="size-4" /> Clone on GitHub
+        <GithubMark class="size-4" /> Clone on GitHub
       </a>
       <a href="#guide" class={buttonVariants({ variant: "outline", size: "lg" })}>Jump to the guide</a>
     </div>
@@ -302,7 +302,7 @@ const secrets = [
           <h2 class="mt-4 text-3xl font-semibold tracking-tight">Try it locally first</h2>
           <p class="mt-3 text-muted-foreground">Apply migrations to a local D1, then run the whole monorepo with Turborepo. The API serves on <code class="rounded bg-muted px-1.5 py-0.5 text-sm">:8787</code>, the web app on <code class="rounded bg-muted px-1.5 py-0.5 text-sm">:5173</code>, and this site on <code class="rounded bg-muted px-1.5 py-0.5 text-sm">:4321</code>.</p>
           <div class="mt-6">
-            <a href={site.repoUrl} target="_blank" rel="noopener" class={`${buttonVariants({ variant: "outline" })} gap-1.5`}><Github className="size-4" /> Read the repo README</a>
+            <a href={site.repoUrl} target="_blank" rel="noopener" class={`${buttonVariants({ variant: "outline" })} gap-1.5`}><GithubMark class="size-4" /> Read the repo README</a>
           </div>
         </div>
         <div class="rounded-xl border bg-card p-5">
