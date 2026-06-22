@@ -98,32 +98,36 @@ const webhookAdapter: ChannelAdapter<Record<string, never>, WebhookProvider> = {
       }
     }
 
-    let anyOk = false
+    // Endpoints are independent — deliver concurrently instead of serializing
+    // each HTTP round-trip in the queue consumer.
     const errors: string[] = []
 
-    for (const ep of endpoints) {
-      let secret: string
-      try {
-        secret = await decrypt(ep.secret, encKey)
-      } catch {
-        errors.push(`${ep.url}: secret decrypt failed`)
-        continue
-      }
-      const headers = ep.headers
-        ? (JSON.parse(ep.headers) as Record<string, string>)
-        : null
-      const result = await postWebhook(
-        ep.url,
-        secret,
-        provider.rawBody,
-        crypto.randomUUID(),
-        headers
-      )
-      if (result.ok) anyOk = true
-      else errors.push(`${ep.url}: ${result.error}`)
-    }
+    const outcomes = await Promise.all(
+      endpoints.map(async (ep) => {
+        let secret: string
+        try {
+          secret = await decrypt(ep.secret, encKey)
+        } catch {
+          errors.push(`${ep.url}: secret decrypt failed`)
+          return false
+        }
+        const headers = ep.headers
+          ? (JSON.parse(ep.headers) as Record<string, string>)
+          : null
+        const result = await postWebhook(
+          ep.url,
+          secret,
+          provider.rawBody,
+          crypto.randomUUID(),
+          headers
+        )
+        if (result.ok) return true
+        errors.push(`${ep.url}: ${result.error}`)
+        return false
+      })
+    )
 
-    if (anyOk) return { providerMessageId: null, ok: true }
+    if (outcomes.some(Boolean)) return { providerMessageId: null, ok: true }
     return {
       providerMessageId: null,
       ok: false,

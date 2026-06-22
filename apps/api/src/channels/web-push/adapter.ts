@@ -65,53 +65,61 @@ const webPushAdapter: ChannelAdapter<Record<string, never>, WebPushProvider> = {
       url: provider.url ?? undefined,
     })
 
-    let anyOk = false
+    // Sends are independent across subscriptions — fan out concurrently rather
+    // than blocking the queue consumer on each round-trip.
     const errors: string[] = []
+    const expiredSubIds: string[] = []
 
-    for (const sub of subscriptions) {
-      try {
-        const encrypted = await encryptWebPushPayload(
-          sub.p256dh,
-          sub.auth,
-          notifPayload
-        )
-        const vapidHeaders = await buildVapidHeaders(
-          sub.endpoint,
-          VAPID_PUBLIC_KEY,
-          VAPID_PRIVATE_KEY,
-          subject
-        )
+    const outcomes = await Promise.all(
+      subscriptions.map(async (sub) => {
+        try {
+          const encrypted = await encryptWebPushPayload(
+            sub.p256dh,
+            sub.auth,
+            notifPayload
+          )
+          const vapidHeaders = await buildVapidHeaders(
+            sub.endpoint,
+            VAPID_PUBLIC_KEY,
+            VAPID_PRIVATE_KEY,
+            subject
+          )
 
-        const res = await fetch(sub.endpoint, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/octet-stream",
-            "Content-Encoding": "aes128gcm",
-            TTL: "86400",
-            ...vapidHeaders,
-          },
-          body: encrypted,
-        })
+          const res = await fetch(sub.endpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/octet-stream",
+              "Content-Encoding": "aes128gcm",
+              TTL: "86400",
+              ...vapidHeaders,
+            },
+            body: encrypted,
+          })
 
-        if (res.status === 404 || res.status === 410) {
-          await ctx.db
-            .deleteFrom("push_subscription")
-            .where("id", "=", sub.id)
-            .execute()
-          continue
-        }
+          if (res.status === 404 || res.status === 410) {
+            expiredSubIds.push(sub.id)
+            return false
+          }
 
-        if (res.ok || res.status === 201) {
-          anyOk = true
-        } else {
+          if (res.ok || res.status === 201) return true
           errors.push(`${sub.endpoint}: HTTP ${res.status}`)
+          return false
+        } catch (err) {
+          errors.push(err instanceof Error ? err.message : String(err))
+          return false
         }
-      } catch (err) {
-        errors.push(err instanceof Error ? err.message : String(err))
-      }
+      })
+    )
+
+    // Prune dead subscriptions in a single statement.
+    if (expiredSubIds.length > 0) {
+      await ctx.db
+        .deleteFrom("push_subscription")
+        .where("id", "in", expiredSubIds)
+        .execute()
     }
 
-    if (anyOk) return { providerMessageId: null, ok: true }
+    if (outcomes.some(Boolean)) return { providerMessageId: null, ok: true }
     return {
       providerMessageId: null,
       ok: false,

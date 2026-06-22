@@ -1,3 +1,5 @@
+import { sql } from "kysely"
+
 import { getAdapter } from "../channels/registry"
 import { resolveSendConnection } from "../channels/resolve"
 import type { ChannelType, Connection } from "../channels/types"
@@ -87,23 +89,22 @@ async function updateNotificationStatus(
   notificationId: string,
   ts: string
 ): Promise<void> {
-  const pending = await database
+  const counts = await database
     .selectFrom("delivery")
     .where("notificationId", "=", notificationId)
-    .where("status", "in", ["queued", "retrying"])
-    .select(database.fn.countAll<number>().as("n"))
+    .select([
+      sql<number>`SUM(CASE WHEN status IN ('queued','retrying') THEN 1 ELSE 0 END)`.as(
+        "pending"
+      ),
+      sql<number>`SUM(CASE WHEN status IN ('failed','dead') THEN 1 ELSE 0 END)`.as(
+        "failed"
+      ),
+    ])
     .executeTakeFirstOrThrow()
 
-  if (Number(pending.n) > 0) return
+  if (Number(counts.pending) > 0) return
 
-  const failed = await database
-    .selectFrom("delivery")
-    .where("notificationId", "=", notificationId)
-    .where("status", "in", ["failed", "dead"])
-    .select(database.fn.countAll<number>().as("n"))
-    .executeTakeFirstOrThrow()
-
-  const finalStatus = Number(failed.n) > 0 ? "failed" : "completed"
+  const finalStatus = Number(counts.failed) > 0 ? "failed" : "completed"
   await database
     .updateTable("notification")
     .set({ status: finalStatus, updatedAt: ts })
@@ -273,50 +274,45 @@ async function processDelivery(
       })
       .where("id", "=", deliveryId)
       .execute()
-    const deliveryRow = await database
-      .selectFrom("delivery")
-      .where("id", "=", deliveryId)
-      .selectAll()
-      .executeTakeFirst()
-    if (deliveryRow) {
-      await database
-        .insertInto("delivery_event")
-        .values({
-          id: crypto.randomUUID(),
-          deliveryId,
-          userId: deliveryRow.userId,
-          type: "delivered",
-          at: ts,
-          meta: "{}",
-        })
-        .execute()
+    // `delivery` (fetched above) already holds userId/chainId/chainStepIndex —
+    // those don't change on the status update, so no need to re-SELECT it.
+    await database
+      .insertInto("delivery_event")
+      .values({
+        id: crypto.randomUUID(),
+        deliveryId,
+        userId: delivery.userId,
+        type: "delivered",
+        at: ts,
+        meta: "{}",
+      })
+      .execute()
 
-      if (deliveryRow.chainId && deliveryRow.chainStepIndex !== null) {
-        const chain = await database
-          .selectFrom("fallback_chain")
-          .where("id", "=", deliveryRow.chainId)
-          .selectAll()
-          .executeTakeFirst()
-        if (chain) {
-          const steps = JSON.parse(
-            chain.steps
-          ) as import("../lib/routing").ChainStep[]
-          const step = steps[deliveryRow.chainStepIndex]
-          if (step) {
-            const successOnSet = new Set(step.successOn)
-            if (!successOnSet.has("delivered") && step.waitForDeliveryMs > 0) {
-              const delaySeconds = Math.ceil(step.waitForDeliveryMs / 1000)
-              await env.DELIVERY_Q.send(
-                {
-                  deliveryId,
-                  notificationId,
-                  userId,
-                  channel,
-                  escalationCheck: true,
-                },
-                { delaySeconds }
-              )
-            }
+    if (delivery.chainId && delivery.chainStepIndex !== null) {
+      const chain = await database
+        .selectFrom("fallback_chain")
+        .where("id", "=", delivery.chainId)
+        .selectAll()
+        .executeTakeFirst()
+      if (chain) {
+        const steps = JSON.parse(
+          chain.steps
+        ) as import("../lib/routing").ChainStep[]
+        const step = steps[delivery.chainStepIndex]
+        if (step) {
+          const successOnSet = new Set(step.successOn)
+          if (!successOnSet.has("delivered") && step.waitForDeliveryMs > 0) {
+            const delaySeconds = Math.ceil(step.waitForDeliveryMs / 1000)
+            await env.DELIVERY_Q.send(
+              {
+                deliveryId,
+                notificationId,
+                userId,
+                channel,
+                escalationCheck: true,
+              },
+              { delaySeconds }
+            )
           }
         }
       }

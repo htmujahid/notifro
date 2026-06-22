@@ -27,3 +27,5 @@ CREATE TABLE "delivery" (
 );
 CREATE INDEX "delivery_notificationId_idx" ON "delivery" ("notificationId");
 CREATE INDEX "delivery_user_status_idx" ON "delivery" ("userId", "status");
+CREATE INDEX "delivery_user_createdAt_idx" ON "delivery" ("userId", "createdAt");
+CREATE INDEX "delivery_providerMessageId_idx" ON "delivery" ("providerMessageId");

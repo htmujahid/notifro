@@ -71,7 +71,8 @@ export default router.post("/:provider", async (c) => {
 
     const authToken = c.env.TWILIO_AUTH_TOKEN
     const sig = c.req.header("X-Twilio-Signature")
-    if (authToken && sig) {
+    if (authToken) {
+      if (!sig) return c.json({ ok: false, error: "Missing signature" }, 403)
       const url = new URL(c.req.url).toString()
       const valid = await verifyTwilioSignature(sig, url, params, authToken)
       if (!valid) return c.json({ ok: false, error: "Invalid signature" }, 403)

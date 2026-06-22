@@ -30,3 +30,4 @@ CREATE TABLE dead_letter (
 CREATE INDEX idx_dead_letter_user_failed  ON dead_letter (userId, failedAt, id);
 CREATE INDEX idx_dead_letter_user_channel ON dead_letter (userId, channel);
 CREATE INDEX idx_dead_letter_user_notif   ON dead_letter (userId, notificationId);
+CREATE INDEX idx_dead_letter_deliveryId   ON dead_letter (deliveryId);
