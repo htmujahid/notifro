@@ -1,146 +1,23 @@
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+import { OpenAPIHono, z } from "@hono/zod-openapi"
 
 import { getAdapter } from "../channels/registry"
-import { CHANNEL_TYPES, CONNECTION_STATUSES } from "../channels/types"
 import type { ChannelType, ConnectionStatus } from "../channels/types"
 import { decrypt, encrypt } from "../lib/crypto"
 import { Errors, validationHook } from "../lib/errors"
-import { applyListQuery, listQuerySchema } from "../lib/list-query"
+import { applyListQuery } from "../lib/list-query"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
-
-const ChannelTypeEnum = z.enum(CHANNEL_TYPES as [ChannelType, ...ChannelType[]])
-const StatusEnum = z.enum(
-  CONNECTION_STATUSES as [ConnectionStatus, ...ConnectionStatus[]]
-)
-
-const SORTABLE = {
-  createdAt: "createdAt",
-  name: "name",
-  channelType: "type",
-  status: "status",
-}
-
-const FILTERABLE = {
-  channelType: {
-    column: "type",
-    schema: ChannelTypeEnum,
-    operator: "eq" as const,
-  },
-  status: { column: "status", schema: StatusEnum, operator: "eq" as const },
-}
-
-const DEFAULT_SORT = { key: "createdAt", order: "desc" as const }
-
-const ConnectionDtoSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  type: z.string(),
-  name: z.string(),
-  status: z.string(),
-  config: z.string(),
-  scopes: z.string(),
-  health: z.string().nullable(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-})
-
-const ListResponseSchema = z.object({
-  data: z.array(ConnectionDtoSchema),
-  nextCursor: z.string().nullable(),
-})
-
-const listRoute = createRoute({
-  method: "get",
-  path: "/connections",
-  request: {
-    query: listQuerySchema({
-      sortable: SORTABLE,
-      filterable: FILTERABLE,
-      defaultSort: DEFAULT_SORT,
-    }),
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: ListResponseSchema } },
-      description: "Paginated connections",
-    },
-  },
-})
-
-const CreateBodySchema = z.object({
-  type: ChannelTypeEnum,
-  name: z.string().min(1).max(255),
-  config: z.record(z.string(), z.unknown()).optional().default({}),
-  credentials: z.record(z.string(), z.unknown()).optional(),
-  scopes: z.array(z.string()).optional().default([]),
-})
-
-const createRoute_ = createRoute({
-  method: "post",
-  path: "/connections",
-  request: {
-    body: { content: { "application/json": { schema: CreateBodySchema } } },
-  },
-  responses: {
-    201: {
-      content: { "application/json": { schema: ConnectionDtoSchema } },
-      description: "Created connection",
-    },
-  },
-})
-
-const UpdateBodySchema = z.object({
-  name: z.string().min(1).max(255).optional(),
-  config: z.record(z.string(), z.unknown()).optional(),
-  credentials: z.record(z.string(), z.unknown()).optional(),
-  status: StatusEnum.optional(),
-  scopes: z.array(z.string()).optional(),
-})
-
-const updateRoute = createRoute({
-  method: "patch",
-  path: "/connections/:id",
-  request: {
-    body: { content: { "application/json": { schema: UpdateBodySchema } } },
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: ConnectionDtoSchema } },
-      description: "Updated connection",
-    },
-  },
-})
-
-const deleteRoute = createRoute({
-  method: "delete",
-  path: "/connections/:id",
-  responses: {
-    200: {
-      content: {
-        "application/json": { schema: z.object({ ok: z.boolean() }) },
-      },
-      description: "Deleted",
-    },
-  },
-})
-
-const HealthResultSchema = z.object({
-  ok: z.boolean(),
-  message: z.string().optional(),
-  checkedAt: z.string(),
-})
-
-const healthRoute = createRoute({
-  method: "post",
-  path: "/connections/:id/health",
-  responses: {
-    200: {
-      content: { "application/json": { schema: HealthResultSchema } },
-      description: "Health check result",
-    },
-  },
-})
+import {
+  ConnectionDtoSchema,
+  DEFAULT_SORT,
+  FILTERABLE,
+  SORTABLE,
+  createRoute_,
+  deleteRoute,
+  healthRoute,
+  listRoute,
+  updateRoute,
+} from "./connections.contract"
 
 function redact(row: Record<string, unknown>) {
   const { credentials: _creds, ...rest } = row

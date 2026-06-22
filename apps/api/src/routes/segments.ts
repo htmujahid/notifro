@@ -1,148 +1,24 @@
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+import { OpenAPIHono, z } from "@hono/zod-openapi"
 
 import { Errors, validationHook } from "../lib/errors"
-import { applyListQuery, listQuerySchema } from "../lib/list-query"
+import { applyListQuery } from "../lib/list-query"
 import { previewSegment } from "../lib/segment-resolver"
 import type { FilterNode } from "../lib/segment-resolver"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
-
-const SORTABLE = {
-  updatedAt: "updatedAt",
-  createdAt: "createdAt",
-  name: "name",
-}
-const FILTERABLE = {
-  q: { column: "name", schema: z.string(), operator: "like" as const },
-}
-const DEFAULT_SORT = { key: "updatedAt", order: "desc" as const }
-
-const FilterClauseSchema: z.ZodType<FilterNode> = z.lazy(() =>
-  z.union([
-    z.object({ and: z.array(FilterClauseSchema) }),
-    z.object({ or: z.array(FilterClauseSchema) }),
-    z.object({
-      field: z.string().min(1).max(64),
-      op: z.enum(["eq", "neq", "gt", "lt", "gte", "lte", "contains", "in"]),
-      value: z.union([
-        z.string(),
-        z.number(),
-        z.boolean(),
-        z.null(),
-        z.array(z.union([z.string(), z.number()])),
-      ]),
-    }),
-  ])
-)
-
-const SegmentDtoSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  name: z.string(),
-  filter: z.string(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-})
-
-// z.lazy() causes infinite recursion in OpenAPI generator; use generic JSON schema for routes
-const FilterInputSchema = z.record(z.string(), z.unknown()).openapi({
-  description: "Recursive filter clause: leaf { field, op, value } or composite { and/or: [...] }",
-  example: { field: "email", op: "eq", value: "user@example.com" },
-})
-
-const CreateSegmentSchema = z.object({
-  name: z.string().min(1).max(255),
-  filter: FilterInputSchema,
-})
-
-const PatchSegmentSchema = z.object({
-  name: z.string().min(1).max(255).optional(),
-  filter: FilterInputSchema.optional(),
-})
-
-const ListResponseSchema = z.object({
-  data: z.array(SegmentDtoSchema),
-  nextCursor: z.string().nullable(),
-})
-
-const PreviewResponseSchema = z.object({
-  count: z.number(),
-  sample: z.array(z.object({ id: z.string(), email: z.string().nullable() })),
-})
-
-const listRoute = createRoute({
-  method: "get",
-  path: "/segments",
-  request: {
-    query: listQuerySchema({
-      sortable: SORTABLE,
-      filterable: FILTERABLE,
-      defaultSort: DEFAULT_SORT,
-    }),
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: ListResponseSchema } },
-      description: "Paginated segments",
-    },
-  },
-})
-
-const createRoute_ = createRoute({
-  method: "post",
-  path: "/segments",
-  request: {
-    body: { content: { "application/json": { schema: CreateSegmentSchema } } },
-  },
-  responses: {
-    201: {
-      content: { "application/json": { schema: SegmentDtoSchema } },
-      description: "Created segment",
-    },
-  },
-})
-
-const detailRoute = createRoute({
-  method: "get",
-  path: "/segments/:id",
-  responses: {
-    200: {
-      content: { "application/json": { schema: SegmentDtoSchema } },
-      description: "Segment detail",
-    },
-  },
-})
-
-const patchRoute = createRoute({
-  method: "patch",
-  path: "/segments/:id",
-  request: {
-    body: { content: { "application/json": { schema: PatchSegmentSchema } } },
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: SegmentDtoSchema } },
-      description: "Updated segment",
-    },
-  },
-})
-
-const deleteRoute = createRoute({
-  method: "delete",
-  path: "/segments/:id",
-  responses: { 204: { description: "Deleted" } },
-})
-
-const previewRoute = createRoute({
-  method: "get",
-  path: "/segments/:id/preview",
-  responses: {
-    200: {
-      content: { "application/json": { schema: PreviewResponseSchema } },
-      description: "Segment preview",
-    },
-  },
-})
+import {
+  DEFAULT_SORT,
+  FILTERABLE,
+  SORTABLE,
+  FilterClauseSchema,
+  SegmentDtoSchema,
+  listRoute,
+  createRoute_,
+  detailRoute,
+  patchRoute,
+  deleteRoute,
+  previewRoute,
+} from "./segments.contract"
 
 function newId() {
   return crypto.randomUUID()

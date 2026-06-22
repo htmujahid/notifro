@@ -1,72 +1,17 @@
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+import { OpenAPIHono, z } from "@hono/zod-openapi"
 
 import { Errors, validationHook } from "../lib/errors"
-import { applyListQuery, listQuerySchema } from "../lib/list-query"
+import { applyListQuery } from "../lib/list-query"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
-
-const SORTABLE = { createdAt: "createdAt", sendAt: "sendAt" }
-const FILTERABLE = {
-  status: {
-    column: "status",
-    schema: z.enum(["pending", "enqueued", "cancelled"]),
-    operator: "eq" as const,
-  },
-}
-const DEFAULT_SORT = { key: "sendAt", order: "asc" as const }
-
-const ScheduledMessageDtoSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  sendAt: z.string(),
-  status: z.string(),
-  timezone: z.string().nullable(),
-  quietHoursStart: z.string().nullable(),
-  quietHoursEnd: z.string().nullable(),
-  deliveryWindowStart: z.string().nullable(),
-  deliveryWindowEnd: z.string().nullable(),
-  respectQuietHours: z.number(),
-  notificationId: z.string().nullable(),
-  recurringSendId: z.string().nullable(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-})
-
-const ListResponseSchema = z.object({
-  data: z.array(ScheduledMessageDtoSchema),
-  nextCursor: z.string().nullable(),
-})
-
-const listRoute = createRoute({
-  method: "get",
-  path: "/schedules",
-  request: {
-    query: listQuerySchema({
-      sortable: SORTABLE,
-      filterable: FILTERABLE,
-      defaultSort: DEFAULT_SORT,
-    }),
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: ListResponseSchema } },
-      description: "Paginated scheduled messages",
-    },
-  },
-})
-
-const deleteRoute = createRoute({
-  method: "delete",
-  path: "/schedules/:id",
-  responses: {
-    200: {
-      content: {
-        "application/json": { schema: z.object({ ok: z.literal(true) }) },
-      },
-      description: "Cancelled",
-    },
-  },
-})
+import {
+  DEFAULT_SORT,
+  FILTERABLE,
+  SORTABLE,
+  ScheduledMessageDtoSchema,
+  deleteRoute,
+  listRoute,
+} from "./schedules.contract"
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)

@@ -1,49 +1,9 @@
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+import { OpenAPIHono, z } from "@hono/zod-openapi"
 
 import { Errors, validationHook } from "../lib/errors"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
-
-const BrandKitDtoSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  logoUrl: z.string().nullable(),
-  colors: z.string().nullable(),
-  fontStack: z.string().nullable(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-})
-
-const UpdateBrandKitSchema = z.object({
-  logoUrl: z.string().url().nullable().optional(),
-  colors: z.record(z.string(), z.string()).nullable().optional(),
-  fontStack: z.string().nullable().optional(),
-})
-
-const getRoute = createRoute({
-  method: "get",
-  path: "/brand-kit",
-  responses: {
-    200: {
-      content: { "application/json": { schema: BrandKitDtoSchema } },
-      description: "Brand kit",
-    },
-  },
-})
-
-const putRoute = createRoute({
-  method: "put",
-  path: "/brand-kit",
-  request: {
-    body: { content: { "application/json": { schema: UpdateBrandKitSchema } } },
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: BrandKitDtoSchema } },
-      description: "Updated brand kit",
-    },
-  },
-})
+import { BrandKitDtoSchema, getRoute, putRoute } from "./brand-kit.contract"
 
 function newId(): string {
   return crypto.randomUUID()

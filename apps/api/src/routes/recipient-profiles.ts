@@ -1,51 +1,9 @@
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+import { OpenAPIHono } from "@hono/zod-openapi"
 
 import { validationHook } from "../lib/errors"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
-
-const HHMM = z.string().regex(/^\d{2}:\d{2}$/)
-
-const PreferencesBodySchema = z.object({
-  timezone: z.string().optional(),
-  quietHoursStart: HHMM.optional(),
-  quietHoursEnd: HHMM.optional(),
-})
-
-const PreferencesDtoSchema = z.object({
-  userId: z.string(),
-  timezone: z.string().nullable(),
-  quietHoursStart: z.string().nullable(),
-  quietHoursEnd: z.string().nullable(),
-  updatedAt: z.string(),
-})
-
-const patchRoute = createRoute({
-  method: "patch",
-  path: "/recipients/preferences",
-  request: {
-    body: {
-      content: { "application/json": { schema: PreferencesBodySchema } },
-    },
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: PreferencesDtoSchema } },
-      description: "Updated preferences",
-    },
-  },
-})
-
-const getRoute = createRoute({
-  method: "get",
-  path: "/recipients/preferences",
-  responses: {
-    200: {
-      content: { "application/json": { schema: PreferencesDtoSchema } },
-      description: "Recipient preferences",
-    },
-  },
-})
+import { getRoute, patchRoute } from "./recipient-profiles.contract"
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)

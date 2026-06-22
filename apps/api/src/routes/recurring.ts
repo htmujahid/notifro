@@ -1,163 +1,27 @@
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+import { OpenAPIHono, z } from "@hono/zod-openapi"
 
 import { Errors, validationHook } from "../lib/errors"
-import { applyListQuery, listQuerySchema } from "../lib/list-query"
+import { applyListQuery } from "../lib/list-query"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
 import { nextCronRun, validateCronExpr } from "../scheduling/cron"
 
-const RecurringSendDtoSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  cron: z.string(),
-  timezone: z.string(),
-  channels: z.string(),
-  nextRunAt: z.string(),
-  lastRunAt: z.string().nullable(),
-  enabled: z.number(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-})
-
-const RunDtoSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  sendAt: z.string(),
-  status: z.string(),
-  timezone: z.string().nullable(),
-  notificationId: z.string().nullable(),
-  recurringSendId: z.string().nullable(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-})
-
-const CreateBodySchema = z.object({
-  payload: z.record(z.string(), z.unknown()),
-  channels: z.array(z.string()).min(1),
-  cron: z.string(),
-  timezone: z.string().optional().default("UTC"),
-})
-
-const PatchBodySchema = z.object({
-  enabled: z.number().int().min(0).max(1).optional(),
-  cron: z.string().optional(),
-  timezone: z.string().optional(),
-  payload: z.record(z.string(), z.unknown()).optional(),
-  channels: z.array(z.string()).optional(),
-})
-
-const SORTABLE = { createdAt: "createdAt", nextRunAt: "nextRunAt" }
-const FILTERABLE = {
-  enabled: {
-    column: "enabled",
-    schema: z.coerce.number().int().min(0).max(1),
-    operator: "eq" as const,
-  },
-  channel: {
-    column: "channels",
-    schema: z.string(),
-    operator: "like" as const,
-  },
-}
-const DEFAULT_SORT = { key: "createdAt", order: "desc" as const }
-
-const RUNS_SORTABLE = { sendAt: "sendAt" }
-const RUNS_FILTERABLE = {
-  status: {
-    column: "status",
-    schema: z.enum(["pending", "enqueued", "cancelled"]),
-    operator: "eq" as const,
-  },
-  from: { column: "sendAt", schema: z.string(), operator: "gte" as const },
-  to: { column: "sendAt", schema: z.string(), operator: "lte" as const },
-}
-const RUNS_DEFAULT_SORT = { key: "sendAt", order: "desc" as const }
-
-const ListResponseSchema = z.object({
-  data: z.array(RecurringSendDtoSchema),
-  nextCursor: z.string().nullable(),
-})
-const RunsResponseSchema = z.object({
-  data: z.array(RunDtoSchema),
-  nextCursor: z.string().nullable(),
-})
-
-const createRoute_ = createRoute({
-  method: "post",
-  path: "/recurring",
-  request: {
-    body: { content: { "application/json": { schema: CreateBodySchema } } },
-  },
-  responses: {
-    201: {
-      content: { "application/json": { schema: RecurringSendDtoSchema } },
-      description: "Created",
-    },
-  },
-})
-
-const listRoute = createRoute({
-  method: "get",
-  path: "/recurring",
-  request: {
-    query: listQuerySchema({
-      sortable: SORTABLE,
-      filterable: FILTERABLE,
-      defaultSort: DEFAULT_SORT,
-    }),
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: ListResponseSchema } },
-      description: "Paginated recurring sends",
-    },
-  },
-})
-
-const patchRoute = createRoute({
-  method: "patch",
-  path: "/recurring/:id",
-  request: {
-    body: { content: { "application/json": { schema: PatchBodySchema } } },
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: RecurringSendDtoSchema } },
-      description: "Updated",
-    },
-  },
-})
-
-const deleteRoute = createRoute({
-  method: "delete",
-  path: "/recurring/:id",
-  responses: {
-    200: {
-      content: {
-        "application/json": { schema: z.object({ ok: z.literal(true) }) },
-      },
-      description: "Deleted",
-    },
-  },
-})
-
-const runsRoute = createRoute({
-  method: "get",
-  path: "/recurring/:id/runs",
-  request: {
-    query: listQuerySchema({
-      sortable: RUNS_SORTABLE,
-      filterable: RUNS_FILTERABLE,
-      defaultSort: RUNS_DEFAULT_SORT,
-    }),
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: RunsResponseSchema } },
-      description: "Run history",
-    },
-  },
-})
+import {
+  CreateBodySchema,
+  DEFAULT_SORT,
+  FILTERABLE,
+  RUNS_DEFAULT_SORT,
+  RUNS_FILTERABLE,
+  RUNS_SORTABLE,
+  SORTABLE,
+  RecurringSendDtoSchema,
+  RunDtoSchema,
+  createRoute_,
+  deleteRoute,
+  listRoute,
+  patchRoute,
+  runsRoute,
+} from "./recurring.contract"
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)

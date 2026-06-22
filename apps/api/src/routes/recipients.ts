@@ -1,136 +1,21 @@
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+import { OpenAPIHono, z } from "@hono/zod-openapi"
 
 import { Errors, validationHook } from "../lib/errors"
-import { applyListQuery, listQuerySchema } from "../lib/list-query"
+import { applyListQuery } from "../lib/list-query"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
-
-const SORTABLE = {
-  updatedAt: "updatedAt",
-  createdAt: "createdAt",
-  email: "email",
-}
-const FILTERABLE = {
-  q: { column: "email", schema: z.string(), operator: "like" as const },
-}
-const DEFAULT_SORT = { key: "updatedAt", order: "desc" as const }
-
-const RecipientDtoSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  externalId: z.string().nullable(),
-  email: z.string().nullable(),
-  phone: z.string().nullable(),
-  locale: z.string().nullable(),
-  timezone: z.string().nullable(),
-  attributes: z.string().nullable(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-})
-
-const CreateRecipientSchema = z.object({
-  externalId: z.string().optional(),
-  email: z.string().email().optional(),
-  phone: z.string().optional(),
-  locale: z.string().optional(),
-  timezone: z.string().optional(),
-  attributes: z.record(z.string(), z.unknown()).optional(),
-})
-
-const PatchRecipientSchema = CreateRecipientSchema.partial()
-
-const IdentifySchema = z.object({
-  externalId: z.string().min(1),
-  email: z.string().email().optional(),
-  phone: z.string().optional(),
-  locale: z.string().optional(),
-  timezone: z.string().optional(),
-  attributes: z.record(z.string(), z.unknown()).optional(),
-})
-
-const ListResponseSchema = z.object({
-  data: z.array(RecipientDtoSchema),
-  nextCursor: z.string().nullable(),
-})
-
-const listRoute = createRoute({
-  method: "get",
-  path: "/recipients",
-  request: {
-    query: listQuerySchema({
-      sortable: SORTABLE,
-      filterable: FILTERABLE,
-      defaultSort: DEFAULT_SORT,
-    }),
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: ListResponseSchema } },
-      description: "Paginated recipients",
-    },
-  },
-})
-
-const createRoute_ = createRoute({
-  method: "post",
-  path: "/recipients",
-  request: {
-    body: {
-      content: { "application/json": { schema: CreateRecipientSchema } },
-    },
-  },
-  responses: {
-    201: {
-      content: { "application/json": { schema: RecipientDtoSchema } },
-      description: "Created recipient",
-    },
-  },
-})
-
-const detailRoute = createRoute({
-  method: "get",
-  path: "/recipients/:id",
-  responses: {
-    200: {
-      content: { "application/json": { schema: RecipientDtoSchema } },
-      description: "Recipient detail",
-    },
-  },
-})
-
-const patchRoute = createRoute({
-  method: "patch",
-  path: "/recipients/:id",
-  request: {
-    body: { content: { "application/json": { schema: PatchRecipientSchema } } },
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: RecipientDtoSchema } },
-      description: "Updated recipient",
-    },
-  },
-})
-
-const deleteRoute = createRoute({
-  method: "delete",
-  path: "/recipients/:id",
-  responses: { 204: { description: "Deleted" } },
-})
-
-const identifyRoute = createRoute({
-  method: "post",
-  path: "/recipients/identify",
-  request: {
-    body: { content: { "application/json": { schema: IdentifySchema } } },
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: RecipientDtoSchema } },
-      description: "Upserted recipient",
-    },
-  },
-})
+import {
+  DEFAULT_SORT,
+  FILTERABLE,
+  SORTABLE,
+  RecipientDtoSchema,
+  createRoute_,
+  deleteRoute,
+  detailRoute,
+  identifyRoute,
+  listRoute,
+  patchRoute,
+} from "./recipients.contract"
 
 function newId() {
   return crypto.randomUUID()
@@ -138,6 +23,12 @@ function newId() {
 
 function now() {
   return new Date().toISOString()
+}
+
+function inferLocale(acceptLanguage: string | null): string | undefined {
+  if (!acceptLanguage) return undefined
+  const primary = acceptLanguage.split(",")[0]?.split(";")[0]?.trim()
+  return primary || undefined
 }
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
@@ -322,9 +213,3 @@ export default router
     await c.var.db.deleteFrom("recipient").where("id", "=", id).execute()
     return new Response(null, { status: 204 })
   })
-
-function inferLocale(acceptLanguage: string | null): string | undefined {
-  if (!acceptLanguage) return undefined
-  const primary = acceptLanguage.split(",")[0]?.split(";")[0]?.trim()
-  return primary || undefined
-}

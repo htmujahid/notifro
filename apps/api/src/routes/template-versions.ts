@@ -1,68 +1,17 @@
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+import { OpenAPIHono, z } from "@hono/zod-openapi"
 
 import { Errors, validationHook } from "../lib/errors"
-import { applyListQuery, listQuerySchema } from "../lib/list-query"
+import { applyListQuery } from "../lib/list-query"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
-
-const SORTABLE = { version: "version", createdAt: "createdAt" }
-const FILTERABLE = {}
-const DEFAULT_SORT = { key: "version", order: "desc" as const }
-
-const VersionDtoSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  templateId: z.string(),
-  version: z.number(),
-  content: z.string(),
-  localeStrings: z.string().nullable(),
-  variables: z.string().nullable(),
-  createdAt: z.string(),
-})
-
-const listVersionsRoute = createRoute({
-  method: "get",
-  path: "/templates/:id/versions",
-  request: {
-    query: listQuerySchema({
-      sortable: SORTABLE,
-      filterable: FILTERABLE,
-      defaultSort: DEFAULT_SORT,
-    }),
-  },
-  responses: {
-    200: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            data: z.array(VersionDtoSchema),
-            nextCursor: z.string().nullable(),
-          }),
-        },
-      },
-      description: "Version history",
-    },
-  },
-})
-
-const restoreVersionRoute = createRoute({
-  method: "post",
-  path: "/templates/:id/versions/:version/restore",
-  responses: {
-    200: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            id: z.string(),
-            version: z.number(),
-            message: z.string(),
-          }),
-        },
-      },
-      description: "Restored version",
-    },
-  },
-})
+import {
+  DEFAULT_SORT,
+  FILTERABLE,
+  SORTABLE,
+  VersionDtoSchema,
+  listVersionsRoute,
+  restoreVersionRoute,
+} from "./template-versions.contract"
 
 function newId(): string {
   return crypto.randomUUID()

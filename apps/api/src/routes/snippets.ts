@@ -1,96 +1,20 @@
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+import { OpenAPIHono, z } from "@hono/zod-openapi"
 
 import { Errors, validationHook } from "../lib/errors"
-import { applyListQuery, listQuerySchema } from "../lib/list-query"
+import { applyListQuery } from "../lib/list-query"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
-
-const SORTABLE = {
-  updatedAt: "updatedAt",
-  name: "name",
-  createdAt: "createdAt",
-}
-const FILTERABLE = {
-  q: { column: "name", schema: z.string(), operator: "like" as const },
-}
-const DEFAULT_SORT = { key: "updatedAt", order: "desc" as const }
-
-const SnippetDtoSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  name: z.string(),
-  content: z.string(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-})
-
-const CreateSnippetSchema = z.object({
-  name: z.string().min(1).max(255),
-  content: z.record(z.string(), z.unknown()),
-})
-
-const listRoute = createRoute({
-  method: "get",
-  path: "/snippets",
-  request: {
-    query: listQuerySchema({
-      sortable: SORTABLE,
-      filterable: FILTERABLE,
-      defaultSort: DEFAULT_SORT,
-    }),
-  },
-  responses: {
-    200: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            data: z.array(SnippetDtoSchema),
-            nextCursor: z.string().nullable(),
-          }),
-        },
-      },
-      description: "Snippets list",
-    },
-  },
-})
-
-const createRoute_ = createRoute({
-  method: "post",
-  path: "/snippets",
-  request: {
-    body: { content: { "application/json": { schema: CreateSnippetSchema } } },
-  },
-  responses: {
-    201: {
-      content: { "application/json": { schema: SnippetDtoSchema } },
-      description: "Created snippet",
-    },
-  },
-})
-
-const patchRoute = createRoute({
-  method: "patch",
-  path: "/snippets/:id",
-  request: {
-    body: {
-      content: {
-        "application/json": { schema: CreateSnippetSchema.partial() },
-      },
-    },
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: SnippetDtoSchema } },
-      description: "Updated snippet",
-    },
-  },
-})
-
-const deleteRoute = createRoute({
-  method: "delete",
-  path: "/snippets/:id",
-  responses: { 204: { description: "Deleted" } },
-})
+import {
+  CreateSnippetSchema,
+  DEFAULT_SORT,
+  FILTERABLE,
+  SORTABLE,
+  SnippetDtoSchema,
+  createRoute_,
+  deleteRoute,
+  listRoute,
+  patchRoute,
+} from "./snippets.contract"
 
 function newId(): string {
   return crypto.randomUUID()

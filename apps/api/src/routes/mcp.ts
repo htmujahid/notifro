@@ -1,129 +1,17 @@
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+import { OpenAPIHono } from "@hono/zod-openapi"
 
 import { Errors, validationHook } from "../lib/errors"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
-
-const McpGateDtoSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  tool: z.string(),
-  requiresApproval: z.number(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-})
-
-const UpsertGateSchema = z.object({
-  tool: z.string().min(1),
-  requiresApproval: z.boolean().default(true),
-})
-
-const McpPendingDtoSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  tool: z.string(),
-  status: z.string(),
-  expiresAt: z.string(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-})
-
-const CreatePendingSchema = z.object({
-  tool: z.string().min(1),
-  payload: z.string(),
-})
-
-const listGatesRoute = createRoute({
-  method: "get",
-  path: "/mcp/gates",
-  responses: {
-    200: {
-      content: {
-        "application/json": {
-          schema: z.object({ data: z.array(McpGateDtoSchema) }),
-        },
-      },
-      description: "Approval gates",
-    },
-  },
-})
-
-const upsertGateRoute = createRoute({
-  method: "post",
-  path: "/mcp/gates",
-  request: {
-    body: { content: { "application/json": { schema: UpsertGateSchema } } },
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: McpGateDtoSchema } },
-      description: "Upserted gate",
-    },
-  },
-})
-
-const deleteGateRoute = createRoute({
-  method: "delete",
-  path: "/mcp/gates/:id",
-  responses: { 204: { description: "Deleted" } },
-})
-
-const listPendingRoute = createRoute({
-  method: "get",
-  path: "/mcp/pending",
-  responses: {
-    200: {
-      content: {
-        "application/json": {
-          schema: z.object({ data: z.array(McpPendingDtoSchema) }),
-        },
-      },
-      description: "Pending actions",
-    },
-  },
-})
-
-const createPendingRoute = createRoute({
-  method: "post",
-  path: "/mcp/pending",
-  request: {
-    body: { content: { "application/json": { schema: CreatePendingSchema } } },
-  },
-  responses: {
-    201: {
-      content: { "application/json": { schema: McpPendingDtoSchema } },
-      description: "Created pending action",
-    },
-  },
-})
-
-const approveRoute = createRoute({
-  method: "post",
-  path: "/mcp/pending/:id/approve",
-  responses: {
-    200: {
-      content: {
-        "application/json": {
-          schema: z.object({ approved: z.boolean(), result: z.unknown() }),
-        },
-      },
-      description: "Approved and executed",
-    },
-  },
-})
-
-const rejectRoute = createRoute({
-  method: "post",
-  path: "/mcp/pending/:id/reject",
-  responses: {
-    200: {
-      content: {
-        "application/json": { schema: z.object({ rejected: z.boolean() }) },
-      },
-      description: "Rejected",
-    },
-  },
-})
+import {
+  approveRoute,
+  createPendingRoute,
+  deleteGateRoute,
+  listGatesRoute,
+  listPendingRoute,
+  rejectRoute,
+  upsertGateRoute,
+} from "./mcp.contract"
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 

@@ -1,229 +1,27 @@
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+import { OpenAPIHono, z } from "@hono/zod-openapi"
 
 import { Errors, validationHook } from "../lib/errors"
 import { advanceJourneyRun } from "../lib/journey-engine"
-import { applyListQuery, listQuerySchema } from "../lib/list-query"
+import { applyListQuery } from "../lib/list-query"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
-
-const SORTABLE = { createdAt: "createdAt", name: "name" }
-const FILTERABLE = {}
-const DEFAULT_SORT = { key: "createdAt", order: "desc" as const }
-
-const RUN_SORTABLE = { createdAt: "createdAt", updatedAt: "updatedAt" }
-const RUN_DEFAULT_SORT = { key: "createdAt", order: "desc" as const }
-
-const JourneyDtoSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  name: z.string(),
-  status: z.string(),
-  trigger: z.string().nullable(),
-  steps: z.string(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-})
-
-const JourneyRunDtoSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  journeyId: z.string(),
-  recipientId: z.string(),
-  status: z.string(),
-  currentStepId: z.string(),
-  nextResumeAt: z.string().nullable(),
-  context: z.string(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-})
-
-const ListJourneysResponseSchema = z.object({
-  data: z.array(JourneyDtoSchema),
-  nextCursor: z.string().nullable(),
-})
-
-const ListRunsResponseSchema = z.object({
-  data: z.array(JourneyRunDtoSchema),
-  nextCursor: z.string().nullable(),
-})
-
-const CreateJourneySchema = z.object({
-  name: z.string().min(1),
-  trigger: z
-    .union([
-      z.object({
-        type: z.literal("event"),
-        event: z.string(),
-        filter: z.record(z.string(), z.unknown()).optional(),
-      }),
-      z.object({ type: z.literal("manual") }),
-      z.object({ type: z.literal("segment"), segmentId: z.string() }),
-    ])
-    .optional(),
-  steps: z.record(
-    z.string(),
-    z.object({
-      kind: z.enum(["send", "wait", "branch", "exit"]),
-      config: z.record(z.string(), z.unknown()),
-      next: z.string().nullable().optional(),
-      branches: z
-        .array(
-          z.object({
-            condition: z.record(z.string(), z.unknown()),
-            next: z.string(),
-          })
-        )
-        .optional(),
-    })
-  ),
-})
-
-const PatchJourneySchema = z.object({
-  name: z.string().min(1).optional(),
-  trigger: z
-    .union([
-      z.object({
-        type: z.literal("event"),
-        event: z.string(),
-        filter: z.record(z.string(), z.unknown()).optional(),
-      }),
-      z.object({ type: z.literal("manual") }),
-      z.object({ type: z.literal("segment"), segmentId: z.string() }),
-    ])
-    .nullable()
-    .optional(),
-  steps: z
-    .record(
-      z.string(),
-      z.object({
-        kind: z.enum(["send", "wait", "branch", "exit"]),
-        config: z.record(z.string(), z.unknown()),
-        next: z.string().nullable().optional(),
-        branches: z
-          .array(
-            z.object({
-              condition: z.record(z.string(), z.unknown()),
-              next: z.string(),
-            })
-          )
-          .optional(),
-      })
-    )
-    .optional(),
-  status: z.enum(["paused"]).optional(),
-})
-
-const EnrollSchema = z.object({
-  recipientId: z.string(),
-})
-
-const listRoute = createRoute({
-  method: "get",
-  path: "/journeys",
-  request: {
-    query: listQuerySchema({
-      sortable: SORTABLE,
-      filterable: FILTERABLE,
-      defaultSort: DEFAULT_SORT,
-    }),
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: ListJourneysResponseSchema } },
-      description: "Journeys list",
-    },
-  },
-})
-
-const createRoute_ = createRoute({
-  method: "post",
-  path: "/journeys",
-  request: {
-    body: { content: { "application/json": { schema: CreateJourneySchema } } },
-  },
-  responses: {
-    201: {
-      content: { "application/json": { schema: JourneyDtoSchema } },
-      description: "Journey created",
-    },
-  },
-})
-
-const getRoute = createRoute({
-  method: "get",
-  path: "/journeys/:id",
-  responses: {
-    200: {
-      content: { "application/json": { schema: JourneyDtoSchema } },
-      description: "Journey detail",
-    },
-  },
-})
-
-const patchRoute = createRoute({
-  method: "patch",
-  path: "/journeys/:id",
-  request: {
-    body: { content: { "application/json": { schema: PatchJourneySchema } } },
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: JourneyDtoSchema } },
-      description: "Journey updated",
-    },
-  },
-})
-
-const deleteRoute = createRoute({
-  method: "delete",
-  path: "/journeys/:id",
-  responses: {
-    204: { description: "Journey deleted" },
-  },
-})
-
-const activateRoute = createRoute({
-  method: "post",
-  path: "/journeys/:id/activate",
-  responses: {
-    200: {
-      content: { "application/json": { schema: JourneyDtoSchema } },
-      description: "Journey activated",
-    },
-  },
-})
-
-const listRunsRoute = createRoute({
-  method: "get",
-  path: "/journeys/:id/runs",
-  request: {
-    query: listQuerySchema({
-      sortable: RUN_SORTABLE,
-      filterable: {},
-      defaultSort: RUN_DEFAULT_SORT,
-    }),
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: ListRunsResponseSchema } },
-      description: "Journey runs",
-    },
-  },
-})
-
-const enrollRoute = createRoute({
-  method: "post",
-  path: "/journeys/:id/enroll",
-  request: {
-    body: { content: { "application/json": { schema: EnrollSchema } } },
-  },
-  responses: {
-    201: {
-      content: { "application/json": { schema: JourneyRunDtoSchema } },
-      description: "Recipient enrolled",
-    },
-  },
-})
+import {
+  DEFAULT_SORT,
+  FILTERABLE,
+  JourneyDtoSchema,
+  JourneyRunDtoSchema,
+  RUN_DEFAULT_SORT,
+  RUN_SORTABLE,
+  SORTABLE,
+  activateRoute,
+  createRoute_,
+  deleteRoute,
+  enrollRoute,
+  getRoute,
+  listRoute,
+  listRunsRoute,
+  patchRoute,
+} from "./journeys.contract"
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)

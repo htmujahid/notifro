@@ -1,4 +1,4 @@
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+import { OpenAPIHono, z } from "@hono/zod-openapi"
 
 import { Errors, validationHook } from "../lib/errors"
 import {
@@ -8,55 +8,21 @@ import {
 import { recordConsentEvent, suppress } from "../lib/suppress"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
+import {
+  adminSetPreferenceRoute,
+  channelPriorityRoute,
+  ChannelPriorityDtoSchema,
+  generateTokenRoute,
+  prefCenterGetRoute,
+  prefCenterPostRoute,
+  PreferenceDtoSchema,
+  recipientPrefsRoute,
+  setChannelPriorityRoute,
+  unsubscribeGetRoute,
+  unsubscribePostRoute,
+} from "./preferences.contract"
 
 const TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000
-
-const PreferenceDtoSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  recipientId: z.string(),
-  channel: z.string(),
-  topicId: z.string().nullable(),
-  optedIn: z.number(),
-  source: z.string(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-})
-
-const TopicWithPrefSchema = z.object({
-  topicId: z.string(),
-  key: z.string(),
-  name: z.string(),
-  description: z.string().nullable(),
-  transactional: z.number(),
-  channels: z.array(
-    z.object({
-      channel: z.string(),
-      optedIn: z.boolean(),
-    })
-  ),
-})
-
-const PreferenceCenterSchema = z.object({
-  recipientId: z.string(),
-  topics: z.array(TopicWithPrefSchema),
-  globalOptOut: z.array(z.string()),
-})
-
-const UpdatePreferencesSchema = z.object({
-  topicId: z.string().nullable().optional(),
-  channel: z.string(),
-  optedIn: z.boolean(),
-})
-
-const ChannelPriorityDtoSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  recipientId: z.string(),
-  order: z.array(z.string()),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-})
 
 function now(): string {
   return new Date().toISOString()
@@ -67,101 +33,6 @@ async function getSecret(env: CloudflareBindings): Promise<string | null> {
 }
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
-
-const generateTokenRoute = createRoute({
-  method: "post",
-  path: "/preferences/token",
-  request: {
-    body: {
-      content: {
-        "application/json": {
-          schema: z.object({ recipientId: z.string() }),
-        },
-      },
-    },
-  },
-  responses: {
-    200: {
-      content: {
-        "application/json": {
-          schema: z.object({ token: z.string(), expiresAt: z.string() }),
-        },
-      },
-      description: "Signed preference center token",
-    },
-  },
-})
-
-const recipientPrefsRoute = createRoute({
-  method: "get",
-  path: "/recipients/:id/preferences",
-  responses: {
-    200: {
-      content: {
-        "application/json": {
-          schema: z.object({ data: z.array(PreferenceDtoSchema) }),
-        },
-      },
-      description: "Preferences for a recipient",
-    },
-  },
-})
-
-const adminSetPreferenceRoute = createRoute({
-  method: "put",
-  path: "/recipients/:id/preferences",
-  request: {
-    body: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            preferences: z.array(UpdatePreferencesSchema),
-          }),
-        },
-      },
-    },
-  },
-  responses: {
-    200: {
-      content: {
-        "application/json": { schema: z.object({ updated: z.number() }) },
-      },
-      description: "Updated preferences",
-    },
-  },
-})
-
-const channelPriorityRoute = createRoute({
-  method: "get",
-  path: "/recipients/:id/channel-priority",
-  responses: {
-    200: {
-      content: { "application/json": { schema: ChannelPriorityDtoSchema } },
-      description: "Channel priority",
-    },
-    404: { description: "Not set" },
-  },
-})
-
-const setChannelPriorityRoute = createRoute({
-  method: "put",
-  path: "/recipients/:id/channel-priority",
-  request: {
-    body: {
-      content: {
-        "application/json": {
-          schema: z.object({ order: z.array(z.string()).min(1) }),
-        },
-      },
-    },
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: ChannelPriorityDtoSchema } },
-      description: "Channel priority updated",
-    },
-  },
-})
 
 const authedRouter = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 authedRouter.use("*", requireAuth)
@@ -358,81 +229,6 @@ const authedRoutes = authedRouter
   })
 
 const publicRouter = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
-
-const prefCenterGetRoute = createRoute({
-  method: "get",
-  path: "/preferences/center",
-  request: { query: z.object({ token: z.string() }) },
-  responses: {
-    200: {
-      content: { "application/json": { schema: PreferenceCenterSchema } },
-      description: "Preference center data",
-    },
-    401: { description: "Invalid or expired token" },
-  },
-})
-
-const prefCenterPostRoute = createRoute({
-  method: "post",
-  path: "/preferences/center",
-  request: {
-    query: z.object({ token: z.string() }),
-    body: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            preferences: z.array(UpdatePreferencesSchema),
-          }),
-        },
-      },
-    },
-  },
-  responses: {
-    200: {
-      content: {
-        "application/json": { schema: z.object({ updated: z.number() }) },
-      },
-      description: "Preferences updated",
-    },
-    401: { description: "Invalid or expired token" },
-  },
-})
-
-const unsubscribeGetRoute = createRoute({
-  method: "get",
-  path: "/unsubscribe",
-  request: { query: z.object({ token: z.string() }) },
-  responses: {
-    200: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            recipientId: z.string(),
-            email: z.string().nullable(),
-            ok: z.boolean(),
-          }),
-        },
-      },
-      description: "Token valid",
-    },
-    401: { description: "Invalid or expired token" },
-  },
-})
-
-const unsubscribePostRoute = createRoute({
-  method: "post",
-  path: "/unsubscribe",
-  request: { query: z.object({ token: z.string() }) },
-  responses: {
-    200: {
-      content: {
-        "application/json": { schema: z.object({ ok: z.boolean() }) },
-      },
-      description: "Unsubscribed",
-    },
-    401: { description: "Invalid or expired token" },
-  },
-})
 
 async function verifyToken(c: { env: CloudflareBindings }, token: string) {
   const secret = await getSecret(c.env)

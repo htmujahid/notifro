@@ -1,55 +1,16 @@
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+import { OpenAPIHono, z } from "@hono/zod-openapi"
 
 import { validationHook } from "../lib/errors"
-import { applyListQuery, listQuerySchema } from "../lib/list-query"
+import { applyListQuery } from "../lib/list-query"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
-
-const SORTABLE = { createdAt: "createdAt" }
-const FILTERABLE = {
-  method: { column: "method", schema: z.string(), operator: "eq" as const },
-  status: {
-    column: "status",
-    schema: z.coerce.number().int(),
-    operator: "eq" as const,
-  },
-  path: { column: "path", schema: z.string(), operator: "like" as const },
-}
-const DEFAULT_SORT = { key: "createdAt", order: "desc" as const }
-
-const ApiRequestLogDtoSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  apiKeyId: z.string().nullable(),
-  method: z.string(),
-  path: z.string(),
-  status: z.number(),
-  latencyMs: z.number().nullable(),
-  createdAt: z.string(),
-})
-
-const ListResponseSchema = z.object({
-  data: z.array(ApiRequestLogDtoSchema),
-  nextCursor: z.string().nullable(),
-})
-
-const listRoute = createRoute({
-  method: "get",
-  path: "/request-log",
-  request: {
-    query: listQuerySchema({
-      sortable: SORTABLE,
-      filterable: FILTERABLE,
-      defaultSort: DEFAULT_SORT,
-    }),
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: ListResponseSchema } },
-      description: "Paginated request log",
-    },
-  },
-})
+import {
+  ApiRequestLogDtoSchema,
+  DEFAULT_SORT,
+  FILTERABLE,
+  SORTABLE,
+  listRoute,
+} from "./request-log.contract"
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 

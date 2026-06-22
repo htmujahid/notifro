@@ -1,162 +1,22 @@
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+import { OpenAPIHono, z } from "@hono/zod-openapi"
 
 import { Errors, validationHook } from "../lib/errors"
-import { applyListQuery, listQuerySchema } from "../lib/list-query"
+import { applyListQuery } from "../lib/list-query"
 import { renderTemplate } from "../lib/render-template"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
-
-const SORTABLE = {
-  updatedAt: "updatedAt",
-  name: "name",
-  createdAt: "createdAt",
-}
-const FILTERABLE = {
-  q: { column: "name", schema: z.string(), operator: "like" as const },
-  defaultLocale: {
-    column: "defaultLocale",
-    schema: z.string(),
-    operator: "eq" as const,
-  },
-}
-const DEFAULT_SORT = { key: "updatedAt", order: "desc" as const }
-
-const VariableDefSchema = z.object({
-  key: z.string().min(1),
-  type: z
-    .enum(["string", "number", "boolean", "array", "object"])
-    .default("string"),
-  required: z.boolean().optional().default(false),
-})
-
-const TemplateDtoSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  name: z.string(),
-  slug: z.string(),
-  description: z.string().nullable(),
-  defaultLocale: z.string(),
-  content: z.string(),
-  variables: z.string().nullable(),
-  localeStrings: z.string().nullable(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-})
-
-const CreateTemplateSchema = z.object({
-  name: z.string().min(1).max(255),
-  slug: z
-    .string()
-    .min(1)
-    .max(100)
-    .regex(/^[a-z0-9-_]+$/, "slug must be lowercase alphanumeric with - or _"),
-  description: z.string().optional(),
-  defaultLocale: z.string().default("en"),
-  content: z.record(z.string(), z.unknown()),
-  variables: z.array(VariableDefSchema).optional(),
-  localeStrings: z
-    .record(z.string(), z.record(z.string(), z.string()))
-    .optional(),
-})
-
-const PatchTemplateSchema = CreateTemplateSchema.partial()
-
-const RenderRequestSchema = z.object({
-  data: z.record(z.string(), z.unknown()).default({}),
-  locale: z.string().optional(),
-})
-
-const ListResponseSchema = z.object({
-  data: z.array(TemplateDtoSchema),
-  nextCursor: z.string().nullable(),
-})
-
-const listRoute = createRoute({
-  method: "get",
-  path: "/templates",
-  request: {
-    query: listQuerySchema({
-      sortable: SORTABLE,
-      filterable: FILTERABLE,
-      defaultSort: DEFAULT_SORT,
-    }),
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: ListResponseSchema } },
-      description: "Paginated templates",
-    },
-  },
-})
-
-const createRoute_ = createRoute({
-  method: "post",
-  path: "/templates",
-  request: {
-    body: { content: { "application/json": { schema: CreateTemplateSchema } } },
-  },
-  responses: {
-    201: {
-      content: { "application/json": { schema: TemplateDtoSchema } },
-      description: "Created template",
-    },
-  },
-})
-
-const detailRoute = createRoute({
-  method: "get",
-  path: "/templates/:id",
-  responses: {
-    200: {
-      content: { "application/json": { schema: TemplateDtoSchema } },
-      description: "Template",
-    },
-  },
-})
-
-const patchRoute = createRoute({
-  method: "patch",
-  path: "/templates/:id",
-  request: {
-    body: { content: { "application/json": { schema: PatchTemplateSchema } } },
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: TemplateDtoSchema } },
-      description: "Updated template",
-    },
-  },
-})
-
-const deleteRoute = createRoute({
-  method: "delete",
-  path: "/templates/:id",
-  responses: {
-    204: { description: "Deleted" },
-  },
-})
-
-const renderRoute = createRoute({
-  method: "post",
-  path: "/templates/:id/render",
-  request: {
-    body: { content: { "application/json": { schema: RenderRequestSchema } } },
-  },
-  responses: {
-    200: {
-      content: {
-        "application/json": {
-          schema: z.object({
-            content: z.record(z.string(), z.unknown()),
-            templateId: z.string(),
-            locale: z.string(),
-          }),
-        },
-      },
-      description: "Rendered content",
-    },
-  },
-})
+import {
+  DEFAULT_SORT,
+  FILTERABLE,
+  SORTABLE,
+  TemplateDtoSchema,
+  createRoute_,
+  deleteRoute,
+  detailRoute,
+  listRoute,
+  patchRoute,
+  renderRoute,
+} from "./templates.contract"
 
 function newId(): string {
   return crypto.randomUUID()

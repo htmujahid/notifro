@@ -1,12 +1,15 @@
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+import { OpenAPIHono } from "@hono/zod-openapi"
 import { sql } from "kysely"
 
-import { CHANNEL_TYPES } from "../channels/types"
 import { validationHook } from "../lib/errors"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
-
-const CHANNEL_ENUM = CHANNEL_TYPES as [string, ...string[]]
+import {
+  channelsRoute,
+  summaryRoute,
+  timeseriesRoute,
+  topTopicsRoute,
+} from "./analytics.contract"
 
 const GRANULARITY_FMT: Record<string, string> = {
   hour: "%Y-%m-%dT%H:00:00",
@@ -21,120 +24,6 @@ function defaultFrom(): string {
 function defaultTo(): string {
   return new Date().toISOString()
 }
-
-const SummaryResponseSchema = z.object({
-  sent: z.number(),
-  delivered: z.number(),
-  opened: z.number(),
-  clicked: z.number(),
-  bounced: z.number(),
-  deliveryRate: z.number(),
-  openRate: z.number(),
-  clickRate: z.number(),
-})
-
-const TimeseriesResponseSchema = z.object({
-  data: z.array(
-    z.object({
-      period: z.string(),
-      sent: z.number(),
-      delivered: z.number(),
-      opened: z.number(),
-      clicked: z.number(),
-    })
-  ),
-})
-
-const ChannelsResponseSchema = z.object({
-  data: z.array(
-    z.object({
-      channel: z.string(),
-      sent: z.number(),
-      delivered: z.number(),
-      opened: z.number(),
-      clicked: z.number(),
-      bounced: z.number(),
-      deliveryRate: z.number(),
-    })
-  ),
-})
-
-const TopTopicsResponseSchema = z.object({
-  data: z.array(
-    z.object({
-      topicKey: z.string(),
-      sent: z.number(),
-      delivered: z.number(),
-      deliveryRate: z.number(),
-    })
-  ),
-})
-
-const summaryQuerySchema = z.object({
-  from: z.string().optional(),
-  to: z.string().optional(),
-  channel: z.enum(CHANNEL_ENUM).optional(),
-})
-
-const timeseriesQuerySchema = z.object({
-  from: z.string().optional(),
-  to: z.string().optional(),
-  granularity: z.enum(["hour", "day", "week"]).optional(),
-  channel: z.enum(CHANNEL_ENUM).optional(),
-})
-
-const rangeQuerySchema = z.object({
-  from: z.string().optional(),
-  to: z.string().optional(),
-})
-
-const summaryRoute = createRoute({
-  method: "get",
-  path: "/analytics/summary",
-  request: { query: summaryQuerySchema },
-  responses: {
-    200: {
-      content: { "application/json": { schema: SummaryResponseSchema } },
-      description: "Analytics summary",
-    },
-  },
-})
-
-const timeseriesRoute = createRoute({
-  method: "get",
-  path: "/analytics/timeseries",
-  request: { query: timeseriesQuerySchema },
-  responses: {
-    200: {
-      content: { "application/json": { schema: TimeseriesResponseSchema } },
-      description: "Analytics timeseries",
-    },
-  },
-})
-
-const channelsRoute = createRoute({
-  method: "get",
-  path: "/analytics/channels",
-  request: { query: rangeQuerySchema },
-  responses: {
-    200: {
-      content: { "application/json": { schema: ChannelsResponseSchema } },
-      description: "Per-channel analytics",
-    },
-  },
-})
-
-const topTopicsRoute = createRoute({
-  method: "get",
-  path: "/analytics/top-topics",
-  request: { query: rangeQuerySchema },
-  responses: {
-    200: {
-      content: { "application/json": { schema: TopTopicsResponseSchema } },
-      description: "Top topics by send volume",
-    },
-  },
-})
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)

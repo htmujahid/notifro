@@ -1,34 +1,10 @@
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+import { OpenAPIHono } from "@hono/zod-openapi"
 
 import { validationHook } from "../lib/errors"
 import { advanceJourneyRun } from "../lib/journey-engine"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
-
-const TriggerEventSchema = z.object({
-  name: z.string().min(1),
-  recipientId: z.string().optional(),
-  payload: z.record(z.string(), z.unknown()).optional().default({}),
-})
-
-const TriggerEventResponseSchema = z.object({
-  eventId: z.string(),
-  journeysTriggered: z.number(),
-})
-
-const triggerRoute = createRoute({
-  method: "post",
-  path: "/events",
-  request: {
-    body: { content: { "application/json": { schema: TriggerEventSchema } } },
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: TriggerEventResponseSchema } },
-      description: "Event recorded and matching journeys triggered",
-    },
-  },
-})
+import { triggerRoute } from "./events.contract"
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)

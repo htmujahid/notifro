@@ -1,97 +1,19 @@
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+import { OpenAPIHono, z } from "@hono/zod-openapi"
 
 import { Errors, validationHook } from "../lib/errors"
-import { applyListQuery, listQuerySchema } from "../lib/list-query"
+import { applyListQuery } from "../lib/list-query"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
-
-const SORTABLE = { createdAt: "createdAt", channel: "channel" }
-const FILTERABLE = {}
-const DEFAULT_SORT = { key: "createdAt", order: "desc" as const }
-
-const RateLimitRuleDtoSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  channel: z.string(),
-  maxCount: z.number(),
-  windowSeconds: z.number(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-})
-
-const CreateRateLimitRuleSchema = z.object({
-  channel: z.string().min(1),
-  maxCount: z.number().int().min(1),
-  windowSeconds: z.number().int().min(1),
-})
-
-const PatchRateLimitRuleSchema = z.object({
-  maxCount: z.number().int().min(1).optional(),
-  windowSeconds: z.number().int().min(1).optional(),
-})
-
-const ListResponseSchema = z.object({
-  data: z.array(RateLimitRuleDtoSchema),
-  nextCursor: z.string().nullable(),
-})
-
-const listRoute = createRoute({
-  method: "get",
-  path: "/rate-limits",
-  request: {
-    query: listQuerySchema({
-      sortable: SORTABLE,
-      filterable: FILTERABLE,
-      defaultSort: DEFAULT_SORT,
-    }),
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: ListResponseSchema } },
-      description: "Paginated rate limit rules",
-    },
-  },
-})
-
-const createRoute_ = createRoute({
-  method: "post",
-  path: "/rate-limits",
-  request: {
-    body: {
-      content: { "application/json": { schema: CreateRateLimitRuleSchema } },
-    },
-  },
-  responses: {
-    201: {
-      content: { "application/json": { schema: RateLimitRuleDtoSchema } },
-      description: "Created or updated rate limit rule",
-    },
-  },
-})
-
-const patchRoute = createRoute({
-  method: "patch",
-  path: "/rate-limits/:id",
-  request: {
-    body: {
-      content: { "application/json": { schema: PatchRateLimitRuleSchema } },
-    },
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: RateLimitRuleDtoSchema } },
-      description: "Updated rate limit rule",
-    },
-  },
-})
-
-const deleteRoute = createRoute({
-  method: "delete",
-  path: "/rate-limits/:id",
-  responses: {
-    204: { description: "Deleted" },
-  },
-})
+import {
+  DEFAULT_SORT,
+  FILTERABLE,
+  SORTABLE,
+  RateLimitRuleDtoSchema,
+  createRoute_,
+  deleteRoute,
+  listRoute,
+  patchRoute,
+} from "./rate-limits.contract"
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 

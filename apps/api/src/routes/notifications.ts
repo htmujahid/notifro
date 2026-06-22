@@ -1,13 +1,12 @@
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+import { OpenAPIHono, z } from "@hono/zod-openapi"
 
 import { getAdapter } from "../channels/registry"
 import { resolveSendConnection } from "../channels/resolve"
 import type { ChannelType } from "../channels/types"
-import { ComposePayloadSchema } from "../compose/schema"
 import type { ComposePayload } from "../compose/schema"
 import { getTransform } from "../compose/transform"
 import { Errors, validationHook } from "../lib/errors"
-import { applyListQuery, listQuerySchema } from "../lib/list-query"
+import { applyListQuery } from "../lib/list-query"
 import { checkRateLimit } from "../lib/rate-limit"
 import { renderTemplate, resolveTemplate } from "../lib/render-template"
 import { resolvePreferences } from "../lib/resolve-preferences"
@@ -18,133 +17,15 @@ import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
 import type { DeliveryQueueMessage } from "../queue/consumer"
 import { localToUtc } from "../scheduling/utils"
-
-const SendRequestSchema = ComposePayloadSchema.extend({
-  content: ComposePayloadSchema.shape.content.optional(),
-  templateId: z.string().optional(),
-  templateSlug: z.string().optional(),
-  templateData: z.record(z.string(), z.unknown()).optional(),
-  templateLocale: z.string().optional(),
-  topicKey: z.string().optional(),
-  chainId: z.string().optional(),
-}).refine(
-  (v) =>
-    v.content !== undefined ||
-    v.templateId !== undefined ||
-    v.templateSlug !== undefined,
-  { message: "Either content or templateId/templateSlug is required" }
-)
-
-const SORTABLE = { createdAt: "createdAt", status: "status" }
-const FILTERABLE = {
-  status: {
-    column: "status",
-    schema: z.enum(["queued", "processing", "completed", "failed"]),
-    operator: "eq" as const,
-  },
-}
-const DEFAULT_SORT = { key: "createdAt", order: "desc" as const }
-
-const DeliveryDtoSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  notificationId: z.string(),
-  channel: z.string(),
-  recipient: z.string(),
-  status: z.string(),
-  providerMessageId: z.string().nullable(),
-  error: z.string().nullable(),
-  attempts: z.number(),
-  nextRetryAt: z.string().nullable(),
-  lastError: z.string().nullable(),
-  deliveredAt: z.string().nullable(),
-  openedAt: z.string().nullable(),
-  clickedAt: z.string().nullable(),
-  bouncedAt: z.string().nullable(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-})
-
-const NotificationDtoSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  payload: z.string(),
-  subject: z.string().nullable(),
-  channels: z.string(),
-  mode: z.string(),
-  status: z.string(),
-  templateId: z.string().nullable(),
-  templateData: z.string().nullable(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-})
-
-const NotificationWithDeliveriesSchema = NotificationDtoSchema.extend({
-  deliveries: z.array(DeliveryDtoSchema),
-})
-
-const ListResponseSchema = z.object({
-  data: z.array(NotificationDtoSchema),
-  nextCursor: z.string().nullable(),
-})
-
-const ScheduledResponseSchema = z.object({
-  id: z.string(),
-  sendAt: z.string(),
-  status: z.literal("pending"),
-  scheduled: z.literal(true),
-})
-
-const sendRoute = createRoute({
-  method: "post",
-  path: "/notifications",
-  request: {
-    body: { content: { "application/json": { schema: SendRequestSchema } } },
-  },
-  responses: {
-    200: {
-      content: {
-        "application/json": { schema: NotificationWithDeliveriesSchema },
-      },
-      description: "Notification enqueued",
-    },
-    202: {
-      content: { "application/json": { schema: ScheduledResponseSchema } },
-      description: "Notification scheduled for future delivery",
-    },
-  },
-})
-
-const listRoute = createRoute({
-  method: "get",
-  path: "/notifications",
-  request: {
-    query: listQuerySchema({
-      sortable: SORTABLE,
-      filterable: FILTERABLE,
-      defaultSort: DEFAULT_SORT,
-    }),
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: ListResponseSchema } },
-      description: "Paginated notifications",
-    },
-  },
-})
-
-const detailRoute = createRoute({
-  method: "get",
-  path: "/notifications/:id",
-  responses: {
-    200: {
-      content: {
-        "application/json": { schema: NotificationWithDeliveriesSchema },
-      },
-      description: "Notification with deliveries",
-    },
-  },
-})
+import {
+  DEFAULT_SORT,
+  FILTERABLE,
+  NotificationDtoSchema,
+  SORTABLE,
+  detailRoute,
+  listRoute,
+  sendRoute,
+} from "./notifications.contract"
 
 function newId(): string {
   return crypto.randomUUID()

@@ -1,61 +1,9 @@
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+import { OpenAPIHono } from "@hono/zod-openapi"
 
 import { Errors, validationHook } from "../lib/errors"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
-
-const ProviderFallbackDtoSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  channel: z.string(),
-  primaryConnectionId: z.string(),
-  fallbackConnectionId: z.string(),
-  createdAt: z.string(),
-})
-
-const ListResponseSchema = z.object({
-  data: z.array(ProviderFallbackDtoSchema),
-  nextCursor: z.string().nullable(),
-})
-
-const CreateSchema = z.object({
-  channel: z.string().min(1),
-  primaryConnectionId: z.string().min(1),
-  fallbackConnectionId: z.string().min(1),
-})
-
-const listRoute = createRoute({
-  method: "get",
-  path: "/provider-fallbacks",
-  responses: {
-    200: {
-      content: { "application/json": { schema: ListResponseSchema } },
-      description: "Provider fallback rules",
-    },
-  },
-})
-
-const createRoute_ = createRoute({
-  method: "post",
-  path: "/provider-fallbacks",
-  request: {
-    body: { content: { "application/json": { schema: CreateSchema } } },
-  },
-  responses: {
-    201: {
-      content: { "application/json": { schema: ProviderFallbackDtoSchema } },
-      description: "Rule created or updated",
-    },
-  },
-})
-
-const deleteRoute = createRoute({
-  method: "delete",
-  path: "/provider-fallbacks/:id",
-  responses: {
-    204: { description: "Rule deleted" },
-  },
-})
+import { createRoute_, deleteRoute, listRoute } from "./provider-fallbacks.contract"
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)

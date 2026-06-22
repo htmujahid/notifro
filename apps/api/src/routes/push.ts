@@ -1,68 +1,13 @@
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi"
+import { OpenAPIHono } from "@hono/zod-openapi"
 
 import { Errors, validationHook } from "../lib/errors"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
-
-const SubscribeBodySchema = z.object({
-  endpoint: z.string().url(),
-  keys: z.object({
-    p256dh: z.string(),
-    auth: z.string(),
-  }),
-  userAgent: z.string().optional(),
-})
-
-const UnsubscribeBodySchema = z.object({
-  endpoint: z.string().url(),
-})
-
-const VapidKeyResponseSchema = z.object({
-  publicKey: z.string(),
-})
-
-const OkResponseSchema = z.object({ ok: z.boolean() })
-
-const subscribeRoute = createRoute({
-  method: "post",
-  path: "/push/subscribe",
-  request: {
-    body: { content: { "application/json": { schema: SubscribeBodySchema } } },
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: OkResponseSchema } },
-      description: "Subscribed",
-    },
-  },
-})
-
-const unsubscribeRoute = createRoute({
-  method: "post",
-  path: "/push/unsubscribe",
-  request: {
-    body: {
-      content: { "application/json": { schema: UnsubscribeBodySchema } },
-    },
-  },
-  responses: {
-    200: {
-      content: { "application/json": { schema: OkResponseSchema } },
-      description: "Unsubscribed",
-    },
-  },
-})
-
-const vapidKeyRoute = createRoute({
-  method: "get",
-  path: "/push/vapid-public-key",
-  responses: {
-    200: {
-      content: { "application/json": { schema: VapidKeyResponseSchema } },
-      description: "VAPID public key",
-    },
-  },
-})
+import {
+  subscribeRoute,
+  unsubscribeRoute,
+  vapidKeyRoute,
+} from "./push.contract"
 
 function newId(): string {
   return crypto.randomUUID()
