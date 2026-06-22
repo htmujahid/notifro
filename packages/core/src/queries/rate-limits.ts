@@ -44,23 +44,6 @@ export function useUpsertRateLimit() {
   })
 }
 
-export function useUpdateRateLimit() {
-  const client = useApiClient()
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: ({
-      id,
-      ...body
-    }: { id: string } & InferRequestType<
-      ApiClient["api"]["rate-limits"][":id"]["$patch"]
-    >["json"]) =>
-      unwrap(
-        client.api["rate-limits"][":id"].$patch({ param: { id }, json: body })
-      ),
-    onSuccess: () => qc.invalidateQueries({ queryKey: rateLimitKeys.lists() }),
-  })
-}
-
 export function useDeleteRateLimit() {
   const client = useApiClient()
   const qc = useQueryClient()

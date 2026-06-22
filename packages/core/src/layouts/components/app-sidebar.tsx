@@ -15,10 +15,7 @@ import {
 } from "lucide-react"
 import { Link, useNavigate } from "react-router"
 
-import { useQueryClient } from "@tanstack/react-query"
-
-import { useAuth } from "@renderical/app/auth/context"
-import { SESSION_QUERY_KEY, useSession } from "@renderical/app/auth/use-session"
+import { useSession } from "@renderical/app/auth/use-session"
 import { RendericalMark } from "@renderical/core/components/renderical-logo"
 import {
   Sidebar,
@@ -30,6 +27,7 @@ import {
   SidebarMenuItem,
 } from "@renderical/ui/components/sidebar"
 
+import { useSignOut } from "../../queries/auth"
 import { NavDocuments } from "./nav-documents"
 import { NavMain } from "./nav-main"
 import { NavSecondary } from "./nav-secondary"
@@ -94,10 +92,9 @@ const NAV_DOCUMENTS = [
 ]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const auth = useAuth()
   const { data: session } = useSession()
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
+  const signOut = useSignOut()
   const [quickCreateOpen, setQuickCreateOpen] = React.useState(false)
 
   const name = session?.user?.name ?? ""
@@ -112,8 +109,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     : email.slice(0, 2).toUpperCase() || "U"
 
   async function handleSignOut() {
-    await auth.signOut()
-    queryClient.setQueryData(SESSION_QUERY_KEY, null)
+    await signOut.mutateAsync(undefined)
     navigate("/auth/sign-in")
   }
 

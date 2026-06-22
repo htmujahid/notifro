@@ -39,8 +39,7 @@ export function useSignOut() {
   return useMutation({
     mutationFn: (args?: Parameters<typeof auth.signOut>[0]) =>
       auth.signOut(args),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY }),
+    onSuccess: () => queryClient.setQueryData(SESSION_QUERY_KEY, null),
   })
 }
 

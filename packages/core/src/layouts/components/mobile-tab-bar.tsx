@@ -18,13 +18,11 @@ import {
 } from "lucide-react"
 import { NavLink, useNavigate } from "react-router"
 
-import { useQueryClient } from "@tanstack/react-query"
-
-import { useAuth } from "@renderical/app/auth/context"
-import { SESSION_QUERY_KEY, useSession } from "@renderical/app/auth/use-session"
+import { useSession } from "@renderical/app/auth/use-session"
 import { Avatar, AvatarFallback } from "@renderical/ui/components/avatar"
 import { Drawer, DrawerContent } from "@renderical/ui/components/drawer"
 
+import { useSignOut } from "../../queries/auth"
 import { useUnreadCount } from "../../queries/inbox"
 import { QuickCreateDialog } from "./quick-create-dialog"
 
@@ -47,9 +45,8 @@ export function MobileTabBar() {
   const { data: unreadData } = useUnreadCount()
   const unreadCount = unreadData?.count ?? 0
   const { data: session } = useSession()
-  const auth = useAuth()
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
+  const signOut = useSignOut()
 
   const name = session?.user?.name ?? ""
   const email = session?.user?.email ?? ""
@@ -63,8 +60,7 @@ export function MobileTabBar() {
     : email.slice(0, 2).toUpperCase() || "U"
 
   async function handleSignOut() {
-    await auth.signOut()
-    queryClient.setQueryData(SESSION_QUERY_KEY, null)
+    await signOut.mutateAsync(undefined)
     navigate("/auth/sign-in")
   }
 

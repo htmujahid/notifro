@@ -142,14 +142,3 @@ export function useDeleteFallbackChain() {
       qc.invalidateQueries({ queryKey: fallbackChainKeys.lists() }),
   })
 }
-
-export function useResolveRoute() {
-  const client = useApiClient()
-  return useMutation({
-    mutationFn: (
-      body: InferRequestType<
-        ApiClient["api"]["routing"]["resolve"]["$post"]
-      >["json"]
-    ) => unwrap(client.api.routing.resolve.$post({ json: body })),
-  })
-}
