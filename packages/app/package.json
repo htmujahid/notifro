@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.101.0",
+    "@better-auth/api-key": "^1.6.20",
     "@renderical/api-client": "workspace:*",
     "@renderical/ui-primitives": "workspace:*",
     "better-auth": "^1.6.19",

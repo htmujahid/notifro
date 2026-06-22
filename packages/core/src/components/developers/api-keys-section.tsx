@@ -2,7 +2,6 @@ import { useState } from "react"
 
 import { CopyIcon, KeyIcon, PlusIcon, TrashIcon } from "lucide-react"
 
-import type { ApiKeyWithSecret } from "@renderical/api-client/types"
 import { Button } from "@renderical/ui/components/button"
 import { Card, CardContent } from "@renderical/ui/components/card"
 
@@ -18,9 +17,9 @@ export function ApiKeysSection() {
   const revokeKey = useRevokeApiKey()
   const [showForm, setShowForm] = useState(false)
   const [name, setName] = useState("")
-  const [newKey, setNewKey] = useState<ApiKeyWithSecret | null>(null)
+  const [newKey, setNewKey] = useState<{ key: string } | null>(null)
 
-  const keys = data?.pages.flatMap((p) => p.data) ?? []
+  const keys = data ?? []
 
   function handleCreate() {
     if (!name) return

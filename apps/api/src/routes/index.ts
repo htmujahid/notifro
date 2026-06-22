@@ -18,7 +18,6 @@ import deliveriesRouter from "./deliveries"
 import eventsRouter from "./events"
 import inboxRouter from "./inbox"
 import journeysRouter from "./journeys"
-import keysRouter from "./keys"
 import mcpRouter from "./mcp"
 import notificationsRouter from "./notifications"
 import overviewRouter from "./overview"
@@ -165,7 +164,6 @@ export function registerRoutes(app: OpenAPIHono<AppEnv>) {
     .route("/api", routingRouter)
     .route("/api", chainsRouter)
     .route("/api", rateLimitsRouter)
-    .route("/api", keysRouter)
     .route("/api", requestLogRouter)
     .route("/api", mcpRouter)
     .route("/api", analyticsRouter)

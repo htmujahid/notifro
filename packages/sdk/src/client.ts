@@ -1,6 +1,4 @@
 import type {
-  ApiKey,
-  ApiKeyWithSecret,
   ApiRequestLog,
   ComposePayload,
   ListResponse,
@@ -105,21 +103,6 @@ export function createRendericalClient(options: RendericalClientOptions) {
           ).toString()
         : ""
       return request("GET", `/api/deliveries${qs}`)
-    },
-
-    keys: {
-      list(): Promise<ListResponse<ApiKey>> {
-        return request("GET", "/api/keys")
-      },
-      create(
-        name: string,
-        mode: "live" | "test" = "live"
-      ): Promise<ApiKeyWithSecret> {
-        return request("POST", "/api/keys", { name, mode })
-      },
-      revoke(id: string): Promise<void> {
-        return request("DELETE", `/api/keys/${id}`)
-      },
     },
 
     requestLog(

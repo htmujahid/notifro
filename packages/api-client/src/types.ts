@@ -292,23 +292,6 @@ export interface PreferenceCenter {
   globalOptOut: string[]
 }
 
-export interface ApiKey {
-  id: string
-  referenceId: string
-  name: string | null
-  start: string | null
-  prefix: string | null
-  enabled: boolean
-  metadata: Record<string, unknown> | null
-  lastRequest: string | null
-  createdAt: string
-  updatedAt: string
-}
-
-export interface ApiKeyWithSecret extends ApiKey {
-  key: string
-}
-
 export interface McpApprovalGate {
   id: string
   userId: string
