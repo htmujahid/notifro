@@ -6,8 +6,9 @@ CREATE TABLE "connection" (
   "status" text not null default 'active',
   "config" text not null default '{}',
   "credentials" text,
-  "scopes" text not null default '[]',
+  "metadata" text,
   "health" text,
+  "lastUsedAt" text,
   "createdAt" text not null,
   "updatedAt" text not null
 );

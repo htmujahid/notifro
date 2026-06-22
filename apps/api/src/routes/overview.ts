@@ -168,8 +168,9 @@ export default router
       status: "active",
       config: "{}",
       credentials: null,
-      scopes: "[]",
+      metadata: null,
       health: null,
+      lastUsedAt: null,
       createdAt: ts,
       updatedAt: ts,
     }

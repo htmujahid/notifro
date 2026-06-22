@@ -29,8 +29,9 @@ function synthetic(userId: string, type: ChannelType, ts: string): Connection {
     status: "active",
     config: "{}",
     credentials: null,
-    scopes: "[]",
+    metadata: null,
     health: null,
+    lastUsedAt: null,
     createdAt: ts,
     updatedAt: ts,
   }

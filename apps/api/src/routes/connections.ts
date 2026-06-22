@@ -95,8 +95,9 @@ export default router
         status,
         config: JSON.stringify(validatedConfig),
         credentials: encryptedCredentials,
-        scopes: JSON.stringify(body.scopes),
+        metadata: null,
         health: null,
+        lastUsedAt: null,
         createdAt: ts,
         updatedAt: ts,
       })
@@ -135,7 +136,8 @@ export default router
 
     if (body.name !== undefined) updates.name = body.name
     if (body.status !== undefined) updates.status = body.status
-    if (body.scopes !== undefined) updates.scopes = JSON.stringify(body.scopes)
+    if (body.metadata !== undefined)
+      updates.metadata = JSON.stringify(body.metadata)
 
     if (body.config !== undefined) {
       const adapter = getAdapter(existing.type as ChannelType)

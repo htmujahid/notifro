@@ -26,8 +26,9 @@ export interface ConnectionTable {
   status: string
   config: string
   credentials: string | null
-  scopes: string
+  metadata: string | null
   health: string | null
+  lastUsedAt: string | null
   createdAt: string
   updatedAt: string
 }

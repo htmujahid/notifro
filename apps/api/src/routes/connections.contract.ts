@@ -36,8 +36,9 @@ export const ConnectionDtoSchema = z.object({
   name: z.string(),
   status: z.string(),
   config: z.string(),
-  scopes: z.string(),
+  metadata: z.string().nullable(),
   health: z.string().nullable(),
+  lastUsedAt: z.string().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
 })
@@ -70,7 +71,6 @@ export const CreateBodySchema = z.object({
   name: z.string().min(1).max(255),
   config: z.record(z.string(), z.unknown()).optional().default({}),
   credentials: z.record(z.string(), z.unknown()).optional(),
-  scopes: z.array(z.string()).optional().default([]),
 })
 
 export const createRoute_ = createRoute({
@@ -92,7 +92,7 @@ export const UpdateBodySchema = z.object({
   config: z.record(z.string(), z.unknown()).optional(),
   credentials: z.record(z.string(), z.unknown()).optional(),
   status: StatusEnum.optional(),
-  scopes: z.array(z.string()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 })
 
 export const updateRoute = createRoute({
