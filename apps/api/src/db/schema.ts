@@ -237,15 +237,6 @@ export interface TemplateVersionTable {
   createdAt: string
 }
 
-export interface SnippetTable {
-  id: string
-  userId: string
-  name: string
-  content: string
-  createdAt: string
-  updatedAt: string
-}
-
 export interface BrandKitTable {
   id: string
   userId: string
@@ -336,7 +327,6 @@ export interface DB {
   connection: ConnectionTable
   template: TemplateTable
   template_version: TemplateVersionTable
-  snippet: SnippetTable
   brand_kit: BrandKitTable
   notification: NotificationTable
   delivery: DeliveryTable

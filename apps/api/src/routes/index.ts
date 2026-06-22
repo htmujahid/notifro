@@ -27,7 +27,6 @@ import recurringRouter from "./recurring"
 import requestLogRouter from "./request-log"
 import routingRouter from "./routing"
 import schedulesRouter from "./schedules"
-import snippetsRouter from "./snippets"
 import templateVersionsRouter from "./template-versions"
 import templatesRouter from "./templates"
 import trackingRouter from "./tracking"
@@ -147,7 +146,6 @@ export function registerRoutes(app: OpenAPIHono<AppEnv>) {
     .route("/api", schedulesRouter)
     .route("/api", recurringRouter)
     .route("/api", templateVersionsRouter)
-    .route("/api", snippetsRouter)
     .route("/api", brandKitRouter)
     .route("/api", routingRouter)
     .route("/api", chainsRouter)

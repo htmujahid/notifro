@@ -12,8 +12,6 @@ export const analyticsKeys = {
     [...analyticsKeys.all, "timeseries", params] as const,
   channels: (params: Record<string, string | undefined>) =>
     [...analyticsKeys.all, "channels", params] as const,
-  topTopics: (params: Record<string, string | undefined>) =>
-    [...analyticsKeys.all, "top-topics", params] as const,
 }
 
 export function useAnalyticsSummary(
@@ -69,24 +67,6 @@ export function useAnalyticsChannels(
     queryKey: analyticsKeys.channels(p),
     queryFn: () =>
       unwrap(client.api.analytics.channels.$get({ query: toQuery(p) })),
-    staleTime: 60_000,
-  })
-}
-
-export function useAnalyticsTopTopics(
-  params: InferRequestType<
-    ApiClient["api"]["analytics"]["top-topics"]["$get"]
-  >["query"] = {}
-) {
-  const client = useApiClient()
-  const p: Record<string, string | undefined> = {
-    from: params.from,
-    to: params.to,
-  }
-  return useQuery({
-    queryKey: analyticsKeys.topTopics(p),
-    queryFn: () =>
-      unwrap(client.api.analytics["top-topics"].$get({ query: toQuery(p) })),
     staleTime: 60_000,
   })
 }

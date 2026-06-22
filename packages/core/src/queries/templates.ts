@@ -18,12 +18,6 @@ export const templateKeys = {
   versions: (id: string) => [...templateKeys.all, "versions", id] as const,
 }
 
-export const snippetKeys = {
-  all: ["snippets"] as const,
-  lists: () => [...snippetKeys.all, "list"] as const,
-  list: (params: ListParams) => [...snippetKeys.lists(), params] as const,
-}
-
 export const brandKitKeys = {
   all: ["brand-kit"] as const,
 }
@@ -163,60 +157,6 @@ export function useRestoreVersion() {
       qc.invalidateQueries({ queryKey: templateKeys.versions(templateId) })
       qc.invalidateQueries({ queryKey: templateKeys.lists() })
     },
-  })
-}
-
-export function useSnippets(params: ListParams = {}) {
-  const client = useApiClient()
-  return useInfiniteQuery({
-    queryKey: snippetKeys.list(params),
-    queryFn: ({ pageParam }) =>
-      unwrap(
-        client.api.snippets.$get({
-          query: toQuery({
-            ...params,
-            ...(pageParam ? { cursor: pageParam as string } : {}),
-          }),
-        })
-      ),
-    initialPageParam: undefined as string | undefined,
-    getNextPageParam: (last) => last.nextCursor ?? undefined,
-  })
-}
-
-export function useCreateSnippet() {
-  const client = useApiClient()
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (
-      body: InferRequestType<ApiClient["api"]["snippets"]["$post"]>["json"]
-    ) => unwrap(client.api.snippets.$post({ json: body })),
-    onSuccess: () => qc.invalidateQueries({ queryKey: snippetKeys.lists() }),
-  })
-}
-
-export function useUpdateSnippet() {
-  const client = useApiClient()
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: ({
-      id,
-      ...body
-    }: { id: string } & InferRequestType<
-      ApiClient["api"]["snippets"][":id"]["$patch"]
-    >["json"]) =>
-      unwrap(client.api.snippets[":id"].$patch({ param: { id }, json: body })),
-    onSuccess: () => qc.invalidateQueries({ queryKey: snippetKeys.lists() }),
-  })
-}
-
-export function useDeleteSnippet() {
-  const client = useApiClient()
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (id: string) =>
-      unwrap(client.api.snippets[":id"].$delete({ param: { id } })),
-    onSuccess: () => qc.invalidateQueries({ queryKey: snippetKeys.lists() }),
   })
 }
 

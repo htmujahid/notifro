@@ -41,17 +41,6 @@ export const ChannelsResponseSchema = z.object({
   ),
 })
 
-export const TopTopicsResponseSchema = z.object({
-  data: z.array(
-    z.object({
-      topicKey: z.string(),
-      sent: z.number(),
-      delivered: z.number(),
-      deliveryRate: z.number(),
-    })
-  ),
-})
-
 export const summaryQuerySchema = z.object({
   from: z.string().optional(),
   to: z.string().optional(),
@@ -106,14 +95,3 @@ export const channelsRoute = createRoute({
   },
 })
 
-export const topTopicsRoute = createRoute({
-  method: "get",
-  path: "/analytics/top-topics",
-  request: { query: rangeQuerySchema },
-  responses: {
-    200: {
-      content: { "application/json": { schema: TopTopicsResponseSchema } },
-      description: "Top topics by send volume",
-    },
-  },
-})

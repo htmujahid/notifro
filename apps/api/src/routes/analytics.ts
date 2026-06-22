@@ -8,7 +8,6 @@ import {
   channelsRoute,
   summaryRoute,
   timeseriesRoute,
-  topTopicsRoute,
 } from "./analytics.contract"
 
 const GRANULARITY_FMT: Record<string, string> = {
@@ -142,46 +141,6 @@ export default router
           opened: Number(r.opened),
           clicked: Number(r.clicked),
           bounced: Number(r.bounced),
-          deliveryRate:
-            sent > 0 ? Math.round((delivered / sent) * 1000) / 10 : 0,
-        }
-      }),
-    })
-  })
-
-  .openapi(topTopicsRoute, async (c) => {
-    const userId = c.var.user!.id
-    const db = c.var.db
-    const { from, to } = c.req.valid("query")
-    const fromStr = from ?? defaultFrom()
-    const toStr = to ?? defaultTo()
-    const topicExpr = sql.raw(`json_extract(n."payload", '$.topicKey')`)
-
-    const rows = await db
-      .selectFrom("delivery as d")
-      .innerJoin("notification as n", "n.id", "d.notificationId")
-      .where("d.userId", "=", userId)
-      .where("d.createdAt", ">=", fromStr)
-      .where("d.createdAt", "<=", toStr)
-      .where(sql<boolean>`${topicExpr} IS NOT NULL`)
-      .select([
-        topicExpr.as("topicKey"),
-        sql<number>`COUNT(*)`.as("sent"),
-        sql<number>`COUNT(d."deliveredAt")`.as("delivered"),
-      ])
-      .groupBy(topicExpr)
-      .orderBy(sql`COUNT(*)`, "desc")
-      .limit(10)
-      .execute()
-
-    return c.json({
-      data: rows.map((r) => {
-        const sent = Number(r.sent)
-        const delivered = Number(r.delivered)
-        return {
-          topicKey: r.topicKey as string,
-          sent,
-          delivered,
           deliveryRate:
             sent > 0 ? Math.round((delivered / sent) * 1000) / 10 : 0,
         }

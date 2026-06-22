@@ -82,15 +82,6 @@ export interface TemplateVersion {
   createdAt: string
 }
 
-export interface Snippet {
-  id: string
-  userId: string
-  name: string
-  content: string
-  createdAt: string
-  updatedAt: string
-}
-
 export interface BrandKit {
   id: string
   userId: string
