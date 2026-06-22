@@ -46,7 +46,6 @@ app.use("*", async (c, next) => {
 })
 
 app.use("*", async (c, next) => {
-  c.set("sandboxMode", false)
   c.set("apiKeyId", null)
 
   const authHeader = c.req.header("Authorization")
@@ -69,20 +68,12 @@ app.use("*", async (c, next) => {
       if (dbUser) {
         c.set("user", dbUser)
         c.set("session", null)
-        const meta = apiKey.metadata as { mode?: string } | null
-        c.set(
-          "sandboxMode",
-          meta?.mode === "test" ||
-            c.req.header("X-Renderical-Sandbox") === "true"
-        )
         c.set("apiKeyId", apiKey.id)
         await next()
         return
       }
     }
   }
-
-  c.set("sandboxMode", c.req.header("X-Renderical-Sandbox") === "true")
 
   const session = await authInstance.api.getSession({
     headers: c.req.raw.headers,

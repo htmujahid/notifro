@@ -3,7 +3,6 @@ import { useState } from "react"
 import { CopyIcon, KeyIcon, PlusIcon, TrashIcon } from "lucide-react"
 
 import type { ApiKeyWithSecret } from "@renderical/api-client/types"
-import { Badge } from "@renderical/ui/components/badge"
 import { Button } from "@renderical/ui/components/button"
 import { Card, CardContent } from "@renderical/ui/components/card"
 
@@ -19,7 +18,6 @@ export function ApiKeysSection() {
   const revokeKey = useRevokeApiKey()
   const [showForm, setShowForm] = useState(false)
   const [name, setName] = useState("")
-  const [mode, setMode] = useState<"live" | "test">("live")
   const [newKey, setNewKey] = useState<ApiKeyWithSecret | null>(null)
 
   const keys = data?.pages.flatMap((p) => p.data) ?? []
@@ -27,12 +25,11 @@ export function ApiKeysSection() {
   function handleCreate() {
     if (!name) return
     createKey.mutate(
-      { name, mode },
+      { name },
       {
         onSuccess: (result) => {
           setNewKey(result)
           setName("")
-          setMode("live")
           setShowForm(false)
         },
       }
@@ -110,19 +107,6 @@ export function ApiKeysSection() {
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-muted-foreground">
-                  Mode
-                </label>
-                <select
-                  className="rounded-md border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                  value={mode}
-                  onChange={(e) => setMode(e.target.value as "live" | "test")}
-                >
-                  <option value="live">Live</option>
-                  <option value="test">Test (sandbox)</option>
-                </select>
-              </div>
             </div>
             <div className="flex gap-2">
               <Button
@@ -152,14 +136,6 @@ export function ApiKeysSection() {
         <div className="flex flex-col divide-y rounded-lg border">
           {keys.map((key) => (
             <div key={key.id} className="flex items-center gap-3 px-4 py-3">
-              <Badge
-                variant={
-                  key.metadata?.mode === "test" ? "secondary" : "default"
-                }
-                className="shrink-0 text-xs"
-              >
-                {String(key.metadata?.mode ?? "live")}
-              </Badge>
               <span className="flex-1 font-mono text-xs">
                 {key.start ?? key.prefix}…
               </span>

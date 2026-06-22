@@ -7,7 +7,6 @@ export type AppEnv = {
     user: typeof auth.$Infer.Session.user | null
     session: typeof auth.$Infer.Session.session | null
     db: AppDB
-    sandboxMode: boolean
     apiKeyId: string | null
   }
 }

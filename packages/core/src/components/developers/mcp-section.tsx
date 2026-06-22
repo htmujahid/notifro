@@ -91,7 +91,7 @@ export function McpSection() {
             </div>
             <p className="mt-1.5 text-xs text-muted-foreground">
               Authenticate with an API key:{" "}
-              <code className="text-xs">Authorization: Bearer rk_live_…</code>
+              <code className="text-xs">Authorization: Bearer rk_…</code>
             </p>
           </div>
 

@@ -19,7 +19,6 @@ export const ApiKeyCreateResponseSchema = ApiKeyDtoSchema.extend({
 
 export const CreateKeySchema = z.object({
   name: z.string().min(1).max(32),
-  mode: z.enum(["live", "test"]).default("live"),
 })
 
 export const ListResponseSchema = z.object({

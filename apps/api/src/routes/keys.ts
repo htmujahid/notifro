@@ -56,8 +56,7 @@ export default router
       body: {
         name: body.name,
         userId: c.var.user!.id,
-        prefix: body.mode === "test" ? "rk_test_" : "rk_live_",
-        metadata: { mode: body.mode },
+        prefix: "rk_",
       },
     })
     return c.json({ ...mapKey(result), key: result.key }, 201)

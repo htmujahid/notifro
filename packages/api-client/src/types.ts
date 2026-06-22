@@ -299,7 +299,7 @@ export interface ApiKey {
   start: string | null
   prefix: string | null
   enabled: boolean
-  metadata: { mode?: "live" | "test"; [key: string]: unknown } | null
+  metadata: Record<string, unknown> | null
   lastRequest: string | null
   createdAt: string
   updatedAt: string

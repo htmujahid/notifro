@@ -79,7 +79,6 @@ export function registerRoutes(app: OpenAPIHono<AppEnv>) {
         "Content-Type",
         "Authorization",
         "X-API-Key",
-        "X-Renderical-Sandbox",
       ],
       allowMethods: ["POST", "GET", "PATCH", "PUT", "DELETE", "OPTIONS"],
       exposeHeaders: ["Content-Length"],
