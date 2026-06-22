@@ -9,6 +9,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "deploy": "wrangler deploy",
     "astro": "astro",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "generate-types": "wrangler types"
