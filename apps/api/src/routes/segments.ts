@@ -44,14 +44,20 @@ const SegmentDtoSchema = z.object({
   updatedAt: z.string(),
 })
 
+// z.lazy() causes infinite recursion in OpenAPI generator; use generic JSON schema for routes
+const FilterInputSchema = z.record(z.string(), z.unknown()).openapi({
+  description: "Recursive filter clause: leaf { field, op, value } or composite { and/or: [...] }",
+  example: { field: "email", op: "eq", value: "user@example.com" },
+})
+
 const CreateSegmentSchema = z.object({
   name: z.string().min(1).max(255),
-  filter: FilterClauseSchema,
+  filter: FilterInputSchema,
 })
 
 const PatchSegmentSchema = z.object({
   name: z.string().min(1).max(255).optional(),
-  filter: FilterClauseSchema.optional(),
+  filter: FilterInputSchema.optional(),
 })
 
 const ListResponseSchema = z.object({
@@ -172,6 +178,8 @@ export default router
 
   .openapi(createRoute_, async (c) => {
     const body = c.req.valid("json")
+    const parsed = FilterClauseSchema.safeParse(body.filter)
+    if (!parsed.success) throw Errors.badRequest("Invalid filter structure")
     const userId = c.var.user!.id
     const ts = now()
     const id = newId()
@@ -181,7 +189,7 @@ export default router
         id,
         userId,
         name: body.name,
-        filter: JSON.stringify(body.filter),
+        filter: JSON.stringify(parsed.data),
         createdAt: ts,
         updatedAt: ts,
       })
@@ -221,7 +229,11 @@ export default router
     if (!existing) throw Errors.notFound("Segment")
     const updates: Record<string, string> = { updatedAt: ts }
     if (body.name !== undefined) updates.name = body.name
-    if (body.filter !== undefined) updates.filter = JSON.stringify(body.filter)
+    if (body.filter !== undefined) {
+      const parsed = FilterClauseSchema.safeParse(body.filter)
+      if (!parsed.success) throw Errors.badRequest("Invalid filter structure")
+      updates.filter = JSON.stringify(parsed.data)
+    }
     await c.var.db
       .updateTable("segment")
       .set(updates)
