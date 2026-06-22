@@ -1,7 +1,6 @@
 import { sendNotificationEmail } from "@renderical/mailer"
 
 import { registerTransform } from "../compose/transform"
-import { signPreferenceToken } from "../lib/preference-token"
 import { signTrackingToken } from "../lib/tracking"
 import type { ChannelAdapter } from "./adapter"
 import { registerAdapter } from "./registry"
@@ -160,22 +159,6 @@ const emailAdapter: ChannelAdapter<EmailConfig, EmailProvider> = {
     const secret = ctx.env?.CONNECTION_ENC_KEY
     const baseUrl = ctx.env?.BETTER_AUTH_URL?.replace(/\/$/, "")
 
-    let unsubscribeToken: string | null = null
-    if (secret && baseUrl && ctx.recipientId) {
-      const recipientRow = await ctx.db
-        .selectFrom("recipient")
-        .where("id", "=", ctx.recipientId)
-        .select(["userId"])
-        .executeTakeFirst()
-      if (recipientRow) {
-        const exp = Date.now() + 30 * 24 * 60 * 60 * 1000
-        unsubscribeToken = await signPreferenceToken(
-          { recipientId: ctx.recipientId, userId: recipientRow.userId, exp },
-          secret
-        )
-      }
-    }
-
     if (secret && baseUrl && ctx.deliveryId) {
       if (provider.trackClicks) {
         html = await rewriteLinks(html, ctx.deliveryId, secret, baseUrl)
@@ -186,34 +169,9 @@ const emailAdapter: ChannelAdapter<EmailConfig, EmailProvider> = {
           secret
         )
         const pixelTag = `<img src="${baseUrl}/t/o/${openToken}.gif" width="1" height="1" style="display:none" alt="">`
-        if (unsubscribeToken) {
-          const unsubUrl = `${baseUrl}/api/unsubscribe?token=${unsubscribeToken}`
-          const footer = `<div style="margin-top:24px;padding-top:16px;border-top:1px solid #e5e7eb;text-align:center;font-size:12px;color:#9ca3af"><a href="${unsubUrl}" style="color:#9ca3af">Unsubscribe</a></div>`
-          html = html.replace(/<\/body>/i, `${footer}${pixelTag}</body>`)
-          text = `${text}\n\n---\nTo unsubscribe: ${unsubUrl}`
-        } else {
-          html = html.replace(/<\/body>/i, `${pixelTag}</body>`)
-        }
-      } else if (unsubscribeToken) {
-        const unsubUrl = `${baseUrl}/api/unsubscribe?token=${unsubscribeToken}`
-        const footer = `<div style="margin-top:24px;padding-top:16px;border-top:1px solid #e5e7eb;text-align:center;font-size:12px;color:#9ca3af"><a href="${unsubUrl}" style="color:#9ca3af">Unsubscribe</a></div>`
-        html = html.replace(/<\/body>/i, `${footer}</body>`)
-        text = `${text}\n\n---\nTo unsubscribe: ${unsubUrl}`
+        html = html.replace(/<\/body>/i, `${pixelTag}</body>`)
       }
-    } else if (unsubscribeToken && baseUrl) {
-      const unsubUrl = `${baseUrl}/api/unsubscribe?token=${unsubscribeToken}`
-      const footer = `<div style="margin-top:24px;padding-top:16px;border-top:1px solid #e5e7eb;text-align:center;font-size:12px;color:#9ca3af"><a href="${unsubUrl}" style="color:#9ca3af">Unsubscribe</a></div>`
-      html = html.replace(/<\/body>/i, `${footer}</body>`)
-      text = `${text}\n\n---\nTo unsubscribe: ${unsubUrl}`
     }
-
-    const emailHeaders: Record<string, string> | undefined =
-      unsubscribeToken && baseUrl
-        ? {
-            "List-Unsubscribe": `<${baseUrl}/api/unsubscribe?token=${unsubscribeToken}>`,
-            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
-          }
-        : undefined
 
     try {
       await sendNotificationEmail({
@@ -222,7 +180,6 @@ const emailAdapter: ChannelAdapter<EmailConfig, EmailProvider> = {
         subject: provider.subject,
         html,
         text,
-        headers: emailHeaders,
       })
       return { providerMessageId: null, ok: true }
     } catch (err) {

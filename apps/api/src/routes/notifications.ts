@@ -8,7 +8,6 @@ import { Errors, validationHook } from "../lib/errors"
 import { applyListQuery } from "../lib/list-query"
 import { checkRateLimit } from "../lib/rate-limit"
 import { renderTemplate, resolveTemplate } from "../lib/render-template"
-import { resolvePreferences } from "../lib/resolve-preferences"
 import { resolveRoute } from "../lib/routing"
 import { resolveSegment } from "../lib/segment-resolver"
 import type { AppEnv } from "../lib/types"
@@ -265,41 +264,6 @@ export default router
           const deliveryId = newId()
           const recipientAddr = recip.email ?? recip.phone ?? ""
 
-          const prefResult = await resolvePreferences(
-            db,
-            userId,
-            recip.id,
-            channel,
-            rawPayload.topicKey
-          )
-          if (!prefResult.allowed) {
-            await db
-              .insertInto("delivery")
-              .values({
-                id: deliveryId,
-                userId,
-                notificationId: notifId,
-                channel,
-                recipient: recipientAddr,
-                status: "skipped",
-                providerMessageId: null,
-                error: prefResult.reason ?? "preference:opted_out",
-                attempts: 0,
-                nextRetryAt: null,
-                lastError: prefResult.reason ?? "preference:opted_out",
-                deliveredAt: null,
-                openedAt: null,
-                clickedAt: null,
-                bouncedAt: null,
-                recipientId: recip.id,
-                variantId: null,
-                createdAt: dts,
-                updatedAt: dts,
-              })
-              .execute()
-            continue
-          }
-
           const rlResult = await checkRateLimit(
             c.env.RATE_LIMIT_KV,
             db,
@@ -439,84 +403,6 @@ export default router
           channel,
           payload.recipient as Record<string, unknown>
         )
-
-        let nonSegmentRecipientId: string | null = null
-        const needsRecipientLookup = !!rawPayload.topicKey
-        if (recipientAddr && needsRecipientLookup) {
-          const recipRow = await db
-            .selectFrom("recipient")
-            .where("userId", "=", userId)
-            .where((eb) =>
-              eb.or([
-                eb("email", "=", recipientAddr),
-                eb("phone", "=", recipientAddr),
-              ])
-            )
-            .select("id")
-            .executeTakeFirst()
-          if (recipRow) {
-            nonSegmentRecipientId = recipRow.id
-          }
-        }
-
-        if (nonSegmentRecipientId && rawPayload.topicKey) {
-          const prefResult = await resolvePreferences(
-            db,
-            userId,
-            nonSegmentRecipientId,
-            channel,
-            rawPayload.topicKey
-          )
-          if (!prefResult.allowed) {
-            await db
-              .insertInto("delivery")
-              .values({
-                id: deliveryId,
-                userId,
-                notificationId: notifId,
-                channel,
-                recipient: recipientAddr,
-                status: "skipped",
-                providerMessageId: null,
-                error: prefResult.reason ?? "preference:opted_out",
-                attempts: 0,
-                nextRetryAt: null,
-                lastError: prefResult.reason ?? "preference:opted_out",
-                deliveredAt: null,
-                openedAt: null,
-                clickedAt: null,
-                bouncedAt: null,
-                createdAt: dts,
-                updatedAt: dts,
-              })
-              .execute()
-            deliveries.push({
-              id: deliveryId,
-              userId,
-              notificationId: notifId,
-              channel,
-              recipient: recipientAddr,
-              status: "skipped",
-              providerMessageId: null,
-              error: prefResult.reason ?? "preference:opted_out",
-              attempts: 0,
-              nextRetryAt: null,
-              lastError: prefResult.reason ?? "preference:opted_out",
-              deliveredAt: null,
-              openedAt: null,
-              clickedAt: null,
-              bouncedAt: null,
-              recipientId: null,
-              variantId: null,
-              chainId: null,
-              chainStepIndex: null,
-              escalatedFromDeliveryId: null,
-              createdAt: dts,
-              updatedAt: dts,
-            })
-            continue
-          }
-        }
 
         const rlResult = await checkRateLimit(
           c.env.RATE_LIMIT_KV,
@@ -700,7 +586,7 @@ export default router
             openedAt: null,
             clickedAt: null,
             bouncedAt: null,
-            recipientId: nonSegmentRecipientId,
+            recipientId: null,
             chainId: resolvedChainId,
             chainStepIndex: resolvedChainId ? 0 : null,
             escalatedFromDeliveryId: null,
@@ -733,7 +619,7 @@ export default router
           openedAt: null,
           clickedAt: null,
           bouncedAt: null,
-          recipientId: nonSegmentRecipientId,
+          recipientId: null,
           variantId: null,
           chainId: resolvedChainId,
           chainStepIndex: resolvedChainId ? 0 : null,

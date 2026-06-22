@@ -5,7 +5,7 @@
 Renderical normalizes every channel behind a single compose-once API. Write a message once
 and Renderical transforms and delivers it across Slack, email, Microsoft Teams, Discord,
 web push, in-app inbox, webhooks, and SMS — with fallback chains, scope-based OAuth,
-a built-in preference center, and a **native MCP server** so AI agents can send safely. One
+and a **native MCP server** so AI agents can send safely. One
 integration replaces the five tools teams stitch together today.
 
 ## Core features
@@ -27,8 +27,6 @@ integration replaces the five tools teams stitch together today.
 - **Reliability** — automatic retries with backoff, dead-letter queue, idempotency keys,
   full delivery status tracking (queued → sent → delivered → opened → clicked → failed),
   webhook receipts, and bounce handling.
-- **Preference center** — per-channel/per-category opt-in/out, subscription topics, frequency
-  capping, digest bundling, compliant unsubscribe (CAN-SPAM/GDPR), and channel priority.
 - **Personalization & orchestration** — segmentation, dynamic content, A/B testing, locale/TZ
   auto-detection, multi-step journeys, trigger-based automation, and throttle/debounce.
 - **Analytics & observability** — per-channel delivery/open/engagement metrics, funnel and
@@ -51,7 +49,7 @@ same routing, fallback, and OAuth scopes underneath. Available as **remote MCP**
 OAuth-authenticated) and **local/stdio MCP** (self-hosted/dev).
 
 - **Tools** — `send_notification`, `schedule_notification`, `list_channels`,
-  `get_channel_status`, `manage_connection`, `get_delivery_status`, `manage_preferences`,
+  `get_channel_status`, `manage_connection`, `get_delivery_status`,
   `create_template`, `render_preview`, `query_analytics`.
 - **Resources** — connected accounts and scopes, templates and variables, recipient segments,
   recent delivery logs and failures.

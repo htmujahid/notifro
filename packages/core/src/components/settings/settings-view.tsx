@@ -7,7 +7,6 @@ import { Separator } from "@renderical/ui/components/separator"
 import { BrandKitSection } from "./brand-kit-section"
 import { FailoverSection } from "./failover-section"
 import { RateLimitsSection } from "./rate-limits-section"
-import { SubscriptionsSection } from "./subscriptions-section"
 
 export function SettingsView() {
   return (
@@ -81,8 +80,6 @@ export function SettingsView() {
       </section>
 
       <RateLimitsSection />
-
-      <SubscriptionsSection />
 
       <FailoverSection />
 

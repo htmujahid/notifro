@@ -190,42 +190,6 @@ export function registerTools(server: McpServer, config: McpConfig): void {
   )
 
   server.registerTool(
-    "manage_preferences",
-    {
-      description:
-        "Read notification preferences, topic subscriptions, and opt-out status",
-      inputSchema: {
-        action: z.enum(["list_topics", "list_preferences", "get_center"]),
-        recipientId: z.string().optional(),
-      },
-    },
-    async (args) => {
-      if (args.action === "list_topics") {
-        const data = await apiGet(config, "/api/topics")
-        return text(JSON.stringify(data, null, 2))
-      }
-      if (args.action === "list_preferences" && args.recipientId) {
-        const data = await apiGet(config, "/api/preferences", {
-          recipientId: args.recipientId,
-        })
-        return text(JSON.stringify(data, null, 2))
-      }
-      if (args.action === "get_center" && args.recipientId) {
-        const data = await apiGet(
-          config,
-          `/api/preferences/center/${args.recipientId}`
-        )
-        return text(JSON.stringify(data, null, 2))
-      }
-      return text(
-        JSON.stringify({
-          error: "recipientId required for list_preferences and get_center",
-        })
-      )
-    }
-  )
-
-  server.registerTool(
     "create_template",
     {
       description: "Create a new notification template",

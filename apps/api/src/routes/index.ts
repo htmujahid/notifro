@@ -21,7 +21,6 @@ import journeysRouter from "./journeys"
 import mcpRouter from "./mcp"
 import notificationsRouter from "./notifications"
 import overviewRouter from "./overview"
-import preferencesRouter from "./preferences"
 import providerFallbacksRouter from "./provider-fallbacks"
 import pushRouter from "./push"
 import rateLimitsRouter from "./rate-limits"
@@ -36,7 +35,6 @@ import segmentsRouter from "./segments"
 import snippetsRouter from "./snippets"
 import templateVersionsRouter from "./template-versions"
 import templatesRouter from "./templates"
-import topicsRouter from "./topics"
 import trackingRouter from "./tracking"
 import webhooksRouter from "./webhooks"
 
@@ -159,8 +157,6 @@ export function registerRoutes(app: OpenAPIHono<AppEnv>) {
     .route("/api", brandKitRouter)
     .route("/api", recipientsRouter)
     .route("/api", segmentsRouter)
-    .route("/api", topicsRouter)
-    .route("/api", preferencesRouter)
     .route("/api", routingRouter)
     .route("/api", chainsRouter)
     .route("/api", rateLimitsRouter)

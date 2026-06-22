@@ -291,39 +291,6 @@ export interface SegmentTable {
   updatedAt: string
 }
 
-export interface TopicTable {
-  id: string
-  userId: string
-  key: string
-  name: string
-  description: string | null
-  defaultOptIn: number
-  transactional: number
-  createdAt: string
-  updatedAt: string
-}
-
-export interface PreferenceTable {
-  id: string
-  userId: string
-  recipientId: string
-  channel: string
-  topicId: string | null
-  optedIn: number
-  source: string
-  createdAt: string
-  updatedAt: string
-}
-
-export interface ChannelPriorityTable {
-  id: string
-  userId: string
-  recipientId: string
-  order: string
-  createdAt: string
-  updatedAt: string
-}
-
 export interface RateLimitRuleTable {
   id: string
   userId: string
@@ -453,9 +420,6 @@ export interface DB {
   recurring_send: RecurringSendTable
   recipient: RecipientTable
   segment: SegmentTable
-  topic: TopicTable
-  preference: PreferenceTable
-  channel_priority: ChannelPriorityTable
   fallback_chain: FallbackChainTable
   routing_rule: RoutingRuleTable
   rate_limit_rule: RateLimitRuleTable

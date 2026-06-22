@@ -5,7 +5,7 @@ export const site = {
   name: "Renderical",
   tagline: "Compose once. Deliver everywhere.",
   description:
-    "Renderical is unified notification infrastructure. One compose-once API delivers across Slack, email, Teams, Discord, WhatsApp, Telegram, web push, and in-app — with routing rules, fallback chains, rate limiting, a preference center, and a native MCP server for AI agents.",
+    "Renderical is unified notification infrastructure. One compose-once API delivers across Slack, email, Teams, Discord, WhatsApp, Telegram, web push, and in-app — with routing rules, fallback chains, rate limiting, and a native MCP server for AI agents.",
   url: "https://renderical.com",
   email: "hello@renderical.com",
   frontendUrl: FRONTEND_URL,
