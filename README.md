@@ -8,6 +8,13 @@ Telegram, web push, webhooks, in-app inbox, and SMS — with routing rules, fall
 provider failover, scheduling, rate limiting, and a **native MCP server** so AI agents can send
 safely. It runs entirely on Cloudflare's edge and is fully self-hostable.
 
+<h1 align="center">
+   <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="apps/site/public/bg-dark.png">
+   <img alt="supasheet" width="100%" src="apps/site/public/bg-light.png">
+   </picture>
+</h1>
+
 ## Features
 
 - **Compose-once API** — one normalized payload, transformed per channel (Slack Block Kit,
