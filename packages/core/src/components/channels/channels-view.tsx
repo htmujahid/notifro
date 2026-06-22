@@ -42,6 +42,12 @@ const CHANNEL_META: Record<
     description: "POST notification payloads to any HTTP endpoint you control.",
     icon: WebhookIcon,
   },
+  in_app: {
+    name: "In-App",
+    description:
+      "Real-time in-app notifications delivered to the bell inbox. Always available.",
+    icon: BellIcon,
+  },
   web_push: {
     name: "Web Push",
     description: "Native push notifications for web apps via the Web Push API.",
@@ -81,12 +87,6 @@ const CHANNEL_META: Record<
       "Post Adaptive Cards to a Teams channel via a connector/workflow webhook URL. No OAuth required.",
     icon: MessageSquareIcon,
   },
-  in_app: {
-    name: "In-App",
-    description:
-      "Real-time in-app notifications delivered to the bell inbox. Always available.",
-    icon: BellIcon,
-  },
 }
 
 const ALWAYS_ON = new Set(["email", "in_app"])
@@ -94,6 +94,7 @@ const ALWAYS_ON = new Set(["email", "in_app"])
 const CHANNEL_TYPES = [
   "email",
   "webhook",
+  "in_app",
   "web_push",
   "sms",
   "whatsapp",
@@ -101,7 +102,6 @@ const CHANNEL_TYPES = [
   "slack",
   "discord",
   "teams",
-  "in_app",
 ] as const
 
 export function ChannelsView() {
