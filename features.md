@@ -14,8 +14,7 @@
    - [Notification Compose & Send](#notification-compose--send)
    - [Delivery Queue & Retry](#delivery-queue--retry)
    - [Scheduling & Recurring Sends](#scheduling--recurring-sends)
-   - [Topics](#topics)
-   - [Suppression & Compliance](#suppression--compliance)
+   - [Routing, Chains & Provider Fallbacks](#routing-chains--provider-fallbacks)
    - [Templates & Snippets](#templates--snippets)
    - [Analytics & Tracking](#analytics--tracking)
    - [Inbox (In-App Messages)](#inbox-in-app-messages)
@@ -24,7 +23,6 @@
    - [Rate Limits](#rate-limits)
    - [API Request Logging](#api-request-logging)
    - [MCP Server Endpoint](#mcp-server-endpoint)
-   - [Sandbox / Test Mode](#sandbox--test-mode)
 3. [packages/core — UI Component Library](#packagescore--ui-component-library)
 4. [packages/views — Pages & Routing](#packagesviews--pages--routing)
 5. [packages/app — Cross-Platform Auth Shell](#packagesapp--cross-platform-auth-shell)
@@ -92,13 +90,15 @@ Entry: `apps/api/src/index.ts`
 | Two-Factor OTP (email) | Backup 2FA via email OTP |
 | Phone number OTP | SMS verification via Twilio (`TWILIO_*` env vars) |
 | Backup codes | Generated on 2FA enable; regenerable |
-| API Key management | Prefix `rk_`, `live` and `test` (sandbox) modes, per-key metadata |
+| API Key management | Handled by the better-auth `apiKey` plugin — listed/created/revoked via `/api/auth/api-key/*`. Keys are `rk_`-prefixed and stored in the `apikey` table, with a `mode` (`live`/`test`) label in per-key metadata |
 | Session management | KV-backed secondary storage; `trustedOrigins` CORS guard |
 | Rate limiting | 100 req / 60 s per account via KV |
 
 Files: `apps/api/src/lib/auth.ts`, `apps/api/src/middleware/auth.ts`
 
-Auth endpoints live under `/api/auth/*` and are fully handled by better-auth (no custom implementation needed).
+Auth endpoints live under `/api/auth/*` and are fully handled by better-auth (no custom implementation needed). The frontend manages API keys through the better-auth client (`auth.apiKey.list/create/delete`), surfaced by the `queries/keys.ts` hooks.
+
+Requests authenticate with either a session cookie or an API key passed as `Authorization: Bearer <key>` / `X-API-Key`.
 
 ---
 
@@ -162,10 +162,6 @@ ComposePayload {
 4. Create `notification` row + one `delivery` row per channel
 5. Enqueue `DeliveryQueueMessage` → `DELIVERY_Q`
 
-**Sandbox mode** — `X-Renderical-Sandbox: true` header or test-mode API key; returns preview without sending; marks `sandboxMode: true` in response.
-
-**Preview** (`/api/notifications` + sandbox header) — dry-run render with channel-specific output preview.
-
 Files: `apps/api/src/compose/`, `apps/api/src/routes/notifications.ts`, `apps/api/src/routes/_template.ts`
 
 ---
@@ -176,13 +172,12 @@ Cloudflare Queue consumer at `queue/consumer.ts`.
 
 **Per-message flow:**
 1. Load `delivery` + `notification` rows
-2. Check suppression list; mark `suppressed` if hit
-3. Resolve connection
-4. Render template if attached
-5. Call adapter `send()`
-6. On success: mark `delivered`, log `delivery_event`
-7. On retryable error (timeout / 429 / 502-504): exponential backoff up to `MAX_ATTEMPTS=5`; `msg.retry({ delaySeconds })`
-8. On permanent error: move to `dead_letter`
+2. Resolve connection (honouring any provider-fallback rule for the channel)
+3. Render template if attached
+4. Call adapter `send()`
+5. On success: mark `delivered`, log `delivery_event`
+6. On retryable error (timeout / 429 / 502-504): exponential backoff up to `MAX_ATTEMPTS=5`; `msg.retry({ delaySeconds })`
+7. On permanent error: move to `dead_letter`
 
 **Backoff formula:** `min(10×2^(attempts−1), 3600) × (1 + rand(0.2))`
 
@@ -190,7 +185,7 @@ Cloudflare Queue consumer at `queue/consumer.ts`.
 
 **PII redaction:** Error strings passed through `redactPii()` before persistence.
 
-Files: `apps/api/src/queue/consumer.ts`, `apps/api/src/lib/suppress.ts`, `apps/api/src/lib/redact.ts`
+Files: `apps/api/src/queue/consumer.ts`, `apps/api/src/lib/redact.ts`
 
 ---
 
@@ -218,30 +213,27 @@ Files: `apps/api/src/scheduling/`, `apps/api/src/routes/schedules.ts`, `apps/api
 
 ---
 
-### Topics
+### Routing, Chains & Provider Fallbacks
 
-**Topics** (`topic` table):
-- `key` (slugged string), `name`, `description` — used to tag notifications in logs and analytics
-- CRUD: `GET/POST/PATCH/DELETE /api/topics`
+Three cooperating mechanisms decide *which channel/provider* a notification ultimately uses. Resolution logic lives in `apps/api/src/lib/routing.ts`.
 
-Files: `apps/api/src/routes/topics.ts`
+**Routing rules** (`routing_rule` table):
+- Priority-ordered (`priority` asc), `enabled` flag, JSON `match` predicate
+- `match` can test `messageType`, `minPriority`, a `recipientAttr` (`field`/`op`/`value`), and a `timeWindow` (`HH:MM`–`HH:MM`)
+- A matching rule targets either a fallback chain (`targetChainId`) or a single `targetChannel`
+- Routes: `GET/POST/PATCH/DELETE /api/routing/rules`, plus `POST /api/routing/resolve` (dry-run resolution for a given message)
 
----
+**Fallback chains** (`fallback_chain` table):
+- Ordered list of `steps` (1–10), each `{ channel, connectionId?, waitForDeliveryMs, successOn[] }`
+- A step is considered satisfied when the delivery reaches one of its `successOn` states (`delivered` / `opened` / `clicked`); otherwise the chain advances to the next step
+- Routes: `GET/POST/PATCH/DELETE /api/routing/chains`
 
-### Suppression & Compliance
+**Provider fallbacks** (`provider_fallback` table):
+- Per `channel`: a `primaryConnectionId` and a `fallbackConnectionId`
+- The delivery worker retries on the fallback provider when the primary connection fails
+- Routes: `GET/POST/DELETE /api/provider-fallbacks` (create is upsert per channel)
 
-**Suppression list** (`suppression` table):
-- Per `(channel, address)` — checked before every send
-- Reasons: bounce, complaint, manual
-- `isSuppressed()` short-circuits delivery before calling adapter
-
-**Compliance routes:**
-- `GET/POST/DELETE /api/compliance/suppressions`
-- Hard-bounce receipts from providers written here
-
-**Receipts** (`/webhooks/receipts/*`): Inbound provider callbacks for bounce / complaint / delivery events. Updates delivery rows and can add to suppression list.
-
-Files: `apps/api/src/lib/suppress.ts`, `apps/api/src/routes/compliance.ts`, `apps/api/src/routes/receipts.ts`
+Files: `apps/api/src/lib/routing.ts`, `apps/api/src/routes/routing.ts`, `apps/api/src/routes/chains.ts`, `apps/api/src/routes/provider-fallbacks.ts`
 
 ---
 
@@ -285,11 +277,13 @@ Files: `apps/api/src/routes/templates.ts`, `apps/api/src/routes/template-version
 - PII-safe token: HMAC-signed delivery ID
 - `trackOpens` / `trackClicks` flags in compose payload control whether links are wrapped
 
-**Analytics API** (`/api/analytics`): Aggregated delivery stats by channel / status / date range.
+**Analytics API** (`/api/analytics`): Aggregated delivery stats by channel / status / date range. Includes `GET /api/analytics/top-topics` — top send volume grouped by the `topicKey` extracted from each notification payload.
 
 **Overview** (`/api/overview`): Dashboard summary metrics (counts, recent activity).
 
-Files: `apps/api/src/lib/tracking.ts`, `apps/api/src/routes/tracking.ts`, `apps/api/src/routes/analytics.ts`, `apps/api/src/routes/overview.ts`
+**Receipts** (`/webhooks/:provider`): Inbound provider callbacks (e.g. Twilio `MessageStatus`) that update the matching `delivery` row's status and timestamps.
+
+Files: `apps/api/src/lib/tracking.ts`, `apps/api/src/routes/tracking.ts`, `apps/api/src/routes/analytics.ts`, `apps/api/src/routes/overview.ts`, `apps/api/src/routes/receipts.ts`
 
 ---
 
@@ -369,7 +363,6 @@ Uses `@modelcontextprotocol/sdk` via the `@renderical/mcp` package. Serves a Str
 | `schedule_notification` | Schedule a notification at a future time |
 | `get_delivery_status` | Fetch delivery records for a notification |
 | `create_template` | Create a new template |
-| `render_preview` | Dry-run render via sandbox mode |
 | `query_analytics` | Query delivery analytics |
 | `approve_action` | Approve a pending human-gated MCP action |
 
@@ -384,20 +377,6 @@ Uses `@modelcontextprotocol/sdk` via the `@renderical/mcp` package. Serves a Str
 **Dashboard MCP section** (`/api/mcp/gates`): UI for toggling per-tool approval requirements.
 
 Files: `packages/mcp/src/`, `apps/api/src/routes/mcp.ts`
-
----
-
-### Sandbox / Test Mode
-
-Activated by:
-- API key created with `mode: "test"` metadata
-- `X-Renderical-Sandbox: true` request header
-
-In sandbox mode:
-- Notifications are created with status `sandboxMode: true`
-- Channel adapters receive a no-op path and return preview output instead of sending
-- Compose endpoint returns `previews: { [channel]: renderedOutput }`
-- CLI `preview` command uses sandbox mode
 
 ---
 
@@ -457,8 +436,8 @@ Feature-level React components and data hooks used across all app targets.
 
 ### Notifications (`components/notifications/`)
 
-- `NotificationsView` — list of sent notifications with delivery status
-- Status badges (queued, delivered, failed, dead, suppressed)
+- `NotificationsView` — list of sent notifications with read/unread badges
+- Underlying delivery statuses: `queued`, `delivered`, `failed`, `dead` (DLQ)
 
 ### Channels (`components/channels/`)
 
@@ -485,19 +464,28 @@ Feature-level React components and data hooks used across all app targets.
 
 ### Developers (`components/developers/`)
 
-- `DevelopersView` — tabs for API Keys, MCP, Request Log, Sandbox
-- `ApiKeysSection` — list / create / revoke API keys (live + test modes)
+- `DevelopersView` — tabs for API Keys, MCP, Request Log
+- `ApiKeysSection` — list / create / revoke API keys
 - `McpSection` — MCP endpoint URL, per-tool approval gate toggles
 - `RequestLogSection` — paginated API request log table
-- `SandboxPanel` — in-browser notification composer in sandbox mode
 
 ### Settings (`components/settings/`)
 
-- `SettingsView` — tabs for Brand Kit, Compliance, Rate Limits, Topics
-- `BrandKitSection` — logo upload, colour palette, font stack
-- `ComplianceSection` — suppression list management
+- `SettingsView` — tabs for Rate Limits, Failover, Brand Kit
 - `RateLimitsSection` — per-channel rate rule CRUD
-- `SubscriptionsSection` — notification topic tag management
+- `FailoverSection` — provider-fallback rules (primary → fallback connection per channel)
+- `BrandKitSection` — logo upload, colour palette, font stack
+
+### Routing (`components/routing/`)
+
+- `RoutingView` — routing rules list + fallback chains management
+- `CreateRuleDialog` — build a routing rule (match predicate → target chain/channel)
+- `CreateChainDialog` — create a fallback chain
+- `ChainStepsEditor` — ordered step editor (channel, wait, success-on conditions)
+
+### Status (`components/status/`)
+
+- `StatusView` — system health page (API / DB / queue status from `/health`)
 
 ### Onboarding (`components/onboarding/`)
 
@@ -512,26 +500,35 @@ Feature-level React components and data hooks used across all app targets.
 - `ProtectedRoute` — session guard wrapper
 - `RendericalLogo` — SVG brand logo
 
-### Hooks (`hooks/`)
+### Queries (`queries/`)
 
-All hooks use `@tanstack/react-query` via the `api-client` package.
+The TanStack Query data layer lives in `packages/core/src/queries/` (not `hooks/`). All hooks use `@tanstack/react-query` over the `api-client` package; `src/data/` is intentionally empty.
 
-| Hook file | Features covered |
+| Query file | Features covered |
 |---|---|
-| `analytics.ts` | `useAnalytics`, `useOverview` |
-| `compliance.ts` | `useSuppressions`, `useConsentEvents` |
+| `analytics.ts` | `useAnalytics`, `useTopTopics` |
+| `auth.ts` | session / auth client helpers |
 | `connections.ts` | `useConnections`, `useCreateConnection`, `useDeleteConnection` |
-| `developers.ts` | `useApiKeys`, `useCreateKey`, `useRevokeKey`, `useRequestLog` |
+| `keys.ts` | `useApiKeys`, `useCreateApiKey`, `useRevokeApiKey` (via better-auth client) |
+| `request-log.ts` | `useRequestLog` |
 | `inbox.ts` | `useInboxMessages`, `useMarkRead` |
 | `mcp.ts` | `useMcpGates`, `usePendingActions`, `useApproveMcpAction` |
 | `notifications.ts` | `useNotifications`, `useSendNotification` |
-| `overview.ts` | `useOverviewStats` |
-| `preferences.ts` | `useTopics`, `useCreateTopic`, `useDeleteTopic` |
+| `deliveries.ts` | `useDeliveries`, `useDelivery` |
+| `overview.ts` | `useOverview` |
 | `push.ts` | `useVapidKey`, `useSubscribePush` |
 | `rate-limits.ts` | `useRateLimits` |
-| `schedules.ts` | `useSchedules`, `useRecurringSends` |
-| `templates.ts` | `useTemplates`, `useTemplate`, `useTemplateVersions` |
+| `routing.ts` | `useRoutingRules`, `useCreateRoutingRule`, `useUpdateRoutingRule`, `useDeleteRoutingRule`, `useResolveRoute` |
+| `chains.ts` | `useFallbackChains` / `useChains`, create / update / delete |
+| `provider-fallbacks.ts` | `useProviderFallbacks`, `useCreateProviderFallback`, `useDeleteProviderFallback` |
+| `schedules.ts` | `useSchedules` |
+| `recurring.ts` | `useRecurringSends` |
+| `templates.ts` | `useTemplates`, `useTemplate` |
+| `template-versions.ts` | `useTemplateVersions` |
+| `snippets.ts` | `useSnippets` |
+| `brand-kit.ts` | `useBrandKit`, `useUpdateBrandKit` |
 | `webhooks.ts` | `useWebhooks`, `useCreateWebhook`, `useDeleteWebhook` |
+| `receipts.ts` / `tracking.ts` | receipt + tracking helpers |
 
 ---
 
@@ -558,6 +555,8 @@ Page-level components and platform-specific router configs.
 | `/templates/:id` | `pages/template-edit.tsx` | `TemplateEdit` |
 | `/logs` | `pages/logs.tsx` | `LogsView` |
 | `/analytics` | `pages/analytics.tsx` | `AnalyticsView` |
+| `/routing` | `pages/routing.tsx` | `RoutingView` |
+| `/status` | `pages/status.tsx` | `StatusView` |
 | `/developers` | `pages/developers.tsx` | `DevelopersView` |
 | `/settings` | `pages/settings.tsx` | `SettingsView` |
 | `/help` | `pages/help.tsx` | `HelpView` |
@@ -619,7 +618,7 @@ Standalone `@renderical/mcp` package that exposes a `createMcpServer(config)` fu
 | Module | Purpose |
 |---|---|
 | `server.ts` | `createMcpServer({ baseUrl, apiKey })` — initialises MCP server |
-| `tools.ts` | Registers 9 tools (see MCP Server section above) |
+| `tools.ts` | Registers the tools listed in the MCP Server section above |
 | `resources.ts` | Registers 3 resources: channels, templates, recent-deliveries |
 | `prompts.ts` | Registers MCP prompts |
 | `bin.ts` | CLI entry for running as a standalone MCP server process |
@@ -634,12 +633,8 @@ The MCP package calls back to the Renderical REST API using the supplied `apiKey
 
 | Method | Description |
 |---|---|
-| `send(payload)` | Send a notification (live mode) |
-| `preview(payload)` | Dry-run render (sandbox) |
+| `send(payload)` | Send a notification |
 | `listDeliveries(params)` | Paginated delivery list |
-| `keys.list()` | List API keys |
-| `keys.create(name, mode)` | Create live or test API key |
-| `keys.revoke(id)` | Delete API key |
 | `requestLog(params)` | Paginated API request log |
 
 Options: `{ baseUrl, apiKey }`. Errors throw with `.code` (API error code string).
@@ -654,10 +649,7 @@ Files: `packages/sdk/src/client.ts`, `packages/sdk/src/index.ts`
 
 ```
 renderical send    --channel <ch> --to <addr> --subject <s> --body <b>
-renderical preview --channel <ch> --to <addr> --subject <s> --body <b>
 renderical logs    [--limit <n>]
-renderical keys list
-renderical keys create --name <n> [--mode live|test]
 ```
 
 Env vars: `RENDERICAL_API_KEY` (required), `RENDERICAL_BASE_URL` (default `http://localhost:8787`).
@@ -764,7 +756,9 @@ Astro + Cloudflare Pages.
 
 ## Database Schema Summary
 
-> All tables stored in Cloudflare D1 (SQLite). Queried via Kysely.
+> All tables stored in Cloudflare D1 (SQLite). Queried via Kysely. The authoritative type definitions live in `apps/api/src/db/schema.ts`; DDL is applied via the numbered migrations in `apps/api/migrations/` (`0000`–`0018`).
+>
+> **Note:** `routing_rule`, `fallback_chain`, and `provider_fallback` are declared in `db/schema.ts` and fully wired into routes/UI, but do not yet have a dedicated migration file under `apps/api/migrations/`.
 
 | Table | Description |
 |---|---|
@@ -784,14 +778,14 @@ Astro + Cloudflare Pages.
 | `webhook_endpoint` | Outbound webhook endpoints with HMAC secret |
 | `scheduled_message` | One-time scheduled notifications |
 | `recurring_send` | Cron-based recurring sends |
-| `topic` | Notification topic tags (key, name, description) |
+| `routing_rule` | Priority-ordered routing rules (match → chain/channel) |
+| `fallback_chain` | Ordered multi-channel fallback chains |
+| `provider_fallback` | Per-channel primary → fallback connection mapping |
 | `rate_limit_rule` | Per-channel rate limit configs |
-| `apikey` | API keys with prefix, metadata, rate-limit config |
+| `apikey` | better-auth API keys (prefix, metadata, rate-limit config) |
 | `api_request_log` | Authenticated API call audit log |
 | `mcp_approval_gate` | Per-MCP-tool approval requirement flags |
 | `mcp_pending_action` | MCP actions awaiting human approval |
-| `suppression` | Hard-suppressed channel+address pairs |
-| `consent_event` | Immutable suppression audit trail |
 | `onboarding_state` | First-run checklist progress |
 
 ---
@@ -809,7 +803,7 @@ All routes prefixed `/api` unless noted.
 | `*` | `/mcp` | MCP streamable HTTP endpoint |
 | `GET/POST` | `/api/connections` | List / create connections |
 | `GET/PATCH/DELETE` | `/api/connections/:id` | Get / update / delete connection |
-| `POST` | `/api/notifications` | Send notification (or sandbox preview) |
+| `POST` | `/api/notifications` | Send notification |
 | `GET` | `/api/notifications` | List notifications |
 | `GET` | `/api/notifications/:id` | Get notification + deliveries |
 | `GET` | `/api/templates` | List templates |
@@ -830,17 +824,19 @@ All routes prefixed `/api` unless noted.
 | `GET/POST/DELETE` | `/api/schedules` | One-time schedule CRUD |
 | `GET/POST/PATCH/DELETE` | `/api/recurring` | Recurring send CRUD |
 | `GET/PUT` | `/api/brand-kit` | Brand kit |
-| `GET/POST/PATCH/DELETE` | `/api/topics` | Topic CRUD |
+| `GET/POST/PATCH/DELETE` | `/api/routing/rules` | Routing rule CRUD |
+| `POST` | `/api/routing/resolve` | Dry-run route resolution |
+| `GET/POST/PATCH/DELETE` | `/api/routing/chains` | Fallback chain CRUD |
+| `GET/POST/DELETE` | `/api/provider-fallbacks` | Provider fallback rule CRUD (create upserts per channel) |
 | `GET/POST/PATCH/DELETE` | `/api/rate-limits` | Rate limit rule CRUD |
-| `GET/POST/DELETE` | `/api/keys` | API key CRUD |
 | `GET` | `/api/request-log` | API request log |
 | `GET` | `/api/overview` | Dashboard metrics |
 | `GET` | `/api/analytics` | Delivery analytics |
-| `GET/POST/DELETE` | `/api/compliance/suppressions` | Suppression list |
-| `GET` | `/api/compliance/consent-events` | Consent audit log |
+| `GET` | `/api/analytics/top-topics` | Top send volume by `topicKey` |
 | `GET/PATCH` | `/api/mcp/gates` | MCP approval gate settings |
 | `POST` | `/api/mcp/pending` | Create pending MCP action |
 | `POST` | `/api/mcp/pending/:id/approve` | Approve pending MCP action |
 | `GET` | `/t/o/:token` | Open pixel tracking |
 | `GET` | `/t/c/:token` | Click tracking + redirect |
-| `POST` | `/webhooks/receipts/*` | Provider inbound receipt callbacks |
+| `*` | `/api/auth/api-key/*` | API key management (better-auth `apiKey` plugin) |
+| `POST` | `/webhooks/:provider` | Provider inbound receipt/status callbacks |
