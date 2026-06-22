@@ -2,13 +2,18 @@ import { type ReactNode, useMemo } from "react"
 
 import type { Delivery } from "@renderical/api-client/types"
 import { DataTable } from "@renderical/ui-primitives/components/data-table"
-import { DataTableToolbar } from "@renderical/ui-primitives/components/data-table-toolbar"
-import { useDataTable } from "@renderical/ui-primitives/components/use-data-table"
+import {
+  type ManualTableState,
+  useDataTable,
+} from "@renderical/ui-primitives/components/use-data-table"
 
 import { getLogsColumns } from "./logs-table-columns"
 
 interface LogsTableProps {
   data: Delivery[]
+  loading?: boolean
+  hasMore: boolean
+  tableState: Omit<ManualTableState, "pageCount">
   emptyState?: ReactNode
   onRetry: (id: string) => void
   retryPending: boolean
@@ -16,6 +21,9 @@ interface LogsTableProps {
 
 export function LogsTable({
   data,
+  loading,
+  hasMore,
+  tableState,
   emptyState,
   onRetry,
   retryPending,
@@ -25,11 +33,12 @@ export function LogsTable({
     [onRetry, retryPending]
   )
 
-  const { table } = useDataTable({ data, columns })
+  const pageCount = tableState.pagination.pageIndex + (hasMore ? 2 : 1)
+  const { table } = useDataTable({
+    data,
+    columns,
+    manual: { ...tableState, pageCount },
+  })
 
-  return (
-    <DataTable table={table} emptyState={emptyState}>
-      <DataTableToolbar table={table} searchPlaceholder="Search logs…" />
-    </DataTable>
-  )
+  return <DataTable table={table} loading={loading} emptyState={emptyState} />
 }

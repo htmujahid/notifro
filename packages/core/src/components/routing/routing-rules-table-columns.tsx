@@ -50,6 +50,7 @@ export function getRoutingRulesColumns({
       id: "match",
       accessorFn: (row) => matchSummary(row.match),
       meta: { label: "Match" },
+      enableSorting: false,
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Match" />
       ),

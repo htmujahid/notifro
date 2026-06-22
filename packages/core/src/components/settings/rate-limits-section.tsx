@@ -5,6 +5,7 @@ import { GaugeIcon, PlusIcon } from "lucide-react"
 import { Button } from "@renderical/ui/components/button"
 import { Card, CardContent } from "@renderical/ui/components/card"
 
+import { useTableQueryState } from "../../hooks/use-table-query-state"
 import {
   useDeleteRateLimit,
   useRateLimits,
@@ -13,7 +14,11 @@ import {
 import { RateLimitsTable } from "./rate-limits-table"
 
 export function RateLimitsSection() {
-  const { data } = useRateLimits()
+  const { listParams, tableState } = useTableQueryState({
+    defaultSort: "createdAt",
+    defaultOrder: "desc",
+  })
+  const { data, isLoading } = useRateLimits(listParams)
   const upsert = useUpsertRateLimit()
   const deleteRule = useDeleteRateLimit()
   const [showForm, setShowForm] = useState(false)
@@ -21,7 +26,8 @@ export function RateLimitsSection() {
   const [maxCount, setMaxCount] = useState("")
   const [windowSeconds, setWindowSeconds] = useState("")
 
-  const rules = data?.pages.flatMap((p) => p.data) ?? []
+  const rules = data?.data ?? []
+  const hasMore = data?.nextCursor != null
 
   function handleCreate() {
     const mc = parseInt(maxCount, 10)
@@ -132,7 +138,13 @@ export function RateLimitsSection() {
           No rate limit rules. Add one to cap sends per channel per window.
         </p>
       ) : (
-        <RateLimitsTable data={rules} onDelete={deleteRule.mutate} />
+        <RateLimitsTable
+          data={rules}
+          loading={isLoading}
+          hasMore={hasMore}
+          tableState={tableState}
+          onDelete={deleteRule.mutate}
+        />
       )}
     </section>
   )

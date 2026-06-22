@@ -27,17 +27,25 @@ export function DataTablePagination<TData>({
   pageSizeOptions = [10, 20, 50],
 }: DataTablePaginationProps<TData>) {
   const { pageIndex, pageSize } = table.getState().pagination
-  const filteredCount = table.getFilteredRowModel().rows.length
+  const serverSide = table.options.manualPagination === true
+  const pageRowCount = table.getRowModel().rows.length
+  const filteredCount = serverSide
+    ? pageRowCount
+    : table.getFilteredRowModel().rows.length
 
   return (
     <div className="flex items-center justify-between gap-4">
       <p className="text-xs text-muted-foreground">
-        {filteredCount === 0
-          ? "No results"
-          : `${pageIndex * pageSize + 1}–${Math.min(
-              (pageIndex + 1) * pageSize,
-              filteredCount
-            )} of ${filteredCount} row(s)`}
+        {serverSide
+          ? pageRowCount === 0
+            ? "No results"
+            : `Page ${pageIndex + 1}`
+          : filteredCount === 0
+            ? "No results"
+            : `${pageIndex * pageSize + 1}–${Math.min(
+                (pageIndex + 1) * pageSize,
+                filteredCount
+              )} of ${filteredCount} row(s)`}
       </p>
 
       <div className="flex items-center gap-4">

@@ -27,6 +27,7 @@ export function getRateLimitsColumns({
     {
       accessorKey: "maxCount",
       meta: { label: "Max sends" },
+      enableSorting: false,
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Max sends" />
       ),
@@ -37,6 +38,7 @@ export function getRateLimitsColumns({
     {
       accessorKey: "windowSeconds",
       meta: { label: "Window" },
+      enableSorting: false,
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Window" />
       ),

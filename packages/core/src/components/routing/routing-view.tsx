@@ -7,6 +7,7 @@ import { SectionHeader } from "@renderical/ui-primitives/components/section-head
 import { Badge } from "@renderical/ui/components/badge"
 import { Button } from "@renderical/ui/components/button"
 
+import { useTableQueryState } from "../../hooks/use-table-query-state"
 import {
   useDeleteFallbackChain,
   useDeleteRoutingRule,
@@ -22,13 +23,19 @@ export function RoutingView() {
   const [newChainOpen, setNewChainOpen] = React.useState(false)
   const [newRuleOpen, setNewRuleOpen] = React.useState(false)
 
-  const rulesQuery = useRoutingRules()
+  const { listParams, tableState } = useTableQueryState({
+    defaultSort: "priority",
+    defaultOrder: "asc",
+  })
+
+  const rulesQuery = useRoutingRules(listParams)
   const chainsQuery = useFallbackChains()
   const deleteRule = useDeleteRoutingRule()
   const deleteChain = useDeleteFallbackChain()
   const toggleRule = useUpdateRoutingRule()
 
-  const rules = rulesQuery.data?.pages.flatMap((p) => p.data) ?? []
+  const rules = rulesQuery.data?.data ?? []
+  const hasMore = rulesQuery.data?.nextCursor != null
   const chains = chainsQuery.data?.pages.flatMap((p) => p.data) ?? []
 
   const chainName = React.useCallback(
@@ -71,6 +78,9 @@ export function RoutingView() {
         ) : (
           <RoutingRulesTable
             data={rules}
+            loading={rulesQuery.isLoading}
+            hasMore={hasMore}
+            tableState={tableState}
             chainName={chainName}
             onToggle={handleToggle}
             onDelete={deleteRule.mutate}

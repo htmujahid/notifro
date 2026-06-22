@@ -73,6 +73,7 @@ export function getTemplatesColumns(): ColumnDef<Template, unknown>[] {
     {
       accessorKey: "slug",
       meta: { label: "Slug" },
+      enableSorting: false,
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Slug" />
       ),
@@ -85,6 +86,7 @@ export function getTemplatesColumns(): ColumnDef<Template, unknown>[] {
     {
       accessorKey: "defaultLocale",
       meta: { label: "Locale" },
+      enableSorting: false,
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Locale" />
       ),
@@ -93,7 +95,7 @@ export function getTemplatesColumns(): ColumnDef<Template, unknown>[] {
       ),
     },
     {
-      id: "updated",
+      id: "updatedAt",
       accessorFn: (row) => formatDate(row.updatedAt),
       meta: { label: "Last modified" },
       header: ({ column }) => (

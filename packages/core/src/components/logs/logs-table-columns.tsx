@@ -41,6 +41,7 @@ export function getLogsColumns({
     {
       accessorKey: "notificationId",
       meta: { label: "Notification" },
+      enableSorting: false,
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Notification" />
       ),
@@ -65,6 +66,7 @@ export function getLogsColumns({
     {
       accessorKey: "recipient",
       meta: { label: "Recipient" },
+      enableSorting: false,
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Recipient" />
       ),
@@ -99,6 +101,7 @@ export function getLogsColumns({
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Attempts" />
       ),
+      enableSorting: false,
       enableGlobalFilter: false,
       cell: ({ getValue }) => (
         <span className="font-mono text-xs text-muted-foreground">

@@ -1,6 +1,8 @@
 import {
+  keepPreviousData,
   useInfiniteQuery,
   useMutation,
+  useQuery,
   useQueryClient,
 } from "@tanstack/react-query"
 
@@ -23,19 +25,11 @@ export const fallbackChainKeys = {
 
 export function useRoutingRules(params: ListParams = {}) {
   const client = useApiClient()
-  return useInfiniteQuery({
+  return useQuery({
     queryKey: routingRuleKeys.list(params),
-    queryFn: ({ pageParam }) =>
-      unwrap(
-        client.api.routing.rules.$get({
-          query: toQuery({
-            ...params,
-            ...(pageParam ? { cursor: pageParam as string } : {}),
-          }),
-        })
-      ),
-    initialPageParam: undefined as string | undefined,
-    getNextPageParam: (last) => last.nextCursor ?? undefined,
+    queryFn: () =>
+      unwrap(client.api.routing.rules.$get({ query: toQuery(params) })),
+    placeholderData: keepPreviousData,
   })
 }
 

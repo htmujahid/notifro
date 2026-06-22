@@ -124,7 +124,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 render={<Link to="/" />}
               >
                 <RendericalMark className="size-[18px]" />
-                <span className="text-sm">Renderical</span>
+                <span className="text-sm">Notifro</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

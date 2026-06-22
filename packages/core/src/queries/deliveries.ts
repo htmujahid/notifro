@@ -1,4 +1,5 @@
 import {
+  keepPreviousData,
   useInfiniteQuery,
   useMutation,
   useQuery,
@@ -19,19 +20,11 @@ export const deliveryKeys = {
 
 export function useDeliveries(params: ListParams = {}) {
   const client = useApiClient()
-  return useInfiniteQuery({
+  return useQuery({
     queryKey: deliveryKeys.list(params),
-    queryFn: ({ pageParam }) =>
-      unwrap(
-        client.api.deliveries.$get({
-          query: toQuery({
-            ...params,
-            ...(pageParam ? { cursor: pageParam as string } : {}),
-          }),
-        })
-      ),
-    initialPageParam: undefined as string | undefined,
-    getNextPageParam: (last) => last.nextCursor ?? undefined,
+    queryFn: () =>
+      unwrap(client.api.deliveries.$get({ query: toQuery(params) })),
+    placeholderData: keepPreviousData,
   })
 }
 

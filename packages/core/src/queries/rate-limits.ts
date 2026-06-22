@@ -1,6 +1,7 @@
 import {
-  useInfiniteQuery,
+  keepPreviousData,
   useMutation,
+  useQuery,
   useQueryClient,
 } from "@tanstack/react-query"
 
@@ -17,19 +18,11 @@ export const rateLimitKeys = {
 
 export function useRateLimits(params: ListParams = {}) {
   const client = useApiClient()
-  return useInfiniteQuery({
+  return useQuery({
     queryKey: rateLimitKeys.list(params),
-    queryFn: ({ pageParam }) =>
-      unwrap(
-        client.api["rate-limits"].$get({
-          query: toQuery({
-            ...params,
-            ...(pageParam ? { cursor: pageParam as string } : {}),
-          }),
-        })
-      ),
-    initialPageParam: undefined as string | undefined,
-    getNextPageParam: (last) => last.nextCursor ?? undefined,
+    queryFn: () =>
+      unwrap(client.api["rate-limits"].$get({ query: toQuery(params) })),
+    placeholderData: keepPreviousData,
   })
 }
 

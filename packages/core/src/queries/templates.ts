@@ -1,4 +1,5 @@
 import {
+  keepPreviousData,
   useInfiniteQuery,
   useMutation,
   useQuery,
@@ -24,19 +25,11 @@ export const brandKitKeys = {
 
 export function useTemplates(params: ListParams = {}) {
   const client = useApiClient()
-  return useInfiniteQuery({
+  return useQuery({
     queryKey: templateKeys.list(params),
-    queryFn: ({ pageParam }) =>
-      unwrap(
-        client.api.templates.$get({
-          query: toQuery({
-            ...params,
-            ...(pageParam ? { cursor: pageParam as string } : {}),
-          }),
-        })
-      ),
-    initialPageParam: undefined as string | undefined,
-    getNextPageParam: (last) => last.nextCursor ?? undefined,
+    queryFn: () =>
+      unwrap(client.api.templates.$get({ query: toQuery(params) })),
+    placeholderData: keepPreviousData,
   })
 }
 

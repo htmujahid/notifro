@@ -11,15 +11,24 @@ import {
   EmptyTitle,
 } from "@renderical/ui/components/empty"
 
+import { useTableQueryState } from "../../hooks/use-table-query-state"
 import { useTemplates } from "../../queries/templates"
 import { TemplatesTable } from "./templates-table"
 import { type Template } from "./templates-table-columns"
 
 export function TemplatesView() {
-  const { data, isLoading } = useTemplates()
-  const templates = (data?.pages.flatMap((p) => p.data) ?? []) as Template[]
+  const { listParams, tableState, filters } = useTableQueryState({
+    defaultSort: "updatedAt",
+    defaultOrder: "desc",
+    filterKeys: ["q"],
+    searchKey: "q",
+  })
 
-  if (!isLoading && templates.length === 0) {
+  const { data, isLoading } = useTemplates(listParams)
+  const templates = (data?.data ?? []) as Template[]
+  const hasMore = data?.nextCursor != null
+
+  if (!isLoading && templates.length === 0 && !filters.q) {
     return (
       <div className="flex flex-col gap-6">
         <PageHeader
@@ -74,7 +83,12 @@ export function TemplatesView() {
         </Link>
       </PageHeader>
 
-      <TemplatesTable data={templates} loading={isLoading} />
+      <TemplatesTable
+        data={templates}
+        loading={isLoading}
+        hasMore={hasMore}
+        tableState={tableState}
+      />
     </div>
   )
 }

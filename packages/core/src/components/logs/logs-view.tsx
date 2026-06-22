@@ -1,30 +1,35 @@
-import { useState } from "react"
-
 import { RefreshCwIcon } from "lucide-react"
 
 import { PageHeader } from "@renderical/ui-primitives/components/page-header"
 import { Button } from "@renderical/ui/components/button"
 
+import { useTableQueryState } from "../../hooks/use-table-query-state"
 import { useDeliveries, useRetryDelivery } from "../../queries/deliveries"
 import { LogsTable } from "./logs-table"
 
 const TABS = ["All", "Delivered", "Failed", "Bounced"] as const
 type Tab = (typeof TABS)[number]
 
-const TAB_STATUS: Record<Tab, string | undefined> = {
-  All: undefined,
+const TAB_STATUS: Record<Tab, string> = {
+  All: "",
   Delivered: "delivered",
   Failed: "failed",
   Bounced: "bounced",
 }
 
 export function LogsView() {
-  const [activeTab, setActiveTab] = useState<Tab>("All")
+  const { listParams, tableState, filters, setFilter } = useTableQueryState({
+    defaultSort: "createdAt",
+    defaultOrder: "desc",
+    filterKeys: ["status"],
+  })
 
-  const query = useDeliveries({ status: TAB_STATUS[activeTab] })
+  const query = useDeliveries(listParams)
   const retry = useRetryDelivery()
 
-  const rows = query.data?.pages.flatMap((p) => p.data) ?? []
+  const rows = query.data?.data ?? []
+  const hasMore = query.data?.nextCursor != null
+  const activeStatus = filters.status ?? ""
 
   return (
     <div className="flex flex-col gap-6">
@@ -50,9 +55,9 @@ export function LogsView() {
         {TABS.map((tab) => (
           <button
             key={tab}
-            onClick={() => setActiveTab(tab)}
+            onClick={() => setFilter("status", TAB_STATUS[tab] || null)}
             className={`-mb-px border-b-2 px-4 py-2 text-sm transition-colors ${
-              activeTab === tab
+              activeStatus === TAB_STATUS[tab]
                 ? "border-foreground font-medium text-foreground"
                 : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
@@ -64,27 +69,17 @@ export function LogsView() {
 
       <LogsTable
         data={rows}
+        loading={query.isLoading}
+        hasMore={hasMore}
+        tableState={tableState}
         onRetry={retry.mutate}
         retryPending={retry.isPending}
         emptyState={
           query.isLoading
             ? "Loading deliveries…"
-            : `No ${activeTab.toLowerCase()} entries. Delivery logs will appear here once you start sending notifications.`
+            : "No entries. Delivery logs will appear here once you start sending notifications."
         }
       />
-
-      {query.hasNextPage && (
-        <div className="flex justify-center">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => query.fetchNextPage()}
-            disabled={query.isFetchingNextPage}
-          >
-            {query.isFetchingNextPage ? "Loading…" : "Load more"}
-          </Button>
-        </div>
-      )}
     </div>
   )
 }
