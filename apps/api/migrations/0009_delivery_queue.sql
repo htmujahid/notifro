@@ -1,4 +1,4 @@
--- M17: delivery queue — retries, backoff, DLQ, idempotency
+-- M17: delivery queue, retries, backoff, DLQ, idempotency
 
 ALTER TABLE delivery ADD COLUMN nextRetryAt TEXT;
 ALTER TABLE delivery ADD COLUMN lastError TEXT;
