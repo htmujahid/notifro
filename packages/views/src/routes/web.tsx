@@ -4,12 +4,9 @@ import type { RouteObject } from "react-router"
 
 import { ProtectedRoute } from "@renderical/core/components/protected-route"
 
-import {
-  notFoundRoute,
-  publicRoutes,
-  sharedAuthRoutes,
-  sharedProtectedChildren,
-} from "./_shared"
+import { sharedAuthRoutes } from "./shared/auth"
+import { notFoundRoute, publicRoutes } from "./shared/public"
+import { sharedProtectedChildren } from "./shared/protected"
 
 const RootLayout = lazy(() => import("@renderical/core/layouts/root-layout"))
 const AppLayout = lazy(() => import("@renderical/core/layouts/app-layout"))
