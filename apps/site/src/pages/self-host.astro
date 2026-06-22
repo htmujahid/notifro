@@ -22,7 +22,7 @@ import {
 const components = [
   { icon: Server, title: "API Worker (apps/api)", text: "Hono backend on Cloudflare Workers: compose & send, routing, the delivery queue consumer, the cron sweep, the MCP endpoint, and better-auth." },
   { icon: Globe, title: "Web app (apps/web)", text: "React 19 SPA dashboard, hosted on Cloudflare Pages. The desktop (Electron) and mobile (Capacitor) wrappers reuse the same build." },
-  { icon: Boxes, title: "Marketing site (apps/site)", text: "This Astro site — optional, but included in the monorepo and deployable to Cloudflare Pages." },
+  { icon: Boxes, title: "Marketing site (apps/site)", text: "This Astro site, optional, but included in the monorepo and deployable to Cloudflare Pages." },
   { icon: Database, title: "Edge resources", text: "D1 (SQLite), two KV namespaces, a delivery queue + dead-letter queue, the Email send binding, and an every-minute cron trigger." },
 ];
 
@@ -50,7 +50,7 @@ const steps = [
   {
     n: 2,
     title: "Create the Cloudflare resources",
-    body: "From apps/api, create the D1 database, both KV namespaces, and the two queues. Copy each id Wrangler prints back — you'll paste them in the next step.",
+    body: "From apps/api, create the D1 database, both KV namespaces, and the two queues. Copy each id Wrangler prints back, you'll paste them in the next step.",
     code: [
       "cd apps/api",
       "npx wrangler d1 create notifro",
@@ -79,20 +79,20 @@ const steps = [
     title: "Set your secrets",
     body: "Store runtime secrets with wrangler secret put (or a local .dev.vars file for dev). CONNECTION_ENC_KEY and FRONTEND_URL are required; the rest unlock optional channels and OAuth.",
     code: [
-      "npx wrangler secret put CONNECTION_ENC_KEY    # 32-byte key — encrypts channel credentials",
+      "npx wrangler secret put CONNECTION_ENC_KEY    # 32-byte key, encrypts channel credentials",
       "npx wrangler secret put FRONTEND_URL          # https://app.your-domain.com",
-      "npx wrangler secret put GOOGLE_CLIENT_ID      # optional — Google OAuth",
+      "npx wrangler secret put GOOGLE_CLIENT_ID      # optional, Google OAuth",
       "npx wrangler secret put GOOGLE_CLIENT_SECRET",
-      "npx wrangler secret put TWILIO_ACCOUNT_SID    # optional — SMS / WhatsApp / phone OTP",
+      "npx wrangler secret put TWILIO_ACCOUNT_SID    # optional, SMS / WhatsApp / phone OTP",
       "npx wrangler secret put TWILIO_AUTH_TOKEN",
       "npx wrangler secret put TWILIO_FROM_NUMBER",
-      "npx wrangler secret put VAPID_PUBLIC_KEY      # optional — web push",
+      "npx wrangler secret put VAPID_PUBLIC_KEY      # optional, web push",
     ],
   },
   {
     n: 5,
     title: "Apply the database migrations",
-    body: "Eighteen numbered SQL migrations under apps/api/migrations build the full schema — auth, connections, notifications, delivery, scheduling, templates, rate limits, API keys, and MCP. Apply them to your remote D1.",
+    body: "Eighteen numbered SQL migrations under apps/api/migrations build the full schema, auth, connections, notifications, delivery, scheduling, templates, rate limits, API keys, and MCP. Apply them to your remote D1.",
     code: [
       "pnpm --filter api db:migrate:remote",
       "# equivalent to: npx wrangler d1 migrations apply DB --remote",
@@ -146,7 +146,7 @@ const bindings = [
   ["KV", "KV namespace", "better-auth sessions & secondary storage"],
   ["RATE_LIMIT_KV", "KV namespace", "Per-channel & per-account rate limiting"],
   ["DELIVERY_Q", "Queue producer", "Enqueues per-channel deliveries"],
-  ["delivery-queue", "Queue consumer", "Delivery worker — retries with backoff (max 5)"],
+  ["delivery-queue", "Queue consumer", "Delivery worker, retries with backoff (max 5)"],
   ["delivery-dlq", "Dead-letter queue", "Captures deliveries that exhausted retries"],
   ["EMAIL", "Email send binding", "Auth OTPs and the email channel"],
   ["crons: * * * * *", "Cron trigger", "Sweeps due scheduled & recurring sends"],
@@ -154,7 +154,7 @@ const bindings = [
 
 const secrets = [
   ["CONNECTION_ENC_KEY", "Required", "AES-GCM key that encrypts channel credentials at rest"],
-  ["FRONTEND_URL", "Required", "App base URL — used as the auth trusted origin"],
+  ["FRONTEND_URL", "Required", "App base URL, used as the auth trusted origin"],
   ["GOOGLE_CLIENT_ID", "Optional", "Google OAuth sign-in"],
   ["GOOGLE_CLIENT_SECRET", "Optional", "Google OAuth sign-in"],
   ["TWILIO_ACCOUNT_SID", "Optional", "SMS, WhatsApp & phone-number OTP"],
@@ -166,12 +166,12 @@ const secrets = [
 
 <BaseLayout
   title="Self-host"
-  description="A step-by-step guide to self-hosting Notifro on your own Cloudflare account — Workers, D1, KV, Queues, Email, and cron. Open source, fully under your control."
+  description="A step-by-step guide to self-hosting Notifro on your own Cloudflare account, Workers, D1, KV, Queues, Email, and cron. Open source, fully under your control."
 >
   <PageHeader
     eyebrow="Self-host"
     title="Run Notifro on your own Cloudflare account"
-    lead="The whole stack is open source and edge-native. Deploy the API Worker, dashboard, and MCP server to your own Cloudflare — your data, your credentials, your infrastructure."
+    lead="The whole stack is open source and edge-native. Deploy the API Worker, dashboard, and MCP server to your own Cloudflare, your data, your credentials, your infrastructure."
   />
 
   <!-- quick actions -->

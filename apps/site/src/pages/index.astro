@@ -42,14 +42,14 @@ const channelTiles = [
 
 const testimonials = [
   { quote: "We deleted four internal services and a pile of brittle glue code. One integration now handles every notification we send.", name: "Platform lead", role: "Growth-stage SaaS" },
-  { quote: "Compose-once was the unlock. Our code stopped caring about channels — we just send, and Notifro figures out the rest.", name: "Staff engineer", role: "Fintech" },
-  { quote: "The MCP server lets our agents send safely. Scoped, gated, audited — exactly what we needed to ship it.", name: "Head of AI", role: "Dev tools" },
+  { quote: "Compose-once was the unlock. Our code stopped caring about channels, we just send, and Notifro figures out the rest.", name: "Staff engineer", role: "Fintech" },
+  { quote: "The MCP server lets our agents send safely. Scoped, gated, audited, exactly what we needed to ship it.", name: "Head of AI", role: "Dev tools" },
 ];
 
 const faqs = [
-  { q: "What is Notifro?", a: "Unified notification infrastructure. You compose a message once and Notifro transforms and delivers it across every channel — Slack, email, Teams, Discord, web push, in-app, webhooks, SMS, WhatsApp, and Telegram." },
-  { q: "How is it different from an email or push service?", a: "Those cover one channel. Notifro normalizes ten channels behind one API and adds routing rules, fallback chains, provider failover, scheduling, rate limiting, and a native MCP server — so a single integration replaces a whole stack." },
-  { q: "Can AI agents send notifications?", a: "Yes. The native MCP server exposes sending, scheduling, template, and analytics tools that agents call — authenticated with API keys, with preview and approval gates, idempotency, and full request logging." },
+  { q: "What is Notifro?", a: "Unified notification infrastructure. You compose a message once and Notifro transforms and delivers it across every channel, Slack, email, Teams, Discord, web push, in-app, webhooks, SMS, WhatsApp, and Telegram." },
+  { q: "How is it different from an email or push service?", a: "Those cover one channel. Notifro normalizes ten channels behind one API and adds routing rules, fallback chains, provider failover, scheduling, rate limiting, and a native MCP server, so a single integration replaces a whole stack." },
+  { q: "Can AI agents send notifications?", a: "Yes. The native MCP server exposes sending, scheduling, template, and analytics tools that agents call, authenticated with API keys, with preview and approval gates, idempotency, and full request logging." },
   { q: "Can I self-host?", a: "Yes. The entire stack runs on Cloudflare Workers (D1, Queues, KV). Deploy to your own Cloudflare account and run the MCP server as a local stdio binary." },
 ];
 ---
@@ -71,10 +71,10 @@ const faqs = [
       </h1>
       <p class="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground text-pretty">
         {site.name} is your personal notification hub. Connect your email, phone, browser, Slack,
-        Telegram, and more — then send or schedule a message once and get it wherever you actually
+        Telegram, and more, then send or schedule a message once and get it wherever you actually
         look. Server alarms, cron jobs, payment pings, reminders, even your own AI agents reach you
         through one platform, with templates, smart routing, fallback chains, and scheduling built
-        in. The whole notification stack — just for you.
+        in. The whole notification stack, just for you.
       </p>
       <div class="mt-8 flex flex-wrap justify-center gap-3">
         <a href={site.selfHostUrl} class={buttonVariants({ size: "lg" })}>Self-host on Cloudflare</a>
@@ -97,7 +97,7 @@ const faqs = [
               <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Compose once</p>
               <div class="mt-3 rounded-lg border bg-background p-4">
                 <p class="text-sm font-semibold">You just got paid 💰</p>
-                <p class="mt-1 text-sm text-muted-foreground">Stripe — $240.00 from a new Pro subscription.</p>
+                <p class="mt-1 text-sm text-muted-foreground">Stripe: $240.00 from a new Pro subscription.</p>
                 <span class={`mt-3 ${buttonVariants({ size: "xs" })}`}>View payment</span>
               </div>
               <div class="mt-4 rounded-lg bg-muted/60 p-3 font-mono text-xs text-muted-foreground">
@@ -147,7 +147,7 @@ const faqs = [
     <div class="mx-auto max-w-6xl px-6">
       <div class="mx-auto max-w-2xl text-center">
         <p class="text-sm font-semibold text-primary">The platform</p>
-        <h2 class="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Everything your notification stack did — in one</h2>
+        <h2 class="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Everything your notification stack did, in one</h2>
         <p class="mt-3 text-muted-foreground">Delivery, routing rules, scheduling, rate limiting, and agentic sending, behind a single API.</p>
       </div>
 
@@ -174,7 +174,7 @@ const faqs = [
             <span class="flex size-9 items-center justify-center rounded-lg border bg-muted/50"><Bot className="size-5" /></span>
             <h3 class="font-semibold">Native MCP server</h3>
           </div>
-          <p class="mt-2 text-sm text-muted-foreground">Agents compose, schedule, and send — within granted scopes, preview-gated and audited.</p>
+          <p class="mt-2 text-sm text-muted-foreground">Agents compose, schedule, and send, within granted scopes, preview-gated and audited.</p>
           <div class="mt-5 rounded-lg bg-muted/60 p-4 font-mono text-xs leading-relaxed text-muted-foreground">
             <span class="text-muted-foreground/60"># agent tool call</span><br />
             <span class="text-foreground">send_notification</span>(<br />
@@ -235,7 +235,7 @@ const faqs = [
       <div class="mx-auto max-w-2xl text-center">
         <p class="text-sm font-semibold text-primary">Use cases</p>
         <h2 class="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Built for every message you send</h2>
-        <p class="mt-3 text-muted-foreground">From OTPs to AI agents — the same compose-once API, routed the way each message needs.</p>
+        <p class="mt-3 text-muted-foreground">From OTPs to AI agents, the same compose-once API, routed the way each message needs.</p>
       </div>
       <div class="mt-10">
         <UseCases client:visible />

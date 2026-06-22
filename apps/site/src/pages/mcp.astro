@@ -17,8 +17,8 @@ const tools = [
 ];
 
 const standout = [
-  { icon: Brain, title: "Agentic sending", text: "An agent decides what to send, which channel, and when — your routing and fallback logic runs underneath, consistent with API and UI sends." },
-  { icon: ShieldCheck, title: "API-key scoped safety", text: "The server enforces the same API-key permissions you granted. Agents act only within those boundaries — no broader access than the key allows." },
+  { icon: Brain, title: "Agentic sending", text: "An agent decides what to send, which channel, and when, your routing and fallback logic runs underneath, consistent with API and UI sends." },
+  { icon: ShieldCheck, title: "API-key scoped safety", text: "The server enforces the same API-key permissions you granted. Agents act only within those boundaries, no broader access than the key allows." },
   { icon: Hand, title: "Human-in-the-loop", text: "Approval-gate tools prevent agents from blasting messages unchecked. Nothing ships without your guardrails." },
   { icon: ShieldCheck, title: "Rate-limited and idempotent", text: "KV-backed rate limiting at the MCP layer prevents agent loops from duplicating sends or running away. Every call is audited." },
 ];
@@ -36,11 +36,11 @@ const prompts = [
 ];
 ---
 
-<BaseLayout title="MCP Server" description="Expose your notification infrastructure as an MCP server so AI agents can compose, schedule, and deliver — API-key authenticated, with approval gates, rate limiting, and full audit.">
+<BaseLayout title="MCP Server" description="Expose your notification infrastructure as an MCP server so AI agents can compose, schedule, and deliver, API-key authenticated, with approval gates, rate limiting, and full audit.">
   <PageHeader
     eyebrow="MCP server layer"
     title="Your notification stack, as an MCP server"
-    lead="Let Claude, IDE assistants, and custom agents compose, schedule, and deliver notifications in natural language — using your routing, fallback, and rate-limiting logic underneath. No manual API wiring."
+    lead="Let Claude, IDE assistants, and custom agents compose, schedule, and deliver notifications in natural language, using your routing, fallback, and rate-limiting logic underneath. No manual API wiring."
   />
 
   <!-- Standout -->
@@ -88,7 +88,7 @@ const prompts = [
           <p class="mt-3 text-muted-foreground">Agents ground their decisions in live context exposed as MCP resources.</p>
           <ul class="mt-5 space-y-3 text-sm">
             {resources.map(([t, d]) => (
-              <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span><span class="font-medium text-foreground">{t}</span> — {d}</span></li>
+              <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span><span class="font-medium text-foreground">{t}</span>: {d}</span></li>
             ))}
           </ul>
         </div>
@@ -98,7 +98,7 @@ const prompts = [
           <p class="mt-3 text-muted-foreground">Ship guided, repeatable agent workflows out of the box.</p>
           <ul class="mt-5 space-y-3 text-sm">
             {prompts.map(([t, d]) => (
-              <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span><span class="font-medium text-foreground">{t}</span> — {d}</span></li>
+              <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span><span class="font-medium text-foreground">{t}</span>: {d}</span></li>
             ))}
           </ul>
         </div>
@@ -115,7 +115,7 @@ const prompts = [
       <div class="mt-10 grid gap-5 sm:grid-cols-3">
         <div class="rounded-xl border bg-card p-6">
           <h3 class="font-semibold">Remote MCP</h3>
-          <p class="mt-1.5 text-sm text-muted-foreground">Hosted on Cloudflare Workers, API-key authenticated — connect from Claude, any MCP client, or IDE assistant.</p>
+          <p class="mt-1.5 text-sm text-muted-foreground">Hosted on Cloudflare Workers, API-key authenticated, connect from Claude, any MCP client, or IDE assistant.</p>
         </div>
         <div class="rounded-xl border bg-card p-6">
           <h3 class="font-semibold">Local / stdio MCP</h3>
@@ -123,7 +123,7 @@ const prompts = [
         </div>
         <div class="rounded-xl border bg-card p-6">
           <h3 class="font-semibold">Safe by default</h3>
-          <p class="mt-1.5 text-sm text-muted-foreground">Rate limiting and idempotency at the MCP layer — agent loops can't duplicate or run away. Every send is audited.</p>
+          <p class="mt-1.5 text-sm text-muted-foreground">Rate limiting and idempotency at the MCP layer, agent loops can't duplicate or run away. Every send is audited.</p>
         </div>
       </div>
       <div class="mt-10 text-center">
@@ -134,6 +134,6 @@ const prompts = [
 
   <CtaBand
     title="Give your agents a safe way to notify"
-    text="Connect the Notifro MCP server and let agents send with your API key — fully audited, rate-limited, and preview-gated."
+    text="Connect the Notifro MCP server and let agents send with your API key, fully audited, rate-limited, and preview-gated."
   />
 </BaseLayout>

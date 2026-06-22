@@ -1,4 +1,4 @@
-# Notifro — Feature Reference
+# Notifro: Feature Reference
 
 > Single-user, cross-platform notification infrastructure running on Cloudflare edge.
 > Organised by module / package. Each section lists what is **implemented**, key files, data models, and integration points.
@@ -8,7 +8,7 @@
 ## Table of Contents
 
 1. [Monorepo Structure](#monorepo-structure)
-2. [apps/api — Cloudflare Workers Backend](#appsapi--cloudflare-workers-backend)
+2. [apps/api: Cloudflare Workers Backend](#appsapi--cloudflare-workers-backend)
    - [Authentication & API Keys](#authentication--api-keys)
    - [Channels & Adapters](#channels--adapters)
    - [Notification Compose & Send](#notification-compose--send)
@@ -23,20 +23,20 @@
    - [Rate Limits](#rate-limits)
    - [API Request Logging](#api-request-logging)
    - [MCP Server Endpoint](#mcp-server-endpoint)
-3. [packages/core — UI Component Library](#packagescore--ui-component-library)
-4. [packages/views — Pages & Routing](#packagesviews--pages--routing)
-5. [packages/app — Cross-Platform Auth Shell](#packagesapp--cross-platform-auth-shell)
-6. [packages/mailer — Transactional Email](#packagesmailer--transactional-email)
-7. [packages/mcp — MCP Server Package](#packagesmcp--mcp-server-package)
-8. [packages/sdk — TypeScript SDK](#packagessdk--typescript-sdk)
-9. [packages/cli — CLI Tool](#packagescli--cli-tool)
-10. [packages/templating — Template Engine](#packagestemplating--template-engine)
-11. [packages/api-client — Frontend API Client](#packagesapi-client--frontend-api-client)
-12. [packages/ui — UI Primitives (shadcn)](#packagesui--ui-primitives-shadcn)
-13. [apps/web — Web App](#appsweb--web-app)
-14. [apps/desktop — Electron Desktop App](#appsdesktop--electron-desktop-app)
-15. [apps/ios & apps/android — Capacitor Mobile Apps](#appsios--appsandroid--capacitor-mobile-apps)
-16. [apps/site — Marketing Site (Astro)](#appssite--marketing-site-astro)
+3. [packages/core: UI Component Library](#packagescore--ui-component-library)
+4. [packages/views: Pages & Routing](#packagesviews--pages--routing)
+5. [packages/app: Cross-Platform Auth Shell](#packagesapp--cross-platform-auth-shell)
+6. [packages/mailer: Transactional Email](#packagesmailer--transactional-email)
+7. [packages/mcp: MCP Server Package](#packagesmcp--mcp-server-package)
+8. [packages/sdk: TypeScript SDK](#packagessdk--typescript-sdk)
+9. [packages/cli: CLI Tool](#packagescli--cli-tool)
+10. [packages/templating: Template Engine](#packagestemplating--template-engine)
+11. [packages/api-client: Frontend API Client](#packagesapi-client--frontend-api-client)
+12. [packages/ui: UI Primitives (shadcn)](#packagesui--ui-primitives-shadcn)
+13. [apps/web: Web App](#appsweb--web-app)
+14. [apps/desktop: Electron Desktop App](#appsdesktop--electron-desktop-app)
+15. [apps/ios & apps/android: Capacitor Mobile Apps](#appsios--appsandroid--capacitor-mobile-apps)
+16. [apps/site: Marketing Site (Astro)](#appssite--marketing-site-astro)
 17. [Database Schema Summary](#database-schema-summary)
 18. [API Route Index](#api-route-index)
 
@@ -47,7 +47,7 @@
 ```
 notifro/
 ├── apps/
-│   ├── api/          # Cloudflare Worker — all backend logic
+│   ├── api/          # Cloudflare Worker: all backend logic
 │   ├── web/          # Vite + React SPA
 │   ├── desktop/      # Electron (Forge) desktop app
 │   ├── ios/          # Capacitor iOS wrapper
@@ -72,7 +72,7 @@ Tooling: **pnpm workspaces + Turborepo**, framework **Hono** (API), **React 19**
 
 ---
 
-## apps/api — Cloudflare Workers Backend
+## apps/api: Cloudflare Workers Backend
 
 Entry: `apps/api/src/index.ts`
 
@@ -90,7 +90,7 @@ Entry: `apps/api/src/index.ts`
 | Two-Factor OTP (email) | Backup 2FA via email OTP |
 | Phone number OTP | SMS verification via Twilio (`TWILIO_*` env vars) |
 | Backup codes | Generated on 2FA enable; regenerable |
-| API Key management | Handled by the better-auth `apiKey` plugin — listed/created/revoked via `/api/auth/api-key/*`. Keys are `rk_`-prefixed and stored in the `apikey` table, with a `mode` (`live`/`test`) label in per-key metadata |
+| API Key management | Handled by the better-auth `apiKey` plugin: listed/created/revoked via `/api/auth/api-key/*`. Keys are `rk_`-prefixed and stored in the `apikey` table, with a `mode` (`live`/`test`) label in per-key metadata |
 | Session management | KV-backed secondary storage; `trustedOrigins` CORS guard |
 | Rate limiting | 100 req / 60 s per account via KV |
 
@@ -121,7 +121,7 @@ All adapters are registered into a global registry (`channels/registry.ts`) at s
 
 **Connection model:** Each channel provider is stored as a `Connection` row with `type`, `name`, `status` (active/inactive), `config` (JSON provider config), `credentials` (JSON secrets), `scopes`, and `health`.
 
-Route `GET/POST/PATCH/DELETE /api/connections` — CRUD for connections.
+Route `GET/POST/PATCH/DELETE /api/connections`: CRUD for connections.
 
 ---
 
@@ -152,8 +152,8 @@ ComposePayload {
 ```
 
 **Recipient types:**
-- `user` — owner's own user account (email auto-resolved)
-- `contact` — ad-hoc address (email, phone, slackUserId, discordUserId, teamsUserId, pushSubscription)
+- `user`: owner's own user account (email auto-resolved)
+- `contact`: ad-hoc address (email, phone, slackUserId, discordUserId, teamsUserId, pushSubscription)
 
 **Send flow** (`routes/notifications.ts`):
 1. Parse + validate `ComposePayload`
@@ -203,7 +203,7 @@ Files: `apps/api/src/queue/consumer.ts`, `apps/api/src/lib/redact.ts`
 - Each run spawns a `scheduled_message` row then advances `nextRunAt`
 - Invalid cron disables the recurring send
 
-**Sweep** (`scheduling/sweep.ts`) — Cloudflare Cron Trigger (scheduled Worker):
+**Sweep** (`scheduling/sweep.ts`), Cloudflare Cron Trigger (scheduled Worker):
 1. Fetch up to 100 due `scheduled_message` rows
 2. Apply quiet-hours / delivery-window: reschedule if blocked
 3. Create `notification` + `delivery` rows, enqueue to `DELIVERY_Q`
@@ -260,8 +260,8 @@ Files: `apps/api/src/lib/routing.ts`, `apps/api/src/routes/routing.ts`, `apps/ap
 - Iteration: `{{#each items as item}}...{{/each}}` (max 100 iterations)
 - Nested dot-path resolution, array coercion to comma-separated string
 - Output size limit: 100 KB
-- `renderString(template, ctx, localeStrings)` — core function
-- `renderValue(value, ctx, localeStrings)` — recursively renders strings inside objects/arrays
+- `renderString(template, ctx, localeStrings)`: core function
+- `renderValue(value, ctx, localeStrings)`: recursively renders strings inside objects/arrays
 
 Files: `apps/api/src/routes/templates.ts`, `apps/api/src/routes/template-versions.ts`, `apps/api/src/routes/snippets.ts`, `packages/templating/src/engine.ts`
 
@@ -272,12 +272,12 @@ Files: `apps/api/src/routes/templates.ts`, `apps/api/src/routes/template-version
 **Delivery events** (`delivery_event` table): Per-delivery lifecycle events: `delivered`, `opened`, `clicked`, `bounced`.
 
 **Tracking** (`/t/*` routes):
-- `GET /t/o/:token` — open pixel; writes `openedAt` to delivery
-- `GET /t/c/:token` — click redirect; writes `clickedAt` and redirects to original URL
+- `GET /t/o/:token`: open pixel; writes `openedAt` to delivery
+- `GET /t/c/:token`: click redirect; writes `clickedAt` and redirects to original URL
 - PII-safe token: HMAC-signed delivery ID
 - `trackOpens` / `trackClicks` flags in compose payload control whether links are wrapped
 
-**Analytics API** (`/api/analytics`): Aggregated delivery stats by channel / status / date range. Includes `GET /api/analytics/top-topics` — top send volume grouped by the `topicKey` extracted from each notification payload.
+**Analytics API** (`/api/analytics`): Aggregated delivery stats by channel / status / date range. Includes `GET /api/analytics/top-topics`: top send volume grouped by the `topicKey` extracted from each notification payload.
 
 **Overview** (`/api/overview`): Dashboard summary metrics (counts, recent activity).
 
@@ -350,7 +350,7 @@ Files: `apps/api/src/routes/request-log.ts`
 
 ### MCP Server Endpoint
 
-**Endpoint:** `POST/GET/DELETE /mcp` — requires `rk_`-prefixed API key.
+**Endpoint:** `POST/GET/DELETE /mcp`: requires `rk_`-prefixed API key.
 
 Uses `@modelcontextprotocol/sdk` via the `@notifro/mcp` package. Serves a Streamable HTTP transport (stateless, `enableJsonResponse: true`).
 
@@ -380,7 +380,7 @@ Files: `packages/mcp/src/`, `apps/api/src/routes/mcp.ts`
 
 ---
 
-## packages/core — UI Component Library
+## packages/core: UI Component Library
 
 Feature-level React components and data hooks used across all app targets.
 
@@ -427,78 +427,78 @@ Feature-level React components and data hooks used across all app targets.
 
 ### Dashboard (`components/dashboard/`)
 
-- `DashboardView` — overview page
-- `OverviewMetrics` — delivery counts, success rate
-- `AnalyticsSection` — mini charts per channel
-- `MiniLineChart` — sparkline using recharts
-- `OnboardingChecklist` — first-run task list
-- `DashboardSkeleton` — loading state
+- `DashboardView`: overview page
+- `OverviewMetrics`: delivery counts, success rate
+- `AnalyticsSection`: mini charts per channel
+- `MiniLineChart`: sparkline using recharts
+- `OnboardingChecklist`: first-run task list
+- `DashboardSkeleton`: loading state
 
 ### Notifications (`components/notifications/`)
 
-- `NotificationsView` — list of sent notifications with read/unread badges
+- `NotificationsView`: list of sent notifications with read/unread badges
 - Underlying delivery statuses: `queued`, `delivered`, `failed`, `dead` (DLQ)
 
 ### Channels (`components/channels/`)
 
-- `ChannelsView` — grid of connection cards with status indicators
-- `ConnectionDialog` — add/edit connection form (provider-specific config fields)
-- `WebhookManager` — list + manage outbound webhook endpoints
-- `WebhookRow` — single webhook row with test-send action
-- `AddWebhookForm` — create outbound webhook endpoint
+- `ChannelsView`: grid of connection cards with status indicators
+- `ConnectionDialog`: add/edit connection form (provider-specific config fields)
+- `WebhookManager`: list + manage outbound webhook endpoints
+- `WebhookRow`: single webhook row with test-send action
+- `AddWebhookForm`: create outbound webhook endpoint
 
 ### Templates (`components/templates/`)
 
-- `TemplatesView` — searchable template list
-- `TemplateEdit` — full template editor: content, variables, locale strings, preview pane
-- `VersionRow` — version history row with restore action
+- `TemplatesView`: searchable template list
+- `TemplateEdit`: full template editor: content, variables, locale strings, preview pane
+- `VersionRow`: version history row with restore action
 
 ### Schedules (`components/schedules/`)
 
-- `SchedulesView` — tabs for one-time schedules and recurring sends
-- `RecurringRow` — cron expression display + enable/disable toggle
+- `SchedulesView`: tabs for one-time schedules and recurring sends
+- `RecurringRow`: cron expression display + enable/disable toggle
 
 ### Analytics (`components/analytics/`)
 
-- `AnalyticsView` — delivery metrics by channel, time-range filter, sparklines
+- `AnalyticsView`: delivery metrics by channel, time-range filter, sparklines
 
 ### Developers (`components/developers/`)
 
-- `DevelopersView` — tabs for API Keys, MCP, Request Log
-- `ApiKeysSection` — list / create / revoke API keys
-- `McpSection` — MCP endpoint URL, per-tool approval gate toggles
-- `RequestLogSection` — paginated API request log table
+- `DevelopersView`: tabs for API Keys, MCP, Request Log
+- `ApiKeysSection`: list / create / revoke API keys
+- `McpSection`: MCP endpoint URL, per-tool approval gate toggles
+- `RequestLogSection`: paginated API request log table
 
 ### Settings (`components/settings/`)
 
-- `SettingsView` — tabs for Rate Limits, Failover, Brand Kit
-- `RateLimitsSection` — per-channel rate rule CRUD
-- `FailoverSection` — provider-fallback rules (primary → fallback connection per channel)
-- `BrandKitSection` — logo upload, colour palette, font stack
+- `SettingsView`: tabs for Rate Limits, Failover, Brand Kit
+- `RateLimitsSection`: per-channel rate rule CRUD
+- `FailoverSection`: provider-fallback rules (primary → fallback connection per channel)
+- `BrandKitSection`: logo upload, colour palette, font stack
 
 ### Routing (`components/routing/`)
 
-- `RoutingView` — routing rules list + fallback chains management
-- `CreateRuleDialog` — build a routing rule (match predicate → target chain/channel)
-- `CreateChainDialog` — create a fallback chain
-- `ChainStepsEditor` — ordered step editor (channel, wait, success-on conditions)
+- `RoutingView`: routing rules list + fallback chains management
+- `CreateRuleDialog`: build a routing rule (match predicate → target chain/channel)
+- `CreateChainDialog`: create a fallback chain
+- `ChainStepsEditor`: ordered step editor (channel, wait, success-on conditions)
 
 ### Status (`components/status/`)
 
-- `StatusView` — system health page (API / DB / queue status from `/health`)
+- `StatusView`: system health page (API / DB / queue status from `/health`)
 
 ### Onboarding (`components/onboarding/`)
 
-- `OnboardingView` — step-by-step first-run wizard
-- `StepIcon` — animated step status icons
+- `OnboardingView`: step-by-step first-run wizard
+- `StepIcon`: animated step status icons
 
 ### Other
 
-- `CreateView` — quick-compose notification form
-- `LogsView` — raw delivery log with filters
-- `HelpView` + `FaqItem` — FAQ accordion
-- `ProtectedRoute` — session guard wrapper
-- `NotifroLogo` — SVG brand logo
+- `CreateView`: quick-compose notification form
+- `LogsView`: raw delivery log with filters
+- `HelpView` + `FaqItem`: FAQ accordion
+- `ProtectedRoute`: session guard wrapper
+- `NotifroLogo`: SVG brand logo
 
 ### Queries (`queries/`)
 
@@ -532,7 +532,7 @@ The TanStack Query data layer lives in `packages/core/src/queries/` (not `hooks/
 
 ---
 
-## packages/views — Pages & Routing
+## packages/views: Pages & Routing
 
 Page-level components and platform-specific router configs.
 
@@ -546,7 +546,7 @@ Page-level components and platform-specific router configs.
 | `/auth/reset-password` | `pages/auth/reset-password.tsx` | `ResetPasswordForm` |
 | `/auth/verify-email` | `pages/auth/verify-email.tsx` | `VerifyEmailCard` |
 | `/auth/two-factor` | `pages/auth/two-factor.tsx` | `TwoFactorForm` |
-| `/` (redirect) | — | → `/notifications` |
+| `/` (redirect) | (none) | → `/notifications` |
 | `/notifications` | `pages/notifications.tsx` | `NotificationsView` |
 | `/schedules` | `pages/schedules.tsx` | `SchedulesView` |
 | `/channels` | `pages/channels.tsx` | `ChannelsView` |
@@ -577,7 +577,7 @@ Page-level components and platform-specific router configs.
 
 ---
 
-## packages/app — Cross-Platform Auth Shell
+## packages/app: Cross-Platform Auth Shell
 
 Provides a unified auth client and app context that adapts per platform.
 
@@ -595,7 +595,7 @@ Provides a unified auth client and app context that adapts per platform.
 
 ---
 
-## packages/mailer — Transactional Email
+## packages/mailer: Transactional Email
 
 Cloudflare Email binding wrapper. All emails sent from `noreply@notifro.com`.
 
@@ -611,13 +611,13 @@ Files: `packages/mailer/src/emails/`, `packages/mailer/src/binding.ts`
 
 ---
 
-## packages/mcp — MCP Server Package
+## packages/mcp: MCP Server Package
 
 Standalone `@notifro/mcp` package that exposes a `createMcpServer(config)` function.
 
 | Module | Purpose |
 |---|---|
-| `server.ts` | `createMcpServer({ baseUrl, apiKey })` — initialises MCP server |
+| `server.ts` | `createMcpServer({ baseUrl, apiKey })`: initialises MCP server |
 | `tools.ts` | Registers the tools listed in the MCP Server section above |
 | `resources.ts` | Registers 3 resources: channels, templates, recent-deliveries |
 | `prompts.ts` | Registers MCP prompts |
@@ -627,9 +627,9 @@ The MCP package calls back to the Notifro REST API using the supplied `apiKey`, 
 
 ---
 
-## packages/sdk — TypeScript SDK
+## packages/sdk: TypeScript SDK
 
-`createNotifroClient(options)` — isomorphic fetch-based client.
+`createNotifroClient(options)`: isomorphic fetch-based client.
 
 | Method | Description |
 |---|---|
@@ -643,7 +643,7 @@ Files: `packages/sdk/src/client.ts`, `packages/sdk/src/index.ts`
 
 ---
 
-## packages/cli — CLI Tool
+## packages/cli: CLI Tool
 
 `notifro` binary (Node.js).
 
@@ -660,7 +660,7 @@ Files: `packages/cli/src/index.ts`
 
 ---
 
-## packages/templating — Template Engine
+## packages/templating: Template Engine
 
 Custom Mustache-style engine with no external runtime dependency.
 
@@ -685,13 +685,13 @@ Tests: `packages/templating/src/engine.test.ts`
 
 ---
 
-## packages/api-client — Frontend API Client
+## packages/api-client: Frontend API Client
 
 Typed `fetch` wrapper used by `@notifro/core` hooks.
 
 | Module | Purpose |
 |---|---|
-| `client.ts` | `createApiClient(baseUrl)` — all typed HTTP methods |
+| `client.ts` | `createApiClient(baseUrl)`: all typed HTTP methods |
 | `context.tsx` | `ApiClientContext` + `useApiClient()` hook |
 | `error.ts` | `ApiClientError` with `.code` property |
 | `types.ts` | Shared types: `ChannelType`, `ComposePayload`, `ListResponse`, `ApiKey`, etc. |
@@ -700,17 +700,17 @@ Used internally by all `packages/core/src/hooks/` files.
 
 ---
 
-## packages/ui — UI Primitives (shadcn)
+## packages/ui: UI Primitives (shadcn)
 
 Auto-generated shadcn components. **Do not edit these files directly** (see project rule).
 
 Components available: `accordion`, `alert-dialog`, `alert`, `avatar`, `badge`, `breadcrumb`, `button`, `button-group`, `calendar`, `card`, `carousel`, `chart`, `checkbox`, `collapsible`, `combobox`, `command`, `context-menu`, `dialog`, `drawer`, `dropdown-menu`, `empty`, `field`, `hover-card`, `input`, `input-group`, `input-otp`, `item`, `kbd`, `label`, `menubar`, `native-select`, `navigation-menu`, `pagination`, `popover`, `progress`, `radio-group`, `resizable`, `scroll-area`, `select`, `separator`, `sheet`, `sidebar`, `skeleton`, `slider`, `sonner` (toasts), `spinner`, `switch`, `table`, `tabs`, `textarea`, `toggle`, `toggle-group`, `tooltip`.
 
-Utility: `lib/utils.ts` — `cn()` (class merging).
+Utility: `lib/utils.ts`, `cn()` (class merging).
 
 ---
 
-## apps/web — Web App
+## apps/web: Web App
 
 Vite + React SPA.
 
@@ -720,18 +720,18 @@ Vite + React SPA.
 
 ---
 
-## apps/desktop — Electron Desktop App
+## apps/desktop: Electron Desktop App
 
 Electron Forge + Vite.
 
-- Main process: `electron/main.ts` — creates `BrowserWindow`; loads renderer URL
-- Preload: `electron/preload.ts` — exposes `contextBridge` APIs as `window.desktop`
+- Main process: `electron/main.ts`, creates `BrowserWindow`; loads renderer URL
+- Preload: `electron/preload.ts`, exposes `contextBridge` APIs as `window.desktop`
 - Renderer: `src/renderer.tsx` → `App.tsx` → `routes/desktop.tsx` (HashRouter)
-- `desktop.d.ts` — TypeScript types for `window.desktop` bridge
+- `desktop.d.ts`: TypeScript types for `window.desktop` bridge
 
 ---
 
-## apps/ios & apps/android — Capacitor Mobile Apps
+## apps/ios & apps/android: Capacitor Mobile Apps
 
 | File | Purpose |
 |---|---|
@@ -744,13 +744,13 @@ Uses `routes/ios.tsx` / `routes/android.tsx` which add deep-link handling on top
 
 ---
 
-## apps/site — Marketing Site (Astro)
+## apps/site: Marketing Site (Astro)
 
 Astro + Cloudflare Pages.
 
-- `src/config.ts` — site metadata, navigation
-- `src/components/UseCases.tsx` — use-case cards (React island)
-- `src/components/Faq.tsx` — FAQ accordion (React island)
+- `src/config.ts`: site metadata, navigation
+- `src/components/UseCases.tsx`: use-case cards (React island)
+- `src/components/Faq.tsx`: FAQ accordion (React island)
 
 ---
 

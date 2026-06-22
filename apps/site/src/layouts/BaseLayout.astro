@@ -9,7 +9,7 @@ interface Props {
   description?: string;
   /** Page-specific OG/Twitter image (absolute or root-relative). Defaults to the site OG image. */
   image?: string;
-  /** og:type — "website" (default) or "article" for blog/changelog posts. */
+  /** og:type: "website" (default) or "article" for blog/changelog posts. */
   type?: "website" | "article";
   /** Set true to keep a page out of search indexes (e.g. thank-you / utility pages). */
   noindex?: boolean;
@@ -26,7 +26,7 @@ const {
   schema,
 } = Astro.props;
 
-const fullTitle = title ? `${title} · ${site.name}` : `${site.name} — ${site.tagline}`;
+const fullTitle = title ? `${title} · ${site.name}` : `${site.name}: ${site.tagline}`;
 // Canonical + absolute asset URLs, resolved against `site` in astro.config.mjs.
 const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).toString();
 const ogImage = new URL(image, Astro.site ?? site.url).toString();
@@ -84,7 +84,7 @@ const siteSchema = {
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={`${site.name} — ${site.tagline}`} />
+    <meta property="og:image:alt" content={`${site.name}: ${site.tagline}`} />
     <meta property="og:locale" content={site.locale} />
 
     <!-- Twitter / X -->
@@ -94,7 +94,7 @@ const siteSchema = {
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
-    <meta name="twitter:image:alt" content={`${site.name} — ${site.tagline}`} />
+    <meta name="twitter:image:alt" content={`${site.name}: ${site.tagline}`} />
 
     <!-- Structured data -->
     <script type="application/ld+json" is:inline set:html={JSON.stringify(orgSchema)} />
