@@ -10,7 +10,6 @@ import {
 import { authInstance } from "../lib/auth"
 import { redactPii } from "../lib/redact"
 import type { AppEnv } from "../lib/types"
-import templateRouter from "./_template"
 import analyticsRouter from "./analytics"
 import brandKitRouter from "./brand-kit"
 import chainsRouter from "./chains"
@@ -149,7 +148,6 @@ export function registerRoutes(app: OpenAPIHono<AppEnv>) {
         .executeTakeFirstOrThrow()
       return c.json({ userCount: Number(result.n) })
     })
-    .route("/api", templateRouter)
     .route("/api", connectionsRouter)
     .route("/api", notificationsRouter)
     .route("/api", templatesRouter)
