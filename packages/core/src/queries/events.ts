@@ -22,6 +22,8 @@ export function useTrackEvent() {
   const client = useApiClient()
   return useMutation({
     mutationFn: (input: TrackEventInput) =>
-      unwrap(client.api.events.$post({ json: input })) as Promise<TrackEventResult>,
+      unwrap(
+        client.api.events.$post({ json: input })
+      ) as Promise<TrackEventResult>,
   })
 }

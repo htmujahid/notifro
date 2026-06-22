@@ -7,11 +7,11 @@ import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 
+import { useTwoFactorGenerateBackupCodes } from "../../queries/auth"
 import {
   type TwoFactorPasswordValues,
   twoFactorPasswordSchema,
 } from "../../schemas/auth"
-import { useTwoFactorGenerateBackupCodes } from "../../queries/auth"
 import { BackupCodeGrid } from "./backup-code-grid"
 
 type BackupStep = "idle" | "password" | "codes"

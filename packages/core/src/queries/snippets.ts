@@ -38,8 +38,9 @@ export function useCreateSnippet() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: InferRequestType<ApiClient["api"]["snippets"]["$post"]>["json"]) =>
-      unwrap(client.api.snippets.$post({ json: body })),
+    mutationFn: (
+      body: InferRequestType<ApiClient["api"]["snippets"]["$post"]>["json"]
+    ) => unwrap(client.api.snippets.$post({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: snippetKeys.lists() }),
   })
 }
@@ -51,7 +52,9 @@ export function useUpdateSnippet() {
     mutationFn: ({
       id,
       ...body
-    }: { id: string } & InferRequestType<ApiClient["api"]["snippets"][":id"]["$patch"]>["json"]) =>
+    }: { id: string } & InferRequestType<
+      ApiClient["api"]["snippets"][":id"]["$patch"]
+    >["json"]) =>
       unwrap(
         client.api.snippets[":id"].$patch({
           param: { id },

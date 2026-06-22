@@ -9,14 +9,14 @@ import { requireAuth } from "../middleware/auth"
 import {
   DEFAULT_SORT,
   FILTERABLE,
-  SORTABLE,
   FilterClauseSchema,
+  SORTABLE,
   SegmentDtoSchema,
-  listRoute,
   createRoute_,
-  detailRoute,
-  patchRoute,
   deleteRoute,
+  detailRoute,
+  listRoute,
+  patchRoute,
   previewRoute,
 } from "./segments.contract"
 

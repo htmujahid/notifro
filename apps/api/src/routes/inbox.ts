@@ -3,7 +3,6 @@ import { OpenAPIHono, z } from "@hono/zod-openapi"
 import { Errors, validationHook } from "../lib/errors"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
-
 import {
   InboxMessageDtoSchema,
   listRoute,

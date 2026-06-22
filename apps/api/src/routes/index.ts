@@ -75,11 +75,7 @@ export function registerRoutes(app: OpenAPIHono<AppEnv>) {
   app.use("/api/*", (c, next) => {
     return cors({
       origin: c.env.FRONTEND_URL,
-      allowHeaders: [
-        "Content-Type",
-        "Authorization",
-        "X-API-Key",
-      ],
+      allowHeaders: ["Content-Type", "Authorization", "X-API-Key"],
       allowMethods: ["POST", "GET", "PATCH", "PUT", "DELETE", "OPTIONS"],
       exposeHeaders: ["Content-Length"],
       maxAge: 600,

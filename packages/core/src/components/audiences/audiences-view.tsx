@@ -14,9 +14,9 @@ import { SectionHeader } from "@renderical/ui-primitives/components/section-head
 import { Badge } from "@renderical/ui/components/badge"
 import { Button } from "@renderical/ui/components/button"
 
-import { useRecipients, useDeleteRecipient } from "../../queries/recipients"
-import { useSegments, useDeleteSegment } from "../../queries/segments"
 import { useDeleteTopic, useTopics } from "../../queries/preferences"
+import { useDeleteRecipient, useRecipients } from "../../queries/recipients"
+import { useDeleteSegment, useSegments } from "../../queries/segments"
 import { CreateRecipientDialog } from "./create-recipient-dialog"
 import { CreateSegmentDialog } from "./create-segment-dialog"
 import { CreateTopicDialog } from "./create-topic-dialog"

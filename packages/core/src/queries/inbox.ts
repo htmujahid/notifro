@@ -5,12 +5,18 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
-import type { ApiClient, InferResponseType } from "@renderical/api-client/client"
+import type {
+  ApiClient,
+  InferResponseType,
+} from "@renderical/api-client/client"
 import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
 
 export type InboxFilter = "all" | "unread" | "read"
-export type InboxMessage = InferResponseType<ApiClient["api"]["inbox"]["$get"], 200>["data"][number]
+export type InboxMessage = InferResponseType<
+  ApiClient["api"]["inbox"]["$get"],
+  200
+>["data"][number]
 
 export const inboxKeys = {
   all: ["inbox"] as const,

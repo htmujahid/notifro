@@ -4,7 +4,10 @@ import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 
-import { type CreateJourneyInput, useCreateJourney } from "../../queries/journeys"
+import {
+  type CreateJourneyInput,
+  useCreateJourney,
+} from "../../queries/journeys"
 import {
   ResponsiveModal,
   ResponsiveModalBody,
@@ -45,7 +48,10 @@ export function CreateJourneyDialog({
     setStepsError(null)
 
     const trigger = triggerEvent.trim()
-      ? ({ type: "event" as const, event: triggerEvent.trim() } satisfies NonNullable<CreateJourneyInput["trigger"]>)
+      ? ({
+          type: "event" as const,
+          event: triggerEvent.trim(),
+        } satisfies NonNullable<CreateJourneyInput["trigger"]>)
       : undefined
 
     create.mutate(

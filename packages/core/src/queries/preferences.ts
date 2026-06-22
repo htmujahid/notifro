@@ -45,8 +45,9 @@ export function useCreateTopic() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: InferRequestType<ApiClient["api"]["topics"]["$post"]>["json"]) =>
-      unwrap(client.api.topics.$post({ json: body })),
+    mutationFn: (
+      body: InferRequestType<ApiClient["api"]["topics"]["$post"]>["json"]
+    ) => unwrap(client.api.topics.$post({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: topicKeys.lists() }),
   })
 }
@@ -55,7 +56,12 @@ export function useUpdateTopic() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, ...body }: { id: string } & InferRequestType<ApiClient["api"]["topics"][":id"]["$patch"]>["json"]) =>
+    mutationFn: ({
+      id,
+      ...body
+    }: { id: string } & InferRequestType<
+      ApiClient["api"]["topics"][":id"]["$patch"]
+    >["json"]) =>
       unwrap(client.api.topics[":id"].$patch({ param: { id }, json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: topicKeys.all }),
   })
@@ -96,7 +102,9 @@ export function useUpdatePreferences(token: string | undefined) {
   const client = useApiClient()
   return useMutation({
     mutationFn: (
-      preferences: InferRequestType<ApiClient["api"]["preferences"]["center"]["$post"]>["json"]["preferences"]
+      preferences: InferRequestType<
+        ApiClient["api"]["preferences"]["center"]["$post"]
+      >["json"]["preferences"]
     ) =>
       unwrap(
         client.api.preferences.center.$post({
@@ -151,7 +159,9 @@ export function useSetRecipientPreferences(recipientId: string) {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (
-      preferences: InferRequestType<ApiClient["api"]["recipients"][":id"]["preferences"]["$put"]>["json"]["preferences"]
+      preferences: InferRequestType<
+        ApiClient["api"]["recipients"][":id"]["preferences"]["$put"]
+      >["json"]["preferences"]
     ) =>
       unwrap(
         client.api.recipients[":id"].preferences.$put({
@@ -182,7 +192,11 @@ export function useSetChannelPriority(recipientId: string) {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (order: InferRequestType<ApiClient["api"]["recipients"][":id"]["channel-priority"]["$put"]>["json"]["order"]) =>
+    mutationFn: (
+      order: InferRequestType<
+        ApiClient["api"]["recipients"][":id"]["channel-priority"]["$put"]
+      >["json"]["order"]
+    ) =>
       unwrap(
         client.api.recipients[":id"]["channel-priority"].$put({
           param: { id: recipientId },

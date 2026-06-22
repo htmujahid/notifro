@@ -3,7 +3,11 @@ import { OpenAPIHono } from "@hono/zod-openapi"
 import { Errors, validationHook } from "../lib/errors"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
-import { createRoute_, deleteRoute, listRoute } from "./provider-fallbacks.contract"
+import {
+  createRoute_,
+  deleteRoute,
+  listRoute,
+} from "./provider-fallbacks.contract"
 
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)

@@ -21,8 +21,9 @@ export function useUpdateBrandKit() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: InferRequestType<ApiClient["api"]["brand-kit"]["$put"]>["json"]) =>
-      unwrap(client.api["brand-kit"].$put({ json: body })),
+    mutationFn: (
+      body: InferRequestType<ApiClient["api"]["brand-kit"]["$put"]>["json"]
+    ) => unwrap(client.api["brand-kit"].$put({ json: body })),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: brandKitKeys.all })
     },

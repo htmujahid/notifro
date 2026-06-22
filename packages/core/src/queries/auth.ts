@@ -9,7 +9,8 @@ export function useSignInEmail() {
   return useMutation({
     mutationFn: (args: Parameters<typeof auth.signIn.email>[0]) =>
       auth.signIn.email(args),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY }),
   })
 }
 
@@ -19,7 +20,8 @@ export function useSignInSocial() {
   return useMutation({
     mutationFn: (args: Parameters<typeof auth.signIn.social>[0]) =>
       auth.signIn.social(args),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY }),
   })
 }
 
@@ -37,15 +39,17 @@ export function useSignOut() {
   return useMutation({
     mutationFn: (args?: Parameters<typeof auth.signOut>[0]) =>
       auth.signOut(args),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY }),
   })
 }
 
 export function useForgotPassword() {
   const auth = useAuth()
   return useMutation({
-    mutationFn: (args: Parameters<typeof auth.emailOtp.requestPasswordReset>[0]) =>
-      auth.emailOtp.requestPasswordReset(args),
+    mutationFn: (
+      args: Parameters<typeof auth.emailOtp.requestPasswordReset>[0]
+    ) => auth.emailOtp.requestPasswordReset(args),
   })
 }
 
@@ -68,8 +72,9 @@ export function useVerifyEmail() {
 export function useSendVerificationOtp() {
   const auth = useAuth()
   return useMutation({
-    mutationFn: (args: Parameters<typeof auth.emailOtp.sendVerificationOtp>[0]) =>
-      auth.emailOtp.sendVerificationOtp(args),
+    mutationFn: (
+      args: Parameters<typeof auth.emailOtp.sendVerificationOtp>[0]
+    ) => auth.emailOtp.sendVerificationOtp(args),
   })
 }
 
@@ -119,15 +124,17 @@ export function useTwoFactorDisable() {
   return useMutation({
     mutationFn: (args: Parameters<typeof auth.twoFactor.disable>[0]) =>
       auth.twoFactor.disable(args),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY }),
   })
 }
 
 export function useTwoFactorGenerateBackupCodes() {
   const auth = useAuth()
   return useMutation({
-    mutationFn: (args: Parameters<typeof auth.twoFactor.generateBackupCodes>[0]) =>
-      auth.twoFactor.generateBackupCodes(args),
+    mutationFn: (
+      args: Parameters<typeof auth.twoFactor.generateBackupCodes>[0]
+    ) => auth.twoFactor.generateBackupCodes(args),
   })
 }
 
@@ -145,7 +152,8 @@ export function useUpdateUser() {
   return useMutation({
     mutationFn: (args: Parameters<typeof auth.updateUser>[0]) =>
       auth.updateUser(args),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY }),
   })
 }
 
@@ -163,6 +171,7 @@ export function useDeleteUser() {
   return useMutation({
     mutationFn: (args: Parameters<typeof auth.deleteUser>[0]) =>
       auth.deleteUser(args),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY }),
   })
 }

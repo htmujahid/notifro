@@ -8,13 +8,13 @@ import {
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
 import {
+  ChannelPriorityDtoSchema,
+  PreferenceDtoSchema,
   adminSetPreferenceRoute,
   channelPriorityRoute,
-  ChannelPriorityDtoSchema,
   generateTokenRoute,
   prefCenterGetRoute,
   prefCenterPostRoute,
-  PreferenceDtoSchema,
   recipientPrefsRoute,
   setChannelPriorityRoute,
   unsubscribeGetRoute,
@@ -342,7 +342,6 @@ const publicRoutes = publicRouter
           })
           .execute()
       }
-
     }
 
     return c.json({ updated: preferences.length })

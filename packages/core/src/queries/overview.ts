@@ -36,8 +36,9 @@ export function useOnboarding() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: InferRequestType<ApiClient["api"]["onboarding"]["$patch"]>["json"]) =>
-      unwrap(client.api.onboarding.$patch({ json: body })),
+    mutationFn: (
+      body: InferRequestType<ApiClient["api"]["onboarding"]["$patch"]>["json"]
+    ) => unwrap(client.api.onboarding.$patch({ json: body })),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: overviewKeys.all })
     },

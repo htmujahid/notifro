@@ -40,8 +40,11 @@ export function useCreateChain() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: InferRequestType<ApiClient["api"]["routing"]["chains"]["$post"]>["json"]) =>
-      unwrap(client.api.routing.chains.$post({ json: body })),
+    mutationFn: (
+      body: InferRequestType<
+        ApiClient["api"]["routing"]["chains"]["$post"]
+      >["json"]
+    ) => unwrap(client.api.routing.chains.$post({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: chainKeys.lists() }),
   })
 }
@@ -53,7 +56,9 @@ export function useUpdateChain() {
     mutationFn: ({
       id,
       ...body
-    }: { id: string } & InferRequestType<ApiClient["api"]["routing"]["chains"][":id"]["$patch"]>["json"]) =>
+    }: { id: string } & InferRequestType<
+      ApiClient["api"]["routing"]["chains"][":id"]["$patch"]
+    >["json"]) =>
       unwrap(
         client.api.routing.chains[":id"].$patch({ param: { id }, json: body })
       ),

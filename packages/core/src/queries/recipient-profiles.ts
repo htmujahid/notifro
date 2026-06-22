@@ -21,8 +21,11 @@ export function useUpdateRecipientProfile() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: InferRequestType<ApiClient["api"]["recipients"]["preferences"]["$patch"]>["json"]) =>
-      unwrap(client.api.recipients.preferences.$patch({ json: body })),
+    mutationFn: (
+      body: InferRequestType<
+        ApiClient["api"]["recipients"]["preferences"]["$patch"]
+      >["json"]
+    ) => unwrap(client.api.recipients.preferences.$patch({ json: body })),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: recipientProfileKeys.all })
     },

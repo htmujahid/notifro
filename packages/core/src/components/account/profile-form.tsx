@@ -8,11 +8,11 @@ import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 
+import { useUpdateUser } from "../../queries/auth"
 import {
   type UpdateProfileValues,
   updateProfileSchema,
 } from "../../schemas/account"
-import { useUpdateUser } from "../../queries/auth"
 
 export function ProfileForm() {
   const updateUser = useUpdateUser()

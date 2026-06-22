@@ -50,8 +50,9 @@ export function useCreateSegment() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: InferRequestType<ApiClient["api"]["segments"]["$post"]>["json"]) =>
-      unwrap(client.api.segments.$post({ json: body })),
+    mutationFn: (
+      body: InferRequestType<ApiClient["api"]["segments"]["$post"]>["json"]
+    ) => unwrap(client.api.segments.$post({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: segmentKeys.lists() }),
   })
 }
@@ -63,7 +64,9 @@ export function useUpdateSegment() {
     mutationFn: ({
       id,
       ...body
-    }: { id: string } & InferRequestType<ApiClient["api"]["segments"][":id"]["$patch"]>["json"]) =>
+    }: { id: string } & InferRequestType<
+      ApiClient["api"]["segments"][":id"]["$patch"]
+    >["json"]) =>
       unwrap(client.api.segments[":id"].$patch({ param: { id }, json: body })),
     onSuccess: (_, { id }) => {
       qc.invalidateQueries({ queryKey: segmentKeys.lists() })

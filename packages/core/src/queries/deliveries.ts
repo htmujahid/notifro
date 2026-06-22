@@ -58,9 +58,7 @@ export function useDeliveryEvents(id: string | undefined) {
   return useQuery({
     queryKey: deliveryKeys.events(id ?? ""),
     queryFn: () =>
-      unwrap(
-        client.api.deliveries[":id"].events.$get({ param: { id: id! } })
-      ),
+      unwrap(client.api.deliveries[":id"].events.$get({ param: { id: id! } })),
     enabled: !!id,
   })
 }

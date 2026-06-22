@@ -2,13 +2,14 @@ import { useState } from "react"
 
 import { useNavigate, useSearchParams } from "react-router"
 
-import { useSendVerificationOtp, useVerifyEmail } from "../../queries/auth"
 import { Button } from "@renderical/ui/components/button"
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "@renderical/ui/components/input-otp"
+
+import { useSendVerificationOtp, useVerifyEmail } from "../../queries/auth"
 
 export function VerifyEmailCard() {
   const verifyEmail = useVerifyEmail()

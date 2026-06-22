@@ -11,9 +11,5 @@ export function HelloView() {
     queryFn: () => unwrap(client.api.hello.$get()),
   })
 
-  return (
-    <div>
-      {isPending ? <p>Loading…</p> : <h1>{data?.message}</h1>}
-    </div>
-  )
+  return <div>{isPending ? <p>Loading…</p> : <h1>{data?.message}</h1>}</div>
 }

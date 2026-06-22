@@ -38,10 +38,10 @@ export function useCreateApiKey() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: InferRequestType<ApiClient["api"]["keys"]["$post"]>["json"]) =>
-      unwrap(client.api.keys.$post({ json: body })),
-    onSuccess: () =>
-      qc.invalidateQueries({ queryKey: apiKeyKeys.apiKeys() }),
+    mutationFn: (
+      body: InferRequestType<ApiClient["api"]["keys"]["$post"]>["json"]
+    ) => unwrap(client.api.keys.$post({ json: body })),
+    onSuccess: () => qc.invalidateQueries({ queryKey: apiKeyKeys.apiKeys() }),
   })
 }
 
@@ -51,7 +51,6 @@ export function useRevokeApiKey() {
   return useMutation({
     mutationFn: (id: string) =>
       unwrap(client.api.keys[":id"].$delete({ param: { id } })),
-    onSuccess: () =>
-      qc.invalidateQueries({ queryKey: apiKeyKeys.apiKeys() }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: apiKeyKeys.apiKeys() }),
   })
 }

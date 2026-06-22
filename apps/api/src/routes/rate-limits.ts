@@ -7,8 +7,8 @@ import { requireAuth } from "../middleware/auth"
 import {
   DEFAULT_SORT,
   FILTERABLE,
-  SORTABLE,
   RateLimitRuleDtoSchema,
+  SORTABLE,
   createRoute_,
   deleteRoute,
   listRoute,

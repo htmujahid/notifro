@@ -59,8 +59,9 @@ export function useCreateTemplate() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: InferRequestType<ApiClient["api"]["templates"]["$post"]>["json"]) =>
-      unwrap(client.api.templates.$post({ json: body })),
+    mutationFn: (
+      body: InferRequestType<ApiClient["api"]["templates"]["$post"]>["json"]
+    ) => unwrap(client.api.templates.$post({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: templateKeys.lists() }),
   })
 }
@@ -72,7 +73,9 @@ export function useUpdateTemplate() {
     mutationFn: ({
       id,
       ...body
-    }: { id: string } & InferRequestType<ApiClient["api"]["templates"][":id"]["$patch"]>["json"]) =>
+    }: { id: string } & InferRequestType<
+      ApiClient["api"]["templates"][":id"]["$patch"]
+    >["json"]) =>
       unwrap(
         client.api.templates[":id"].$patch({
           param: { id },
@@ -104,7 +107,9 @@ export function useRenderPreview() {
       id,
       data,
       locale,
-    }: { id: string } & InferRequestType<ApiClient["api"]["templates"][":id"]["render"]["$post"]>["json"]) =>
+    }: { id: string } & InferRequestType<
+      ApiClient["api"]["templates"][":id"]["render"]["$post"]
+    >["json"]) =>
       unwrap(
         client.api.templates[":id"].render.$post({
           param: { id },
@@ -183,8 +188,9 @@ export function useCreateSnippet() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: InferRequestType<ApiClient["api"]["snippets"]["$post"]>["json"]) =>
-      unwrap(client.api.snippets.$post({ json: body })),
+    mutationFn: (
+      body: InferRequestType<ApiClient["api"]["snippets"]["$post"]>["json"]
+    ) => unwrap(client.api.snippets.$post({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: snippetKeys.lists() }),
   })
 }
@@ -196,7 +202,9 @@ export function useUpdateSnippet() {
     mutationFn: ({
       id,
       ...body
-    }: { id: string } & InferRequestType<ApiClient["api"]["snippets"][":id"]["$patch"]>["json"]) =>
+    }: { id: string } & InferRequestType<
+      ApiClient["api"]["snippets"][":id"]["$patch"]
+    >["json"]) =>
       unwrap(client.api.snippets[":id"].$patch({ param: { id }, json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: snippetKeys.lists() }),
   })
@@ -228,8 +236,9 @@ export function useUpdateBrandKit() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: InferRequestType<ApiClient["api"]["brand-kit"]["$put"]>["json"]) =>
-      unwrap(client.api["brand-kit"].$put({ json: body })),
+    mutationFn: (
+      body: InferRequestType<ApiClient["api"]["brand-kit"]["$put"]>["json"]
+    ) => unwrap(client.api["brand-kit"].$put({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: brandKitKeys.all }),
   })
 }

@@ -46,7 +46,10 @@ export const ENGAGEMENT_COLUMN: Record<
   bounced: "bouncedAt",
   delivered: "deliveredAt",
 }
-export const DELIVERY_DEFAULT_SORT = { key: "createdAt", order: "desc" as const }
+export const DELIVERY_DEFAULT_SORT = {
+  key: "createdAt",
+  order: "desc" as const,
+}
 
 export const DeliveryListItemSchema = z.object({
   id: z.string(),

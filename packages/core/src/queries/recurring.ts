@@ -38,8 +38,9 @@ export function useCreateRecurring() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: InferRequestType<ApiClient["api"]["recurring"]["$post"]>["json"]) =>
-      unwrap(client.api.recurring.$post({ json: body })),
+    mutationFn: (
+      body: InferRequestType<ApiClient["api"]["recurring"]["$post"]>["json"]
+    ) => unwrap(client.api.recurring.$post({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: recurringKeys.lists() }),
   })
 }
@@ -48,7 +49,12 @@ export function useUpdateRecurring() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, ...body }: { id: string } & InferRequestType<ApiClient["api"]["recurring"][":id"]["$patch"]>["json"]) =>
+    mutationFn: ({
+      id,
+      ...body
+    }: { id: string } & InferRequestType<
+      ApiClient["api"]["recurring"][":id"]["$patch"]
+    >["json"]) =>
       unwrap(client.api.recurring[":id"].$patch({ param: { id }, json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: recurringKeys.lists() }),
   })

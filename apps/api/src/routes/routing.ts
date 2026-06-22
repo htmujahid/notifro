@@ -5,12 +5,11 @@ import { applyListQuery } from "../lib/list-query"
 import { resolveRoute } from "../lib/routing"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
-
 import {
   DEFAULT_SORT,
   FILTERABLE,
-  SORTABLE,
   RoutingRuleDtoSchema,
+  SORTABLE,
   createRoute_,
   deleteRoute,
   listRoute,

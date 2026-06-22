@@ -38,8 +38,9 @@ export function useCreateRecipient() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: InferRequestType<ApiClient["api"]["recipients"]["$post"]>["json"]) =>
-      unwrap(client.api.recipients.$post({ json: body })),
+    mutationFn: (
+      body: InferRequestType<ApiClient["api"]["recipients"]["$post"]>["json"]
+    ) => unwrap(client.api.recipients.$post({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: recipientKeys.lists() }),
   })
 }
@@ -48,8 +49,11 @@ export function useIdentifyRecipient() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: InferRequestType<ApiClient["api"]["recipients"]["identify"]["$post"]>["json"]) =>
-      unwrap(client.api.recipients.identify.$post({ json: body })),
+    mutationFn: (
+      body: InferRequestType<
+        ApiClient["api"]["recipients"]["identify"]["$post"]
+      >["json"]
+    ) => unwrap(client.api.recipients.identify.$post({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: recipientKeys.lists() }),
   })
 }

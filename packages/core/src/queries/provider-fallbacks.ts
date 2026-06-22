@@ -21,9 +21,13 @@ export function useCreateProviderFallback() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: InferRequestType<ApiClient["api"]["provider-fallbacks"]["$post"]>["json"]) =>
-      unwrap(client.api["provider-fallbacks"].$post({ json: body })),
-    onSuccess: () => qc.invalidateQueries({ queryKey: providerFallbackKeys.all }),
+    mutationFn: (
+      body: InferRequestType<
+        ApiClient["api"]["provider-fallbacks"]["$post"]
+      >["json"]
+    ) => unwrap(client.api["provider-fallbacks"].$post({ json: body })),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: providerFallbackKeys.all }),
   })
 }
 
@@ -35,6 +39,7 @@ export function useDeleteProviderFallback() {
       unwrap(
         client.api["provider-fallbacks"][":id"].$delete({ param: { id } })
       ),
-    onSuccess: () => qc.invalidateQueries({ queryKey: providerFallbackKeys.all }),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: providerFallbackKeys.all }),
   })
 }

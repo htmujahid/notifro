@@ -390,7 +390,6 @@ export interface McpPendingActionTable {
   updatedAt: string
 }
 
-
 export interface ProviderFallbackTable {
   id: string
   userId: string

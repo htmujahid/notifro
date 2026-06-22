@@ -17,15 +17,15 @@ import {
 import { Label } from "@renderical/ui/components/label"
 
 import {
-  type TwoFactorVerifyValues,
-  twoFactorVerifySchema,
-} from "../../schemas/auth"
-import {
   useTwoFactorSendOtp,
   useTwoFactorVerifyBackupCode,
   useTwoFactorVerifyOtp,
   useTwoFactorVerifyTotp,
 } from "../../queries/auth"
+import {
+  type TwoFactorVerifyValues,
+  twoFactorVerifySchema,
+} from "../../schemas/auth"
 
 type Mode = "totp" | "otp" | "backup"
 

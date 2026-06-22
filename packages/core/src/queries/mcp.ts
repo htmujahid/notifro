@@ -22,8 +22,9 @@ export function useUpsertMcpGate() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: InferRequestType<ApiClient["api"]["mcp"]["gates"]["$post"]>["json"]) =>
-      unwrap(client.api.mcp.gates.$post({ json: body })),
+    mutationFn: (
+      body: InferRequestType<ApiClient["api"]["mcp"]["gates"]["$post"]>["json"]
+    ) => unwrap(client.api.mcp.gates.$post({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: mcpKeys.gates() }),
   })
 }

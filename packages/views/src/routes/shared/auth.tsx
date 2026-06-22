@@ -5,7 +5,9 @@ import type { RouteObject } from "react-router"
 const AuthLayout = lazy(() => import("@renderical/core/layouts/auth-layout"))
 const SignInPage = lazy(() => import("../../pages/auth/sign-in"))
 const SignUpPage = lazy(() => import("../../pages/auth/sign-up"))
-const ForgotPasswordPage = lazy(() => import("../../pages/auth/forgot-password"))
+const ForgotPasswordPage = lazy(
+  () => import("../../pages/auth/forgot-password")
+)
 const ResetPasswordPage = lazy(() => import("../../pages/auth/reset-password"))
 const VerifyEmailPage = lazy(() => import("../../pages/auth/verify-email"))
 const TwoFactorPage = lazy(() => import("../../pages/auth/two-factor"))

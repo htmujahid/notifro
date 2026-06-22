@@ -9,7 +9,9 @@ import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
 import type { ListParams } from "@renderical/api-client/types"
 
-export type CreateJourneyInput = InferRequestType<ApiClient["api"]["journeys"]["$post"]>["json"]
+export type CreateJourneyInput = InferRequestType<
+  ApiClient["api"]["journeys"]["$post"]
+>["json"]
 
 export const journeyKeys = {
   all: ["journeys"] as const,
@@ -72,8 +74,9 @@ export function useCreateJourney() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: InferRequestType<ApiClient["api"]["journeys"]["$post"]>["json"]) =>
-      unwrap(client.api.journeys.$post({ json: body })),
+    mutationFn: (
+      body: InferRequestType<ApiClient["api"]["journeys"]["$post"]>["json"]
+    ) => unwrap(client.api.journeys.$post({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: journeyKeys.lists() }),
   })
 }
@@ -82,7 +85,12 @@ export function useUpdateJourney() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, ...body }: { id: string } & InferRequestType<ApiClient["api"]["journeys"][":id"]["$patch"]>["json"]) =>
+    mutationFn: ({
+      id,
+      ...body
+    }: { id: string } & InferRequestType<
+      ApiClient["api"]["journeys"][":id"]["$patch"]
+    >["json"]) =>
       unwrap(
         client.api.journeys[":id"].$patch({
           param: { id },
@@ -123,7 +131,12 @@ export function useEnrollRecipient() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ journeyId, ...body }: { journeyId: string } & InferRequestType<ApiClient["api"]["journeys"][":id"]["enroll"]["$post"]>["json"]) =>
+    mutationFn: ({
+      journeyId,
+      ...body
+    }: { journeyId: string } & InferRequestType<
+      ApiClient["api"]["journeys"][":id"]["enroll"]["$post"]
+    >["json"]) =>
       unwrap(
         client.api.journeys[":id"].enroll.$post({
           param: { id: journeyId },
@@ -139,7 +152,8 @@ export function useEnrollRecipient() {
 export function useTriggerEvent() {
   const client = useApiClient()
   return useMutation({
-    mutationFn: (body: InferRequestType<ApiClient["api"]["events"]["$post"]>["json"]) =>
-      unwrap(client.api.events.$post({ json: body })),
+    mutationFn: (
+      body: InferRequestType<ApiClient["api"]["events"]["$post"]>["json"]
+    ) => unwrap(client.api.events.$post({ json: body })),
   })
 }

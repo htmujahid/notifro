@@ -43,8 +43,11 @@ export function useCreateRoutingRule() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: InferRequestType<ApiClient["api"]["routing"]["rules"]["$post"]>["json"]) =>
-      unwrap(client.api.routing.rules.$post({ json: body })),
+    mutationFn: (
+      body: InferRequestType<
+        ApiClient["api"]["routing"]["rules"]["$post"]
+      >["json"]
+    ) => unwrap(client.api.routing.rules.$post({ json: body })),
     onSuccess: () =>
       qc.invalidateQueries({ queryKey: routingRuleKeys.lists() }),
   })
@@ -57,7 +60,9 @@ export function useUpdateRoutingRule() {
     mutationFn: ({
       id,
       ...body
-    }: { id: string } & InferRequestType<ApiClient["api"]["routing"]["rules"][":id"]["$patch"]>["json"]) =>
+    }: { id: string } & InferRequestType<
+      ApiClient["api"]["routing"]["rules"][":id"]["$patch"]
+    >["json"]) =>
       unwrap(
         client.api.routing.rules[":id"].$patch({ param: { id }, json: body })
       ),
@@ -99,8 +104,11 @@ export function useCreateFallbackChain() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: InferRequestType<ApiClient["api"]["routing"]["chains"]["$post"]>["json"]) =>
-      unwrap(client.api.routing.chains.$post({ json: body })),
+    mutationFn: (
+      body: InferRequestType<
+        ApiClient["api"]["routing"]["chains"]["$post"]
+      >["json"]
+    ) => unwrap(client.api.routing.chains.$post({ json: body })),
     onSuccess: () =>
       qc.invalidateQueries({ queryKey: fallbackChainKeys.lists() }),
   })
@@ -113,7 +121,9 @@ export function useUpdateFallbackChain() {
     mutationFn: ({
       id,
       ...body
-    }: { id: string } & InferRequestType<ApiClient["api"]["routing"]["chains"][":id"]["$patch"]>["json"]) =>
+    }: { id: string } & InferRequestType<
+      ApiClient["api"]["routing"]["chains"][":id"]["$patch"]
+    >["json"]) =>
       unwrap(
         client.api.routing.chains[":id"].$patch({ param: { id }, json: body })
       ),
@@ -136,7 +146,10 @@ export function useDeleteFallbackChain() {
 export function useResolveRoute() {
   const client = useApiClient()
   return useMutation({
-    mutationFn: (body: InferRequestType<ApiClient["api"]["routing"]["resolve"]["$post"]>["json"]) =>
-      unwrap(client.api.routing.resolve.$post({ json: body })),
+    mutationFn: (
+      body: InferRequestType<
+        ApiClient["api"]["routing"]["resolve"]["$post"]
+      >["json"]
+    ) => unwrap(client.api.routing.resolve.$post({ json: body })),
   })
 }

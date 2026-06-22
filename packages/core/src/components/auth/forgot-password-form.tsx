@@ -7,11 +7,11 @@ import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 
+import { useForgotPassword } from "../../queries/auth"
 import {
   type ForgotPasswordValues,
   forgotPasswordSchema,
 } from "../../schemas/auth"
-import { useForgotPassword } from "../../queries/auth"
 
 export function ForgotPasswordForm() {
   const forgotPassword = useForgotPassword()

@@ -21,7 +21,9 @@ const HelpPage = lazy(() => import("../../pages/help"))
 const OnboardingPage = lazy(() => import("../../pages/onboarding"))
 const AccountProfilePage = lazy(() => import("../../pages/account/profile"))
 const AccountSecurityPage = lazy(() => import("../../pages/account/security"))
-const AccountTwoFactorPage = lazy(() => import("../../pages/account/two-factor"))
+const AccountTwoFactorPage = lazy(
+  () => import("../../pages/account/two-factor")
+)
 const DevelopersPage = lazy(() => import("../../pages/developers"))
 
 export const sharedProtectedChildren: RouteObject[] = [

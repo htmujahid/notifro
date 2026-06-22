@@ -4,12 +4,19 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
-import type { ApiClient, InferRequestType, InferResponseType } from "@renderical/api-client/client"
+import type {
+  ApiClient,
+  InferRequestType,
+  InferResponseType,
+} from "@renderical/api-client/client"
 import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
 import type { ListParams } from "@renderical/api-client/types"
 
-export type WebhookEndpoint = InferResponseType<ApiClient["api"]["channels"]["webhooks"]["$get"], 200>["data"][number]
+export type WebhookEndpoint = InferResponseType<
+  ApiClient["api"]["channels"]["webhooks"]["$get"],
+  200
+>["data"][number]
 
 export const webhookKeys = {
   all: ["webhooks"] as const,
@@ -39,8 +46,11 @@ export function useCreateWebhook() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (input: InferRequestType<ApiClient["api"]["channels"]["webhooks"]["$post"]>["json"]) =>
-      unwrap(client.api.channels.webhooks.$post({ json: input })),
+    mutationFn: (
+      input: InferRequestType<
+        ApiClient["api"]["channels"]["webhooks"]["$post"]
+      >["json"]
+    ) => unwrap(client.api.channels.webhooks.$post({ json: input })),
     onSuccess: () => qc.invalidateQueries({ queryKey: webhookKeys.lists() }),
   })
 }
@@ -49,7 +59,11 @@ export function useUpdateWebhook(id: string) {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (input: InferRequestType<ApiClient["api"]["channels"]["webhooks"][":id"]["$patch"]>["json"]) =>
+    mutationFn: (
+      input: InferRequestType<
+        ApiClient["api"]["channels"]["webhooks"][":id"]["$patch"]
+      >["json"]
+    ) =>
       unwrap(
         client.api.channels.webhooks[":id"].$patch({
           param: { id },

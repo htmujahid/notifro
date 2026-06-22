@@ -25,7 +25,9 @@ export const WebhookDtoSchema = z.object({
   updatedAt: z.string(),
 })
 
-export const WebhookWithSecretSchema = WebhookDtoSchema.extend({ secret: z.string() })
+export const WebhookWithSecretSchema = WebhookDtoSchema.extend({
+  secret: z.string(),
+})
 
 export const ListResponseSchema = z.object({
   data: z.array(WebhookDtoSchema),

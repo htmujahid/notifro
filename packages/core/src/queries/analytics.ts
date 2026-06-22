@@ -17,7 +17,9 @@ export const analyticsKeys = {
 }
 
 export function useAnalyticsSummary(
-  params: InferRequestType<ApiClient["api"]["analytics"]["summary"]["$get"]>["query"] = {},
+  params: InferRequestType<
+    ApiClient["api"]["analytics"]["summary"]["$get"]
+  >["query"] = {}
 ) {
   const client = useApiClient()
   const p: Record<string, string | undefined> = {
@@ -34,7 +36,9 @@ export function useAnalyticsSummary(
 }
 
 export function useAnalyticsTimeseries(
-  params: InferRequestType<ApiClient["api"]["analytics"]["timeseries"]["$get"]>["query"] = {},
+  params: InferRequestType<
+    ApiClient["api"]["analytics"]["timeseries"]["$get"]
+  >["query"] = {}
 ) {
   const client = useApiClient()
   const p: Record<string, string | undefined> = {
@@ -52,7 +56,9 @@ export function useAnalyticsTimeseries(
 }
 
 export function useAnalyticsChannels(
-  params: InferRequestType<ApiClient["api"]["analytics"]["channels"]["$get"]>["query"] = {},
+  params: InferRequestType<
+    ApiClient["api"]["analytics"]["channels"]["$get"]
+  >["query"] = {}
 ) {
   const client = useApiClient()
   const p: Record<string, string | undefined> = {
@@ -68,7 +74,9 @@ export function useAnalyticsChannels(
 }
 
 export function useAnalyticsTopTopics(
-  params: InferRequestType<ApiClient["api"]["analytics"]["top-topics"]["$get"]>["query"] = {},
+  params: InferRequestType<
+    ApiClient["api"]["analytics"]["top-topics"]["$get"]
+  >["query"] = {}
 ) {
   const client = useApiClient()
   const p: Record<string, string | undefined> = {

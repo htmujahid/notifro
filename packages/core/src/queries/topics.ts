@@ -48,8 +48,9 @@ export function useCreateTopic() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: InferRequestType<ApiClient["api"]["topics"]["$post"]>["json"]) =>
-      unwrap(client.api.topics.$post({ json: body })),
+    mutationFn: (
+      body: InferRequestType<ApiClient["api"]["topics"]["$post"]>["json"]
+    ) => unwrap(client.api.topics.$post({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: topicKeys.lists() }),
   })
 }
@@ -61,7 +62,9 @@ export function useUpdateTopic() {
     mutationFn: ({
       id,
       ...body
-    }: { id: string } & InferRequestType<ApiClient["api"]["topics"][":id"]["$patch"]>["json"]) =>
+    }: { id: string } & InferRequestType<
+      ApiClient["api"]["topics"][":id"]["$patch"]
+    >["json"]) =>
       unwrap(
         client.api.topics[":id"].$patch({
           param: { id },

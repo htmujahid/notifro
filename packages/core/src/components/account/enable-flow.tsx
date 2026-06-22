@@ -12,10 +12,7 @@ import {
 } from "@renderical/ui/components/input-otp"
 import { Label } from "@renderical/ui/components/label"
 
-import {
-  useTwoFactorEnable,
-  useTwoFactorVerifyTotp,
-} from "../../queries/auth"
+import { useTwoFactorEnable, useTwoFactorVerifyTotp } from "../../queries/auth"
 import {
   type TwoFactorPasswordValues,
   type TwoFactorVerifyValues,
@@ -67,7 +64,9 @@ export function EnableFlow({ onDone }: { onDone: () => void }) {
   }
 
   async function handleVerify(values: TwoFactorVerifyValues) {
-    const { error } = await verifyTotpMutation.mutateAsync({ code: values.code })
+    const { error } = await verifyTotpMutation.mutateAsync({
+      code: values.code,
+    })
     if (error) {
       verifyForm.setError("root", { message: error.message })
       return
