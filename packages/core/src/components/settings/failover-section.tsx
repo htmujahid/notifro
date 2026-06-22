@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-import { GitForkIcon, PlusIcon, TrashIcon } from "lucide-react"
+import { GitForkIcon, PlusIcon } from "lucide-react"
 
 import { Button } from "@renderical/ui/components/button"
 import { Card, CardContent } from "@renderical/ui/components/card"
@@ -10,6 +10,7 @@ import {
   useDeleteProviderFallback,
   useProviderFallbacks,
 } from "../../queries/provider-fallbacks"
+import { FailoverTable } from "./failover-table"
 
 export function FailoverSection() {
   const { data } = useProviderFallbacks()
@@ -122,45 +123,7 @@ export function FailoverSection() {
       )}
 
       {rules.length > 0 && (
-        <div className="overflow-hidden rounded-lg border border-border">
-          <table className="w-full text-sm">
-            <thead className="bg-muted/50">
-              <tr>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                  Channel
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                  Primary
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                  Fallback
-                </th>
-                <th className="px-4 py-3" />
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border bg-card">
-              {rules.map((rule) => (
-                <tr key={rule.id}>
-                  <td className="px-4 py-3 font-medium">{rule.channel}</td>
-                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
-                    {rule.primaryConnectionId.slice(0, 8)}…
-                  </td>
-                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
-                    {rule.fallbackConnectionId.slice(0, 8)}…
-                  </td>
-                  <td className="px-4 py-3">
-                    <button
-                      className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
-                      onClick={() => deleteFallback.mutate(rule.id)}
-                    >
-                      <TrashIcon className="size-3.5" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <FailoverTable data={rules} onDelete={deleteFallback.mutate} />
       )}
     </section>
   )

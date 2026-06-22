@@ -19,6 +19,7 @@ import {
   useAnalyticsSummary,
   useAnalyticsTimeseries,
 } from "../../queries/analytics"
+import { AnalyticsChannelsTable } from "./analytics-channels-table"
 
 type Granularity = "hour" | "day" | "week"
 
@@ -199,50 +200,8 @@ export function AnalyticsView() {
         <h2 className="text-sm font-medium">Delivery by channel</h2>
         {channelsLoading ? (
           <div className="h-32 rounded-xl bg-muted animate-pulse" />
-        ) : (channels?.data ?? []).length === 0 ? (
-          <p className="py-6 text-center text-sm text-muted-foreground">
-            No channel data.
-          </p>
         ) : (
-          <div className="overflow-hidden rounded-xl ring-1 ring-foreground/10">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border bg-muted/40">
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                    Channel
-                  </th>
-                  <th className="px-4 py-3 text-right font-medium text-muted-foreground">
-                    Sent
-                  </th>
-                  <th className="px-4 py-3 text-right font-medium text-muted-foreground">
-                    Delivered
-                  </th>
-                  <th className="px-4 py-3 text-right font-medium text-muted-foreground">
-                    Rate
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border bg-card">
-                {(channels?.data ?? []).map((row) => (
-                  <tr
-                    key={row.channel}
-                    className="transition-colors hover:bg-muted/30"
-                  >
-                    <td className="px-4 py-3 font-medium">{row.channel}</td>
-                    <td className="px-4 py-3 text-right text-muted-foreground">
-                      {row.sent.toLocaleString()}
-                    </td>
-                    <td className="px-4 py-3 text-right text-muted-foreground">
-                      {row.delivered.toLocaleString()}
-                    </td>
-                    <td className="px-4 py-3 text-right font-medium text-green-700 dark:text-green-400">
-                      {pct(row.deliveryRate)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <AnalyticsChannelsTable data={channels?.data ?? []} />
         )}
       </div>
     </div>

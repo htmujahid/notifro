@@ -6,7 +6,6 @@ import { PageHeader } from "@renderical/ui-primitives/components/page-header"
 import { SectionHeader } from "@renderical/ui-primitives/components/section-header"
 import { Badge } from "@renderical/ui/components/badge"
 import { Button } from "@renderical/ui/components/button"
-import { Switch } from "@renderical/ui/components/switch"
 
 import {
   useDeleteFallbackChain,
@@ -17,6 +16,7 @@ import {
 } from "../../queries/routing"
 import { CreateChainDialog } from "./create-chain-dialog"
 import { CreateRuleDialog } from "./create-rule-dialog"
+import { RoutingRulesTable } from "./routing-rules-table"
 
 export function RoutingView() {
   const [newChainOpen, setNewChainOpen] = React.useState(false)
@@ -31,10 +31,18 @@ export function RoutingView() {
   const rules = rulesQuery.data?.pages.flatMap((p) => p.data) ?? []
   const chains = chainsQuery.data?.pages.flatMap((p) => p.data) ?? []
 
-  function chainName(chainId: string | null) {
-    if (!chainId) return null
-    return chains.find((c) => c.id === chainId)?.name ?? chainId
-  }
+  const chainName = React.useCallback(
+    (chainId: string | null) => {
+      if (!chainId) return null
+      return chains.find((c) => c.id === chainId)?.name ?? chainId
+    },
+    [chains]
+  )
+
+  const handleToggle = React.useCallback(
+    (id: string, enabled: boolean) => toggleRule.mutate({ id, enabled }),
+    [toggleRule]
+  )
 
   return (
     <div className="flex flex-col gap-8">
@@ -61,88 +69,12 @@ export function RoutingView() {
             No routing rules yet. Rules override the channel list on each send.
           </p>
         ) : (
-          <div className="overflow-hidden rounded-xl ring-1 ring-foreground/10">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border bg-muted/40">
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground w-16">
-                    Priority
-                  </th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                    Match
-                  </th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                    Target
-                  </th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground w-20">
-                    Enabled
-                  </th>
-                  <th className="px-4 py-3 w-10" />
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border bg-card">
-                {rules.map((rule) => {
-                  const match = (() => {
-                    try {
-                      return JSON.parse(rule.match)
-                    } catch {
-                      return {}
-                    }
-                  })() as Record<string, unknown>
-                  const matchSummary =
-                    Object.keys(match).length === 0
-                      ? "always"
-                      : Object.entries(match)
-                          .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
-                          .join(", ")
-                  return (
-                    <tr
-                      key={rule.id}
-                      className="transition-colors hover:bg-muted/30"
-                    >
-                      <td className="px-4 py-3 font-mono text-muted-foreground">
-                        {rule.priority}
-                      </td>
-                      <td className="px-4 py-3 text-muted-foreground">
-                        {matchSummary}
-                      </td>
-                      <td className="px-4 py-3">
-                        {rule.targetChainId ? (
-                          <span className="flex items-center gap-1">
-                            <GitBranchIcon className="size-3.5 text-muted-foreground" />
-                            {chainName(rule.targetChainId) ??
-                              rule.targetChainId}
-                          </span>
-                        ) : (
-                          <Badge variant="secondary">
-                            {rule.targetChannel}
-                          </Badge>
-                        )}
-                      </td>
-                      <td className="px-4 py-3">
-                        <Switch
-                          checked={rule.enabled === 1}
-                          onCheckedChange={(v) =>
-                            toggleRule.mutate({ id: rule.id, enabled: v })
-                          }
-                        />
-                      </td>
-                      <td className="px-4 py-3">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 text-muted-foreground"
-                          onClick={() => deleteRule.mutate(rule.id)}
-                        >
-                          <Trash2Icon className="size-3.5" />
-                        </Button>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
+          <RoutingRulesTable
+            data={rules}
+            chainName={chainName}
+            onToggle={handleToggle}
+            onDelete={deleteRule.mutate}
+          />
         )}
       </section>
 

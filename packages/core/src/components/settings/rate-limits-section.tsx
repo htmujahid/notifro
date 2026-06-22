@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-import { GaugeIcon, PlusIcon, TrashIcon } from "lucide-react"
+import { GaugeIcon, PlusIcon } from "lucide-react"
 
 import { Button } from "@renderical/ui/components/button"
 import { Card, CardContent } from "@renderical/ui/components/card"
@@ -10,6 +10,7 @@ import {
   useRateLimits,
   useUpsertRateLimit,
 } from "../../queries/rate-limits"
+import { RateLimitsTable } from "./rate-limits-table"
 
 export function RateLimitsSection() {
   const { data } = useRateLimits()
@@ -131,47 +132,7 @@ export function RateLimitsSection() {
           No rate limit rules. Add one to cap sends per channel per window.
         </p>
       ) : (
-        <div className="overflow-hidden rounded-xl ring-1 ring-foreground/10">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border bg-muted/40">
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                  Channel
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                  Max sends
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                  Window
-                </th>
-                <th className="px-4 py-3" />
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border bg-card">
-              {rules.map((r) => (
-                <tr key={r.id}>
-                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
-                    {r.channel}
-                  </td>
-                  <td className="px-4 py-3 font-medium">{r.maxCount}</td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    {r.windowSeconds}s
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex justify-end">
-                      <button
-                        className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
-                        onClick={() => deleteRule.mutate(r.id)}
-                      >
-                        <TrashIcon className="size-3.5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <RateLimitsTable data={rules} onDelete={deleteRule.mutate} />
       )}
     </section>
   )
