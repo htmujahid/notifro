@@ -12,7 +12,6 @@ const tools = [
   ["list_channels", "Discover connected and healthy channels."],
   ["get_delivery_status", "Query queued / sent / delivered / failed state for a notification."],
   ["create_template", "Build a template with variables, conditionals, and localization."],
-  ["render_preview", "Preview a template rendered per channel before sending."],
   ["query_analytics", "Pull delivery, engagement, and cost metrics."],
   ["approve_action", "Approve or reject a pending MCP action that required human sign-off."],
 ];
@@ -20,7 +19,7 @@ const tools = [
 const standout = [
   { icon: Brain, title: "Agentic sending", text: "An agent decides what to send, which channel, and when — your routing and fallback logic runs underneath, consistent with API and UI sends." },
   { icon: ShieldCheck, title: "API-key scoped safety", text: "The server enforces the same API-key permissions you granted. Agents act only within those boundaries — no broader access than the key allows." },
-  { icon: Hand, title: "Human-in-the-loop", text: "Preview-before-send and approval-gate tools prevent agents from blasting messages unchecked. Nothing ships without your guardrails." },
+  { icon: Hand, title: "Human-in-the-loop", text: "Approval-gate tools prevent agents from blasting messages unchecked. Nothing ships without your guardrails." },
   { icon: ShieldCheck, title: "Rate-limited and idempotent", text: "KV-backed rate limiting at the MCP layer prevents agent loops from duplicating sends or running away. Every call is audited." },
 ];
 

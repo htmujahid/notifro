@@ -3,19 +3,18 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import PageHeader from "../components/PageHeader.astro";
 import CtaBand from "../components/CtaBand.astro";
 import { buttonVariants } from "@renderical/ui/components/button";
-import { Code2, Boxes, Webhook, FlaskConical, Terminal, ScrollText, Check } from "lucide-react";
+import { Code2, Boxes, Webhook, Terminal, ScrollText, Check } from "lucide-react";
 
 const dx = [
   { icon: Code2, title: "REST API", text: "Typed REST API (OpenAPI + Scalar reference) with consistent error envelopes, pagination, and idempotency keys." },
-  { icon: Boxes, title: "TypeScript SDK", text: "Isomorphic client with send(), preview(), listDeliveries(), and requestLog() — errors carry a typed .code." },
+  { icon: Boxes, title: "TypeScript SDK", text: "Isomorphic client with send(), listDeliveries(), and requestLog() — errors carry a typed .code." },
   { icon: Webhook, title: "Webhook ingestion", text: "Drive sends from any event source, and receive provider status callbacks on inbound receipts." },
-  { icon: FlaskConical, title: "Preview rendering", text: "Render any template per channel before sending — via the SDK preview(), the CLI, or the render_preview MCP tool." },
-  { icon: Terminal, title: "CLI", text: "Send, preview, view logs, and manage API keys directly from your terminal via the @renderical/cli package." },
+  { icon: Terminal, title: "CLI", text: "Send and view logs directly from your terminal via the @renderical/cli package." },
   { icon: ScrollText, title: "Request log & inspector", text: "Every authenticated API call is logged with method, path, status, and latency — debug any delivery in seconds." },
 ];
 ---
 
-<BaseLayout title="Developers" description="REST API, TypeScript SDK, CLI, per-channel preview, webhook ingestion, and a native MCP server — built for developer experience.">
+<BaseLayout title="Developers" description="REST API, TypeScript SDK, CLI, webhook ingestion, and a native MCP server — built for developer experience.">
   <PageHeader
     eyebrow="Developers"
     title="Built for the way you ship"

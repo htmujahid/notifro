@@ -17,9 +17,9 @@ by an LLM, while approval gates keep destructive/sending actions under human con
 - M10 send pipeline and the template/analytics routes already exist for the tools to call.
 
 ## Scope (in)
-- **`@renderical/mcp`** package: a `createMcpServer(config)` factory exposing 8 tools (`list_channels`,
+- **`@renderical/mcp`** package: a `createMcpServer(config)` factory exposing 7 tools (`list_channels`,
   `send_notification`, `schedule_notification`, `get_delivery_status`,
-  `create_template`, `render_preview`, `query_analytics`, `approve_action`), 3 resources
+  `create_template`, `query_analytics`, `approve_action`), 3 resources
   (`renderical://channels`, `://templates`, `://recent-deliveries`), and 3 prompts. Tools call the Worker
   over HTTP, threading the caller's auth.
 - **Remote endpoint**: a stateless `/mcp` route using `WebStandardStreamableHTTPServerTransport`

@@ -38,7 +38,7 @@ async function parseError(res: Response): Promise<never> {
       message = body.error.message ?? message
     }
   } catch {
-    void 0
+    message = `HTTP ${res.status}`
   }
   const err = new Error(message)
   ;(err as Error & { code: string }).code = code
