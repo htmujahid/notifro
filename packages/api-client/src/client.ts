@@ -5,14 +5,13 @@ import { ApiClientError } from "./error"
 
 export type { InferRequestType, InferResponseType } from "hono/client"
 
-const _typedClient = hc<AppType>("")
-export type ApiClient = typeof _typedClient & { baseURL: string }
-
-export function createApiClient(baseURL: string): ApiClient {
+export function createApiClient(baseURL: string) {
   const base = baseURL.replace(/\/$/, "")
   const client = hc<AppType>(base, { init: { credentials: "include" } })
   return Object.assign(client, { baseURL: base })
 }
+
+export type ApiClient = ReturnType<typeof createApiClient>
 
 async function parseError(res: Response): Promise<never> {
   let code = "internal_error"

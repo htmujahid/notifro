@@ -7,6 +7,9 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**"]
     },
+    "build:types": {
+      "outputs": ["dist-types/**"]
+    },
     "lint": {
       "dependsOn": ["^lint"]
     },
@@ -14,7 +17,7 @@
       "dependsOn": ["^format"]
     },
     "typecheck": {
-      "dependsOn": ["^typecheck"]
+      "dependsOn": ["^typecheck", "api#build:types"]
     },
     "dev": {
       "cache": false,
