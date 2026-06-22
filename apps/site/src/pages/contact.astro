@@ -7,7 +7,7 @@ import { buttonVariants } from "@renderical/ui/components/button";
 const routes = [
   ["Sales", "Plans, volume pricing, and enterprise evaluations.", "sales@renderical.com"],
   ["Support", "Help with integration, delivery, or your account.", "support@renderical.com"],
-  ["Security", "Report a vulnerability or request our SOC 2 / DPA.", "security@renderical.com"],
+  ["Security", "Report a vulnerability or ask about our security posture.", "security@renderical.com"],
 ];
 ---
 
@@ -34,13 +34,13 @@ const routes = [
 
   <section class="border-t bg-muted/30 py-16">
     <div class="mx-auto max-w-2xl px-6 text-center">
-      <h2 class="text-3xl font-semibold tracking-tight">Start free, no sales call needed</h2>
+      <h2 class="text-3xl font-semibold tracking-tight">Clone it and self-host in minutes</h2>
       <p class="mx-auto mt-3 max-w-md text-muted-foreground">
-        Create an account and send your first multi-channel notification in minutes. Reach out
-        anytime at <a href={`mailto:${site.email}`} class="text-primary underline-offset-4 hover:underline">{site.email}</a>.
+        Deploy the whole stack to your own Cloudflare account and send your first multi-channel
+        notification. Reach out anytime at <a href={`mailto:${site.email}`} class="text-primary underline-offset-4 hover:underline">{site.email}</a>.
       </p>
       <div class="mt-7 flex flex-wrap justify-center gap-3">
-        <a href={site.signupUrl} class={buttonVariants({ size: "lg" })}>Start free</a>
+        <a href={site.selfHostUrl} class={buttonVariants({ size: "lg" })}>Self-host guide</a>
         <a href="/developers" class={buttonVariants({ variant: "outline", size: "lg" })}>Read the docs</a>
       </div>
     </div>

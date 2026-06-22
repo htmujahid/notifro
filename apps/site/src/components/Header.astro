@@ -1,6 +1,7 @@
 ---
 import { site, nav } from "../config";
 import { buttonVariants } from "@renderical/ui/components/button";
+import { Github } from "lucide-react";
 import Logo from "./Logo.astro";
 ---
 
@@ -18,8 +19,10 @@ import Logo from "./Logo.astro";
     </nav>
 
     <div class="flex items-center gap-2">
-      <a href={site.signinUrl} class={`${buttonVariants({ variant: "ghost", size: "sm" })} hidden sm:inline-flex`}>Sign in</a>
-      <a href={site.signupUrl} class={buttonVariants({ size: "sm" })}>Get started</a>
+      <a href={site.repoUrl} target="_blank" rel="noopener" class={`${buttonVariants({ variant: "ghost", size: "sm" })} hidden gap-1.5 sm:inline-flex`}>
+        <Github className="size-4" /> Open source
+      </a>
+      <a href={site.selfHostUrl} class={buttonVariants({ size: "sm" })}>Self-host</a>
     </div>
   </div>
 </header>

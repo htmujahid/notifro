@@ -8,19 +8,13 @@ import { buttonVariants } from "@renderical/ui/components/button";
 import {
   Layers,
   Split,
-  ShieldCheck,
-  SlidersHorizontal,
-  RefreshCw,
   Bot,
   Clock,
-  Workflow,
   BarChart3,
   Lock,
-  Check,
   ArrowRight,
   MessageSquare,
   Mail,
-  Smartphone,
   Bell,
   Globe,
   Webhook,
@@ -38,7 +32,6 @@ const channelTiles = [
   { name: "Email", icon: Mail },
   { name: "Teams", icon: Users },
   { name: "Discord", icon: Gamepad2 },
-  { name: "Push", icon: Smartphone },
   { name: "Web Push", icon: Globe },
   { name: "In-App", icon: Bell },
   { name: "Webhooks", icon: Webhook },
@@ -48,15 +41,15 @@ const channelTiles = [
 ];
 
 const testimonials = [
-  { quote: "We deleted four internal services and a preference center nobody wanted to own. One integration now handles every notification we send.", name: "Platform lead", role: "Growth-stage SaaS" },
+  { quote: "We deleted four internal services and a pile of brittle glue code. One integration now handles every notification we send.", name: "Platform lead", role: "Growth-stage SaaS" },
   { quote: "Compose-once was the unlock. Our code stopped caring about channels — we just send, and Renderical figures out the rest.", name: "Staff engineer", role: "Fintech" },
-  { quote: "The MCP server lets our agents notify users safely. Scoped, gated, audited — exactly what we needed to ship it.", name: "Head of AI", role: "Dev tools" },
+  { quote: "The MCP server lets our agents send safely. Scoped, gated, audited — exactly what we needed to ship it.", name: "Head of AI", role: "Dev tools" },
 ];
 
 const faqs = [
-  { q: "What is Renderical?", a: "Unified notification infrastructure. You compose a message once and Renderical transforms and delivers it across every channel — Slack, email, Teams, Discord, push, in-app, webhooks, and SMS." },
-  { q: "How is it different from an email or push service?", a: "Those cover one channel. Renderical normalizes every channel behind one API, adds routing rules, fallback chains, rate limiting, a preference center, and a native MCP server so a single integration replaces five tools." },
-  { q: "Can AI agents send notifications?", a: "Yes. The native MCP server exposes sending, scheduling, and analytics as tools that agents call — authenticated with API keys, with preview and approval gates, idempotency, and full audit logging." },
+  { q: "What is Renderical?", a: "Unified notification infrastructure. You compose a message once and Renderical transforms and delivers it across every channel — Slack, email, Teams, Discord, web push, in-app, webhooks, SMS, WhatsApp, and Telegram." },
+  { q: "How is it different from an email or push service?", a: "Those cover one channel. Renderical normalizes ten channels behind one API and adds routing rules, fallback chains, provider failover, scheduling, rate limiting, and a native MCP server — so a single integration replaces a whole stack." },
+  { q: "Can AI agents send notifications?", a: "Yes. The native MCP server exposes sending, scheduling, template, and analytics tools that agents call — authenticated with API keys, with preview and approval gates, idempotency, and full request logging." },
   { q: "Can I self-host?", a: "Yes. The entire stack runs on Cloudflare Workers (D1, Queues, KV). Deploy to your own Cloudflare account and run the MCP server as a local stdio binary." },
 ];
 ---
@@ -77,15 +70,15 @@ const faqs = [
         Send notifications everywhere from <span class="text-primary">one API</span>
       </h1>
       <p class="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground text-pretty">
-        {site.name} normalizes every channel behind one compose-once API — Slack, email, Teams,
-        Discord, WhatsApp, Telegram, push, and in-app — with routing rules, fallback chains,
-        rate limiting, and a built-in preference center. One integration replaces five.
+        {site.name} normalizes ten channels behind one compose-once API — Slack, email, Teams,
+        Discord, WhatsApp, Telegram, web push, webhooks, and in-app — with routing rules,
+        fallback chains, scheduling, and rate limiting. One integration replaces your stack.
       </p>
       <div class="mt-8 flex flex-wrap justify-center gap-3">
-        <a href={site.signupUrl} class={buttonVariants({ size: "lg" })}>Start free</a>
+        <a href={site.selfHostUrl} class={buttonVariants({ size: "lg" })}>Self-host on Cloudflare</a>
         <a href="/developers" class={buttonVariants({ variant: "outline", size: "lg" })}>Read the docs</a>
       </div>
-      <p class="mt-4 text-sm text-muted-foreground">Free tier · No credit card · Self-hosted option available</p>
+      <p class="mt-4 text-sm text-muted-foreground">Open source · Runs on Cloudflare Workers · Self-host in minutes</p>
 
       <!-- Product window mock -->
       <div class="relative mx-auto mt-16 max-w-4xl text-left">
@@ -117,7 +110,7 @@ const faqs = [
                 {[
                   [MessageSquare, "Slack", "Delivered", "bg-green-500/10 text-green-600 dark:text-green-500"],
                   [Mail, "Email", "Opened", "bg-primary/10 text-primary"],
-                  [Smartphone, "Push", "Delivered", "bg-green-500/10 text-green-600 dark:text-green-500"],
+                  [Globe, "Web Push", "Delivered", "bg-green-500/10 text-green-600 dark:text-green-500"],
                   [MessageCircle, "SMS", "Fallback ready", "bg-muted text-muted-foreground"],
                 ].map(([Icon, name, status, cls]) => (
                   <div class="flex items-center justify-between py-3">
@@ -142,7 +135,7 @@ const faqs = [
       <p class="text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">One API for every channel teams ship on</p>
       <div class="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-base font-semibold text-muted-foreground/70">
         <span>Slack</span><span>Email</span><span>Teams</span><span>Discord</span>
-        <span>WhatsApp</span><span>Telegram</span><span>APNs/FCM</span><span>Webhooks</span>
+        <span>WhatsApp</span><span>Telegram</span><span>Web Push</span><span>Webhooks</span>
       </div>
     </div>
   </section>
@@ -152,8 +145,8 @@ const faqs = [
     <div class="mx-auto max-w-6xl px-6">
       <div class="mx-auto max-w-2xl text-center">
         <p class="text-sm font-semibold text-primary">The platform</p>
-        <h2 class="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Everything the five tools did — in one</h2>
-        <p class="mt-3 text-muted-foreground">Delivery, routing rules, rate limiting, compliance, and agentic sending, behind a single API.</p>
+        <h2 class="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Everything your notification stack did — in one</h2>
+        <p class="mt-3 text-muted-foreground">Delivery, routing rules, scheduling, rate limiting, and agentic sending, behind a single API.</p>
       </div>
 
       <div class="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -210,20 +203,18 @@ const faqs = [
           </div>
         </div>
 
-        <!-- D: preferences -->
+        <!-- D: scheduling -->
         <div class="group rounded-2xl border bg-card p-6 transition hover:border-foreground/20">
           <div class="flex items-center gap-2.5">
-            <span class="flex size-9 items-center justify-center rounded-lg border bg-muted/50"><SlidersHorizontal className="size-5" /></span>
-            <h3 class="font-semibold">Preference center</h3>
+            <span class="flex size-9 items-center justify-center rounded-lg border bg-muted/50"><Clock className="size-5" /></span>
+            <h3 class="font-semibold">Scheduling & quiet hours</h3>
           </div>
-          <p class="mt-2 text-sm text-muted-foreground">Per-channel opt-in, digests, and compliant unsubscribe.</p>
-          <div class="mt-4 space-y-2.5">
-            {[["Product updates", true], ["Weekly digest", true], ["Marketing", false]].map(([label, on]) => (
-              <div class="flex items-center justify-between text-sm">
+          <p class="mt-2 text-sm text-muted-foreground">Timezone-aware send-at, cron recurring sends, and quiet-hour windows.</p>
+          <div class="mt-4 space-y-2.5 text-sm">
+            {[["Send-at", "timezone-aware"], ["Recurring", "cron schedule"], ["Quiet hours", "never disturb"]].map(([label, detail]) => (
+              <div class="flex items-center justify-between">
                 <span class="text-muted-foreground">{label}</span>
-                <span class={`relative h-5 w-9 rounded-full transition ${on ? "bg-primary" : "bg-muted-foreground/25"}`}>
-                  <span class={`absolute top-0.5 size-4 rounded-full bg-white transition-all ${on ? "right-0.5" : "left-0.5"}`}></span>
-                </span>
+                <span class="rounded-md border bg-background px-2 py-0.5 text-xs font-medium">{detail}</span>
               </div>
             ))}
           </div>
@@ -300,7 +291,7 @@ const faqs = [
     <div class="mx-auto max-w-6xl px-6">
       <div class="rounded-2xl border bg-primary/5 px-6 py-12">
         <div class="grid gap-8 text-center sm:grid-cols-2 lg:grid-cols-4">
-          {[["11+", "Channels, one API"], ["99.99%", "Delivery uptime SLA"], ["9", "Native MCP tools"], ["Edge-native", "Cloudflare Workers"]].map(([num, lbl]) => (
+          {[["10", "Channels, one API"], ["8", "Native MCP tools"], ["100%", "Edge-native runtime"], ["Self-host", "Your Cloudflare account"]].map(([num, lbl]) => (
             <div>
               <div class="text-4xl font-semibold tracking-tight text-primary">{num}</div>
               <div class="mt-1 text-sm text-muted-foreground">{lbl}</div>

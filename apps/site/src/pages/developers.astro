@@ -6,20 +6,20 @@ import { buttonVariants } from "@renderical/ui/components/button";
 import { Code2, Boxes, Webhook, FlaskConical, Terminal, ScrollText, Check } from "lucide-react";
 
 const dx = [
-  { icon: Code2, title: "REST API", text: "Typed REST API with consistent error envelopes, keyset pagination, and idempotency keys." },
-  { icon: Boxes, title: "TypeScript SDK", text: "Typed JS/TS client with send(), preview(), listDeliveries(), and key management built in." },
-  { icon: Webhook, title: "Webhook ingestion", text: "Drive sends from any event source with signed delivery webhooks." },
-  { icon: FlaskConical, title: "Sandbox / test mode", text: "Pass a test-mode API key or the X-Renderical-Sandbox header to get per-channel previews without real delivery." },
-  { icon: Terminal, title: "CLI", text: "Send, preview, tail logs, and manage keys directly from your terminal via the @renderical/cli package." },
-  { icon: ScrollText, title: "Request log & inspector", text: "Every API call is logged with method, path, status, and latency — debug any delivery in seconds." },
+  { icon: Code2, title: "REST API", text: "Typed REST API (OpenAPI + Scalar reference) with consistent error envelopes, pagination, and idempotency keys." },
+  { icon: Boxes, title: "TypeScript SDK", text: "Isomorphic client with send(), preview(), listDeliveries(), and requestLog() — errors carry a typed .code." },
+  { icon: Webhook, title: "Webhook ingestion", text: "Drive sends from any event source, and receive provider status callbacks on inbound receipts." },
+  { icon: FlaskConical, title: "Preview rendering", text: "Render any template per channel before sending — via the SDK preview(), the CLI, or the render_preview MCP tool." },
+  { icon: Terminal, title: "CLI", text: "Send, preview, view logs, and manage API keys directly from your terminal via the @renderical/cli package." },
+  { icon: ScrollText, title: "Request log & inspector", text: "Every authenticated API call is logged with method, path, status, and latency — debug any delivery in seconds." },
 ];
 ---
 
-<BaseLayout title="Developers" description="REST API, TypeScript SDK, CLI, webhook ingestion, sandbox mode, and a native MCP server — built for developer experience.">
+<BaseLayout title="Developers" description="REST API, TypeScript SDK, CLI, per-channel preview, webhook ingestion, and a native MCP server — built for developer experience.">
   <PageHeader
     eyebrow="Developers"
     title="Built for the way you ship"
-    lead="TypeScript SDK, REST API, a CLI, sandbox mode, and a native MCP server. Send your first notification in minutes."
+    lead="TypeScript SDK, REST API, a CLI, per-channel preview, and a native MCP server. Send your first notification in minutes."
   />
 
   <!-- Quickstart -->
@@ -35,8 +35,8 @@ const dx = [
           </p>
           <ul class="mt-6 space-y-3 text-sm">
             <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span>API keys: live and test modes</span></li>
-            <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span>Sandbox mode: per-channel previews without real delivery</span></li>
-            <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span>Delivery status via polling or webhook callbacks</span></li>
+            <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span>Per-channel preview rendering before you send</span></li>
+            <li class="flex gap-3"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span>Delivery status via polling or webhook receipts</span></li>
           </ul>
         </div>
         <div class="rounded-xl border bg-card p-5 font-mono text-sm leading-relaxed">
@@ -48,9 +48,9 @@ const rc = <span class="text-foreground">createRendericalClient</span>({'{'}
 {'}'});
 
 await rc.<span class="text-foreground">send</span>({'{'}
-  to: <span class="text-primary">"user@example.com"</span>,
-  template: <span class="text-primary">"welcome"</span>,
-  channels: [<span class="text-primary">"email"</span>, <span class="text-primary">"push"</span>],
+  recipient: {'{'} type: <span class="text-primary">"contact"</span>, email: <span class="text-primary">"you@example.com"</span> {'}'},
+  channels: [<span class="text-primary">"email"</span>, <span class="text-primary">"web_push"</span>],
+  content: {'{'} title: <span class="text-primary">"Welcome 🎉"</span> {'}'},
 {'}'});</code></pre>
         </div>
       </div>

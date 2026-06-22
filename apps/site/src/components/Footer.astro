@@ -10,16 +10,17 @@ const cols = [
       ["Features", "/features"],
       ["Channels", "/channels"],
       ["MCP Server", "/mcp"],
-      ["Changelog", "/changelog"],
+      ["Self-host", "/self-host"],
     ],
   },
   {
     title: "Developers",
     links: [
       ["Documentation", "/developers"],
-      ["REST & GraphQL API", "/developers#api"],
-      ["SDKs & CLI", "/developers#sdks"],
+      ["REST API", "/developers#api"],
+      ["SDK & CLI", "/developers#sdks"],
       ["MCP tools", "/mcp"],
+      ["GitHub", site.repoUrl],
       ["Status", "/status"],
     ],
   },
@@ -62,7 +63,13 @@ const cols = [
           <h4 class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{col.title}</h4>
           <ul class="mt-4 space-y-2.5">
             {col.links.map(([label, href]) => (
-              <li><a href={href} class="text-sm text-muted-foreground transition-colors hover:text-foreground">{label}</a></li>
+              <li>
+                <a
+                  href={href}
+                  {...(href.startsWith("http") ? { target: "_blank", rel: "noopener" } : {})}
+                  class="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                >{label}</a>
+              </li>
             ))}
           </ul>
         </div>
@@ -71,7 +78,7 @@ const cols = [
 
     <div class="mt-12 flex flex-col gap-2 border-t pt-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
       <span>© {year} {site.name}, Inc. All rights reserved.</span>
-      <span>SOC 2 Type II · GDPR · HIPAA-ready</span>
+      <span>Encrypted at rest · PII redaction · Self-hostable on Cloudflare</span>
     </div>
   </div>
 </footer>

@@ -1,0 +1,327 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
+import CtaBand from "../components/CtaBand.astro";
+import { site } from "../config";
+import { buttonVariants } from "@renderical/ui/components/button";
+import {
+  Boxes,
+  Database,
+  Server,
+  Globe,
+  KeyRound,
+  Clock,
+  Mail,
+  Terminal,
+  Check,
+  Github,
+  ListChecks,
+} from "lucide-react";
+
+// What you deploy
+const components = [
+  { icon: Server, title: "API Worker (apps/api)", text: "Hono backend on Cloudflare Workers: compose & send, routing, the delivery queue consumer, the cron sweep, the MCP endpoint, and better-auth." },
+  { icon: Globe, title: "Web app (apps/web)", text: "React 19 SPA dashboard, hosted on Cloudflare Pages. The desktop (Electron) and mobile (Capacitor) wrappers reuse the same build." },
+  { icon: Boxes, title: "Marketing site (apps/site)", text: "This Astro site — optional, but included in the monorepo and deployable to Cloudflare Pages." },
+  { icon: Database, title: "Edge resources", text: "D1 (SQLite), two KV namespaces, a delivery queue + dead-letter queue, the Email send binding, and an every-minute cron trigger." },
+];
+
+// Prerequisites
+const prereqs = [
+  "Node.js 20 or newer",
+  "pnpm 10+ (the repo pins pnpm@10.33.4)",
+  "A Cloudflare account (Workers Paid plan for Queues)",
+  "Wrangler CLI, authenticated via npx wrangler login",
+];
+
+// Step-by-step
+const steps = [
+  {
+    n: 1,
+    title: "Clone the repo & install",
+    body: "Renderical is a pnpm + Turborepo monorepo. Clone it, install, and authenticate Wrangler against your Cloudflare account.",
+    code: [
+      "git clone https://github.com/htmujahid/renderical.git",
+      "cd renderical",
+      "pnpm install",
+      "npx wrangler login",
+    ],
+  },
+  {
+    n: 2,
+    title: "Create the Cloudflare resources",
+    body: "From apps/api, create the D1 database, both KV namespaces, and the two queues. Copy each id Wrangler prints back — you'll paste them in the next step.",
+    code: [
+      "cd apps/api",
+      "npx wrangler d1 create renderical",
+      "npx wrangler kv namespace create renderical-auth",
+      "npx wrangler kv namespace create renderical-rate-limit",
+      "npx wrangler queues create delivery-queue",
+      "npx wrangler queues create delivery-dlq",
+    ],
+  },
+  {
+    n: 3,
+    title: "Wire the IDs into wrangler.jsonc",
+    body: "Open apps/api/wrangler.jsonc and paste the D1 database_id and the two KV ids. Bindings are DB (data), KV (auth sessions), and RATE_LIMIT_KV (rate limiting). The queue and cron config is already set.",
+    code: [
+      '"d1_databases": [',
+      '  { "binding": "DB", "database_name": "renderical", "database_id": "<your-d1-id>", "migrations_dir": "migrations" }',
+      '],',
+      '"kv_namespaces": [',
+      '  { "binding": "KV", "id": "<auth-kv-id>" },',
+      '  { "binding": "RATE_LIMIT_KV", "id": "<rate-limit-kv-id>" }',
+      ']',
+    ],
+  },
+  {
+    n: 4,
+    title: "Set your secrets",
+    body: "Store runtime secrets with wrangler secret put (or a local .dev.vars file for dev). CONNECTION_ENC_KEY and FRONTEND_URL are required; the rest unlock optional channels and OAuth.",
+    code: [
+      "npx wrangler secret put CONNECTION_ENC_KEY    # 32-byte key — encrypts channel credentials",
+      "npx wrangler secret put FRONTEND_URL          # https://app.your-domain.com",
+      "npx wrangler secret put GOOGLE_CLIENT_ID      # optional — Google OAuth",
+      "npx wrangler secret put GOOGLE_CLIENT_SECRET",
+      "npx wrangler secret put TWILIO_ACCOUNT_SID    # optional — SMS / WhatsApp / phone OTP",
+      "npx wrangler secret put TWILIO_AUTH_TOKEN",
+      "npx wrangler secret put TWILIO_FROM_NUMBER",
+      "npx wrangler secret put VAPID_PUBLIC_KEY      # optional — web push",
+    ],
+  },
+  {
+    n: 5,
+    title: "Apply the database migrations",
+    body: "Eighteen numbered SQL migrations under apps/api/migrations build the full schema — auth, connections, notifications, delivery, scheduling, templates, rate limits, API keys, and MCP. Apply them to your remote D1.",
+    code: [
+      "pnpm --filter api db:migrate:remote",
+      "# equivalent to: npx wrangler d1 migrations apply DB --remote",
+    ],
+  },
+  {
+    n: 6,
+    title: "Set up email delivery",
+    body: "The Worker uses Cloudflare's Email send binding (EMAIL) for auth OTPs and the email channel. In the Cloudflare dashboard, enable Email Routing and verify the addresses you'll send from and to.",
+    code: null,
+  },
+  {
+    n: 7,
+    title: "Deploy the API Worker",
+    body: "Publish the backend. This deploys the Worker, attaches the delivery + dead-letter queue consumers (max 5 retries), and registers the every-minute cron trigger that drives scheduled and recurring sends.",
+    code: [
+      "pnpm --filter api deploy",
+      "# wrangler deploy --minify",
+    ],
+  },
+  {
+    n: 8,
+    title: "Deploy the web app & site",
+    body: "Point the web app at your API with VITE_API_URL, then build and host apps/web (and optionally apps/site) on Cloudflare Pages or any static host.",
+    code: [
+      "# apps/web/.env",
+      "VITE_API_URL=https://api.your-domain.com",
+      "VITE_FRONTEND_URL=https://app.your-domain.com",
+      "",
+      "pnpm --filter web build    # deploy dist/ to Cloudflare Pages",
+      "pnpm --filter site build   # optional marketing site",
+    ],
+  },
+  {
+    n: 9,
+    title: "Connect the MCP server",
+    body: "The hosted MCP endpoint lives at /mcp on your API Worker and authenticates with an rk_ API key. Prefer local? Run the stdio server from @renderical/mcp with your key.",
+    code: [
+      "# remote: point any MCP client at",
+      "https://api.your-domain.com/mcp   (Authorization: Bearer rk_live_...)",
+      "",
+      "# local stdio server:",
+      "RENDERICAL_API_KEY=rk_live_... RENDERICAL_BASE_URL=https://api.your-domain.com npx @renderical/mcp",
+    ],
+  },
+];
+
+// Reference tables
+const bindings = [
+  ["DB", "D1 database", "All application data (SQLite, via Kysely)"],
+  ["KV", "KV namespace", "better-auth sessions & secondary storage"],
+  ["RATE_LIMIT_KV", "KV namespace", "Per-channel & per-account rate limiting"],
+  ["DELIVERY_Q", "Queue producer", "Enqueues per-channel deliveries"],
+  ["delivery-queue", "Queue consumer", "Delivery worker — retries with backoff (max 5)"],
+  ["delivery-dlq", "Dead-letter queue", "Captures deliveries that exhausted retries"],
+  ["EMAIL", "Email send binding", "Auth OTPs and the email channel"],
+  ["crons: * * * * *", "Cron trigger", "Sweeps due scheduled & recurring sends"],
+];
+
+const secrets = [
+  ["CONNECTION_ENC_KEY", "Required", "AES-GCM key that encrypts channel credentials at rest"],
+  ["FRONTEND_URL", "Required", "App base URL — used as the auth trusted origin"],
+  ["GOOGLE_CLIENT_ID", "Optional", "Google OAuth sign-in"],
+  ["GOOGLE_CLIENT_SECRET", "Optional", "Google OAuth sign-in"],
+  ["TWILIO_ACCOUNT_SID", "Optional", "SMS, WhatsApp & phone-number OTP"],
+  ["TWILIO_AUTH_TOKEN", "Optional", "SMS, WhatsApp & phone-number OTP"],
+  ["TWILIO_FROM_NUMBER", "Optional", "Sender number for SMS / WhatsApp"],
+  ["VAPID_PUBLIC_KEY", "Optional", "Web push (VAPID); private key is generated into KV"],
+];
+---
+
+<BaseLayout
+  title="Self-host"
+  description="A step-by-step guide to self-hosting Renderical on your own Cloudflare account — Workers, D1, KV, Queues, Email, and cron. Open source, fully under your control."
+>
+  <PageHeader
+    eyebrow="Self-host"
+    title="Run Renderical on your own Cloudflare account"
+    lead="The whole stack is open source and edge-native. Deploy the API Worker, dashboard, and MCP server to your own Cloudflare — your data, your credentials, your infrastructure."
+  />
+
+  <!-- quick actions -->
+  <section class="border-b py-10">
+    <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-3 px-6">
+      <a href={site.repoUrl} target="_blank" rel="noopener" class={`${buttonVariants({ size: "lg" })} gap-1.5`}>
+        <Github className="size-4" /> Clone on GitHub
+      </a>
+      <a href="#guide" class={buttonVariants({ variant: "outline", size: "lg" })}>Jump to the guide</a>
+    </div>
+  </section>
+
+  <!-- What you deploy -->
+  <section class="border-b py-16">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mx-auto max-w-2xl text-center">
+        <span class="inline-flex items-center gap-2 rounded-lg border bg-muted/50 px-2.5 py-1 text-xs font-semibold text-muted-foreground"><Boxes className="size-3.5" /> Architecture</span>
+        <h2 class="mt-4 text-3xl font-semibold tracking-tight">What you're deploying</h2>
+        <p class="mt-3 text-muted-foreground">One monorepo, three deployables, all running on Cloudflare's edge.</p>
+      </div>
+      <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {components.map((c) => (
+          <div class="rounded-xl border bg-card p-6">
+            <span class="flex size-9 items-center justify-center rounded-lg border bg-muted/50"><c.icon className="size-5" /></span>
+            <h3 class="mt-4 font-semibold">{c.title}</h3>
+            <p class="mt-1.5 text-sm text-muted-foreground">{c.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Prerequisites -->
+  <section class="border-b bg-muted/30 py-16">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid items-center gap-10 lg:grid-cols-[1fr_1.3fr]">
+        <div>
+          <span class="inline-flex items-center gap-2 rounded-lg border bg-background px-2.5 py-1 text-xs font-semibold text-muted-foreground"><ListChecks className="size-3.5" /> Before you start</span>
+          <h2 class="mt-4 text-3xl font-semibold tracking-tight">Prerequisites</h2>
+          <p class="mt-3 text-muted-foreground">A few minutes of setup and a Cloudflare account is all it takes. Queues require the Workers Paid plan.</p>
+        </div>
+        <ul class="grid gap-3 sm:grid-cols-2">
+          {prereqs.map((p) => (
+            <li class="flex gap-2.5 rounded-xl border bg-card p-4 text-sm"><Check className="mt-0.5 size-4 shrink-0 text-primary" /><span class="text-muted-foreground">{p}</span></li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step-by-step guide -->
+  <section class="border-b py-20" id="guide">
+    <div class="mx-auto max-w-3xl px-6">
+      <div class="text-center">
+        <span class="inline-flex items-center gap-2 rounded-lg border bg-muted/50 px-2.5 py-1 text-xs font-semibold text-muted-foreground"><Terminal className="size-3.5" /> Step by step</span>
+        <h2 class="mt-4 text-3xl font-semibold tracking-tight">Deploy in nine steps</h2>
+      </div>
+
+      <div class="mt-12 space-y-6">
+        {steps.map((s) => (
+          <div class="relative rounded-2xl border bg-card p-6">
+            <div class="flex items-center gap-3">
+              <span class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground">{s.n}</span>
+              <h3 class="font-semibold tracking-tight">{s.title}</h3>
+            </div>
+            <p class="mt-3 text-sm text-muted-foreground">{s.body}</p>
+            {s.code && (
+              <pre class="mt-4 overflow-x-auto rounded-lg bg-muted/60 p-4 font-mono text-xs leading-relaxed text-muted-foreground"><code>{s.code.join("\n")}</code></pre>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Bindings reference -->
+  <section class="border-b bg-muted/30 py-16">
+    <div class="mx-auto max-w-4xl px-6">
+      <div class="text-center">
+        <span class="inline-flex items-center gap-2 rounded-lg border bg-background px-2.5 py-1 text-xs font-semibold text-muted-foreground"><Database className="size-3.5" /> Reference</span>
+        <h2 class="mt-4 text-3xl font-semibold tracking-tight">Worker bindings</h2>
+        <p class="mt-3 text-muted-foreground">Everything the API Worker expects, declared in <code class="rounded bg-muted px-1.5 py-0.5 text-sm">apps/api/wrangler.jsonc</code>.</p>
+      </div>
+      <div class="mt-8 overflow-hidden rounded-xl border bg-card">
+        <div class="grid grid-cols-[1.2fr_1fr_2fr] border-b bg-muted/40 px-4 py-2.5 text-xs font-medium text-muted-foreground">
+          <span>Binding</span><span>Type</span><span>Purpose</span>
+        </div>
+        {bindings.map(([b, t, p], i) => (
+          <div class={`grid grid-cols-[1.2fr_1fr_2fr] items-center px-4 py-3 text-sm ${i < bindings.length - 1 ? "border-b" : ""}`}>
+            <code class="font-mono text-xs text-primary">{b}</code>
+            <span class="text-xs text-muted-foreground">{t}</span>
+            <span class="text-muted-foreground">{p}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Secrets reference -->
+  <section class="border-b py-16">
+    <div class="mx-auto max-w-4xl px-6">
+      <div class="text-center">
+        <span class="inline-flex items-center gap-2 rounded-lg border bg-muted/50 px-2.5 py-1 text-xs font-semibold text-muted-foreground"><KeyRound className="size-3.5" /> Reference</span>
+        <h2 class="mt-4 text-3xl font-semibold tracking-tight">Environment & secrets</h2>
+        <p class="mt-3 text-muted-foreground">Set with <code class="rounded bg-muted px-1.5 py-0.5 text-sm">wrangler secret put</code> (production) or <code class="rounded bg-muted px-1.5 py-0.5 text-sm">.dev.vars</code> (local).</p>
+      </div>
+      <div class="mt-8 overflow-hidden rounded-xl border bg-card">
+        <div class="grid grid-cols-[1.6fr_0.8fr_2fr] border-b bg-muted/40 px-4 py-2.5 text-xs font-medium text-muted-foreground">
+          <span>Variable</span><span>Required</span><span>Purpose</span>
+        </div>
+        {secrets.map(([v, req, p], i) => (
+          <div class={`grid grid-cols-[1.6fr_0.8fr_2fr] items-center px-4 py-3 text-sm ${i < secrets.length - 1 ? "border-b" : ""}`}>
+            <code class="font-mono text-xs text-primary">{v}</code>
+            <span class={`text-xs font-medium ${req === "Required" ? "text-foreground" : "text-muted-foreground"}`}>{req}</span>
+            <span class="text-muted-foreground">{p}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Run locally -->
+  <section class="py-16">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid items-center gap-12 lg:grid-cols-2">
+        <div>
+          <span class="inline-flex items-center gap-2 rounded-lg border bg-muted/50 px-2.5 py-1 text-xs font-semibold text-muted-foreground"><Clock className="size-3.5" /> Local development</span>
+          <h2 class="mt-4 text-3xl font-semibold tracking-tight">Try it locally first</h2>
+          <p class="mt-3 text-muted-foreground">Apply migrations to a local D1, then run the whole monorepo with Turborepo. The API serves on <code class="rounded bg-muted px-1.5 py-0.5 text-sm">:8787</code>, the web app on <code class="rounded bg-muted px-1.5 py-0.5 text-sm">:5173</code>, and this site on <code class="rounded bg-muted px-1.5 py-0.5 text-sm">:4321</code>.</p>
+          <div class="mt-6">
+            <a href={site.repoUrl} target="_blank" rel="noopener" class={`${buttonVariants({ variant: "outline" })} gap-1.5`}><Github className="size-4" /> Read the repo README</a>
+          </div>
+        </div>
+        <div class="rounded-xl border bg-card p-5">
+          <div class="flex items-center gap-2 border-b pb-3">
+            <Mail className="size-4 text-muted-foreground" />
+            <span class="font-mono text-xs text-muted-foreground">terminal</span>
+          </div>
+          <pre class="mt-4 overflow-x-auto font-mono text-xs leading-relaxed text-muted-foreground"><code>{[
+            "pnpm install",
+            "pnpm --filter api db:migrate   # local D1",
+            "pnpm dev                        # turbo: api + web + site",
+          ].join("\n")}</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    title="Your stack, your edge"
+    text="Clone Renderical, deploy it to your own Cloudflare account, and own every notification you send."
+  />
+</BaseLayout>

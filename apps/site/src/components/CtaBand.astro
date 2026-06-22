@@ -1,13 +1,14 @@
 ---
 import { site } from "../config";
 import { buttonVariants } from "@renderical/ui/components/button";
+import { Github } from "lucide-react";
 interface Props {
   title?: string;
   text?: string;
 }
 const {
-  title = "Stop stitching together five notification tools",
-  text = "Compose once, deliver everywhere, and let your agents send safely. Start free — no credit card required.",
+  title = "Own your entire notification stack",
+  text = "Compose once, deliver everywhere, and let your agents send safely — open source and self-hosted on your own Cloudflare account.",
 } = Astro.props;
 ---
 
@@ -17,8 +18,10 @@ const {
       <h2 class="mx-auto max-w-2xl text-3xl font-semibold tracking-tight">{title}</h2>
       <p class="mx-auto mt-3 max-w-xl text-muted-foreground">{text}</p>
       <div class="mt-7 flex flex-wrap justify-center gap-3">
-        <a href={site.signupUrl} class={buttonVariants({ size: "lg" })}>Start free</a>
-        <a href="/contact" class={buttonVariants({ variant: "outline", size: "lg" })}>Talk to sales</a>
+        <a href={site.selfHostUrl} class={buttonVariants({ size: "lg" })}>Self-host on Cloudflare</a>
+        <a href={site.repoUrl} target="_blank" rel="noopener" class={`${buttonVariants({ variant: "outline", size: "lg" })} gap-1.5`}>
+          <Github className="size-4" /> View on GitHub
+        </a>
       </div>
     </div>
   </div>

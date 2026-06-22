@@ -7,7 +7,6 @@ import {
   Mail,
   Users,
   Gamepad2,
-  Smartphone,
   Globe,
   Bell,
   Webhook,
@@ -22,8 +21,7 @@ const channels = [
   { name: "Gmail / SMTP", icon: Mail, transform: "Responsive HTML", note: "Branded, responsive HTML email with any SMTP provider." },
   { name: "Microsoft Teams", icon: Users, transform: "Adaptive Cards", note: "Rich adaptive cards with actions and inputs." },
   { name: "Discord", icon: Gamepad2, transform: "Embeds", note: "Rich embeds, components, and webhook delivery." },
-  { name: "Mobile Push", icon: Smartphone, transform: "APNs / FCM", note: "Native iOS and Android push with rich payloads." },
-  { name: "Web Push", icon: Globe, transform: "Service Worker", note: "Browser push via the standard Web Push protocol." },
+  { name: "Web Push", icon: Globe, transform: "VAPID / Service Worker", note: "Browser push via the standard Web Push protocol, encrypted per spec." },
   { name: "In-App Inbox", icon: Bell, transform: "Drop-in feed", note: "Embeddable notification feed with read state." },
   { name: "Webhooks", icon: Webhook, transform: "Signed JSON", note: "Generic signed webhooks with replay protection." },
   { name: "SMS", icon: MessageCircle, transform: "Plain text", note: "Reliable fallback tier across major SMS providers." },
@@ -32,7 +30,7 @@ const channels = [
 ];
 ---
 
-<BaseLayout title="Channels" description="Slack, Gmail/SMTP, Microsoft Teams, Discord, mobile & web push, in-app inbox, webhooks, and SMS — one compose-once API, automatically transformed per channel.">
+<BaseLayout title="Channels" description="Slack, email/SMTP, Microsoft Teams, Discord, web push, in-app inbox, webhooks, SMS, WhatsApp, and Telegram — one compose-once API, automatically transformed per channel.">
   <PageHeader
     eyebrow="Channels"
     title="Every channel, one integration"

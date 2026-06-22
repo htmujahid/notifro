@@ -68,7 +68,7 @@ const cases: UseCase[] = [
     label: "Lifecycle",
     icon: Sparkles,
     title: "Digests, reminders & scheduled sends",
-    desc: "Schedule one-off and recurring notifications with cron, delivery windows, and quiet hours. Reuse templates and snippets so every send stays on-brand.",
+    desc: "Schedule one-off and recurring notifications with cron, delivery windows, and quiet hours. Reuse versioned templates and your brand kit so every send stays on-brand.",
     points: [
       "Recurring sends with cron schedules",
       "Quiet hours & delivery windows",
