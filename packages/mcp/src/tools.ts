@@ -118,10 +118,6 @@ export function registerTools(server: McpServer, config: McpConfig): void {
       )
 
       if (needsApproval) {
-        const preview = await apiPost(config, "/api/notifications", args, {
-          "X-Renderical-Sandbox": "true",
-        }).catch(() => null)
-
         const pending = await apiPost<{ id: string }>(
           config,
           "/api/mcp/pending",
@@ -140,7 +136,6 @@ export function registerTools(server: McpServer, config: McpConfig): void {
             {
               requiresApproval: true,
               approvalToken: pending.id,
-              preview,
               message: `Approval required. Call approve_action with approvalToken "${pending.id}".`,
             },
             null,
@@ -168,7 +163,9 @@ export function registerTools(server: McpServer, config: McpConfig): void {
       },
     },
     async (args) => {
-      const result = await apiPost(config, "/api/schedules", args)
+      const { timezone, ...rest } = args
+      const body = timezone ? { ...rest, timezoneHint: timezone } : rest
+      const result = await apiPost(config, "/api/notifications", body)
       return text(JSON.stringify(result, null, 2))
     }
   )
@@ -207,26 +204,6 @@ export function registerTools(server: McpServer, config: McpConfig): void {
     },
     async (args) => {
       const result = await apiPost(config, "/api/templates", args)
-      return text(JSON.stringify(result, null, 2))
-    }
-  )
-
-  server.registerTool(
-    "render_preview",
-    {
-      description: "Render a notification as a sandbox preview without sending",
-      inputSchema: {
-        recipient: RecipientSchema,
-        channels: z.array(z.string()),
-        content: ContentSchema,
-        templateId: z.string().optional(),
-        templateData: z.record(z.string(), z.unknown()).optional(),
-      },
-    },
-    async (args) => {
-      const result = await apiPost(config, "/api/notifications", args, {
-        "X-Renderical-Sandbox": "true",
-      })
       return text(JSON.stringify(result, null, 2))
     }
   )

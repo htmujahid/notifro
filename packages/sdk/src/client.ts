@@ -9,21 +9,21 @@ export interface RendericalClientOptions {
   apiKey: string
 }
 
-export interface SendOptions extends ComposePayload {
-  sandbox?: boolean
+export type SendOptions = ComposePayload
+
+export interface DeliveryResult {
+  id: string
+  channel: string
+  status: string
+  error: string | null
 }
 
 export interface SendResult {
   id: string
   status: string
-  deliveries: Array<{
-    id: string
-    channel: string
-    status: string
-    error: string | null
-  }>
-  sandboxMode?: boolean
-  previews?: Record<string, unknown>
+  deliveries: DeliveryResult[]
+  sendAt?: string
+  scheduled?: boolean
 }
 
 async function parseError(res: Response): Promise<never> {
@@ -38,7 +38,7 @@ async function parseError(res: Response): Promise<never> {
       message = body.error.message ?? message
     }
   } catch {
-    // ignore
+    void 0
   }
   const err = new Error(message)
   ;(err as Error & { code: string }).code = code
@@ -72,19 +72,7 @@ export function createRendericalClient(options: RendericalClientOptions) {
 
   return {
     send(payload: SendOptions): Promise<SendResult> {
-      const { sandbox, ...rest } = payload
-      return request<SendResult>(
-        "POST",
-        "/api/notifications",
-        rest,
-        sandbox ? { "X-Renderical-Sandbox": "true" } : undefined
-      )
-    },
-
-    preview(payload: ComposePayload): Promise<SendResult> {
-      return request<SendResult>("POST", "/api/notifications", payload, {
-        "X-Renderical-Sandbox": "true",
-      })
+      return request<SendResult>("POST", "/api/notifications", payload)
     },
 
     listDeliveries(params?: Record<string, string | number>): Promise<
@@ -92,7 +80,7 @@ export function createRendericalClient(options: RendericalClientOptions) {
         id: string
         channel: string
         status: string
-        error: string | null
+        lastError: string | null
         createdAt: string
       }>
     > {

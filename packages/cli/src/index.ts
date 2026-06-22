@@ -16,10 +16,9 @@ function usage() {
 
 Commands:
   send --channel <ch> --to <addr> --subject <s> --body <b>
-  preview --channel <ch> --to <addr> --subject <s> --body <b>
   logs [--limit <n>]
-  keys list
-  keys create --name <n> [--mode live|test]
+
+API keys are managed from the Renderical dashboard.
 
 Environment:
   RENDERICAL_API_KEY   Your Renderical API key (required)
@@ -44,7 +43,7 @@ function parseArgs(argv: string[]): Record<string, string> {
   return result
 }
 
-async function cmdSend(args: string[], sandbox: boolean) {
+async function cmdSend(args: string[]) {
   const flags = parseArgs(args)
   const channel = flags["channel"] ?? "email"
   const to = flags["to"]
@@ -61,12 +60,9 @@ async function cmdSend(args: string[], sandbox: boolean) {
     content: { subject, body: { text: body } },
     recipient: { type: "contact" as const, email: to },
     channels: [channel as import("@renderical/api-client/types").ChannelType],
-    sandbox,
   }
 
-  const result = sandbox
-    ? await client.preview(payload)
-    : await client.send(payload)
+  const result = await client.send(payload)
 
   console.log(JSON.stringify(result, null, 2))
 }
@@ -79,31 +75,6 @@ async function cmdLogs(args: string[]) {
   console.log(JSON.stringify(result, null, 2))
 }
 
-async function cmdKeysList() {
-  const client = getClient()
-  const result = await client.keys.list()
-  for (const key of result.data) {
-    const mode = (key.metadata?.mode ?? "live") as string
-    console.log(
-      `${key.id}  ${mode.padEnd(5)}  ${key.start ?? key.prefix ?? ""}...  ${key.name ?? ""}  last used: ${key.lastRequest ?? "never"}`
-    )
-  }
-}
-
-async function cmdKeysCreate(args: string[]) {
-  const flags = parseArgs(args)
-  const name = flags["name"]
-  const mode = (flags["mode"] ?? "live") as "live" | "test"
-  if (!name) {
-    console.error("Error: --name is required")
-    process.exit(1)
-  }
-  const client = getClient()
-  const result = await client.keys.create(name, mode)
-  console.log(`Created ${mode} key: ${result.key}`)
-  console.log("(This is the only time the key is shown. Store it securely.)")
-}
-
 async function main() {
   const argv = process.argv.slice(2)
   const cmd = argv[0]
@@ -111,21 +82,9 @@ async function main() {
 
   try {
     if (cmd === "send") {
-      await cmdSend(rest, false)
-    } else if (cmd === "preview") {
-      await cmdSend(rest, true)
+      await cmdSend(rest)
     } else if (cmd === "logs") {
       await cmdLogs(rest)
-    } else if (cmd === "keys") {
-      const sub = rest[0]
-      if (sub === "list") {
-        await cmdKeysList()
-      } else if (sub === "create") {
-        await cmdKeysCreate(rest.slice(1))
-      } else {
-        usage()
-        process.exit(1)
-      }
     } else {
       usage()
       if (cmd) process.exit(1)
