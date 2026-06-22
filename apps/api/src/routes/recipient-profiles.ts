@@ -50,72 +50,73 @@ const getRoute = createRoute({
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)
 
-export default router.openapi(getRoute, async (c) => {
-  const userId = c.var.user!.id
+export default router
+  .openapi(getRoute, async (c) => {
+    const userId = c.var.user!.id
 
-  const profile = await c.var.db
-    .selectFrom("recipient_profile")
-    .where("userId", "=", userId)
-    .selectAll()
-    .executeTakeFirst()
+    const profile = await c.var.db
+      .selectFrom("recipient_profile")
+      .where("userId", "=", userId)
+      .selectAll()
+      .executeTakeFirst()
 
-  if (!profile) {
-    return c.json({
-      userId,
-      timezone: null,
-      quietHoursStart: null,
-      quietHoursEnd: null,
-      updatedAt: new Date().toISOString(),
-    })
-  }
+    if (!profile) {
+      return c.json({
+        userId,
+        timezone: null,
+        quietHoursStart: null,
+        quietHoursEnd: null,
+        updatedAt: new Date().toISOString(),
+      })
+    }
 
-  return c.json(profile)
-})
+    return c.json(profile)
+  })
 
   .openapi(patchRoute, async (c) => {
-  const userId = c.var.user!.id
-  const body = c.req.valid("json")
-  const ts = new Date().toISOString()
+    const userId = c.var.user!.id
+    const body = c.req.valid("json")
+    const ts = new Date().toISOString()
 
-  const existing = await c.var.db
-    .selectFrom("recipient_profile")
-    .where("userId", "=", userId)
-    .selectAll()
-    .executeTakeFirst()
-
-  if (existing) {
-    await c.var.db
-      .updateTable("recipient_profile")
-      .set({
-        ...(body.timezone !== undefined && { timezone: body.timezone }),
-        ...(body.quietHoursStart !== undefined && {
-          quietHoursStart: body.quietHoursStart,
-        }),
-        ...(body.quietHoursEnd !== undefined && {
-          quietHoursEnd: body.quietHoursEnd,
-        }),
-        updatedAt: ts,
-      })
+    const existing = await c.var.db
+      .selectFrom("recipient_profile")
       .where("userId", "=", userId)
-      .execute()
-  } else {
-    await c.var.db
-      .insertInto("recipient_profile")
-      .values({
-        userId,
-        timezone: body.timezone ?? null,
-        quietHoursStart: body.quietHoursStart ?? null,
-        quietHoursEnd: body.quietHoursEnd ?? null,
-        updatedAt: ts,
-      })
-      .execute()
-  }
+      .selectAll()
+      .executeTakeFirst()
 
-  const profile = await c.var.db
-    .selectFrom("recipient_profile")
-    .where("userId", "=", userId)
-    .selectAll()
-    .executeTakeFirstOrThrow()
+    if (existing) {
+      await c.var.db
+        .updateTable("recipient_profile")
+        .set({
+          ...(body.timezone !== undefined && { timezone: body.timezone }),
+          ...(body.quietHoursStart !== undefined && {
+            quietHoursStart: body.quietHoursStart,
+          }),
+          ...(body.quietHoursEnd !== undefined && {
+            quietHoursEnd: body.quietHoursEnd,
+          }),
+          updatedAt: ts,
+        })
+        .where("userId", "=", userId)
+        .execute()
+    } else {
+      await c.var.db
+        .insertInto("recipient_profile")
+        .values({
+          userId,
+          timezone: body.timezone ?? null,
+          quietHoursStart: body.quietHoursStart ?? null,
+          quietHoursEnd: body.quietHoursEnd ?? null,
+          updatedAt: ts,
+        })
+        .execute()
+    }
 
-  return c.json(profile)
-})
+    const profile = await c.var.db
+      .selectFrom("recipient_profile")
+      .where("userId", "=", userId)
+      .selectAll()
+      .executeTakeFirstOrThrow()
+
+    return c.json(profile)
+  })

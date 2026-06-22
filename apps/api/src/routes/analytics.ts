@@ -139,159 +139,163 @@ const topTopicsRoute = createRoute({
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)
 
-export default router.openapi(summaryRoute, async (c) => {
-  const userId = c.var.user!.id
-  const db = c.var.db
-  const { from, to, channel } = c.req.valid("query")
-  const fromStr = from ?? defaultFrom()
-  const toStr = to ?? defaultTo()
+export default router
+  .openapi(summaryRoute, async (c) => {
+    const userId = c.var.user!.id
+    const db = c.var.db
+    const { from, to, channel } = c.req.valid("query")
+    const fromStr = from ?? defaultFrom()
+    const toStr = to ?? defaultTo()
 
-  const row = await db
-    .selectFrom("delivery")
-    .where("userId", "=", userId)
-    .where("createdAt", ">=", fromStr)
-    .where("createdAt", "<=", toStr)
-    .$if(!!channel, (qb) => qb.where("channel", "=", channel!))
-    .select([
-      sql<number>`COUNT(*)`.as("sent"),
-      sql<number>`COUNT("deliveredAt")`.as("delivered"),
-      sql<number>`COUNT("openedAt")`.as("opened"),
-      sql<number>`COUNT("clickedAt")`.as("clicked"),
-      sql<number>`COUNT("bouncedAt")`.as("bounced"),
-    ])
-    .executeTakeFirstOrThrow()
+    const row = await db
+      .selectFrom("delivery")
+      .where("userId", "=", userId)
+      .where("createdAt", ">=", fromStr)
+      .where("createdAt", "<=", toStr)
+      .$if(!!channel, (qb) => qb.where("channel", "=", channel!))
+      .select([
+        sql<number>`COUNT(*)`.as("sent"),
+        sql<number>`COUNT("deliveredAt")`.as("delivered"),
+        sql<number>`COUNT("openedAt")`.as("opened"),
+        sql<number>`COUNT("clickedAt")`.as("clicked"),
+        sql<number>`COUNT("bouncedAt")`.as("bounced"),
+      ])
+      .executeTakeFirstOrThrow()
 
-  const sent = Number(row.sent)
-  const delivered = Number(row.delivered)
-  const opened = Number(row.opened)
-  const clicked = Number(row.clicked)
-  const bounced = Number(row.bounced)
+    const sent = Number(row.sent)
+    const delivered = Number(row.delivered)
+    const opened = Number(row.opened)
+    const clicked = Number(row.clicked)
+    const bounced = Number(row.bounced)
 
-  return c.json({
-    sent,
-    delivered,
-    opened,
-    clicked,
-    bounced,
-    deliveryRate: sent > 0 ? Math.round((delivered / sent) * 1000) / 10 : 0,
-    openRate: delivered > 0 ? Math.round((opened / delivered) * 1000) / 10 : 0,
-    clickRate: opened > 0 ? Math.round((clicked / opened) * 1000) / 10 : 0,
+    return c.json({
+      sent,
+      delivered,
+      opened,
+      clicked,
+      bounced,
+      deliveryRate: sent > 0 ? Math.round((delivered / sent) * 1000) / 10 : 0,
+      openRate:
+        delivered > 0 ? Math.round((opened / delivered) * 1000) / 10 : 0,
+      clickRate: opened > 0 ? Math.round((clicked / opened) * 1000) / 10 : 0,
+    })
   })
-})
 
   .openapi(timeseriesRoute, async (c) => {
-  const userId = c.var.user!.id
-  const db = c.var.db
-  const { from, to, granularity, channel } = c.req.valid("query")
-  const fromStr = from ?? defaultFrom()
-  const toStr = to ?? defaultTo()
-  const fmt = GRANULARITY_FMT[granularity ?? "day"]
-  const periodExpr = sql.raw(`strftime('${fmt}', "createdAt")`)
+    const userId = c.var.user!.id
+    const db = c.var.db
+    const { from, to, granularity, channel } = c.req.valid("query")
+    const fromStr = from ?? defaultFrom()
+    const toStr = to ?? defaultTo()
+    const fmt = GRANULARITY_FMT[granularity ?? "day"]
+    const periodExpr = sql.raw(`strftime('${fmt}', "createdAt")`)
 
-  const rows = await db
-    .selectFrom("delivery")
-    .where("userId", "=", userId)
-    .where("createdAt", ">=", fromStr)
-    .where("createdAt", "<=", toStr)
-    .$if(!!channel, (qb) => qb.where("channel", "=", channel!))
-    .select([
-      periodExpr.as("period"),
-      sql<number>`COUNT(*)`.as("sent"),
-      sql<number>`COUNT("deliveredAt")`.as("delivered"),
-      sql<number>`COUNT("openedAt")`.as("opened"),
-      sql<number>`COUNT("clickedAt")`.as("clicked"),
-    ])
-    .groupBy(periodExpr)
-    .orderBy(periodExpr)
-    .execute()
+    const rows = await db
+      .selectFrom("delivery")
+      .where("userId", "=", userId)
+      .where("createdAt", ">=", fromStr)
+      .where("createdAt", "<=", toStr)
+      .$if(!!channel, (qb) => qb.where("channel", "=", channel!))
+      .select([
+        periodExpr.as("period"),
+        sql<number>`COUNT(*)`.as("sent"),
+        sql<number>`COUNT("deliveredAt")`.as("delivered"),
+        sql<number>`COUNT("openedAt")`.as("opened"),
+        sql<number>`COUNT("clickedAt")`.as("clicked"),
+      ])
+      .groupBy(periodExpr)
+      .orderBy(periodExpr)
+      .execute()
 
-  return c.json({
-    data: rows.map((r) => ({
-      period: r.period as string,
-      sent: Number(r.sent),
-      delivered: Number(r.delivered),
-      opened: Number(r.opened),
-      clicked: Number(r.clicked),
-    })),
-  })
-})
-
-  .openapi(channelsRoute, async (c) => {
-  const userId = c.var.user!.id
-  const db = c.var.db
-  const { from, to } = c.req.valid("query")
-  const fromStr = from ?? defaultFrom()
-  const toStr = to ?? defaultTo()
-
-  const rows = await db
-    .selectFrom("delivery")
-    .where("userId", "=", userId)
-    .where("createdAt", ">=", fromStr)
-    .where("createdAt", "<=", toStr)
-    .select([
-      "channel",
-      sql<number>`COUNT(*)`.as("sent"),
-      sql<number>`COUNT("deliveredAt")`.as("delivered"),
-      sql<number>`COUNT("openedAt")`.as("opened"),
-      sql<number>`COUNT("clickedAt")`.as("clicked"),
-      sql<number>`COUNT("bouncedAt")`.as("bounced"),
-    ])
-    .groupBy("channel")
-    .orderBy(sql`COUNT(*)`, "desc")
-    .execute()
-
-  return c.json({
-    data: rows.map((r) => {
-      const sent = Number(r.sent)
-      const delivered = Number(r.delivered)
-      return {
-        channel: r.channel,
-        sent,
-        delivered,
+    return c.json({
+      data: rows.map((r) => ({
+        period: r.period as string,
+        sent: Number(r.sent),
+        delivered: Number(r.delivered),
         opened: Number(r.opened),
         clicked: Number(r.clicked),
-        bounced: Number(r.bounced),
-        deliveryRate: sent > 0 ? Math.round((delivered / sent) * 1000) / 10 : 0,
-      }
-    }),
+      })),
+    })
   })
-})
+
+  .openapi(channelsRoute, async (c) => {
+    const userId = c.var.user!.id
+    const db = c.var.db
+    const { from, to } = c.req.valid("query")
+    const fromStr = from ?? defaultFrom()
+    const toStr = to ?? defaultTo()
+
+    const rows = await db
+      .selectFrom("delivery")
+      .where("userId", "=", userId)
+      .where("createdAt", ">=", fromStr)
+      .where("createdAt", "<=", toStr)
+      .select([
+        "channel",
+        sql<number>`COUNT(*)`.as("sent"),
+        sql<number>`COUNT("deliveredAt")`.as("delivered"),
+        sql<number>`COUNT("openedAt")`.as("opened"),
+        sql<number>`COUNT("clickedAt")`.as("clicked"),
+        sql<number>`COUNT("bouncedAt")`.as("bounced"),
+      ])
+      .groupBy("channel")
+      .orderBy(sql`COUNT(*)`, "desc")
+      .execute()
+
+    return c.json({
+      data: rows.map((r) => {
+        const sent = Number(r.sent)
+        const delivered = Number(r.delivered)
+        return {
+          channel: r.channel,
+          sent,
+          delivered,
+          opened: Number(r.opened),
+          clicked: Number(r.clicked),
+          bounced: Number(r.bounced),
+          deliveryRate:
+            sent > 0 ? Math.round((delivered / sent) * 1000) / 10 : 0,
+        }
+      }),
+    })
+  })
 
   .openapi(topTopicsRoute, async (c) => {
-  const userId = c.var.user!.id
-  const db = c.var.db
-  const { from, to } = c.req.valid("query")
-  const fromStr = from ?? defaultFrom()
-  const toStr = to ?? defaultTo()
-  const topicExpr = sql.raw(`json_extract(n."payload", '$.topicKey')`)
+    const userId = c.var.user!.id
+    const db = c.var.db
+    const { from, to } = c.req.valid("query")
+    const fromStr = from ?? defaultFrom()
+    const toStr = to ?? defaultTo()
+    const topicExpr = sql.raw(`json_extract(n."payload", '$.topicKey')`)
 
-  const rows = await db
-    .selectFrom("delivery as d")
-    .innerJoin("notification as n", "n.id", "d.notificationId")
-    .where("d.userId", "=", userId)
-    .where("d.createdAt", ">=", fromStr)
-    .where("d.createdAt", "<=", toStr)
-    .where(sql<boolean>`${topicExpr} IS NOT NULL`)
-    .select([
-      topicExpr.as("topicKey"),
-      sql<number>`COUNT(*)`.as("sent"),
-      sql<number>`COUNT(d."deliveredAt")`.as("delivered"),
-    ])
-    .groupBy(topicExpr)
-    .orderBy(sql`COUNT(*)`, "desc")
-    .limit(10)
-    .execute()
+    const rows = await db
+      .selectFrom("delivery as d")
+      .innerJoin("notification as n", "n.id", "d.notificationId")
+      .where("d.userId", "=", userId)
+      .where("d.createdAt", ">=", fromStr)
+      .where("d.createdAt", "<=", toStr)
+      .where(sql<boolean>`${topicExpr} IS NOT NULL`)
+      .select([
+        topicExpr.as("topicKey"),
+        sql<number>`COUNT(*)`.as("sent"),
+        sql<number>`COUNT(d."deliveredAt")`.as("delivered"),
+      ])
+      .groupBy(topicExpr)
+      .orderBy(sql`COUNT(*)`, "desc")
+      .limit(10)
+      .execute()
 
-  return c.json({
-    data: rows.map((r) => {
-      const sent = Number(r.sent)
-      const delivered = Number(r.delivered)
-      return {
-        topicKey: r.topicKey as string,
-        sent,
-        delivered,
-        deliveryRate: sent > 0 ? Math.round((delivered / sent) * 1000) / 10 : 0,
-      }
-    }),
+    return c.json({
+      data: rows.map((r) => {
+        const sent = Number(r.sent)
+        const delivered = Number(r.delivered)
+        return {
+          topicKey: r.topicKey as string,
+          sent,
+          delivered,
+          deliveryRate:
+            sent > 0 ? Math.round((delivered / sent) * 1000) / 10 : 0,
+        }
+      }),
+    })
   })
-})

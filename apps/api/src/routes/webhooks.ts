@@ -169,161 +169,162 @@ function toDto(row: WebhookRow): z.infer<typeof WebhookDtoSchema> {
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)
 
-export default router.openapi(listRoute, async (c) => {
-  const parsed = c.req.valid("query")
-  const userId = c.var.user!.id
-  const baseQuery = c.var.db
-    .selectFrom("webhook_endpoint")
-    .where("userId", "=", userId)
-    .selectAll()
+export default router
+  .openapi(listRoute, async (c) => {
+    const parsed = c.req.valid("query")
+    const userId = c.var.user!.id
+    const baseQuery = c.var.db
+      .selectFrom("webhook_endpoint")
+      .where("userId", "=", userId)
+      .selectAll()
 
-  const { qb, getPage } = applyListQuery(baseQuery, parsed, {
-    sortable: SORTABLE,
-    filterable: FILTERABLE,
-    defaultSort: DEFAULT_SORT,
+    const { qb, getPage } = applyListQuery(baseQuery, parsed, {
+      sortable: SORTABLE,
+      filterable: FILTERABLE,
+      defaultSort: DEFAULT_SORT,
+    })
+
+    const rows = await qb.execute()
+    const page = getPage(rows as unknown as WebhookRow[])
+
+    return c.json({ data: page.data.map(toDto), nextCursor: page.nextCursor })
   })
-
-  const rows = await qb.execute()
-  const page = getPage(rows as unknown as WebhookRow[])
-
-  return c.json({ data: page.data.map(toDto), nextCursor: page.nextCursor })
-})
 
   .openapi(createRoute_, async (c) => {
-  const body = c.req.valid("json")
-  const userId = c.var.user!.id
+    const body = c.req.valid("json")
+    const userId = c.var.user!.id
 
-  const secret = generateSecret()
-  const id = newId()
-  const ts = now()
+    const secret = generateSecret()
+    const id = newId()
+    const ts = now()
 
-  await c.var.db
-    .insertInto("webhook_endpoint")
-    .values({
-      id,
-      userId,
-      url: body.url,
-      secret: await encrypt(secret, c.env.CONNECTION_ENC_KEY),
-      secretLast4: secret.slice(-4),
-      headers: body.headers ? JSON.stringify(body.headers) : null,
-      description: body.description ?? null,
-      enabled: body.enabled ? 1 : 0,
-      createdAt: ts,
-      updatedAt: ts,
-    })
-    .execute()
+    await c.var.db
+      .insertInto("webhook_endpoint")
+      .values({
+        id,
+        userId,
+        url: body.url,
+        secret: await encrypt(secret, c.env.CONNECTION_ENC_KEY),
+        secretLast4: secret.slice(-4),
+        headers: body.headers ? JSON.stringify(body.headers) : null,
+        description: body.description ?? null,
+        enabled: body.enabled ? 1 : 0,
+        createdAt: ts,
+        updatedAt: ts,
+      })
+      .execute()
 
-  const row = await c.var.db
-    .selectFrom("webhook_endpoint")
-    .where("id", "=", id)
-    .where("userId", "=", userId)
-    .selectAll()
-    .executeTakeFirstOrThrow()
+    const row = await c.var.db
+      .selectFrom("webhook_endpoint")
+      .where("id", "=", id)
+      .where("userId", "=", userId)
+      .selectAll()
+      .executeTakeFirstOrThrow()
 
-  return c.json({ ...toDto(row as WebhookRow), secret }, 201)
-})
+    return c.json({ ...toDto(row as WebhookRow), secret }, 201)
+  })
 
   .openapi(updateRoute, async (c) => {
-  const { id } = c.req.param()
-  const body = c.req.valid("json")
-  const userId = c.var.user!.id
+    const { id } = c.req.param()
+    const body = c.req.valid("json")
+    const userId = c.var.user!.id
 
-  const existing = await c.var.db
-    .selectFrom("webhook_endpoint")
-    .where("id", "=", id)
-    .where("userId", "=", userId)
-    .selectAll()
-    .executeTakeFirst()
+    const existing = await c.var.db
+      .selectFrom("webhook_endpoint")
+      .where("id", "=", id)
+      .where("userId", "=", userId)
+      .selectAll()
+      .executeTakeFirst()
 
-  if (!existing) throw Errors.notFound("Webhook endpoint")
+    if (!existing) throw Errors.notFound("Webhook endpoint")
 
-  const updates: Record<string, unknown> = { updatedAt: now() }
-  if (body.url !== undefined) updates.url = body.url
-  if (body.description !== undefined) updates.description = body.description
-  if (body.enabled !== undefined) updates.enabled = body.enabled ? 1 : 0
-  if (body.headers !== undefined)
-    updates.headers = body.headers ? JSON.stringify(body.headers) : null
+    const updates: Record<string, unknown> = { updatedAt: now() }
+    if (body.url !== undefined) updates.url = body.url
+    if (body.description !== undefined) updates.description = body.description
+    if (body.enabled !== undefined) updates.enabled = body.enabled ? 1 : 0
+    if (body.headers !== undefined)
+      updates.headers = body.headers ? JSON.stringify(body.headers) : null
 
-  await c.var.db
-    .updateTable("webhook_endpoint")
-    .set(updates)
-    .where("id", "=", id)
-    .where("userId", "=", userId)
-    .execute()
+    await c.var.db
+      .updateTable("webhook_endpoint")
+      .set(updates)
+      .where("id", "=", id)
+      .where("userId", "=", userId)
+      .execute()
 
-  const row = await c.var.db
-    .selectFrom("webhook_endpoint")
-    .where("id", "=", id)
-    .where("userId", "=", userId)
-    .selectAll()
-    .executeTakeFirstOrThrow()
+    const row = await c.var.db
+      .selectFrom("webhook_endpoint")
+      .where("id", "=", id)
+      .where("userId", "=", userId)
+      .selectAll()
+      .executeTakeFirstOrThrow()
 
-  return c.json(toDto(row as WebhookRow))
-})
+    return c.json(toDto(row as WebhookRow))
+  })
 
   .openapi(deleteRoute, async (c) => {
-  const { id } = c.req.param()
-  const userId = c.var.user!.id
+    const { id } = c.req.param()
+    const userId = c.var.user!.id
 
-  const existing = await c.var.db
-    .selectFrom("webhook_endpoint")
-    .where("id", "=", id)
-    .where("userId", "=", userId)
-    .select("id")
-    .executeTakeFirst()
+    const existing = await c.var.db
+      .selectFrom("webhook_endpoint")
+      .where("id", "=", id)
+      .where("userId", "=", userId)
+      .select("id")
+      .executeTakeFirst()
 
-  if (!existing) throw Errors.notFound("Webhook endpoint")
+    if (!existing) throw Errors.notFound("Webhook endpoint")
 
-  await c.var.db
-    .deleteFrom("webhook_endpoint")
-    .where("id", "=", id)
-    .where("userId", "=", userId)
-    .execute()
+    await c.var.db
+      .deleteFrom("webhook_endpoint")
+      .where("id", "=", id)
+      .where("userId", "=", userId)
+      .execute()
 
-  return c.json({ ok: true })
-})
+    return c.json({ ok: true })
+  })
 
   .openapi(testRoute, async (c) => {
-  const { id } = c.req.param()
-  const userId = c.var.user!.id
+    const { id } = c.req.param()
+    const userId = c.var.user!.id
 
-  const row = await c.var.db
-    .selectFrom("webhook_endpoint")
-    .where("id", "=", id)
-    .where("userId", "=", userId)
-    .selectAll()
-    .executeTakeFirst()
+    const row = await c.var.db
+      .selectFrom("webhook_endpoint")
+      .where("id", "=", id)
+      .where("userId", "=", userId)
+      .selectAll()
+      .executeTakeFirst()
 
-  if (!row) throw Errors.notFound("Webhook endpoint")
+    if (!row) throw Errors.notFound("Webhook endpoint")
 
-  const secret = await decrypt(row.secret, c.env.CONNECTION_ENC_KEY)
-  const headers = row.headers
-    ? (JSON.parse(row.headers) as Record<string, string>)
-    : null
+    const secret = await decrypt(row.secret, c.env.CONNECTION_ENC_KEY)
+    const headers = row.headers
+      ? (JSON.parse(row.headers) as Record<string, string>)
+      : null
 
-  const sampleBody = JSON.stringify({
-    schemaVersion: "1",
-    event: "webhook.test",
-    content: {
-      title: "Renderical test",
-      body: { text: "This is a test webhook delivery." },
-    },
-    recipient: { type: "user", userId },
-    sentAt: now(),
+    const sampleBody = JSON.stringify({
+      schemaVersion: "1",
+      event: "webhook.test",
+      content: {
+        title: "Renderical test",
+        body: { text: "This is a test webhook delivery." },
+      },
+      recipient: { type: "user", userId },
+      sentAt: now(),
+    })
+
+    const result = await postWebhook(
+      row.url,
+      secret,
+      sampleBody,
+      newId(),
+      headers
+    )
+
+    return c.json({
+      ok: result.ok,
+      status: result.status,
+      latencyMs: result.latencyMs,
+      error: result.error,
+    })
   })
-
-  const result = await postWebhook(
-    row.url,
-    secret,
-    sampleBody,
-    newId(),
-    headers
-  )
-
-  return c.json({
-    ok: result.ok,
-    status: result.status,
-    latencyMs: result.latencyMs,
-    error: result.error,
-  })
-})

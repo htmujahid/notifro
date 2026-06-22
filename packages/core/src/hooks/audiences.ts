@@ -133,7 +133,8 @@ export function useUpdateSegment() {
       id: string
       name?: string
       filter?: Record<string, unknown>
-    }) => unwrap(client.api.segments[":id"].$patch({ param: { id }, json: body })),
+    }) =>
+      unwrap(client.api.segments[":id"].$patch({ param: { id }, json: body })),
     onSuccess: (_, { id }) => {
       qc.invalidateQueries({ queryKey: segmentKeys.lists() })
       qc.invalidateQueries({ queryKey: segmentKeys.detail(id) })

@@ -5,10 +5,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
-import type {
-  ApiClient,
-  InferRequestType,
-} from "@renderical/api-client/client"
+import type { ApiClient, InferRequestType } from "@renderical/api-client/client"
 import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
 import type {

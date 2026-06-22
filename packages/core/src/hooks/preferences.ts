@@ -68,7 +68,8 @@ export function useUpdateTopic() {
       description?: string | null
       defaultOptIn?: boolean
       transactional?: boolean
-    }) => unwrap(client.api.topics[":id"].$patch({ param: { id }, json: body })),
+    }) =>
+      unwrap(client.api.topics[":id"].$patch({ param: { id }, json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: topicKeys.all }),
   })
 }

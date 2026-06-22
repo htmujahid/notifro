@@ -34,7 +34,9 @@ export function useDeleteProviderFallback() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (id: string) =>
-      unwrap(client.api["provider-fallbacks"][":id"].$delete({ param: { id } })),
+      unwrap(
+        client.api["provider-fallbacks"][":id"].$delete({ param: { id } })
+      ),
     onSuccess: () => qc.invalidateQueries({ queryKey: failoverKeys.all }),
   })
 }

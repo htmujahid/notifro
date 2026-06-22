@@ -5,10 +5,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
-import type {
-  ApiClient,
-  InferRequestType,
-} from "@renderical/api-client/client"
+import type { ApiClient, InferRequestType } from "@renderical/api-client/client"
 import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
 import type { ListParams } from "@renderical/api-client/types"
@@ -77,7 +74,8 @@ export function useCreateTemplate() {
       content: Record<string, unknown>
       variables?: Array<{ key: string; type?: string; required?: boolean }>
       localeStrings?: Record<string, Record<string, string>>
-    }) => unwrap(client.api.templates.$post({ json: body as CreateTemplateBody })),
+    }) =>
+      unwrap(client.api.templates.$post({ json: body as CreateTemplateBody })),
     onSuccess: () => qc.invalidateQueries({ queryKey: templateKeys.lists() }),
   })
 }

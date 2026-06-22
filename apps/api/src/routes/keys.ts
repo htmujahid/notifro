@@ -101,32 +101,33 @@ function mapKey(k: {
   }
 }
 
-export default router.openapi(listRoute, async (c) => {
-  const result = await authInstance.api.listApiKeys({
-    headers: c.req.raw.headers,
+export default router
+  .openapi(listRoute, async (c) => {
+    const result = await authInstance.api.listApiKeys({
+      headers: c.req.raw.headers,
+    })
+    return c.json({ data: result.apiKeys.map(mapKey), nextCursor: null })
   })
-  return c.json({ data: result.apiKeys.map(mapKey), nextCursor: null })
-})
 
   .openapi(createRoute_, async (c) => {
-  const body = c.req.valid("json")
-  const result = await authInstance.api.createApiKey({
-    body: {
-      name: body.name,
-      userId: c.var.user!.id,
-      prefix: body.mode === "test" ? "rk_test_" : "rk_live_",
-      metadata: { mode: body.mode },
-    },
+    const body = c.req.valid("json")
+    const result = await authInstance.api.createApiKey({
+      body: {
+        name: body.name,
+        userId: c.var.user!.id,
+        prefix: body.mode === "test" ? "rk_test_" : "rk_live_",
+        metadata: { mode: body.mode },
+      },
+    })
+    return c.json({ ...mapKey(result), key: result.key }, 201)
   })
-  return c.json({ ...mapKey(result), key: result.key }, 201)
-})
 
   .openapi(deleteRoute, async (c) => {
-  const { id } = c.req.param()
-  const result = await authInstance.api.deleteApiKey({
-    body: { keyId: id },
-    headers: c.req.raw.headers,
+    const { id } = c.req.param()
+    const result = await authInstance.api.deleteApiKey({
+      body: { keyId: id },
+      headers: c.req.raw.headers,
+    })
+    if (!result.success) throw Errors.notFound("api_key")
+    return c.body(null, 204)
   })
-  if (!result.success) throw Errors.notFound("api_key")
-  return c.body(null, 204)
-})

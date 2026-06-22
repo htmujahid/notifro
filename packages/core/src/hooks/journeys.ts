@@ -4,10 +4,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
-import type {
-  ApiClient,
-  InferRequestType,
-} from "@renderical/api-client/client"
+import type { ApiClient, InferRequestType } from "@renderical/api-client/client"
 import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
 import type { ListParams } from "@renderical/api-client/types"
@@ -84,7 +81,8 @@ export function useCreateJourney() {
       name: string
       trigger?: Record<string, unknown>
       steps: Record<string, unknown>
-    }) => unwrap(client.api.journeys.$post({ json: body as CreateJourneyBody })),
+    }) =>
+      unwrap(client.api.journeys.$post({ json: body as CreateJourneyBody })),
     onSuccess: () => qc.invalidateQueries({ queryKey: journeyKeys.lists() }),
   })
 }

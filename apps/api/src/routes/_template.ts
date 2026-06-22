@@ -67,33 +67,34 @@ const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 
 router.use("*", requireAuth)
 
-export default router.openapi(listRoute, async (c) => {
-  const parsed = c.req.valid("query")
-  const userId = c.var.user!.id
-  const baseQuery = c.var.db
-    .selectFrom("user")
-    .where("id", "=", userId)
-    .selectAll()
+export default router
+  .openapi(listRoute, async (c) => {
+    const parsed = c.req.valid("query")
+    const userId = c.var.user!.id
+    const baseQuery = c.var.db
+      .selectFrom("user")
+      .where("id", "=", userId)
+      .selectAll()
 
-  const { qb, getPage } = applyListQuery(baseQuery, parsed, {
-    sortable: SORTABLE,
-    filterable: FILTERABLE,
-    defaultSort: DEFAULT_SORT,
-  })
+    const { qb, getPage } = applyListQuery(baseQuery, parsed, {
+      sortable: SORTABLE,
+      filterable: FILTERABLE,
+      defaultSort: DEFAULT_SORT,
+    })
 
-  const rows = await qb.execute()
-  const page = getPage(rows as Record<string, unknown>[])
-  return c.json({
-    data: page.data as z.infer<typeof ExampleItemSchema>[],
-    nextCursor: page.nextCursor,
+    const rows = await qb.execute()
+    const page = getPage(rows as Record<string, unknown>[])
+    return c.json({
+      data: page.data as z.infer<typeof ExampleItemSchema>[],
+      nextCursor: page.nextCursor,
+    })
   })
-})
 
   .openapi(createRoute_, async (c) => {
-  const body = c.req.valid("json")
-  if (!body.name) throw Errors.badRequest("Name is required")
-  return c.json(
-    { id: "stub", name: body.name, createdAt: new Date().toISOString() },
-    201
-  )
-})
+    const body = c.req.valid("json")
+    if (!body.name) throw Errors.badRequest("Name is required")
+    return c.json(
+      { id: "stub", name: body.name, createdAt: new Date().toISOString() },
+      201
+    )
+  })

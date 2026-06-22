@@ -1,6 +1,5 @@
-import { hc } from "hono/client"
-
 import type { AppType } from "api/app-type"
+import { hc } from "hono/client"
 
 import { ApiClientError } from "./error"
 

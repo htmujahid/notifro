@@ -20,9 +20,9 @@ export function ComplianceSection() {
   const [showForm, setShowForm] = useState(false)
   const [channel, setChannel] = useState("")
   const [address, setAddress] = useState("")
-  const [reason, setReason] = useState<
-    "hard_bounce" | "complaint" | "manual"
-  >("manual")
+  const [reason, setReason] = useState<"hard_bounce" | "complaint" | "manual">(
+    "manual"
+  )
 
   const suppressions = suppData?.pages.flatMap((p) => p.data) ?? []
   const consentEvents = ceData?.pages.flatMap((p) => p.data) ?? []

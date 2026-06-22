@@ -97,7 +97,9 @@ export function usePushRegistration(): UsePushRegistrationResult {
       const sub = await reg.pushManager.getSubscription()
       if (sub) {
         await unwrap(
-          client.api.push.unsubscribe.$post({ json: { endpoint: sub.endpoint } })
+          client.api.push.unsubscribe.$post({
+            json: { endpoint: sub.endpoint },
+          })
         )
         await sub.unsubscribe()
       }

@@ -106,125 +106,126 @@ function now() {
   return new Date().toISOString()
 }
 
-export default router.openapi(listRoute, async (c) => {
-  const parsed = c.req.valid("query")
-  const userId = c.var.user!.id
-  const db = c.var.db
+export default router
+  .openapi(listRoute, async (c) => {
+    const parsed = c.req.valid("query")
+    const userId = c.var.user!.id
+    const db = c.var.db
 
-  const baseQuery = db
-    .selectFrom("rate_limit_rule")
-    .where("userId", "=", userId)
-    .selectAll()
+    const baseQuery = db
+      .selectFrom("rate_limit_rule")
+      .where("userId", "=", userId)
+      .selectAll()
 
-  const { qb, getPage } = applyListQuery(baseQuery, parsed, {
-    sortable: SORTABLE,
-    filterable: FILTERABLE,
-    defaultSort: DEFAULT_SORT,
+    const { qb, getPage } = applyListQuery(baseQuery, parsed, {
+      sortable: SORTABLE,
+      filterable: FILTERABLE,
+      defaultSort: DEFAULT_SORT,
+    })
+
+    const rows = await qb.execute()
+    const page = getPage(rows as Record<string, unknown>[])
+
+    return c.json({
+      data: page.data as z.infer<typeof RateLimitRuleDtoSchema>[],
+      nextCursor: page.nextCursor,
+    })
   })
-
-  const rows = await qb.execute()
-  const page = getPage(rows as Record<string, unknown>[])
-
-  return c.json({
-    data: page.data as z.infer<typeof RateLimitRuleDtoSchema>[],
-    nextCursor: page.nextCursor,
-  })
-})
 
   .openapi(createRoute_, async (c) => {
-  const body = c.req.valid("json")
-  const userId = c.var.user!.id
-  const db = c.var.db
-  const ts = now()
-  const id = newId()
+    const body = c.req.valid("json")
+    const userId = c.var.user!.id
+    const db = c.var.db
+    const ts = now()
+    const id = newId()
 
-  await db
-    .insertInto("rate_limit_rule")
-    .values({
-      id,
-      userId,
-      channel: body.channel,
-      maxCount: body.maxCount,
-      windowSeconds: body.windowSeconds,
-      createdAt: ts,
-      updatedAt: ts,
-    })
-    .onConflict((oc) =>
-      oc.columns(["userId", "channel"]).doUpdateSet({
+    await db
+      .insertInto("rate_limit_rule")
+      .values({
+        id,
+        userId,
+        channel: body.channel,
         maxCount: body.maxCount,
         windowSeconds: body.windowSeconds,
+        createdAt: ts,
         updatedAt: ts,
       })
-    )
-    .execute()
+      .onConflict((oc) =>
+        oc.columns(["userId", "channel"]).doUpdateSet({
+          maxCount: body.maxCount,
+          windowSeconds: body.windowSeconds,
+          updatedAt: ts,
+        })
+      )
+      .execute()
 
-  const row = await db
-    .selectFrom("rate_limit_rule")
-    .where("userId", "=", userId)
-    .where("channel", "=", body.channel)
-    .selectAll()
-    .executeTakeFirstOrThrow()
+    const row = await db
+      .selectFrom("rate_limit_rule")
+      .where("userId", "=", userId)
+      .where("channel", "=", body.channel)
+      .selectAll()
+      .executeTakeFirstOrThrow()
 
-  return c.json(row, 201)
-})
+    return c.json(row, 201)
+  })
 
   .openapi(patchRoute, async (c) => {
-  const { id } = c.req.param()
-  const body = c.req.valid("json")
-  const userId = c.var.user!.id
-  const db = c.var.db
-  const ts = now()
+    const { id } = c.req.param()
+    const body = c.req.valid("json")
+    const userId = c.var.user!.id
+    const db = c.var.db
+    const ts = now()
 
-  const existing = await db
-    .selectFrom("rate_limit_rule")
-    .where("id", "=", id)
-    .where("userId", "=", userId)
-    .selectAll()
-    .executeTakeFirst()
+    const existing = await db
+      .selectFrom("rate_limit_rule")
+      .where("id", "=", id)
+      .where("userId", "=", userId)
+      .selectAll()
+      .executeTakeFirst()
 
-  if (!existing) throw Errors.notFound("rate_limit_rule")
+    if (!existing) throw Errors.notFound("rate_limit_rule")
 
-  const updates: Record<string, unknown> = { updatedAt: ts }
-  if (body.maxCount !== undefined) updates.maxCount = body.maxCount
-  if (body.windowSeconds !== undefined)
-    updates.windowSeconds = body.windowSeconds
+    const updates: Record<string, unknown> = { updatedAt: ts }
+    if (body.maxCount !== undefined) updates.maxCount = body.maxCount
+    if (body.windowSeconds !== undefined)
+      updates.windowSeconds = body.windowSeconds
 
-  await db
-    .updateTable("rate_limit_rule")
-    .set(updates)
-    .where("id", "=", id)
-    .where("userId", "=", userId)
-    .execute()
+    await db
+      .updateTable("rate_limit_rule")
+      .set(updates)
+      .where("id", "=", id)
+      .where("userId", "=", userId)
+      .execute()
 
-  const updated = await db
-    .selectFrom("rate_limit_rule")
-    .where("id", "=", id)
-    .where("userId", "=", userId)
-    .selectAll()
-    .executeTakeFirstOrThrow()
+    const updated = await db
+      .selectFrom("rate_limit_rule")
+      .where("id", "=", id)
+      .where("userId", "=", userId)
+      .selectAll()
+      .executeTakeFirstOrThrow()
 
-  return c.json(updated)
-})
+    return c.json(updated)
+  })
 
   .openapi(deleteRoute, async (c) => {
-  const { id } = c.req.param()
-  const userId = c.var.user!.id
-  const db = c.var.db
+    const { id } = c.req.param()
+    const userId = c.var.user!.id
+    const db = c.var.db
 
-  const existing = await db
-    .selectFrom("rate_limit_rule")
-    .where("id", "=", id)
-    .where("userId", "=", userId)
-    .select("id")
-    .executeTakeFirst()
+    const existing = await db
+      .selectFrom("rate_limit_rule")
+      .where("id", "=", id)
+      .where("userId", "=", userId)
+      .select("id")
+      .executeTakeFirst()
 
-  if (!existing) throw Errors.notFound("rate_limit_rule")
+    if (!existing) throw Errors.notFound("rate_limit_rule")
 
-  await db
-    .deleteFrom("rate_limit_rule")
-    .where("id", "=", id)
-    .where("userId", "=", userId)
-    .execute()
+    await db
+      .deleteFrom("rate_limit_rule")
+      .where("id", "=", id)
+      .where("userId", "=", userId)
+      .execute()
 
-  return c.body(null, 204)
-})
+    return c.body(null, 204)
+  })
