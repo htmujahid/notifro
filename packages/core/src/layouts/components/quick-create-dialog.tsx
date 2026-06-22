@@ -20,7 +20,7 @@ import {
 const OPTIONS = [
   {
     title: "Notification",
-    description: "Send a one-off notification to a channel or audience.",
+    description: "Send a one-off notification to a channel.",
     icon: BellIcon,
     url: "/create",
   },

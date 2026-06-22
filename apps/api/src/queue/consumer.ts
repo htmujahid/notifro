@@ -3,7 +3,6 @@ import { resolveSendConnection } from "../channels/resolve"
 import type { ChannelType, Connection } from "../channels/types"
 import { db } from "../db/client"
 import { redactPii } from "../lib/redact"
-import { renderTemplate } from "../lib/render-template"
 import { escalateChain } from "../lib/routing"
 
 export interface DeliveryQueueMessage {
@@ -237,41 +236,7 @@ async function processDelivery(
   }
 
   const attempts = delivery.attempts + 1
-  let payload = JSON.parse(notification.payload)
-
-  if (
-    notification.mode === "broadcast" &&
-    delivery.recipientId &&
-    notification.templateId
-  ) {
-    const recipient = await database
-      .selectFrom("recipient")
-      .where("id", "=", delivery.recipientId)
-      .select(["attributes", "locale"])
-      .executeTakeFirst()
-    if (recipient) {
-      const template = await database
-        .selectFrom("template")
-        .where("id", "=", notification.templateId)
-        .where("userId", "=", delivery.userId)
-        .selectAll()
-        .executeTakeFirst()
-      if (template) {
-        const baseData = notification.templateData
-          ? (JSON.parse(notification.templateData) as Record<string, unknown>)
-          : {}
-        const recipientAttrs = recipient.attributes
-          ? (JSON.parse(recipient.attributes) as Record<string, unknown>)
-          : {}
-        const rendered = renderTemplate(
-          template,
-          { ...baseData, ...recipientAttrs },
-          recipient.locale ?? undefined
-        )
-        payload = { ...payload, content: rendered }
-      }
-    }
-  }
+  const payload = JSON.parse(notification.payload)
 
   let ok = false
   let providerMessageId: string | null = null
@@ -283,7 +248,6 @@ async function processDelivery(
       db: database,
       notificationId,
       deliveryId,
-      recipientId: delivery.recipientId ?? undefined,
       env,
     })
     ok = result.ok
@@ -407,7 +371,6 @@ async function processDelivery(
           openedAt: null,
           clickedAt: null,
           bouncedAt: null,
-          recipientId: delivery.recipientId,
           variantId: null,
           chainId: null,
           chainStepIndex: null,

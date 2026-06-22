@@ -15,8 +15,6 @@ import {
   Settings2Icon,
   ShieldIcon,
   UserIcon,
-  UsersIcon,
-  WorkflowIcon,
 } from "lucide-react"
 import { useNavigate } from "react-router"
 
@@ -83,14 +81,6 @@ export function SearchCommand({
             <CommandItem onSelect={() => run("/channels")}>
               <RadioIcon />
               Channels
-            </CommandItem>
-            <CommandItem onSelect={() => run("/audiences")}>
-              <UsersIcon />
-              Audiences
-            </CommandItem>
-            <CommandItem onSelect={() => run("/journeys")}>
-              <WorkflowIcon />
-              Journeys
             </CommandItem>
             <CommandItem onSelect={() => run("/routing")}>
               <RouteIcon />

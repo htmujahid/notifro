@@ -77,11 +77,6 @@ export interface DeliveryTable {
   openedAt: string | null
   clickedAt: string | null
   bouncedAt: string | null
-  recipientId: ColumnType<
-    string | null,
-    string | null | undefined,
-    string | null
-  >
   variantId: ColumnType<string | null, string | null | undefined, string | null>
   chainId: ColumnType<string | null, string | null | undefined, string | null>
   chainStepIndex: ColumnType<
@@ -231,14 +226,6 @@ export interface RecurringSendTable {
   updatedAt: string
 }
 
-export interface RecipientProfileTable {
-  userId: string
-  timezone: string | null
-  quietHoursStart: string | null
-  quietHoursEnd: string | null
-  updatedAt: string
-}
-
 export interface TemplateVersionTable {
   id: string
   userId: string
@@ -265,28 +252,6 @@ export interface BrandKitTable {
   logoUrl: string | null
   colors: string | null
   fontStack: string | null
-  createdAt: string
-  updatedAt: string
-}
-
-export interface RecipientTable {
-  id: string
-  userId: string
-  externalId: string | null
-  email: string | null
-  phone: string | null
-  locale: string | null
-  timezone: string | null
-  attributes: string | null
-  createdAt: string
-  updatedAt: string
-}
-
-export interface SegmentTable {
-  id: string
-  userId: string
-  name: string
-  filter: string
   createdAt: string
   updatedAt: string
 }
@@ -366,39 +331,6 @@ export interface ProviderFallbackTable {
   createdAt: string
 }
 
-export interface JourneyTable {
-  id: string
-  userId: string
-  name: string
-  status: string
-  trigger: string | null
-  steps: string
-  createdAt: string
-  updatedAt: string
-}
-
-export interface JourneyRunTable {
-  id: string
-  userId: string
-  journeyId: string
-  recipientId: string
-  status: string
-  currentStepId: string
-  nextResumeAt: string | null
-  context: string
-  createdAt: string
-  updatedAt: string
-}
-
-export interface JourneyEventTable {
-  id: string
-  userId: string
-  name: string
-  recipientId: string | null
-  payload: string
-  createdAt: string
-}
-
 export interface DB {
   user: UserTable
   connection: ConnectionTable
@@ -416,10 +348,7 @@ export interface DB {
   idempotency_key: IdempotencyKeyTable
   dead_letter: DeadLetterTable
   scheduled_message: ScheduledMessageTable
-  recipient_profile: RecipientProfileTable
   recurring_send: RecurringSendTable
-  recipient: RecipientTable
-  segment: SegmentTable
   fallback_chain: FallbackChainTable
   routing_rule: RoutingRuleTable
   rate_limit_rule: RateLimitRuleTable
@@ -427,8 +356,5 @@ export interface DB {
   api_request_log: ApiRequestLogTable
   mcp_approval_gate: McpApprovalGateTable
   mcp_pending_action: McpPendingActionTable
-  journey: JourneyTable
-  journey_run: JourneyRunTable
-  journey_event: JourneyEventTable
   provider_fallback: ProviderFallbackTable
 }

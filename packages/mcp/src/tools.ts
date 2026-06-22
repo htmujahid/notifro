@@ -70,7 +70,6 @@ const RecipientSchema = z.union([
     email: z.string().optional(),
     phone: z.string().optional(),
   }),
-  z.object({ type: z.literal("segment"), segmentId: z.string() }),
 ])
 
 const ContentSchema = z

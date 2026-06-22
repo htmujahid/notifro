@@ -9,7 +9,6 @@ import { applyListQuery } from "../lib/list-query"
 import { checkRateLimit } from "../lib/rate-limit"
 import { renderTemplate, resolveTemplate } from "../lib/render-template"
 import { resolveRoute } from "../lib/routing"
-import { resolveSegment } from "../lib/segment-resolver"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
 import type { DeliveryQueueMessage } from "../queue/consumer"
@@ -64,8 +63,6 @@ export default router
     const { db } = c.var
     const userId = c.var.user!.id
     const ts = now()
-
-    const isSegmentSend = rawPayload.recipient?.type === "segment"
 
     let resolvedTemplateId: string | null = null
     let payload: ComposePayload
@@ -169,31 +166,29 @@ export default router
     let resolvedChainId: string | null = null
     let resolvedChainSteps: import("../lib/routing").ChainStep[] | null = null
 
-    if (!isSegmentSend) {
-      const explicitChainId = (rawPayload as { chainId?: string }).chainId
-      if (explicitChainId) {
-        const chain = await db
-          .selectFrom("fallback_chain")
-          .where("id", "=", explicitChainId)
-          .where("userId", "=", userId)
-          .selectAll()
-          .executeTakeFirst()
-        if (chain) {
-          resolvedChainId = chain.id
-          resolvedChainSteps = JSON.parse(
-            chain.steps
-          ) as import("../lib/routing").ChainStep[]
-        }
-      } else {
-        const notificationInput = {
-          priority: (payload.metadata as { priority?: string } | undefined)
-            ?.priority,
-        }
-        const routeResult = await resolveRoute(db, userId, notificationInput)
-        if (routeResult?.type === "chain") {
-          resolvedChainId = routeResult.chainId
-          resolvedChainSteps = routeResult.steps
-        }
+    const explicitChainId = (rawPayload as { chainId?: string }).chainId
+    if (explicitChainId) {
+      const chain = await db
+        .selectFrom("fallback_chain")
+        .where("id", "=", explicitChainId)
+        .where("userId", "=", userId)
+        .selectAll()
+        .executeTakeFirst()
+      if (chain) {
+        resolvedChainId = chain.id
+        resolvedChainSteps = JSON.parse(
+          chain.steps
+        ) as import("../lib/routing").ChainStep[]
+      }
+    } else {
+      const notificationInput = {
+        priority: (payload.metadata as { priority?: string } | undefined)
+          ?.priority,
+      }
+      const routeResult = await resolveRoute(db, userId, notificationInput)
+      if (routeResult?.type === "chain") {
+        resolvedChainId = routeResult.chainId
+        resolvedChainSteps = routeResult.steps
       }
     }
 
@@ -203,7 +198,6 @@ export default router
 
     const notifId = newId()
     const subject = payload.content?.subject ?? payload.content?.title ?? null
-    const mode = isSegmentSend ? "broadcast" : "transactional"
 
     await db
       .insertInto("notification")
@@ -213,7 +207,7 @@ export default router
         payload: JSON.stringify(payload),
         subject,
         channels: JSON.stringify(channels),
-        mode,
+        mode: "transactional",
         status: "queued",
         templateId: resolvedTemplateId,
         templateData:
@@ -241,7 +235,6 @@ export default router
       openedAt: string | null
       clickedAt: string | null
       bouncedAt: string | null
-      recipientId: string | null
       variantId: string | null
       chainId: string | null
       chainStepIndex: number | null
@@ -252,189 +245,28 @@ export default router
 
     const deliveries: DeliveryRow[] = []
 
-    if (isSegmentSend) {
-      const segmentId = (
-        payload.recipient as { type: "segment"; segmentId: string }
-      ).segmentId
-      const recipients = await resolveSegment(db, userId, segmentId)
+    for (const channel of channels) {
+      const adapter = getAdapter(channel as ChannelType)
+      const dts = now()
+      const deliveryId = newId()
 
-      for (const recip of recipients) {
-        for (const channel of channels) {
-          const dts = now()
-          const deliveryId = newId()
-          const recipientAddr = recip.email ?? recip.phone ?? ""
+      const recipientAddr = await resolveRecipientAddress(
+        db,
+        channel,
+        payload.recipient as Record<string, unknown>
+      )
 
-          const rlResult = await checkRateLimit(
-            c.env.RATE_LIMIT_KV,
-            db,
-            userId,
-            channel,
-            Date.now()
-          )
-          if (rlResult === "exceeded") {
-            await db
-              .insertInto("delivery")
-              .values({
-                id: deliveryId,
-                userId,
-                notificationId: notifId,
-                channel,
-                recipient: recipientAddr,
-                status: "skipped",
-                providerMessageId: null,
-                error: "rate_limit:exceeded",
-                attempts: 0,
-                nextRetryAt: null,
-                lastError: "rate_limit:exceeded",
-                deliveredAt: null,
-                openedAt: null,
-                clickedAt: null,
-                bouncedAt: null,
-                recipientId: recip.id,
-                variantId: null,
-                createdAt: dts,
-                updatedAt: dts,
-              })
-              .execute()
-            continue
-          }
-
-          const conn = await resolveSendConnection(
-            db,
-            userId,
-            channel as ChannelType,
-            dts
-          )
-
-          if (!conn) {
-            await db
-              .insertInto("delivery")
-              .values({
-                id: deliveryId,
-                userId,
-                notificationId: notifId,
-                channel,
-                recipient: recipientAddr,
-                status: "failed",
-                providerMessageId: null,
-                error: `No active ${channel} connection`,
-                attempts: 1,
-                nextRetryAt: null,
-                lastError: `No active ${channel} connection`,
-                deliveredAt: null,
-                openedAt: null,
-                clickedAt: null,
-                bouncedAt: null,
-                recipientId: recip.id,
-                variantId: null,
-                createdAt: dts,
-                updatedAt: dts,
-              })
-              .execute()
-            continue
-          }
-
-          await db
-            .insertInto("delivery")
-            .values({
-              id: deliveryId,
-              userId,
-              notificationId: notifId,
-              channel,
-              recipient: recipientAddr,
-              status: "queued",
-              providerMessageId: null,
-              error: null,
-              attempts: 0,
-              nextRetryAt: null,
-              lastError: null,
-              deliveredAt: null,
-              openedAt: null,
-              clickedAt: null,
-              bouncedAt: null,
-              recipientId: recip.id,
-              variantId: null,
-              createdAt: dts,
-              updatedAt: dts,
-            })
-            .execute()
-
-          await c.env.DELIVERY_Q.send({
-            deliveryId,
-            notificationId: notifId,
-            userId,
-            channel,
-          } as DeliveryQueueMessage)
-
-          deliveries.push({
-            id: deliveryId,
-            userId,
-            notificationId: notifId,
-            channel,
-            recipient: recipientAddr,
-            status: "queued",
-            providerMessageId: null,
-            error: null,
-            attempts: 0,
-            nextRetryAt: null,
-            lastError: null,
-            deliveredAt: null,
-            openedAt: null,
-            clickedAt: null,
-            bouncedAt: null,
-            recipientId: recip.id,
-            variantId: null,
-            chainId: null,
-            chainStepIndex: null,
-            escalatedFromDeliveryId: null,
-            createdAt: dts,
-            updatedAt: dts,
-          })
-        }
-      }
-    } else {
-      for (const channel of channels) {
-        const adapter = getAdapter(channel as ChannelType)
-        const dts = now()
-        const deliveryId = newId()
-
-        const recipientAddr = await resolveRecipientAddress(
-          db,
-          channel,
-          payload.recipient as Record<string, unknown>
-        )
-
-        const rlResult = await checkRateLimit(
-          c.env.RATE_LIMIT_KV,
-          db,
-          userId,
-          channel,
-          Date.now()
-        )
-        if (rlResult === "exceeded") {
-          await db
-            .insertInto("delivery")
-            .values({
-              id: deliveryId,
-              userId,
-              notificationId: notifId,
-              channel,
-              recipient: recipientAddr,
-              status: "skipped",
-              providerMessageId: null,
-              error: "rate_limit:exceeded",
-              attempts: 0,
-              nextRetryAt: null,
-              lastError: "rate_limit:exceeded",
-              deliveredAt: null,
-              openedAt: null,
-              clickedAt: null,
-              bouncedAt: null,
-              createdAt: dts,
-              updatedAt: dts,
-            })
-            .execute()
-          deliveries.push({
+      const rlResult = await checkRateLimit(
+        c.env.RATE_LIMIT_KV,
+        db,
+        userId,
+        channel,
+        Date.now()
+      )
+      if (rlResult === "exceeded") {
+        await db
+          .insertInto("delivery")
+          .values({
             id: deliveryId,
             userId,
             notificationId: notifId,
@@ -450,41 +282,40 @@ export default router
             openedAt: null,
             clickedAt: null,
             bouncedAt: null,
-            recipientId: null,
-            variantId: null,
-            chainId: null,
-            chainStepIndex: null,
-            escalatedFromDeliveryId: null,
             createdAt: dts,
             updatedAt: dts,
           })
-          continue
-        }
+          .execute()
+        deliveries.push({
+          id: deliveryId,
+          userId,
+          notificationId: notifId,
+          channel,
+          recipient: recipientAddr,
+          status: "skipped",
+          providerMessageId: null,
+          error: "rate_limit:exceeded",
+          attempts: 0,
+          nextRetryAt: null,
+          lastError: "rate_limit:exceeded",
+          deliveredAt: null,
+          openedAt: null,
+          clickedAt: null,
+          bouncedAt: null,
+          variantId: null,
+          chainId: null,
+          chainStepIndex: null,
+          escalatedFromDeliveryId: null,
+          createdAt: dts,
+          updatedAt: dts,
+        })
+        continue
+      }
 
-        if (!adapter) {
-          await db
-            .insertInto("delivery")
-            .values({
-              id: deliveryId,
-              userId,
-              notificationId: notifId,
-              channel,
-              recipient: "",
-              status: "failed",
-              providerMessageId: null,
-              error: `No adapter registered for channel: ${channel}`,
-              attempts: 1,
-              nextRetryAt: null,
-              lastError: `No adapter registered for channel: ${channel}`,
-              deliveredAt: null,
-              openedAt: null,
-              clickedAt: null,
-              bouncedAt: null,
-              createdAt: dts,
-              updatedAt: dts,
-            })
-            .execute()
-          deliveries.push({
+      if (!adapter) {
+        await db
+          .insertInto("delivery")
+          .values({
             id: deliveryId,
             userId,
             notificationId: notifId,
@@ -500,48 +331,47 @@ export default router
             openedAt: null,
             clickedAt: null,
             bouncedAt: null,
-            recipientId: null,
-            variantId: null,
-            chainId: null,
-            chainStepIndex: null,
-            escalatedFromDeliveryId: null,
             createdAt: dts,
             updatedAt: dts,
           })
-          continue
-        }
-
-        const conn = await resolveSendConnection(
-          db,
+          .execute()
+        deliveries.push({
+          id: deliveryId,
           userId,
-          channel as ChannelType,
-          dts
-        )
+          notificationId: notifId,
+          channel,
+          recipient: "",
+          status: "failed",
+          providerMessageId: null,
+          error: `No adapter registered for channel: ${channel}`,
+          attempts: 1,
+          nextRetryAt: null,
+          lastError: `No adapter registered for channel: ${channel}`,
+          deliveredAt: null,
+          openedAt: null,
+          clickedAt: null,
+          bouncedAt: null,
+          variantId: null,
+          chainId: null,
+          chainStepIndex: null,
+          escalatedFromDeliveryId: null,
+          createdAt: dts,
+          updatedAt: dts,
+        })
+        continue
+      }
 
-        if (!conn) {
-          await db
-            .insertInto("delivery")
-            .values({
-              id: deliveryId,
-              userId,
-              notificationId: notifId,
-              channel,
-              recipient: recipientAddr,
-              status: "failed",
-              providerMessageId: null,
-              error: `No active ${channel} connection — connect via Channels page first`,
-              attempts: 1,
-              nextRetryAt: null,
-              lastError: `No active ${channel} connection — connect via Channels page first`,
-              deliveredAt: null,
-              openedAt: null,
-              clickedAt: null,
-              bouncedAt: null,
-              createdAt: dts,
-              updatedAt: dts,
-            })
-            .execute()
-          deliveries.push({
+      const conn = await resolveSendConnection(
+        db,
+        userId,
+        channel as ChannelType,
+        dts
+      )
+
+      if (!conn) {
+        await db
+          .insertInto("delivery")
+          .values({
             id: deliveryId,
             userId,
             notificationId: notifId,
@@ -557,53 +387,39 @@ export default router
             openedAt: null,
             clickedAt: null,
             bouncedAt: null,
-            recipientId: null,
-            variantId: null,
-            chainId: null,
-            chainStepIndex: null,
-            escalatedFromDeliveryId: null,
-            createdAt: dts,
-            updatedAt: dts,
-          })
-          continue
-        }
-
-        await db
-          .insertInto("delivery")
-          .values({
-            id: deliveryId,
-            userId,
-            notificationId: notifId,
-            channel,
-            recipient: recipientAddr,
-            status: "queued",
-            providerMessageId: null,
-            error: null,
-            attempts: 0,
-            nextRetryAt: null,
-            lastError: null,
-            deliveredAt: null,
-            openedAt: null,
-            clickedAt: null,
-            bouncedAt: null,
-            recipientId: null,
-            chainId: resolvedChainId,
-            chainStepIndex: resolvedChainId ? 0 : null,
-            escalatedFromDeliveryId: null,
             createdAt: dts,
             updatedAt: dts,
           })
           .execute()
-
-        const queueMsg: DeliveryQueueMessage = {
-          deliveryId,
-          notificationId: notifId,
-          userId,
-          channel,
-        }
-        await c.env.DELIVERY_Q.send(queueMsg)
-
         deliveries.push({
+          id: deliveryId,
+          userId,
+          notificationId: notifId,
+          channel,
+          recipient: recipientAddr,
+          status: "failed",
+          providerMessageId: null,
+          error: `No active ${channel} connection — connect via Channels page first`,
+          attempts: 1,
+          nextRetryAt: null,
+          lastError: `No active ${channel} connection — connect via Channels page first`,
+          deliveredAt: null,
+          openedAt: null,
+          clickedAt: null,
+          bouncedAt: null,
+          variantId: null,
+          chainId: null,
+          chainStepIndex: null,
+          escalatedFromDeliveryId: null,
+          createdAt: dts,
+          updatedAt: dts,
+        })
+        continue
+      }
+
+      await db
+        .insertInto("delivery")
+        .values({
           id: deliveryId,
           userId,
           notificationId: notifId,
@@ -619,15 +435,45 @@ export default router
           openedAt: null,
           clickedAt: null,
           bouncedAt: null,
-          recipientId: null,
-          variantId: null,
           chainId: resolvedChainId,
           chainStepIndex: resolvedChainId ? 0 : null,
           escalatedFromDeliveryId: null,
           createdAt: dts,
           updatedAt: dts,
         })
+        .execute()
+
+      const queueMsg: DeliveryQueueMessage = {
+        deliveryId,
+        notificationId: notifId,
+        userId,
+        channel,
       }
+      await c.env.DELIVERY_Q.send(queueMsg)
+
+      deliveries.push({
+        id: deliveryId,
+        userId,
+        notificationId: notifId,
+        channel,
+        recipient: recipientAddr,
+        status: "queued",
+        providerMessageId: null,
+        error: null,
+        attempts: 0,
+        nextRetryAt: null,
+        lastError: null,
+        deliveredAt: null,
+        openedAt: null,
+        clickedAt: null,
+        bouncedAt: null,
+        variantId: null,
+        chainId: resolvedChainId,
+        chainStepIndex: resolvedChainId ? 0 : null,
+        escalatedFromDeliveryId: null,
+        createdAt: dts,
+        updatedAt: dts,
+      })
     }
 
     if (payload.idempotencyKey) {

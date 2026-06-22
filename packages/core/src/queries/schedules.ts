@@ -1,7 +1,6 @@
 import {
   useInfiniteQuery,
   useMutation,
-  useQuery,
   useQueryClient,
 } from "@tanstack/react-query"
 
@@ -14,7 +13,6 @@ export const scheduleKeys = {
   all: ["schedules"] as const,
   lists: () => [...scheduleKeys.all, "list"] as const,
   list: (params: ListParams) => [...scheduleKeys.lists(), params] as const,
-  preferences: () => [...scheduleKeys.all, "preferences"] as const,
 }
 
 export function useSchedules(params: ListParams = {}) {
@@ -42,33 +40,6 @@ export function useCancelSchedule() {
     mutationFn: (id: string) =>
       unwrap(client.api.schedules[":id"].$delete({ param: { id } })),
     onSuccess: () => qc.invalidateQueries({ queryKey: scheduleKeys.lists() }),
-  })
-}
-
-export function useRecipientPreferences() {
-  const client = useApiClient()
-  return useQuery({
-    queryKey: scheduleKeys.preferences(),
-    queryFn: () => unwrap(client.api.recipients.preferences.$get()),
-  })
-}
-
-export function useUpdateRecipientPreferences() {
-  const client = useApiClient()
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (
-      body: InferRequestType<
-        ApiClient["api"]["recipients"]["preferences"]["$patch"]
-      >["json"]
-    ) =>
-      unwrap(
-        client.api.recipients.preferences.$patch({
-          json: body,
-        })
-      ),
-    onSuccess: () =>
-      qc.invalidateQueries({ queryKey: scheduleKeys.preferences() }),
   })
 }
 

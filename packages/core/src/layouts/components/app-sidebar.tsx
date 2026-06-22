@@ -12,8 +12,6 @@ import {
   RouteIcon,
   ScrollIcon,
   Settings2Icon,
-  UsersIcon,
-  WorkflowIcon,
 } from "lucide-react"
 import { Link, useNavigate } from "react-router"
 
@@ -59,16 +57,6 @@ const NAV_MAIN = [
     title: "Channels",
     url: "/channels",
     icon: <RadioIcon className="size-4" />,
-  },
-  {
-    title: "Audiences",
-    url: "/audiences",
-    icon: <UsersIcon className="size-4" />,
-  },
-  {
-    title: "Journeys",
-    url: "/journeys",
-    icon: <WorkflowIcon className="size-4" />,
   },
 ]
 

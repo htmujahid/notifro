@@ -67,12 +67,12 @@ const cases: UseCase[] = [
     id: "lifecycle",
     label: "Lifecycle",
     icon: Sparkles,
-    title: "Onboarding, digests & re-engagement",
-    desc: "Multi-step journeys with delays and branching. Personalize content per recipient, A/B test variants, and send at each person's most active time.",
+    title: "Digests, reminders & scheduled sends",
+    desc: "Schedule one-off and recurring notifications with cron, delivery windows, and quiet hours. Reuse templates and snippets so every send stays on-brand.",
     points: [
-      "Multi-step journeys with delays and branching",
-      "Dynamic content & audience segmentation",
-      "Timezone-aware scheduling per recipient",
+      "Recurring sends with cron schedules",
+      "Quiet hours & delivery windows",
+      "Timezone-aware scheduling",
     ],
     rows: [
       { channel: "Email", status: "Opened", tone: "opened" },

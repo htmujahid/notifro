@@ -20,12 +20,3 @@ CREATE TABLE IF NOT EXISTS scheduled_message (
 CREATE INDEX IF NOT EXISTS idx_sched_msg_status_sendAt ON scheduled_message (status, sendAt);
 CREATE INDEX IF NOT EXISTS idx_sched_msg_userId_sendAt_id ON scheduled_message (userId, sendAt, id);
 CREATE INDEX IF NOT EXISTS idx_sched_msg_userId_createdAt ON scheduled_message (userId, createdAt);
-
-CREATE TABLE IF NOT EXISTS recipient_profile (
-  userId TEXT PRIMARY KEY,
-  timezone TEXT,
-  quietHoursStart TEXT,
-  quietHoursEnd TEXT,
-  updatedAt TEXT NOT NULL,
-  FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE
-);

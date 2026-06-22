@@ -100,10 +100,6 @@ export const RecipientSchema = z.discriminatedUnion("type", [
     teamsUserId: z.string().optional(),
     pushSubscription: z.record(z.string(), z.unknown()).optional(),
   }),
-  z.object({
-    type: z.literal("segment"),
-    segmentId: z.string().min(1),
-  }),
 ])
 
 const HHMM = z.string().regex(/^\d{2}:\d{2}$/)

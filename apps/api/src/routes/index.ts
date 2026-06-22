@@ -15,9 +15,7 @@ import brandKitRouter from "./brand-kit"
 import chainsRouter from "./chains"
 import connectionsRouter from "./connections"
 import deliveriesRouter from "./deliveries"
-import eventsRouter from "./events"
 import inboxRouter from "./inbox"
-import journeysRouter from "./journeys"
 import mcpRouter from "./mcp"
 import notificationsRouter from "./notifications"
 import overviewRouter from "./overview"
@@ -25,13 +23,10 @@ import providerFallbacksRouter from "./provider-fallbacks"
 import pushRouter from "./push"
 import rateLimitsRouter from "./rate-limits"
 import receiptsRouter from "./receipts"
-import recipientProfilesRouter from "./recipient-profiles"
-import recipientsRouter from "./recipients"
 import recurringRouter from "./recurring"
 import requestLogRouter from "./request-log"
 import routingRouter from "./routing"
 import schedulesRouter from "./schedules"
-import segmentsRouter from "./segments"
 import snippetsRouter from "./snippets"
 import templateVersionsRouter from "./template-versions"
 import templatesRouter from "./templates"
@@ -150,21 +145,16 @@ export function registerRoutes(app: OpenAPIHono<AppEnv>) {
     .route("/t", trackingRouter)
     .route("/webhooks", receiptsRouter)
     .route("/api", schedulesRouter)
-    .route("/api", recipientProfilesRouter)
     .route("/api", recurringRouter)
     .route("/api", templateVersionsRouter)
     .route("/api", snippetsRouter)
     .route("/api", brandKitRouter)
-    .route("/api", recipientsRouter)
-    .route("/api", segmentsRouter)
     .route("/api", routingRouter)
     .route("/api", chainsRouter)
     .route("/api", rateLimitsRouter)
     .route("/api", requestLogRouter)
     .route("/api", mcpRouter)
     .route("/api", analyticsRouter)
-    .route("/api", journeysRouter)
-    .route("/api", eventsRouter)
     .route("/api", providerFallbacksRouter)
 
   app.use("/mcp", (c, next) => {

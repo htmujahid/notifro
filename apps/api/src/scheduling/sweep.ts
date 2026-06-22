@@ -2,7 +2,6 @@ import { getAdapter } from "../channels/registry"
 import { resolveSendConnection } from "../channels/resolve"
 import type { ChannelType } from "../channels/types"
 import { db } from "../db/client"
-import { advanceJourneyRun } from "../lib/journey-engine"
 import type { DeliveryQueueMessage } from "../queue/consumer"
 import { nextCronRun } from "./cron"
 import {
@@ -39,20 +38,8 @@ export async function handleScheduledSweep(
       priority !== "urgent" &&
       priority !== "high"
 
-    let effectiveQHStart = msg.quietHoursStart
-    let effectiveQHEnd = msg.quietHoursEnd
-
-    if (!effectiveQHStart || !effectiveQHEnd) {
-      const profile = await database
-        .selectFrom("recipient_profile")
-        .where("userId", "=", msg.userId)
-        .select(["quietHoursStart", "quietHoursEnd"])
-        .executeTakeFirst()
-      if (profile) {
-        effectiveQHStart = effectiveQHStart ?? profile.quietHoursStart
-        effectiveQHEnd = effectiveQHEnd ?? profile.quietHoursEnd
-      }
-    }
+    const effectiveQHStart = msg.quietHoursStart
+    const effectiveQHEnd = msg.quietHoursEnd
 
     if (shouldRespectQH && effectiveQHStart && effectiveQHEnd) {
       if (isInQuietHours(now, effectiveQHStart, effectiveQHEnd, tz)) {
@@ -273,19 +260,5 @@ export async function handleScheduledSweep(
       .set({ nextRunAt, lastRunAt: runAt, updatedAt: rdts })
       .where("id", "=", recurring.id)
       .execute()
-  }
-
-  const dueRuns = await database
-    .selectFrom("journey_run")
-    .where("status", "=", "active")
-    .where("nextResumeAt", "is not", null)
-    .where("nextResumeAt", "<=", ts)
-    .selectAll()
-    .orderBy("nextResumeAt", "asc")
-    .limit(50)
-    .execute()
-
-  for (const run of dueRuns) {
-    await advanceJourneyRun(run, database, env)
   }
 }

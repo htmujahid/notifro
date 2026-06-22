@@ -56,7 +56,6 @@ export type Recipient =
       teamsUserId?: string
       pushSubscription?: Record<string, unknown>
     }
-  | { type: "segment"; segmentId: string }
 
 export interface Template {
   id: string
@@ -171,41 +170,6 @@ export interface RecurringSend {
   enabled: number
   createdAt: string
   updatedAt: string
-}
-
-export interface RecipientPreferences {
-  userId: string
-  timezone: string | null
-  quietHoursStart: string | null
-  quietHoursEnd: string | null
-  updatedAt: string
-}
-
-export interface RecipientRecord {
-  id: string
-  userId: string
-  externalId: string | null
-  email: string | null
-  phone: string | null
-  locale: string | null
-  timezone: string | null
-  attributes: string | null
-  createdAt: string
-  updatedAt: string
-}
-
-export interface Segment {
-  id: string
-  userId: string
-  name: string
-  filter: string
-  createdAt: string
-  updatedAt: string
-}
-
-export interface SegmentPreview {
-  count: number
-  sample: { id: string; email: string | null }[]
 }
 
 export interface ChainStep {
@@ -369,39 +333,6 @@ export interface ConsentEvent {
   event: string
   source: string
   actorNote: string | null
-  createdAt: string
-}
-
-export interface Journey {
-  id: string
-  userId: string
-  name: string
-  status: string
-  trigger: string | null
-  steps: string
-  createdAt: string
-  updatedAt: string
-}
-
-export interface JourneyRun {
-  id: string
-  userId: string
-  journeyId: string
-  recipientId: string
-  status: string
-  currentStepId: string
-  nextResumeAt: string | null
-  context: string
-  createdAt: string
-  updatedAt: string
-}
-
-export interface JourneyEvent {
-  id: string
-  userId: string
-  name: string
-  recipientId: string | null
-  payload: string
   createdAt: string
 }
 
