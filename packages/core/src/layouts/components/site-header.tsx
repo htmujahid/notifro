@@ -8,8 +8,6 @@ import { SidebarTrigger } from "@renderical/ui/components/sidebar"
 
 import { useUnreadCount } from "../../queries/inbox"
 
-// Electron requires -webkit-app-region for draggable window chrome.
-// Only applied when running as a desktop app with a hidden system titlebar.
 const DRAG = { WebkitAppRegion: "drag" } as React.CSSProperties
 const NO_DRAG = { WebkitAppRegion: "no-drag" } as React.CSSProperties
 

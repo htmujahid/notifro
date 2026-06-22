@@ -40,7 +40,6 @@ export const SegmentDtoSchema = z.object({
   updatedAt: z.string(),
 })
 
-// z.lazy() causes infinite recursion in OpenAPI generator; use generic JSON schema for routes
 export const FilterInputSchema = z.record(z.string(), z.unknown()).openapi({
   description:
     "Recursive filter clause: leaf { field, op, value } or composite { and/or: [...] }",

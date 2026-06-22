@@ -34,7 +34,6 @@ export function RendericalMark({ className }: { className?: string }) {
   )
 }
 
-/** Mark + "Renderical" wordmark lockup. */
 export function RendericalWordmark({ className }: { className?: string }) {
   return (
     <span

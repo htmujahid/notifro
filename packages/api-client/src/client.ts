@@ -3,13 +3,8 @@ import { hc } from "hono/client"
 
 import { ApiClientError } from "./error"
 
-// Re-exported so consumers can derive request/response types from the client
-// without taking a direct dependency on `hono`.
 export type { InferRequestType, InferResponseType } from "hono/client"
 
-// Compute the heavy hc<AppType> client type ONCE and reuse via the alias so
-// consumers don't re-instantiate it at every call site. The `baseURL` field is
-// preserved for the few callers that build raw URLs (e.g. MCP, sandbox fetch).
 const _typedClient = hc<AppType>("")
 export type ApiClient = typeof _typedClient & { baseURL: string }
 
@@ -44,13 +39,6 @@ async function parseError(res: Response): Promise<never> {
   throw new ApiClientError(code, message, res.status, details)
 }
 
-/**
- * Structural shape of a Hono `hc` response. Accepting any object with this
- * shape (rather than the exact `ClientResponse` union) lets `unwrap` infer the
- * body from any `$get`/`$post`/... call. The generic distributes over routes
- * that declare multiple status codes (a `ClientResponse` union), so the return
- * type is the union of their JSON bodies.
- */
 type AnyJsonResponse = {
   ok: boolean
   status: number
@@ -59,11 +47,6 @@ type AnyJsonResponse = {
 
 type ResponseBody<R extends AnyJsonResponse> = Awaited<ReturnType<R["json"]>>
 
-/**
- * Awaits an `hc` call, throwing a structured `ApiClientError` on non-2xx so
- * existing `isApiError()` handling keeps working with React Query. Returns the
- * parsed JSON body, or `undefined` for 204 responses.
- */
 export async function unwrap<R extends AnyJsonResponse>(
   resPromise: Promise<R>
 ): Promise<ResponseBody<R>> {
@@ -73,11 +56,6 @@ export async function unwrap<R extends AnyJsonResponse>(
   return (await res.json()) as ResponseBody<R>
 }
 
-/**
- * Serializes list/query params for `hc`'s `$get({ query })`, which expects
- * string values. Drops `undefined`/`null`/empty entries (mirrors the previous
- * fetch client's query-string builder).
- */
 export function toQuery(
   params: Record<string, unknown>
 ): Record<string, string> {

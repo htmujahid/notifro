@@ -1,4 +1,3 @@
-// Frontend (apps/web) base URL — auth lives under /auth on the web app.
 const FRONTEND_URL =
   import.meta.env.PUBLIC_FRONTEND_URL ?? "http://localhost:5173"
 
@@ -13,7 +12,6 @@ export const site = {
   signinUrl: `${FRONTEND_URL}/auth/sign-in`,
   signupUrl: `${FRONTEND_URL}/auth/sign-up`,
   docsUrl: "/developers",
-  // --- SEO / social ---
   ogImage: "/og.png", // 1200×630, resolved to an absolute URL in BaseLayout
   twitter: "@renderical", // Twitter/X handle for twitter:site & twitter:creator
   locale: "en_US",

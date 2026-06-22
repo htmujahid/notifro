@@ -97,8 +97,6 @@ export function ResponsiveModalDescription({
   return <DialogDescription>{children}</DialogDescription>
 }
 
-// Wraps the main content area between header and footer.
-// On mobile adds horizontal padding to match Drawer conventions.
 export function ResponsiveModalBody({
   children,
   className,
