@@ -67,18 +67,20 @@ const faqs = [
         <ArrowRight className="size-3" />
       </a>
       <h1 class="mx-auto mt-6 max-w-3xl text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">
-        Send notifications everywhere from <span class="text-primary">one API</span>
+        Every alert you care about, on <span class="text-primary">every device you own</span>
       </h1>
       <p class="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground text-pretty">
-        {site.name} normalizes ten channels behind one compose-once API — Slack, email, Teams,
-        Discord, WhatsApp, Telegram, web push, webhooks, and in-app — with routing rules,
-        fallback chains, scheduling, and rate limiting. One integration replaces your stack.
+        {site.name} is your personal notification hub. Connect your email, phone, browser, Slack,
+        Telegram, and more — then send or schedule a message once and get it wherever you actually
+        look. Server alarms, cron jobs, payment pings, reminders, even your own AI agents reach you
+        through one platform, with templates, smart routing, fallback chains, and scheduling built
+        in. The whole notification stack — just for you.
       </p>
       <div class="mt-8 flex flex-wrap justify-center gap-3">
         <a href={site.selfHostUrl} class={buttonVariants({ size: "lg" })}>Self-host on Cloudflare</a>
         <a href="/developers" class={buttonVariants({ variant: "outline", size: "lg" })}>Read the docs</a>
       </div>
-      <p class="mt-4 text-sm text-muted-foreground">Open source · Runs on Cloudflare Workers · Self-host in minutes</p>
+      <p class="mt-4 text-sm text-muted-foreground">Open source · Runs on Cloudflare · Self-host in minutes</p>
 
       <!-- Product window mock -->
       <div class="relative mx-auto mt-16 max-w-4xl text-left">
@@ -94,13 +96,13 @@ const faqs = [
             <div class="p-6">
               <p class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Compose once</p>
               <div class="mt-3 rounded-lg border bg-background p-4">
-                <p class="text-sm font-semibold">Your invoice is paid 🎉</p>
-                <p class="mt-1 text-sm text-muted-foreground">Thanks, Maria — your $240.00 payment was received.</p>
-                <span class={`mt-3 ${buttonVariants({ size: "xs" })}`}>View receipt</span>
+                <p class="text-sm font-semibold">You just got paid 💰</p>
+                <p class="mt-1 text-sm text-muted-foreground">Stripe — $240.00 from a new Pro subscription.</p>
+                <span class={`mt-3 ${buttonVariants({ size: "xs" })}`}>View payment</span>
               </div>
               <div class="mt-4 rounded-lg bg-muted/60 p-3 font-mono text-xs text-muted-foreground">
-                template: <span class="text-primary">"invoice.paid"</span><br />
-                channels: <span class="text-foreground">[push, email, sms]</span>
+                template: <span class="text-primary">"payment.received"</span><br />
+                channels: <span class="text-foreground">[push, telegram, email]</span>
               </div>
             </div>
             <!-- Delivery -->
@@ -132,7 +134,7 @@ const faqs = [
   <!-- Trust strip -->
   <section class="border-b bg-muted/30">
     <div class="mx-auto max-w-6xl px-6 py-10">
-      <p class="text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">One API for every channel teams ship on</p>
+      <p class="text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">One hub for every channel you actually check</p>
       <div class="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-base font-semibold text-muted-foreground/70">
         <span>Slack</span><span>Email</span><span>Teams</span><span>Discord</span>
         <span>WhatsApp</span><span>Telegram</span><span>Web Push</span><span>Webhooks</span>
