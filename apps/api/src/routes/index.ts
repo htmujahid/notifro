@@ -13,7 +13,6 @@ import type { AppEnv } from "../lib/types"
 import analyticsRouter from "./analytics"
 import brandKitRouter from "./brand-kit"
 import chainsRouter from "./chains"
-import complianceRouter from "./compliance"
 import connectionsRouter from "./connections"
 import deliveriesRouter from "./deliveries"
 import eventsRouter from "./events"
@@ -175,7 +174,6 @@ export function registerRoutes(app: OpenAPIHono<AppEnv>) {
     .route("/api", requestLogRouter)
     .route("/api", mcpRouter)
     .route("/api", analyticsRouter)
-    .route("/api", complianceRouter)
     .route("/api", journeysRouter)
     .route("/api", eventsRouter)
     .route("/api", providerFallbacksRouter)

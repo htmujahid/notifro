@@ -5,7 +5,6 @@ import {
   signPreferenceToken,
   verifyPreferenceToken,
 } from "../lib/preference-token"
-import { recordConsentEvent, suppress } from "../lib/suppress"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
 import {
@@ -344,15 +343,6 @@ const publicRoutes = publicRouter
           .execute()
       }
 
-      await recordConsentEvent(
-        c.var.db,
-        userId,
-        pref.channel,
-        pref.optedIn ? "opt_in" : "opt_out",
-        "preference_center",
-        recipientId,
-        pref.topicId ?? null
-      )
     }
 
     return c.json({ updated: preferences.length })
@@ -434,17 +424,6 @@ const publicRoutes = publicRouter
       .where("id", "=", recipientId)
       .select("email")
       .executeTakeFirst()
-
-    if (recipient?.email) {
-      await suppress(
-        c.var.db,
-        userId,
-        "email",
-        recipient.email,
-        "unsubscribe",
-        recipientId
-      )
-    }
 
     return c.json({ ok: true })
   })

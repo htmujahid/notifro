@@ -12,7 +12,6 @@ import { renderTemplate, resolveTemplate } from "../lib/render-template"
 import { resolvePreferences } from "../lib/resolve-preferences"
 import { resolveRoute } from "../lib/routing"
 import { resolveSegment } from "../lib/segment-resolver"
-import { isSuppressed } from "../lib/suppress"
 import type { AppEnv } from "../lib/types"
 import { requireAuth } from "../middleware/auth"
 import type { DeliveryQueueMessage } from "../queue/consumer"
@@ -415,40 +414,6 @@ export default router
             continue
           }
 
-          const suppressed = await isSuppressed(
-            db,
-            userId,
-            channel,
-            recipientAddr
-          )
-          if (suppressed) {
-            await db
-              .insertInto("delivery")
-              .values({
-                id: deliveryId,
-                userId,
-                notificationId: notifId,
-                channel,
-                recipient: recipientAddr,
-                status: "suppressed",
-                providerMessageId: null,
-                error: `suppressed:${suppressed.reason}`,
-                attempts: 0,
-                nextRetryAt: null,
-                lastError: `suppressed:${suppressed.reason}`,
-                deliveredAt: null,
-                openedAt: null,
-                clickedAt: null,
-                bouncedAt: null,
-                recipientId: recip.id,
-                variantId: null,
-                createdAt: dts,
-                updatedAt: dts,
-              })
-              .execute()
-            continue
-          }
-
           const rlResult = await checkRateLimit(
             c.env.RATE_LIMIT_KV,
             db,
@@ -709,57 +674,6 @@ export default router
             attempts: 0,
             nextRetryAt: null,
             lastError: "rate_limit:exceeded",
-            deliveredAt: null,
-            openedAt: null,
-            clickedAt: null,
-            bouncedAt: null,
-            recipientId: null,
-            variantId: null,
-            chainId: null,
-            chainStepIndex: null,
-            escalatedFromDeliveryId: null,
-            createdAt: dts,
-            updatedAt: dts,
-          })
-          continue
-        }
-
-        const suppCheck = await isSuppressed(db, userId, channel, recipientAddr)
-        if (suppCheck) {
-          await db
-            .insertInto("delivery")
-            .values({
-              id: deliveryId,
-              userId,
-              notificationId: notifId,
-              channel,
-              recipient: recipientAddr,
-              status: "suppressed",
-              providerMessageId: null,
-              error: `suppressed:${suppCheck.reason}`,
-              attempts: 0,
-              nextRetryAt: null,
-              lastError: `suppressed:${suppCheck.reason}`,
-              deliveredAt: null,
-              openedAt: null,
-              clickedAt: null,
-              bouncedAt: null,
-              createdAt: dts,
-              updatedAt: dts,
-            })
-            .execute()
-          deliveries.push({
-            id: deliveryId,
-            userId,
-            notificationId: notifId,
-            channel,
-            recipient: recipientAddr,
-            status: "suppressed",
-            providerMessageId: null,
-            error: `suppressed:${suppCheck.reason}`,
-            attempts: 0,
-            nextRetryAt: null,
-            lastError: `suppressed:${suppCheck.reason}`,
             deliveredAt: null,
             openedAt: null,
             clickedAt: null,

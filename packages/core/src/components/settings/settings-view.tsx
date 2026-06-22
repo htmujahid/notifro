@@ -5,7 +5,6 @@ import { Card, CardContent } from "@renderical/ui/components/card"
 import { Separator } from "@renderical/ui/components/separator"
 
 import { BrandKitSection } from "./brand-kit-section"
-import { ComplianceSection } from "./compliance-section"
 import { FailoverSection } from "./failover-section"
 import { RateLimitsSection } from "./rate-limits-section"
 import { SubscriptionsSection } from "./subscriptions-section"
@@ -84,8 +83,6 @@ export function SettingsView() {
       <RateLimitsSection />
 
       <SubscriptionsSection />
-
-      <ComplianceSection />
 
       <FailoverSection />
 

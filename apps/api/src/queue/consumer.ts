@@ -5,7 +5,6 @@ import { db } from "../db/client"
 import { redactPii } from "../lib/redact"
 import { renderTemplate } from "../lib/render-template"
 import { escalateChain } from "../lib/routing"
-import { isSuppressed } from "../lib/suppress"
 
 export interface DeliveryQueueMessage {
   deliveryId: string
@@ -232,27 +231,6 @@ async function processDelivery(
       `No active ${channel} connection`,
       ts
     )
-    await updateNotificationStatus(database, notificationId, ts)
-    msg.ack()
-    return
-  }
-
-  const suppressed = await isSuppressed(
-    database,
-    userId,
-    channel,
-    delivery.recipient
-  )
-  if (suppressed) {
-    await database
-      .updateTable("delivery")
-      .set({
-        status: "suppressed",
-        error: `suppressed:${suppressed.reason}`,
-        updatedAt: ts,
-      })
-      .where("id", "=", deliveryId)
-      .execute()
     await updateNotificationStatus(database, notificationId, ts)
     msg.ack()
     return

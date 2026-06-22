@@ -1,6 +1,5 @@
 import { Hono } from "hono"
 
-import { suppress } from "../lib/suppress"
 import type { AppEnv } from "../lib/types"
 
 const router = new Hono<AppEnv>()
@@ -107,13 +106,6 @@ export default router.post("/:provider", async (c) => {
       await recordEvent(db, delivery.id, delivery.userId, "bounced", ts, {
         messageStatus,
       })
-      await suppress(
-        db,
-        delivery.userId,
-        delivery.channel,
-        delivery.recipient,
-        "hard_bounce"
-      )
     }
 
     return c.json({ ok: true })
