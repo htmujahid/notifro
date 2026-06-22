@@ -52,7 +52,7 @@ export default function NotFoundPage() {
         This page didn't deliver
       </h2>
       <p className="mt-2 max-w-sm text-pretty text-muted-foreground">
-        We couldn't route you there — that page doesn't exist or has moved.
+        We couldn't route you there. That page doesn't exist or has moved.
         Let's get you back to your notifications.
       </p>
 

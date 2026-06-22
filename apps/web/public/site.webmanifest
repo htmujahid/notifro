@@ -1,7 +1,7 @@
 {
   "name": "Notifro",
   "short_name": "Notifro",
-  "description": "Notifro dashboard — compose and deliver notifications across every channel.",
+  "description": "Notifro dashboard: compose and deliver notifications across every channel.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#FFFFFF",

@@ -73,7 +73,7 @@ const CREATE_OPTIONS = [
     bullets: [
       "Supports {{variable}} interpolation",
       "Shared across notifications and schedules",
-      "Versioned — edits don't break existing sends",
+      "Versioned: edits don't break existing sends",
     ],
   },
 ]
@@ -260,7 +260,7 @@ export function CreateView() {
                       </span>
                       <span className="text-xs text-muted-foreground">
                         {d.status}
-                        {d.error ? ` — ${d.error}` : ""}
+                        {d.error ? `: ${d.error}` : ""}
                       </span>
                     </div>
                   </div>

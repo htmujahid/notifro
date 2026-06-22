@@ -98,7 +98,7 @@ const webhookAdapter: ChannelAdapter<Record<string, never>, WebhookProvider> = {
       }
     }
 
-    // Endpoints are independent — deliver concurrently instead of serializing
+    // Endpoints are independent. Deliver concurrently instead of serializing
     // each HTTP round-trip in the queue consumer.
     const errors: string[] = []
 
@@ -138,7 +138,7 @@ const webhookAdapter: ChannelAdapter<Record<string, never>, WebhookProvider> = {
   async healthCheck(_conn) {
     return {
       ok: true,
-      message: "Webhook channel — configure endpoints under Channels",
+      message: "Webhook channel: configure endpoints under Channels",
       checkedAt: new Date().toISOString(),
     }
   },

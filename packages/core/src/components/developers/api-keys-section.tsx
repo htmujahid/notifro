@@ -64,7 +64,7 @@ export function ApiKeysSection() {
         >
           <CardContent className="flex flex-col gap-2">
             <p className="text-xs font-medium text-green-800 dark:text-green-200">
-              Key created. Copy it now — it won&apos;t be shown again.
+              Key created. Copy it now, it won&apos;t be shown again.
             </p>
             <div className="flex items-center gap-2">
               <code className="flex-1 break-all rounded bg-background px-2 py-1 text-xs font-mono">

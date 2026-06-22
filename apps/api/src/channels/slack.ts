@@ -164,7 +164,7 @@ const slackAdapter: ChannelAdapter<SlackConfig, SlackProvider> = {
       return {
         providerMessageId: null,
         ok: false,
-        error: "No Slack bot token — add credentials.botToken",
+        error: "No Slack bot token. Add credentials.botToken",
       }
     }
 
@@ -238,7 +238,7 @@ const slackAdapter: ChannelAdapter<SlackConfig, SlackProvider> = {
     if (!conn.credentials) {
       return {
         ok: false,
-        message: "No bot token — add credentials.botToken",
+        message: "No bot token. Add credentials.botToken",
         checkedAt: new Date().toISOString(),
       }
     }

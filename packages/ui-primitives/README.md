@@ -1,6 +1,6 @@
 # @notifro/ui-primitives
 
-Low-level, **unstyled React primitives** — the atomic building blocks beneath [`@notifro/ui`](../ui).
+Low-level, **unstyled React primitives**: the atomic building blocks beneath [`@notifro/ui`](../ui).
 
 ## Role
 
@@ -8,8 +8,8 @@ These are headless/minimal components with no Tailwind and no higher-level styli
 
 ## What's here
 
-- `components/` — primitive components, exported via `./components/*`
+- `components/`: primitive components, exported via `./components/*`
 
 ## Stack
 
-React 19 only — intentionally dependency-light.
+React 19 only, intentionally dependency-light.

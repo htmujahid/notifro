@@ -1,12 +1,12 @@
 # @notifro/mailer
 
-Transactional email for Notifro — templates and a sending binding for Cloudflare Workers.
+Transactional email for Notifro: templates and a sending binding for Cloudflare Workers.
 
 ## What's here
 
-- `src/index.ts` — the mailer entry point (compose + send)
-- `src/binding.ts` — the Cloudflare Email Service binding wiring
-- `src/emails/` — email templates (verification, password reset, etc.)
+- `src/index.ts`: the mailer entry point (compose + send)
+- `src/binding.ts`: the Cloudflare Email Service binding wiring
+- `src/emails/`: email templates (verification, password reset, etc.)
 
 ## Stack
 
@@ -14,4 +14,4 @@ TypeScript on Cloudflare Workers, using Cloudflare Email Service. No runtime dep
 
 ## Used by
 
-[`apps/api`](../../apps/api) — for auth and notification emails.
+[`apps/api`](../../apps/api), for auth and notification emails.

@@ -116,7 +116,7 @@ const discordAdapter: ChannelAdapter<DiscordConfig, DiscordProvider> = {
       return {
         providerMessageId: null,
         ok: false,
-        error: "No Discord webhook URL — add credentials.webhookUrl",
+        error: "No Discord webhook URL. Add credentials.webhookUrl",
       }
     }
 
@@ -192,7 +192,7 @@ const discordAdapter: ChannelAdapter<DiscordConfig, DiscordProvider> = {
     if (!conn.credentials) {
       return {
         ok: false,
-        message: "No webhook URL — add credentials.webhookUrl",
+        message: "No webhook URL. Add credentials.webhookUrl",
         checkedAt: new Date().toISOString(),
       }
     }

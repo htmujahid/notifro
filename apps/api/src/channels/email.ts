@@ -195,7 +195,7 @@ const emailAdapter: ChannelAdapter<EmailConfig, EmailProvider> = {
     return {
       ok: true,
       message:
-        "Cloudflare Email binding is used — no connection credentials required",
+        "Cloudflare Email binding is used, no connection credentials required",
       checkedAt: new Date().toISOString(),
     }
   },

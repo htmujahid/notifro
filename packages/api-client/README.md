@@ -59,7 +59,7 @@ export const channelKeys = {
 }
 ```
 
-List params are part of the key — changing sort/filter/cursor triggers a refetch automatically.
+List params are part of the key. Changing sort/filter/cursor triggers a refetch automatically.
 
 ### useQuery (single resource)
 

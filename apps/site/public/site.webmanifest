@@ -1,7 +1,7 @@
 {
   "name": "Notifro",
   "short_name": "Notifro",
-  "description": "Unified notification infrastructure — compose once, deliver everywhere.",
+  "description": "Unified notification infrastructure: compose once, deliver everywhere.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#FFFFFF",

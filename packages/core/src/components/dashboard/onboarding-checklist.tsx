@@ -47,7 +47,7 @@ export function OnboardingChecklist() {
             sendTest.mutate(undefined, {
               onSuccess: () =>
                 toast.success(
-                  "Test notification delivered — check your inbox."
+                  "Test notification delivered. Check your inbox."
                 ),
               onError: (err) =>
                 toast.error(err instanceof Error ? err.message : "Send failed"),
@@ -149,7 +149,7 @@ export function OnboardingChecklist() {
 
       {completedCount === STEPS.length && (
         <div className="rounded-xl bg-green-500/10 px-5 py-4 text-sm text-green-700 dark:text-green-400 ring-1 ring-green-500/20">
-          All steps complete — your notification pipeline is live.{" "}
+          All steps complete. Your notification pipeline is live.{" "}
           <button
             className="underline underline-offset-2"
             onClick={() => onboarding.mutate({ dismiss: true })}

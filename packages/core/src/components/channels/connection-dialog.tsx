@@ -48,13 +48,13 @@ export const CHANNEL_FORMS: Record<string, ChannelForm> = {
   sms: {
     title: "SMS (Twilio)",
     blurb:
-      "Send text messages through Twilio. The Twilio account and sender number are read from the server environment. Messages are delivered to your verified account phone number — add and verify it under Account → Profile first.",
+      "Send text messages through Twilio. The Twilio account and sender number are read from the server environment. Messages are delivered to your verified account phone number, add and verify it under Account → Profile first.",
     fields: [],
   },
   whatsapp: {
     title: "WhatsApp (Twilio)",
     blurb:
-      "Send WhatsApp messages through Twilio. The Twilio account and sender number are read from the server environment. Messages are delivered to your verified account phone number — add and verify it under Account → Profile first.",
+      "Send WhatsApp messages through Twilio. The Twilio account and sender number are read from the server environment. Messages are delivered to your verified account phone number, add and verify it under Account → Profile first.",
     fields: [],
   },
   telegram: {

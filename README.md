@@ -1,10 +1,10 @@
 # Notifro
 
-**Unified notification infrastructure — compose once, deliver everywhere.**
+**Unified notification infrastructure: compose once, deliver everywhere.**
 
 Notifro normalizes ten channels behind a single compose-once API. Write a message once and
 Notifro transforms and delivers it across Slack, email, Microsoft Teams, Discord, WhatsApp,
-Telegram, web push, webhooks, in-app inbox, and SMS — with routing rules, fallback chains,
+Telegram, web push, webhooks, in-app inbox, and SMS, with routing rules, fallback chains,
 provider failover, scheduling, rate limiting, and a **native MCP server** so AI agents can send
 safely. It runs entirely on Cloudflare's edge and is fully self-hostable.
 
@@ -17,24 +17,24 @@ safely. It runs entirely on Cloudflare's edge and is fully self-hostable.
 
 ## Features
 
-- **Compose-once API** — one normalized payload, transformed per channel (Slack Block Kit,
+- **Compose-once API**: one normalized payload, transformed per channel (Slack Block Kit,
   HTML email, Teams adaptive cards, Discord embeds, web push, …). Content blocks plus a
   template engine with variables, conditionals, loops, and i18n.
-- **10 channels** — Slack, email (SMTP/SendGrid/Resend), Teams, Discord, WhatsApp, Telegram,
+- **10 channels**: Slack, email (SMTP/SendGrid/Resend), Teams, Discord, WhatsApp, Telegram,
   web push (VAPID), webhooks (HMAC-signed), SMS (Twilio), and an in-app inbox.
-- **Routing & fallback** — priority-ordered routing rules, ordered fallback chains, and
+- **Routing & fallback**: priority-ordered routing rules, ordered fallback chains, and
   per-channel provider failover, with dry-run route resolution.
-- **Scheduling** — send-at with timezone awareness, recurring (cron) sends, quiet hours,
-  delivery windows, and per-channel rate limiting — driven by a cron-trigger sweep.
-- **Reliability** — a Cloudflare Queue with exponential-backoff retries, a dead-letter queue,
+- **Scheduling**: send-at with timezone awareness, recurring (cron) sends, quiet hours,
+  delivery windows, and per-channel rate limiting, driven by a cron-trigger sweep.
+- **Reliability**: a Cloudflare Queue with exponential-backoff retries, a dead-letter queue,
   idempotency keys, PII redaction, delivery events (delivered/opened/clicked/bounced), open &
   click tracking, and inbound provider receipts.
-- **Templates & content** — template editor, version history with restore, and a brand kit.
-- **Analytics** — delivery stats by channel, status, and date; top topics; and an overview
+- **Templates & content**: template editor, version history with restore, and a brand kit.
+- **Analytics**: delivery stats by channel, status, and date; top topics; and an overview
   dashboard, backed by a full API request log.
-- **Auth & keys** — better-auth with email + password, email OTP, Google OAuth, 2FA
+- **Auth & keys**: better-auth with email + password, email OTP, Google OAuth, 2FA
   (TOTP / email OTP / backup codes), phone verification (Twilio), and scoped `rk_` API keys.
-- **Native MCP server** — agents send, schedule, preview, template, and query analytics within
+- **Native MCP server**: agents send, schedule, preview, template, and query analytics within
   granted scopes, behind approval gates and rate limits.
 
 ## MCP server
@@ -42,10 +42,10 @@ safely. It runs entirely on Cloudflare's edge and is fully self-hostable.
 Notifro exposes the platform at `POST /mcp` (authenticated with an `rk_` API key), available
 hosted (Streamable HTTP) and local (stdio via `@notifro/mcp`).
 
-- **Tools** — `send_notification`, `schedule_notification`, `list_channels`,
+- **Tools**: `send_notification`, `schedule_notification`, `list_channels`,
   `get_delivery_status`, `create_template`, `render_preview`, `query_analytics`, `approve_action`.
-- **Resources** — `notifro://channels`, `notifro://templates`, `notifro://recent-deliveries`.
-- **Safety** — per-tool approval gates, key-scoped access, KV rate limiting, idempotency, and
+- **Resources**: `notifro://channels`, `notifro://templates`, `notifro://recent-deliveries`.
+- **Safety**: per-tool approval gates, key-scoped access, KV rate limiting, idempotency, and
   every call written to the request log.
 
 ## Tech stack
@@ -57,7 +57,7 @@ Email · `@hono/zod-openapi` + Scalar. Tooling: pnpm workspaces + Turborepo.
 
 ```
 apps/
-  api       → Cloudflare Worker — all backend logic (compose, queue, cron, MCP, auth)
+  api       → Cloudflare Worker: all backend logic (compose, queue, cron, MCP, auth)
   web       → React 19 SPA dashboard
   site      → Astro marketing site
   desktop   → Electron (Forge) wrapper

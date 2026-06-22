@@ -69,7 +69,7 @@ export function PhoneNumberForm() {
     phoneForm.reset({ phoneNumber: "" })
   }
 
-  // Step 1 — show the current number and its verification status.
+  // Step 1: show the current number and its verification status.
   if (step === "view") {
     return (
       <div className="flex flex-col gap-4">
@@ -113,7 +113,7 @@ export function PhoneNumberForm() {
     )
   }
 
-  // Step 2 — enter a phone number and request a verification code.
+  // Step 2: enter a phone number and request a verification code.
   if (step === "enter") {
     return (
       <form
@@ -164,7 +164,7 @@ export function PhoneNumberForm() {
     )
   }
 
-  // Step 3 — enter the code that was texted to the pending number.
+  // Step 3: enter the code that was texted to the pending number.
   return (
     <form
       onSubmit={codeForm.handleSubmit(handleVerify)}

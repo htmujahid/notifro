@@ -63,7 +63,7 @@ export function SignInForm() {
         </p>
       </div>
 
-      {/* Google — web only */}
+      {/* Google: web only */}
       {isWeb && (
         <>
           <Button

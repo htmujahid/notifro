@@ -65,7 +65,7 @@ const webPushAdapter: ChannelAdapter<Record<string, never>, WebPushProvider> = {
       url: provider.url ?? undefined,
     })
 
-    // Sends are independent across subscriptions — fan out concurrently rather
+    // Sends are independent across subscriptions. Fan out concurrently rather
     // than blocking the queue consumer on each round-trip.
     const errors: string[] = []
     const expiredSubIds: string[] = []
@@ -130,7 +130,7 @@ const webPushAdapter: ChannelAdapter<Record<string, never>, WebPushProvider> = {
   async healthCheck(_conn) {
     return {
       ok: true,
-      message: "Web push — check VAPID keys are configured",
+      message: "Web push: check VAPID keys are configured",
       checkedAt: new Date().toISOString(),
     }
   },

@@ -1,6 +1,6 @@
 # api
 
-The Notifro backend API — authentication, notification ingestion, and platform endpoints, running on Cloudflare Workers.
+The Notifro backend API: authentication, notification ingestion, and platform endpoints, running on Cloudflare Workers.
 
 ## Stack
 

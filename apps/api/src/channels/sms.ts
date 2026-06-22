@@ -41,7 +41,7 @@ const smsAdapter: ChannelAdapter<SmsConfig, SmsProvider> = {
         providerMessageId: null,
         ok: false,
         error:
-          "Twilio is not configured — set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_FROM_NUMBER",
+          "Twilio is not configured. Set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_FROM_NUMBER",
       }
     }
 
@@ -55,7 +55,7 @@ const smsAdapter: ChannelAdapter<SmsConfig, SmsProvider> = {
         providerMessageId: null,
         ok: false,
         error:
-          "No verified phone number on account — add and verify your phone number in account settings first",
+          "No verified phone number on account. Add and verify your phone number in account settings first",
       }
     }
     const to = user.phoneNumber
@@ -105,7 +105,7 @@ const smsAdapter: ChannelAdapter<SmsConfig, SmsProvider> = {
       ok: configured,
       message: configured
         ? "Twilio configured from environment"
-        : "Twilio not configured — set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_FROM_NUMBER",
+        : "Twilio not configured. Set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_FROM_NUMBER",
       checkedAt: new Date().toISOString(),
     }
   },

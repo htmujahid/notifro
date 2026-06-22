@@ -92,7 +92,7 @@ const teamsAdapter: ChannelAdapter<TeamsConfig, TeamsProvider> = {
       return {
         providerMessageId: null,
         ok: false,
-        error: "No Teams connector URL — add credentials.connectorUrl",
+        error: "No Teams connector URL. Add credentials.connectorUrl",
       }
     }
 
@@ -156,7 +156,7 @@ const teamsAdapter: ChannelAdapter<TeamsConfig, TeamsProvider> = {
     if (!conn.credentials) {
       return {
         ok: false,
-        message: "No connector URL — add credentials.connectorUrl",
+        message: "No connector URL. Add credentials.connectorUrl",
         checkedAt: new Date().toISOString(),
       }
     }

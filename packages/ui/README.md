@@ -1,13 +1,13 @@
 # @notifro/ui
 
-The shared **design system** — a Tailwind v4 + shadcn-based React component library, with hooks, utilities, and the theme used across every app.
+The shared **design system**: a Tailwind v4 + shadcn-based React component library, with hooks, utilities, and the theme used across every app.
 
 ## What's here
 
-- `components/` — the full component set (buttons, dialogs, forms, charts, command palette, etc.)
-- `hooks/` — reusable UI hooks
-- `lib/` — utilities (`cn`, formatting, …)
-- `styles/` / `globals.css` — the Tailwind theme and design tokens
+- `components/`: the full component set (buttons, dialogs, forms, charts, command palette, etc.)
+- `hooks/`: reusable UI hooks
+- `lib/`: utilities (`cn`, formatting, …)
+- `styles/` / `globals.css`: the Tailwind theme and design tokens
 
 ## Exports
 

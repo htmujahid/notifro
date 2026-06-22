@@ -139,7 +139,7 @@ async function processScheduledMessage(
   if (recipient?.type === "contact" && recipient.email)
     recipientAddr = recipient.email as string
 
-  // Channels are independent — fan them out instead of serializing each
+  // Channels are independent. Fan them out instead of serializing each
   // connection lookup + insert + enqueue.
   await Promise.all(
     channels.map(async (channel) => {

@@ -15,7 +15,7 @@ export function registerPrompts(server: McpServer): void {
               "To send a notification via Notifro MCP:",
               "1. Call list_channels to see available channels",
               "2. Call send_notification with recipient, channels, and content",
-              "3. If approval is required, you will receive an approvalToken — share it for review",
+              "3. If approval is required, you will receive an approvalToken: share it for review",
               "4. The approver calls approve_action with the token to execute the send",
               "",
               'Example: "Send an email to user@example.com about their order confirmation"',

@@ -1,6 +1,6 @@
 # android
 
-The Notifro Android app — the dashboard delivered as a native Android application.
+The Notifro Android app, the dashboard delivered as a native Android application.
 
 ## Stack
 
@@ -10,8 +10,8 @@ The Notifro Android app — the dashboard delivered as a native Android applicat
 
 A Capacitor web container wrapping the shared React app. Native capabilities are accessed through Capacitor plugins (`@capacitor/app`, `@capacitor/preferences`), while screens and logic come from the workspace:
 
-- [`@notifro/app`](../../packages/app) — app-wide universal logic and the mobile auth client
-- [`@notifro/views`](../../packages/views) — shared pages (consumes `./routes/android`)
+- [`@notifro/app`](../../packages/app): app-wide universal logic and the mobile auth client
+- [`@notifro/views`](../../packages/views): shared pages (consumes `./routes/android`)
 
 The native Gradle project lives in `android/`; the web build is synced into it via Capacitor.
 

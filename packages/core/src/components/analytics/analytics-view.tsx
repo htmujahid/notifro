@@ -141,7 +141,7 @@ export function AnalyticsView() {
 
       <Card>
         <CardHeader>
-          <CardDescription>Timeseries — sent vs delivered</CardDescription>
+          <CardDescription>Timeseries: sent vs delivered</CardDescription>
         </CardHeader>
         <CardContent>
           {tsLoading ? (

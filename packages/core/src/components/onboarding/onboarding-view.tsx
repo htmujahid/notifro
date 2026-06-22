@@ -37,7 +37,7 @@ export function OnboardingView() {
       icon: RadioIcon,
       label: "Connect your first channel",
       description:
-        "Link an email, SMS, webhook, or other channel. Email is always available via Cloudflare Email binding — connect additional channels from the Channels page.",
+        "Link an email, SMS, webhook, or other channel. Email is always available via Cloudflare Email binding; connect additional channels from the Channels page.",
       done: steps.connect_channel,
       cta: (
         <Link to="/channels">
@@ -62,7 +62,7 @@ export function OnboardingView() {
             sendTest.mutate(undefined, {
               onSuccess: () =>
                 toast.success(
-                  "Test notification delivered — check your inbox."
+                  "Test notification delivered. Check your inbox."
                 ),
               onError: (err) =>
                 toast.error(err instanceof Error ? err.message : "Send failed"),

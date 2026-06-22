@@ -1,6 +1,6 @@
 # ios
 
-The Notifro iOS app — the dashboard delivered as a native iOS application.
+The Notifro iOS app, the dashboard delivered as a native iOS application.
 
 ## Stack
 
@@ -10,8 +10,8 @@ The Notifro iOS app — the dashboard delivered as a native iOS application.
 
 A Capacitor web container wrapping the shared React app. Native capabilities are accessed through Capacitor plugins (`@capacitor/app`, `@capacitor/preferences`), while screens and logic come from the workspace:
 
-- [`@notifro/app`](../../packages/app) — app-wide universal logic and the mobile auth client
-- [`@notifro/views`](../../packages/views) — shared pages (consumes `./routes/ios`)
+- [`@notifro/app`](../../packages/app): app-wide universal logic and the mobile auth client
+- [`@notifro/views`](../../packages/views): shared pages (consumes `./routes/ios`)
 
 The native Xcode project lives in `ios/`; the web build is synced into it via Capacitor.
 

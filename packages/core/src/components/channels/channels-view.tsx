@@ -34,7 +34,7 @@ const CHANNEL_META: Record<
   email: {
     name: "Email",
     description:
-      "Send notifications via Cloudflare Email. No OAuth required — always available.",
+      "Send notifications via Cloudflare Email. No OAuth required, always available.",
     icon: MailIcon,
   },
   webhook: {
@@ -147,7 +147,7 @@ export function ChannelsView() {
                   : "Delivered to the bell inbox"
               actionNode = (
                 <p className="text-xs text-muted-foreground">
-                  Active — no configuration needed.
+                  Active, no configuration needed.
                 </p>
               )
             } else if (type === "webhook") {
@@ -175,7 +175,7 @@ export function ChannelsView() {
               detail = !push.supported
                 ? "Not supported in this browser"
                 : push.permission === "denied"
-                  ? "Permission denied — enable in browser settings"
+                  ? "Permission denied. Enable in browser settings"
                   : push.subscribed
                     ? "Browser notifications active"
                     : "Click to enable browser notifications"

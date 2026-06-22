@@ -274,7 +274,7 @@ async function processDelivery(
       })
       .where("id", "=", deliveryId)
       .execute()
-    // `delivery` (fetched above) already holds userId/chainId/chainStepIndex —
+    // `delivery` (fetched above) already holds userId/chainId/chainStepIndex,
     // those don't change on the status update, so no need to re-SELECT it.
     await database
       .insertInto("delivery_event")

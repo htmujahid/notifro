@@ -3,7 +3,7 @@ import { describe, test } from "node:test"
 
 import { renderString, renderValue } from "./engine.js"
 
-describe("renderString — variables", () => {
+describe("renderString: variables", () => {
   test("substitutes a simple variable", () => {
     assert.equal(
       renderString("Hello {{name}}", { name: "Alice" }),
@@ -38,7 +38,7 @@ describe("renderString — variables", () => {
   })
 })
 
-describe("renderString — conditionals", () => {
+describe("renderString: conditionals", () => {
   test("renders then-branch when truthy", () => {
     assert.equal(renderString("{{#if show}}yes{{/if}}", { show: true }), "yes")
   })
@@ -78,7 +78,7 @@ describe("renderString — conditionals", () => {
   })
 })
 
-describe("renderString — loops", () => {
+describe("renderString: loops", () => {
   test("iterates over an array", () => {
     assert.equal(
       renderString("{{#each names as n}}{{n}} {{/each}}", {
@@ -111,7 +111,7 @@ describe("renderString — loops", () => {
   })
 })
 
-describe("renderString — locale strings", () => {
+describe("renderString: locale strings", () => {
   const ls = { greeting: "Bonjour", farewell: "Au revoir" }
 
   test("resolves locale string with t. prefix", () => {
@@ -127,7 +127,7 @@ describe("renderString — locale strings", () => {
   })
 })
 
-describe("renderValue — JSON walk", () => {
+describe("renderValue: JSON walk", () => {
   test("renders string values in a plain object", () => {
     assert.deepEqual(
       renderValue({ title: "Hello {{name}}", count: 3 }, { name: "World" }),

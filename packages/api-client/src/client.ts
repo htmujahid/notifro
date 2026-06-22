@@ -32,7 +32,7 @@ async function parseError(res: Response): Promise<never> {
       details = body.error.details
     }
   } catch {
-    // non-JSON body — keep defaults
+    // non-JSON body, keep defaults
   }
 
   throw new ApiClientError(code, message, res.status, details)

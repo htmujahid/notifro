@@ -5,7 +5,7 @@ export const site = {
   name: "Notifro",
   tagline: "Compose once. Deliver everywhere.",
   description:
-    "Notifro is unified notification infrastructure. One compose-once API delivers across Slack, email, Teams, Discord, WhatsApp, Telegram, web push, webhooks, and in-app — with routing rules, fallback chains, scheduling, rate limiting, and a native MCP server for AI agents.",
+    "Notifro is unified notification infrastructure. One compose-once API delivers across Slack, email, Teams, Discord, WhatsApp, Telegram, web push, webhooks, and in-app, with routing rules, fallback chains, scheduling, rate limiting, and a native MCP server for AI agents.",
   url: "https://notifro.com",
   email: "hello@notifro.com",
   frontendUrl: FRONTEND_URL,

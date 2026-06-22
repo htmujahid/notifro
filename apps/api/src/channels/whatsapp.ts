@@ -45,7 +45,7 @@ const whatsappAdapter: ChannelAdapter<WhatsAppConfig, WhatsAppProvider> = {
         providerMessageId: null,
         ok: false,
         error:
-          "Twilio is not configured — set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_FROM_NUMBER",
+          "Twilio is not configured. Set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_FROM_NUMBER",
       }
     }
 
@@ -59,7 +59,7 @@ const whatsappAdapter: ChannelAdapter<WhatsAppConfig, WhatsAppProvider> = {
         providerMessageId: null,
         ok: false,
         error:
-          "No verified phone number on account — add and verify your phone number in account settings first",
+          "No verified phone number on account. Add and verify your phone number in account settings first",
       }
     }
     const to = withWhatsAppPrefix(user.phoneNumber)
@@ -110,7 +110,7 @@ const whatsappAdapter: ChannelAdapter<WhatsAppConfig, WhatsAppProvider> = {
       ok: configured,
       message: configured
         ? "Twilio configured from environment"
-        : "Twilio not configured — set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_FROM_NUMBER",
+        : "Twilio not configured. Set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_FROM_NUMBER",
       checkedAt: new Date().toISOString(),
     }
   },

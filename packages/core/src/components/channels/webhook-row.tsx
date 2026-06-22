@@ -21,11 +21,11 @@ export function WebhookRow({ endpoint }: { endpoint: WebhookEndpoint }) {
       const result = await test.mutateAsync(endpoint.id)
       if (result.ok)
         toast.success(
-          `Test delivered — HTTP ${result.status} in ${result.latencyMs}ms`
+          `Test delivered: HTTP ${result.status} in ${result.latencyMs}ms`
         )
       else
         toast.error(
-          `Test failed — ${result.status ? `HTTP ${result.status}` : result.error} (${result.latencyMs}ms)`
+          `Test failed: ${result.status ? `HTTP ${result.status}` : result.error} (${result.latencyMs}ms)`
         )
     } catch {
       toast.error("Test request failed")

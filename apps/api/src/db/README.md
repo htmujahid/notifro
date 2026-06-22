@@ -1,8 +1,8 @@
-# DB — Kysely over D1
+# DB: Kysely over D1
 
 ## How it works
 
-DDL lives in `apps/api/migrations/*.sql` (wrangler). Kysely is the typed **query** layer only — it does **not** own DDL. To add a table:
+DDL lives in `apps/api/migrations/*.sql` (wrangler). Kysely is the typed **query** layer only. It does **not** own DDL. To add a table:
 
 1. Add a numbered SQL migration: `apps/api/migrations/NNNN_<name>.sql`
 2. Add the corresponding interface to `DB` in `schema.ts`
@@ -16,7 +16,7 @@ Every product table must have:
 userId text not null references user(id) on delete cascade
 ```
 
-Never trust a client-supplied user id — always derive it from `c.var.user!.id` (set by `requireAuth`).
+Never trust a client-supplied user id. Always derive it from `c.var.user!.id` (set by `requireAuth`).
 
 ## Timestamps
 
@@ -31,7 +31,7 @@ Use the `Timestamps` interface fragment in `schema.ts` by spreading it into tabl
 
 ## ID generation
 
-Use `generateId()` from `better-auth` (already imported in `auth.ts`), or `crypto.randomUUID()` — both produce unique string ids consistent with better-auth tables.
+Use `generateId()` from `better-auth` (already imported in `auth.ts`), or `crypto.randomUUID()`, both produce unique string ids consistent with better-auth tables.
 
 ## Querying
 
@@ -54,5 +54,5 @@ const result = await c.var.db
 
 ## Scripts
 
-- `pnpm db:migrate` — apply migrations locally
-- `pnpm db:migrate:remote` — apply migrations to remote D1
+- `pnpm db:migrate`: apply migrations locally
+- `pnpm db:migrate:remote`: apply migrations to remote D1

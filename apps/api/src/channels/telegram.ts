@@ -56,7 +56,7 @@ const telegramAdapter: ChannelAdapter<TelegramConfig, TelegramProvider> = {
       return {
         providerMessageId: null,
         ok: false,
-        error: "No Telegram bot token — add credentials.botToken",
+        error: "No Telegram bot token. Add credentials.botToken",
       }
     }
 
@@ -116,7 +116,7 @@ const telegramAdapter: ChannelAdapter<TelegramConfig, TelegramProvider> = {
     if (!conn.credentials) {
       return {
         ok: false,
-        message: "No bot token — add credentials.botToken",
+        message: "No bot token. Add credentials.botToken",
         checkedAt: new Date().toISOString(),
       }
     }

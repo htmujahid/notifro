@@ -1,4 +1,4 @@
-# Notifro — Marketing site
+# Notifro: Marketing site
 
 The public marketing site for **Notifro**, the unified notification infrastructure.
 Built with [Astro](https://astro.build) and deployed on Cloudflare.
@@ -12,10 +12,10 @@ Auth links point at the web app under `PUBLIC_FRONTEND_URL` (`/auth/sign-in`, `/
 
 | Route          | Purpose                                                       |
 | -------------- | ------------------------------------------------------------- |
-| `/`            | Landing page — hero, core features, channels, MCP, how-it-works |
+| `/`            | Landing page: hero, core features, channels, MCP, how-it-works |
 | `/features`    | Full feature breakdown across every category                  |
 | `/channels`    | Supported channels and routing/fallback                       |
-| `/mcp`         | MCP server layer — tools, resources, prompts, safety          |
+| `/mcp`         | MCP server layer: tools, resources, prompts, safety          |
 | `/developers`  | Quickstart, APIs, SDKs, CLI, and MCP setup                    |
 | `/security`    | Security & compliance posture                                 |
 | `/about`       | Company and product principles                                |
@@ -38,7 +38,7 @@ postcss.config.mjs     # Tailwind v4 via @tailwindcss/postcss
 ```
 
 Branding and shared content live in `src/config.ts`. Styling comes from the shared
-`@notifro/ui` shadcn theme — use the same Tailwind utilities and design tokens
+`@notifro/ui` shadcn theme. Use the same Tailwind utilities and design tokens
 (`bg-card`, `text-muted-foreground`, `bg-primary`, …) as the other apps.
 
 ## Commands

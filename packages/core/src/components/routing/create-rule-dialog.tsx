@@ -89,7 +89,7 @@ export function CreateRuleDialog({
               value={minPriority}
               onChange={(e) => setMinPriority(e.target.value)}
             >
-              <option value="">— any —</option>
+              <option value="">Any</option>
               <option value="low">low</option>
               <option value="normal">normal</option>
               <option value="high">high</option>
@@ -132,7 +132,7 @@ export function CreateRuleDialog({
                 value={targetChainId}
                 onChange={(e) => setTargetChainId(e.target.value)}
               >
-                <option value="">— select chain —</option>
+                <option value="">Select chain</option>
                 {chains.map((ch) => (
                   <option key={ch.id} value={ch.id}>
                     {ch.name}

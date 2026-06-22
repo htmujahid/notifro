@@ -34,7 +34,7 @@ const cases: UseCase[] = [
     label: "Transactional",
     icon: Receipt,
     title: "Receipts, OTPs & password resets",
-    desc: "Critical messages that must arrive. Add a fallback chain so a missed push becomes an email becomes an SMS — with idempotency keys so retries never double-send.",
+    desc: "Critical messages that must arrive. Add a fallback chain so a missed push becomes an email becomes an SMS, with idempotency keys so retries never double-send.",
     points: [
       "Idempotency keys prevent duplicates",
       "push → email → SMS fallback",
@@ -43,7 +43,7 @@ const cases: UseCase[] = [
     rows: [
       { channel: "Push", status: "Delivered", tone: "delivered" },
       { channel: "Email", status: "Opened", tone: "opened" },
-      { channel: "SMS", status: "Skipped — push landed", tone: "sent" },
+      { channel: "SMS", status: "Skipped: push landed", tone: "sent" },
     ],
   },
   {
@@ -60,7 +60,7 @@ const cases: UseCase[] = [
     rows: [
       { channel: "Slack", status: "Delivered", tone: "delivered" },
       { channel: "Push", status: "Delivered", tone: "delivered" },
-      { channel: "Email", status: "Queued — quiet hours", tone: "sent" },
+      { channel: "Email", status: "Queued: quiet hours", tone: "sent" },
     ],
   },
   {
@@ -85,7 +85,7 @@ const cases: UseCase[] = [
     label: "Agentic & ops",
     icon: Bot,
     title: "AI agents & internal tooling",
-    desc: "Let agents send through the MCP server within granted scopes — preview-gated and audited. Or wire internal tools to the same compose-once API.",
+    desc: "Let agents send through the MCP server within granted scopes, preview-gated and audited. Or wire internal tools to the same compose-once API.",
     points: [
       "Scoped MCP tools for agents",
       "Preview & approval gates",

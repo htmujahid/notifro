@@ -25,7 +25,7 @@ export default function AuthLayout() {
 
   return (
     <div className="flex h-svh overflow-hidden bg-background">
-      {/* Left panel — visible lg+ */}
+      {/* Left panel (visible lg+) */}
       <aside className="hidden lg:flex w-[44%] xl:w-[46%] shrink-0 flex-col border-r border-border bg-muted/40">
         <div className="flex flex-col h-full px-10 xl:px-14 py-10">
           {/* Brand */}
@@ -101,9 +101,9 @@ export default function AuthLayout() {
         </div>
       </aside>
 
-      {/* Right panel — scrollable form */}
+      {/* Right panel: scrollable form */}
       <main className="flex flex-1 flex-col overflow-y-auto">
-        {/* Mobile brand bar — safe-area-inset-top for notch on native apps */}
+        {/* Mobile brand bar: safe-area-inset-top for notch on native apps */}
         <div
           className="flex shrink-0 items-center gap-2 border-b border-border px-6 lg:hidden"
           style={{
