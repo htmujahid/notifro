@@ -158,7 +158,7 @@ export function ApiKeysSection() {
                 }
                 className="shrink-0 text-xs"
               >
-                {key.metadata?.mode ?? "live"}
+                {String(key.metadata?.mode ?? "live")}
               </Badge>
               <span className="flex-1 font-mono text-xs">
                 {key.start ?? key.prefix}…

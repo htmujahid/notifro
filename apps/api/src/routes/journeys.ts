@@ -228,7 +228,7 @@ const enrollRoute = createRoute({
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)
 
-router.openapi(listRoute, async (c) => {
+export default router.openapi(listRoute, async (c) => {
   const { db } = c.var
   const userId = c.var.user!.id
   const parsed = c.req.valid("query")
@@ -249,7 +249,7 @@ router.openapi(listRoute, async (c) => {
   })
 })
 
-router.openapi(createRoute_, async (c) => {
+  .openapi(createRoute_, async (c) => {
   const body = c.req.valid("json")
   const { db } = c.var
   const userId = c.var.user!.id
@@ -276,7 +276,7 @@ router.openapi(createRoute_, async (c) => {
   return c.json(row, 201)
 })
 
-router.openapi(getRoute, async (c) => {
+  .openapi(getRoute, async (c) => {
   const { db } = c.var
   const userId = c.var.user!.id
   const row = await db
@@ -289,7 +289,7 @@ router.openapi(getRoute, async (c) => {
   return c.json(row)
 })
 
-router.openapi(patchRoute, async (c) => {
+  .openapi(patchRoute, async (c) => {
   const { db } = c.var
   const userId = c.var.user!.id
   const id = c.req.param("id")
@@ -323,7 +323,7 @@ router.openapi(patchRoute, async (c) => {
   return c.json(row)
 })
 
-router.openapi(deleteRoute, async (c) => {
+  .openapi(deleteRoute, async (c) => {
   const { db } = c.var
   const userId = c.var.user!.id
   const id = c.req.param("id")
@@ -340,7 +340,7 @@ router.openapi(deleteRoute, async (c) => {
   return new Response(null, { status: 204 })
 })
 
-router.openapi(activateRoute, async (c) => {
+  .openapi(activateRoute, async (c) => {
   const { db } = c.var
   const userId = c.var.user!.id
   const id = c.req.param("id")
@@ -365,7 +365,7 @@ router.openapi(activateRoute, async (c) => {
   return c.json(row)
 })
 
-router.openapi(listRunsRoute, async (c) => {
+  .openapi(listRunsRoute, async (c) => {
   const { db } = c.var
   const userId = c.var.user!.id
   const journeyId = c.req.param("id")
@@ -395,7 +395,7 @@ router.openapi(listRunsRoute, async (c) => {
   })
 })
 
-router.openapi(enrollRoute, async (c) => {
+  .openapi(enrollRoute, async (c) => {
   const { db } = c.var
   const userId = c.var.user!.id
   const journeyId = c.req.param("id")
@@ -460,5 +460,3 @@ router.openapi(enrollRoute, async (c) => {
     .executeTakeFirstOrThrow()
   return c.json(updated, 201)
 })
-
-export default router

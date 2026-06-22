@@ -2,13 +2,15 @@ import { useState } from "react"
 
 import { CodeIcon } from "lucide-react"
 
+import { unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
+import type { ChannelType } from "@renderical/api-client/types"
 import { Button } from "@renderical/ui/components/button"
 import { Card, CardContent } from "@renderical/ui/components/card"
 
 export function SandboxPanel() {
-  const api = useApiClient()
-  const [channel, setChannel] = useState("email")
+  const client = useApiClient()
+  const [channel, setChannel] = useState<ChannelType>("email")
   const [to, setTo] = useState("")
   const [subject, setSubject] = useState("")
   const [body, setBody] = useState("")
@@ -21,11 +23,15 @@ export function SandboxPanel() {
     setLoading(true)
     setError(null)
     try {
-      const res = await api.post<unknown>("/api/notifications", {
-        content: { subject, body: { text: body } },
-        recipient: { type: "contact", email: to },
-        channels: [channel],
-      })
+      const res = await unwrap(
+        client.api.notifications.$post({
+          json: {
+            content: { subject, body: { text: body } },
+            recipient: { type: "contact", email: to },
+            channels: [channel],
+          },
+        })
+      )
       setResult(res)
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
@@ -39,7 +45,7 @@ export function SandboxPanel() {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch(`${api.baseURL}/api/notifications`, {
+      const res = await fetch(`${client.baseURL}/api/notifications`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -84,7 +90,7 @@ export function SandboxPanel() {
               <select
                 className="rounded-md border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 value={channel}
-                onChange={(e) => setChannel(e.target.value)}
+                onChange={(e) => setChannel(e.target.value as ChannelType)}
               >
                 <option value="email">Email</option>
                 <option value="in_app">In-app</option>

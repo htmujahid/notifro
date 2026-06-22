@@ -5,14 +5,9 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
+import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
-import type {
-  ListParams,
-  ListResponse,
-  RecipientRecord,
-  Segment,
-  SegmentPreview,
-} from "@renderical/api-client/types"
+import type { ListParams } from "@renderical/api-client/types"
 
 export const recipientKeys = {
   all: ["recipients"] as const,
@@ -30,21 +25,25 @@ export const segmentKeys = {
 }
 
 export function useRecipients(params: ListParams = {}) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useInfiniteQuery({
     queryKey: recipientKeys.list(params),
     queryFn: ({ pageParam }) =>
-      api.get<ListResponse<RecipientRecord>>("/api/recipients", {
-        ...params,
-        ...(pageParam ? { cursor: pageParam as string } : {}),
-      }),
+      unwrap(
+        client.api.recipients.$get({
+          query: toQuery({
+            ...params,
+            ...(pageParam ? { cursor: pageParam as string } : {}),
+          }),
+        })
+      ),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (last) => last.nextCursor ?? undefined,
   })
 }
 
 export function useCreateRecipient() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (body: {
@@ -54,13 +53,13 @@ export function useCreateRecipient() {
       locale?: string
       timezone?: string
       attributes?: Record<string, unknown>
-    }) => api.post<RecipientRecord>("/api/recipients", body),
+    }) => unwrap(client.api.recipients.$post({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: recipientKeys.lists() }),
   })
 }
 
 export function useIdentifyRecipient() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (body: {
@@ -70,55 +69,61 @@ export function useIdentifyRecipient() {
       locale?: string
       timezone?: string
       attributes?: Record<string, unknown>
-    }) => api.post<RecipientRecord>("/api/recipients/identify", body),
+    }) => unwrap(client.api.recipients.identify.$post({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: recipientKeys.lists() }),
   })
 }
 
 export function useDeleteRecipient() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => api.delete(`/api/recipients/${id}`),
+    mutationFn: (id: string) =>
+      unwrap(client.api.recipients[":id"].$delete({ param: { id } })),
     onSuccess: () => qc.invalidateQueries({ queryKey: recipientKeys.lists() }),
   })
 }
 
 export function useSegments(params: ListParams = {}) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useInfiniteQuery({
     queryKey: segmentKeys.list(params),
     queryFn: ({ pageParam }) =>
-      api.get<ListResponse<Segment>>("/api/segments", {
-        ...params,
-        ...(pageParam ? { cursor: pageParam as string } : {}),
-      }),
+      unwrap(
+        client.api.segments.$get({
+          query: toQuery({
+            ...params,
+            ...(pageParam ? { cursor: pageParam as string } : {}),
+          }),
+        })
+      ),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (last) => last.nextCursor ?? undefined,
   })
 }
 
 export function useSegmentPreview(id: string) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useQuery({
     queryKey: segmentKeys.preview(id),
-    queryFn: () => api.get<SegmentPreview>(`/api/segments/${id}/preview`),
+    queryFn: () =>
+      unwrap(client.api.segments[":id"].preview.$get({ param: { id } })),
     enabled: !!id,
   })
 }
 
 export function useCreateSegment() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (body: { name: string; filter: Record<string, unknown> }) =>
-      api.post<Segment>("/api/segments", body),
+      unwrap(client.api.segments.$post({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: segmentKeys.lists() }),
   })
 }
 
 export function useUpdateSegment() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({
@@ -128,7 +133,7 @@ export function useUpdateSegment() {
       id: string
       name?: string
       filter?: Record<string, unknown>
-    }) => api.patch<Segment>(`/api/segments/${id}`, body),
+    }) => unwrap(client.api.segments[":id"].$patch({ param: { id }, json: body })),
     onSuccess: (_, { id }) => {
       qc.invalidateQueries({ queryKey: segmentKeys.lists() })
       qc.invalidateQueries({ queryKey: segmentKeys.detail(id) })
@@ -137,10 +142,11 @@ export function useUpdateSegment() {
 }
 
 export function useDeleteSegment() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => api.delete(`/api/segments/${id}`),
+    mutationFn: (id: string) =>
+      unwrap(client.api.segments[":id"].$delete({ param: { id } })),
     onSuccess: () => qc.invalidateQueries({ queryKey: segmentKeys.lists() }),
   })
 }

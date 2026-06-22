@@ -98,7 +98,7 @@ const onboardingPatchRoute = createRoute({
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)
 
-router.openapi(overviewRoute, async (c) => {
+export default router.openapi(overviewRoute, async (c) => {
   const userId = c.var.user!.id
   const db = c.var.db
 
@@ -211,7 +211,7 @@ router.openapi(overviewRoute, async (c) => {
   })
 })
 
-router.openapi(testSendRoute, async (c) => {
+  .openapi(testSendRoute, async (c) => {
   const userId = c.var.user!.id
   const db = c.var.db
 
@@ -298,7 +298,7 @@ router.openapi(testSendRoute, async (c) => {
   return c.json({ ok: result.ok, notificationId: notifId })
 })
 
-router.openapi(onboardingPatchRoute, async (c) => {
+  .openapi(onboardingPatchRoute, async (c) => {
   const userId = c.var.user!.id
   const db = c.var.db
   const body = c.req.valid("json")
@@ -347,5 +347,3 @@ router.openapi(onboardingPatchRoute, async (c) => {
 
   return c.json({ ok: true })
 })
-
-export default router

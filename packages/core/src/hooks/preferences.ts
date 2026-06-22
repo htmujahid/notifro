@@ -5,15 +5,9 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
+import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
-import type {
-  ChannelPriority,
-  ListParams,
-  ListResponse,
-  Preference,
-  PreferenceCenter,
-  Topic,
-} from "@renderical/api-client/types"
+import type { ListParams } from "@renderical/api-client/types"
 
 export const topicKeys = {
   all: ["topics"] as const,
@@ -29,21 +23,25 @@ export const preferenceKeys = {
 }
 
 export function useTopics(params: ListParams = {}) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useInfiniteQuery({
     queryKey: topicKeys.list(params),
     queryFn: ({ pageParam }) =>
-      api.get<ListResponse<Topic>>("/api/topics", {
-        ...params,
-        ...(pageParam ? { cursor: pageParam as string } : {}),
-      }),
+      unwrap(
+        client.api.topics.$get({
+          query: toQuery({
+            ...params,
+            ...(pageParam ? { cursor: pageParam as string } : {}),
+          }),
+        })
+      ),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (last) => last.nextCursor ?? undefined,
   })
 }
 
 export function useCreateTopic() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (body: {
@@ -52,13 +50,13 @@ export function useCreateTopic() {
       description?: string
       defaultOptIn?: boolean
       transactional?: boolean
-    }) => api.post<Topic>("/api/topics", body),
+    }) => unwrap(client.api.topics.$post({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: topicKeys.lists() }),
   })
 }
 
 export function useUpdateTopic() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({
@@ -70,43 +68,44 @@ export function useUpdateTopic() {
       description?: string | null
       defaultOptIn?: boolean
       transactional?: boolean
-    }) => api.patch<Topic>(`/api/topics/${id}`, body),
+    }) => unwrap(client.api.topics[":id"].$patch({ param: { id }, json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: topicKeys.all }),
   })
 }
 
 export function useDeleteTopic() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => api.delete(`/api/topics/${id}`),
+    mutationFn: (id: string) =>
+      unwrap(client.api.topics[":id"].$delete({ param: { id } })),
     onSuccess: () => qc.invalidateQueries({ queryKey: topicKeys.lists() }),
   })
 }
 
 export function useGeneratePreferenceToken() {
-  const api = useApiClient()
+  const client = useApiClient()
   return useMutation({
     mutationFn: (recipientId: string) =>
-      api.post<{ token: string; expiresAt: string }>("/api/preferences/token", {
-        recipientId,
-      }),
+      unwrap(client.api.preferences.token.$post({ json: { recipientId } })),
   })
 }
 
 export function usePreferenceCenter(token: string | undefined) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useQuery({
     queryKey: preferenceKeys.center(token ?? ""),
     queryFn: () =>
-      api.get<PreferenceCenter>(`/api/preferences/center`, { token }),
+      unwrap(
+        client.api.preferences.center.$get({ query: { token: token ?? "" } })
+      ),
     enabled: !!token,
   })
 }
 
 export function useUpdatePreferences(token: string | undefined) {
   const qc = useQueryClient()
-  const api = useApiClient()
+  const client = useApiClient()
   return useMutation({
     mutationFn: (
       preferences: Array<{
@@ -115,9 +114,11 @@ export function useUpdatePreferences(token: string | undefined) {
         optedIn: boolean
       }>
     ) =>
-      api.post<{ updated: number }>(
-        `/api/preferences/center?token=${token ?? ""}`,
-        { preferences }
+      unwrap(
+        client.api.preferences.center.$post({
+          query: { token: token ?? "" },
+          json: { preferences },
+        })
       ),
     onSuccess: () => {
       if (token)
@@ -127,14 +128,11 @@ export function useUpdatePreferences(token: string | undefined) {
 }
 
 export function useUnsubscribeInfo(token: string | undefined) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useQuery({
     queryKey: ["unsubscribe-info", token ?? ""],
     queryFn: () =>
-      api.get<{ recipientId: string; email: string | null; ok: boolean }>(
-        `/api/unsubscribe`,
-        { token }
-      ),
+      unwrap(client.api.unsubscribe.$get({ query: { token: token ?? "" } })),
     enabled: !!token,
   })
 }
@@ -151,19 +149,21 @@ export function useUnsubscribe(token: string | undefined) {
 }
 
 export function useRecipientPreferences(recipientId: string | undefined) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useQuery({
     queryKey: preferenceKeys.recipient(recipientId ?? ""),
     queryFn: () =>
-      api.get<{ data: Preference[] }>(
-        `/api/recipients/${recipientId}/preferences`
+      unwrap(
+        client.api.recipients[":id"].preferences.$get({
+          param: { id: recipientId ?? "" },
+        })
       ),
     enabled: !!recipientId,
   })
 }
 
 export function useSetRecipientPreferences(recipientId: string) {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (
@@ -173,9 +173,11 @@ export function useSetRecipientPreferences(recipientId: string) {
         optedIn: boolean
       }>
     ) =>
-      api.put<{ updated: number }>(
-        `/api/recipients/${recipientId}/preferences`,
-        { preferences }
+      unwrap(
+        client.api.recipients[":id"].preferences.$put({
+          param: { id: recipientId },
+          json: { preferences },
+        })
       ),
     onSuccess: () =>
       qc.invalidateQueries({ queryKey: preferenceKeys.recipient(recipientId) }),
@@ -183,25 +185,29 @@ export function useSetRecipientPreferences(recipientId: string) {
 }
 
 export function useChannelPriority(recipientId: string | undefined) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useQuery({
     queryKey: preferenceKeys.channelPriority(recipientId ?? ""),
     queryFn: () =>
-      api.get<ChannelPriority>(
-        `/api/recipients/${recipientId}/channel-priority`
+      unwrap(
+        client.api.recipients[":id"]["channel-priority"].$get({
+          param: { id: recipientId ?? "" },
+        })
       ),
     enabled: !!recipientId,
   })
 }
 
 export function useSetChannelPriority(recipientId: string) {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (order: string[]) =>
-      api.put<ChannelPriority>(
-        `/api/recipients/${recipientId}/channel-priority`,
-        { order }
+      unwrap(
+        client.api.recipients[":id"]["channel-priority"].$put({
+          param: { id: recipientId },
+          json: { order },
+        })
       ),
     onSuccess: () =>
       qc.invalidateQueries({

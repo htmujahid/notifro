@@ -5,15 +5,20 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
-import { useApiClient } from "@renderical/api-client/context"
 import type {
-  BrandKit,
-  ListParams,
-  ListResponse,
-  Snippet,
-  Template,
-  TemplateVersion,
-} from "@renderical/api-client/types"
+  ApiClient,
+  InferRequestType,
+} from "@renderical/api-client/client"
+import { toQuery, unwrap } from "@renderical/api-client/client"
+import { useApiClient } from "@renderical/api-client/context"
+import type { ListParams } from "@renderical/api-client/types"
+
+type CreateTemplateBody = InferRequestType<
+  ApiClient["api"]["templates"]["$post"]
+>["json"]
+type UpdateTemplateBody = InferRequestType<
+  ApiClient["api"]["templates"][":id"]["$patch"]
+>["json"]
 
 export const templateKeys = {
   all: ["templates"] as const,
@@ -34,30 +39,34 @@ export const brandKitKeys = {
 }
 
 export function useTemplates(params: ListParams = {}) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useInfiniteQuery({
     queryKey: templateKeys.list(params),
     queryFn: ({ pageParam }) =>
-      api.get<ListResponse<Template>>("/api/templates", {
-        ...params,
-        ...(pageParam ? { cursor: pageParam as string } : {}),
-      }),
+      unwrap(
+        client.api.templates.$get({
+          query: toQuery({
+            ...params,
+            ...(pageParam ? { cursor: pageParam as string } : {}),
+          }),
+        })
+      ),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (last) => last.nextCursor ?? undefined,
   })
 }
 
 export function useTemplate(id: string) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useQuery({
     queryKey: templateKeys.detail(id),
-    queryFn: () => api.get<Template>(`/api/templates/${id}`),
+    queryFn: () => unwrap(client.api.templates[":id"].$get({ param: { id } })),
     enabled: !!id,
   })
 }
 
 export function useCreateTemplate() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (body: {
@@ -68,13 +77,13 @@ export function useCreateTemplate() {
       content: Record<string, unknown>
       variables?: Array<{ key: string; type?: string; required?: boolean }>
       localeStrings?: Record<string, Record<string, string>>
-    }) => api.post<Template>("/api/templates", body),
+    }) => unwrap(client.api.templates.$post({ json: body as CreateTemplateBody })),
     onSuccess: () => qc.invalidateQueries({ queryKey: templateKeys.lists() }),
   })
 }
 
 export function useUpdateTemplate() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({
@@ -89,7 +98,13 @@ export function useUpdateTemplate() {
       content?: Record<string, unknown>
       variables?: Array<{ key: string; type?: string; required?: boolean }>
       localeStrings?: Record<string, Record<string, string>>
-    }) => api.patch<Template>(`/api/templates/${id}`, body),
+    }) =>
+      unwrap(
+        client.api.templates[":id"].$patch({
+          param: { id },
+          json: body as UpdateTemplateBody,
+        })
+      ),
     onSuccess: (_, { id }) => {
       qc.invalidateQueries({ queryKey: templateKeys.lists() })
       qc.invalidateQueries({ queryKey: templateKeys.detail(id) })
@@ -99,16 +114,17 @@ export function useUpdateTemplate() {
 }
 
 export function useDeleteTemplate() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => api.delete<void>(`/api/templates/${id}`),
+    mutationFn: (id: string) =>
+      unwrap(client.api.templates[":id"].$delete({ param: { id } })),
     onSuccess: () => qc.invalidateQueries({ queryKey: templateKeys.lists() }),
   })
 }
 
 export function useRenderPreview() {
-  const api = useApiClient()
+  const client = useApiClient()
   return useMutation({
     mutationFn: ({
       id,
@@ -119,11 +135,12 @@ export function useRenderPreview() {
       data?: Record<string, unknown>
       locale?: string
     }) =>
-      api.post<{
-        content: Record<string, unknown>
-        templateId: string
-        locale: string
-      }>(`/api/templates/${id}/render`, { data: data ?? {}, locale }),
+      unwrap(
+        client.api.templates[":id"].render.$post({
+          param: { id },
+          json: { data: data ?? {}, locale },
+        })
+      ),
   })
 }
 
@@ -131,16 +148,18 @@ export function useTemplateVersions(
   templateId: string,
   params: ListParams = {}
 ) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useInfiniteQuery({
     queryKey: templateKeys.versions(templateId),
     queryFn: ({ pageParam }) =>
-      api.get<ListResponse<TemplateVersion>>(
-        `/api/templates/${templateId}/versions`,
-        {
-          ...params,
-          ...(pageParam ? { cursor: pageParam as string } : {}),
-        }
+      unwrap(
+        client.api.templates[":id"].versions.$get({
+          param: { id: templateId },
+          query: toQuery({
+            ...params,
+            ...(pageParam ? { cursor: pageParam as string } : {}),
+          }),
+        })
       ),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (last) => last.nextCursor ?? undefined,
@@ -149,7 +168,7 @@ export function useTemplateVersions(
 }
 
 export function useRestoreVersion() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({
@@ -159,9 +178,10 @@ export function useRestoreVersion() {
       templateId: string
       version: number
     }) =>
-      api.post<{ id: string; version: number; message: string }>(
-        `/api/templates/${templateId}/versions/${version}/restore`,
-        {}
+      unwrap(
+        client.api.templates[":id"].versions[":version"].restore.$post({
+          param: { id: templateId, version: String(version) },
+        })
       ),
     onSuccess: (_, { templateId }) => {
       qc.invalidateQueries({ queryKey: templateKeys.detail(templateId) })
@@ -172,31 +192,35 @@ export function useRestoreVersion() {
 }
 
 export function useSnippets(params: ListParams = {}) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useInfiniteQuery({
     queryKey: snippetKeys.list(params),
     queryFn: ({ pageParam }) =>
-      api.get<ListResponse<Snippet>>("/api/snippets", {
-        ...params,
-        ...(pageParam ? { cursor: pageParam as string } : {}),
-      }),
+      unwrap(
+        client.api.snippets.$get({
+          query: toQuery({
+            ...params,
+            ...(pageParam ? { cursor: pageParam as string } : {}),
+          }),
+        })
+      ),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (last) => last.nextCursor ?? undefined,
   })
 }
 
 export function useCreateSnippet() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (body: { name: string; content: Record<string, unknown> }) =>
-      api.post<Snippet>("/api/snippets", body),
+      unwrap(client.api.snippets.$post({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: snippetKeys.lists() }),
   })
 }
 
 export function useUpdateSnippet() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({
@@ -206,25 +230,27 @@ export function useUpdateSnippet() {
       id: string
       name?: string
       content?: Record<string, unknown>
-    }) => api.patch<Snippet>(`/api/snippets/${id}`, body),
+    }) =>
+      unwrap(client.api.snippets[":id"].$patch({ param: { id }, json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: snippetKeys.lists() }),
   })
 }
 
 export function useDeleteSnippet() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => api.delete<void>(`/api/snippets/${id}`),
+    mutationFn: (id: string) =>
+      unwrap(client.api.snippets[":id"].$delete({ param: { id } })),
     onSuccess: () => qc.invalidateQueries({ queryKey: snippetKeys.lists() }),
   })
 }
 
 export function useBrandKit() {
-  const api = useApiClient()
+  const client = useApiClient()
   return useQuery({
     queryKey: brandKitKeys.all,
-    queryFn: () => api.get<BrandKit>("/api/brand-kit"),
+    queryFn: () => unwrap(client.api["brand-kit"].$get()),
     retry: (failureCount, error) => {
       if ((error as { status?: number }).status === 404) return false
       return failureCount < 3
@@ -233,14 +259,14 @@ export function useBrandKit() {
 }
 
 export function useUpdateBrandKit() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (body: {
       logoUrl?: string | null
       colors?: Record<string, string> | null
       fontStack?: string | null
-    }) => api.put<BrandKit>("/api/brand-kit", body),
+    }) => unwrap(client.api["brand-kit"].$put({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: brandKitKeys.all }),
   })
 }

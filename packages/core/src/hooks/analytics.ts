@@ -1,12 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 
+import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
-import type {
-  AnalyticsChannelRow,
-  AnalyticsSummary,
-  AnalyticsTimeseriesItem,
-  AnalyticsTopicRow,
-} from "@renderical/api-client/types"
 
 export const analyticsKeys = {
   all: ["analytics"] as const,
@@ -38,17 +33,8 @@ export interface RangeParams {
   to?: string
 }
 
-function toQueryString(params: Record<string, string | undefined>): string {
-  const entries = Object.entries(params).filter(([, v]) => v !== undefined) as [
-    string,
-    string,
-  ][]
-  if (entries.length === 0) return ""
-  return "?" + new URLSearchParams(entries).toString()
-}
-
 export function useAnalyticsSummary(params: SummaryParams = {}) {
-  const api = useApiClient()
+  const client = useApiClient()
   const p: Record<string, string | undefined> = {
     from: params.from,
     to: params.to,
@@ -57,13 +43,13 @@ export function useAnalyticsSummary(params: SummaryParams = {}) {
   return useQuery({
     queryKey: analyticsKeys.summary(p),
     queryFn: () =>
-      api.get<AnalyticsSummary>(`/api/analytics/summary${toQueryString(p)}`),
+      unwrap(client.api.analytics.summary.$get({ query: toQuery(p) })),
     staleTime: 60_000,
   })
 }
 
 export function useAnalyticsTimeseries(params: TimeseriesParams = {}) {
-  const api = useApiClient()
+  const client = useApiClient()
   const p: Record<string, string | undefined> = {
     from: params.from,
     to: params.to,
@@ -73,15 +59,13 @@ export function useAnalyticsTimeseries(params: TimeseriesParams = {}) {
   return useQuery({
     queryKey: analyticsKeys.timeseries(p),
     queryFn: () =>
-      api.get<{ data: AnalyticsTimeseriesItem[] }>(
-        `/api/analytics/timeseries${toQueryString(p)}`
-      ),
+      unwrap(client.api.analytics.timeseries.$get({ query: toQuery(p) })),
     staleTime: 60_000,
   })
 }
 
 export function useAnalyticsChannels(params: RangeParams = {}) {
-  const api = useApiClient()
+  const client = useApiClient()
   const p: Record<string, string | undefined> = {
     from: params.from,
     to: params.to,
@@ -89,15 +73,13 @@ export function useAnalyticsChannels(params: RangeParams = {}) {
   return useQuery({
     queryKey: analyticsKeys.channels(p),
     queryFn: () =>
-      api.get<{ data: AnalyticsChannelRow[] }>(
-        `/api/analytics/channels${toQueryString(p)}`
-      ),
+      unwrap(client.api.analytics.channels.$get({ query: toQuery(p) })),
     staleTime: 60_000,
   })
 }
 
 export function useAnalyticsTopTopics(params: RangeParams = {}) {
-  const api = useApiClient()
+  const client = useApiClient()
   const p: Record<string, string | undefined> = {
     from: params.from,
     to: params.to,
@@ -105,9 +87,7 @@ export function useAnalyticsTopTopics(params: RangeParams = {}) {
   return useQuery({
     queryKey: analyticsKeys.topTopics(p),
     queryFn: () =>
-      api.get<{ data: AnalyticsTopicRow[] }>(
-        `/api/analytics/top-topics${toQueryString(p)}`
-      ),
+      unwrap(client.api.analytics["top-topics"].$get({ query: toQuery(p) })),
     staleTime: 60_000,
   })
 }

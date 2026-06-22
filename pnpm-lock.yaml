@@ -410,6 +410,12 @@ importers:
 
   packages/api-client:
     dependencies:
+      api:
+        specifier: workspace:*
+        version: link:../../apps/api
+      hono:
+        specifier: ^4.12.26
+        version: 4.12.26
       react:
         specifier: ^19.2.6
         version: 19.2.6

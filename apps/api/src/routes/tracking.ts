@@ -12,7 +12,7 @@ const TRANSPARENT_GIF = new Uint8Array([
 
 const router = new Hono<AppEnv>()
 
-router.get("/o/:token", async (c) => {
+export default router.get("/o/:token", async (c) => {
   const rawToken = c.req.param("token").replace(/\.gif$/i, "")
   const secret = c.env.CONNECTION_ENC_KEY
 
@@ -56,7 +56,7 @@ router.get("/o/:token", async (c) => {
   })
 })
 
-router.get("/c/:token", async (c) => {
+  .get("/c/:token", async (c) => {
   const token = c.req.param("token")
   const secret = c.env.CONNECTION_ENC_KEY
 
@@ -94,5 +94,3 @@ router.get("/c/:token", async (c) => {
 
   return new Response("Invalid link", { status: 400 })
 })
-
-export default router

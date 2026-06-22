@@ -97,7 +97,7 @@ function now(): string {
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)
 
-router.openapi(listRoute, async (c) => {
+export default router.openapi(listRoute, async (c) => {
   const { limit = 20, cursor, filter } = c.req.valid("query")
   const userId = c.var.user!.id
   const db = c.var.db
@@ -150,7 +150,7 @@ router.openapi(listRoute, async (c) => {
   })
 })
 
-router.openapi(unreadCountRoute, async (c) => {
+  .openapi(unreadCountRoute, async (c) => {
   const userId = c.var.user!.id
   const result = await c.var.db
     .selectFrom("inbox_message")
@@ -161,7 +161,7 @@ router.openapi(unreadCountRoute, async (c) => {
   return c.json({ count: Number(result.n) })
 })
 
-router.openapi(markReadRoute, async (c) => {
+  .openapi(markReadRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
   const db = c.var.db
@@ -191,7 +191,7 @@ router.openapi(markReadRoute, async (c) => {
   return c.json(updated as z.infer<typeof InboxMessageDtoSchema>)
 })
 
-router.openapi(markAllReadRoute, async (c) => {
+  .openapi(markAllReadRoute, async (c) => {
   const userId = c.var.user!.id
   const ts = now()
   const result = await c.var.db
@@ -203,5 +203,3 @@ router.openapi(markAllReadRoute, async (c) => {
 
   return c.json({ updated: Number(result.numUpdatedRows ?? 0) })
 })
-
-export default router

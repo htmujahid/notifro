@@ -55,7 +55,7 @@ async function recordEvent(
     .execute()
 }
 
-router.post("/:provider", async (c) => {
+export default router.post("/:provider", async (c) => {
   const { provider } = c.req.param()
 
   if (provider === "twilio") {
@@ -121,5 +121,3 @@ router.post("/:provider", async (c) => {
 
   return c.json({ ok: false, error: "Unknown provider" }, 404)
 })
-
-export default router

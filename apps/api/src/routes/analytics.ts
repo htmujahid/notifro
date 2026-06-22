@@ -139,7 +139,7 @@ const topTopicsRoute = createRoute({
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)
 
-router.openapi(summaryRoute, async (c) => {
+export default router.openapi(summaryRoute, async (c) => {
   const userId = c.var.user!.id
   const db = c.var.db
   const { from, to, channel } = c.req.valid("query")
@@ -179,7 +179,7 @@ router.openapi(summaryRoute, async (c) => {
   })
 })
 
-router.openapi(timeseriesRoute, async (c) => {
+  .openapi(timeseriesRoute, async (c) => {
   const userId = c.var.user!.id
   const db = c.var.db
   const { from, to, granularity, channel } = c.req.valid("query")
@@ -216,7 +216,7 @@ router.openapi(timeseriesRoute, async (c) => {
   })
 })
 
-router.openapi(channelsRoute, async (c) => {
+  .openapi(channelsRoute, async (c) => {
   const userId = c.var.user!.id
   const db = c.var.db
   const { from, to } = c.req.valid("query")
@@ -257,7 +257,7 @@ router.openapi(channelsRoute, async (c) => {
   })
 })
 
-router.openapi(topTopicsRoute, async (c) => {
+  .openapi(topTopicsRoute, async (c) => {
   const userId = c.var.user!.id
   const db = c.var.db
   const { from, to } = c.req.valid("query")
@@ -295,5 +295,3 @@ router.openapi(topTopicsRoute, async (c) => {
     }),
   })
 })
-
-export default router

@@ -4,8 +4,9 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
+import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
-import type { ListParams, ListResponse } from "@renderical/api-client/types"
+import type { ListParams } from "@renderical/api-client/types"
 
 export interface WebhookEndpoint {
   id: string
@@ -51,53 +52,62 @@ export const webhookKeys = {
 }
 
 export function useWebhooks(params: ListParams = {}) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useInfiniteQuery({
     queryKey: webhookKeys.list(params),
     queryFn: ({ pageParam }) =>
-      api.get<ListResponse<WebhookEndpoint>>("/api/channels/webhooks", {
-        ...params,
-        ...(pageParam ? { cursor: pageParam as string } : {}),
-      }),
+      unwrap(
+        client.api.channels.webhooks.$get({
+          query: toQuery({
+            ...params,
+            ...(pageParam ? { cursor: pageParam as string } : {}),
+          }),
+        })
+      ),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (last) => last.nextCursor ?? undefined,
   })
 }
 
 export function useCreateWebhook() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (input: CreateWebhookInput) =>
-      api.post<WebhookEndpointWithSecret>("/api/channels/webhooks", input),
+      unwrap(client.api.channels.webhooks.$post({ json: input })),
     onSuccess: () => qc.invalidateQueries({ queryKey: webhookKeys.lists() }),
   })
 }
 
 export function useUpdateWebhook(id: string) {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (input: UpdateWebhookInput) =>
-      api.patch<WebhookEndpoint>(`/api/channels/webhooks/${id}`, input),
+      unwrap(
+        client.api.channels.webhooks[":id"].$patch({
+          param: { id },
+          json: input,
+        })
+      ),
     onSuccess: () => qc.invalidateQueries({ queryKey: webhookKeys.lists() }),
   })
 }
 
 export function useDeleteWebhook() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (id: string) =>
-      api.delete<{ ok: boolean }>(`/api/channels/webhooks/${id}`),
+      unwrap(client.api.channels.webhooks[":id"].$delete({ param: { id } })),
     onSuccess: () => qc.invalidateQueries({ queryKey: webhookKeys.lists() }),
   })
 }
 
 export function useTestWebhook() {
-  const api = useApiClient()
+  const client = useApiClient()
   return useMutation({
     mutationFn: (id: string) =>
-      api.post<WebhookTestResult>(`/api/channels/webhooks/${id}/test`),
+      unwrap(client.api.channels.webhooks[":id"].test.$post({ param: { id } })),
   })
 }

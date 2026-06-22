@@ -203,7 +203,7 @@ const retryDeliveryRoute = createRoute({
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)
 
-router.openapi(listDeliveriesRoute, async (c) => {
+export default router.openapi(listDeliveriesRoute, async (c) => {
   const parsed = c.req.valid("query")
   const userId = c.var.user!.id
 
@@ -257,7 +257,7 @@ router.openapi(listDeliveriesRoute, async (c) => {
   })
 })
 
-router.openapi(deliveryEventsRoute, async (c) => {
+  .openapi(deliveryEventsRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
 
@@ -279,7 +279,7 @@ router.openapi(deliveryEventsRoute, async (c) => {
   return c.json({ data: events })
 })
 
-router.openapi(listDeadRoute, async (c) => {
+  .openapi(listDeadRoute, async (c) => {
   const parsed = c.req.valid("query")
   const userId = c.var.user!.id
   const baseQuery = c.var.db
@@ -302,7 +302,7 @@ router.openapi(listDeadRoute, async (c) => {
   })
 })
 
-router.openapi(retryDeliveryRoute, async (c) => {
+  .openapi(retryDeliveryRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
   const db = c.var.db
@@ -345,5 +345,3 @@ router.openapi(retryDeliveryRoute, async (c) => {
 
   return c.json({ queued: true })
 })
-
-export default router

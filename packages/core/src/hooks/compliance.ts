@@ -4,13 +4,9 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
+import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
-import type {
-  ConsentEvent,
-  ListParams,
-  ListResponse,
-  Suppression,
-} from "@renderical/api-client/types"
+import type { ListParams } from "@renderical/api-client/types"
 
 export const complianceKeys = {
   suppressions: ["suppressions"] as const,
@@ -22,52 +18,61 @@ export const complianceKeys = {
 }
 
 export function useSuppressions(params: ListParams = {}) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useInfiniteQuery({
     queryKey: complianceKeys.suppressionList(params),
     queryFn: ({ pageParam }) =>
-      api.get<ListResponse<Suppression>>("/api/suppressions", {
-        ...params,
-        ...(pageParam ? { cursor: pageParam as string } : {}),
-      }),
+      unwrap(
+        client.api.suppressions.$get({
+          query: toQuery({
+            ...params,
+            ...(pageParam ? { cursor: pageParam as string } : {}),
+          }),
+        })
+      ),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (last) => last.nextCursor ?? undefined,
   })
 }
 
 export function useAddSuppression() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (body: {
       channel: string
       address: string
       reason: "hard_bounce" | "complaint" | "unsubscribe" | "manual"
-    }) => api.post<Suppression>("/api/suppressions", body),
+    }) => unwrap(client.api.suppressions.$post({ json: body })),
     onSuccess: () =>
       qc.invalidateQueries({ queryKey: complianceKeys.suppressions }),
   })
 }
 
 export function useDeleteSuppression() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => api.delete(`/api/suppressions/${id}`),
+    mutationFn: (id: string) =>
+      unwrap(client.api.suppressions[":id"].$delete({ param: { id } })),
     onSuccess: () =>
       qc.invalidateQueries({ queryKey: complianceKeys.suppressions }),
   })
 }
 
 export function useConsentEvents(params: ListParams = {}) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useInfiniteQuery({
     queryKey: complianceKeys.consentEventList(params),
     queryFn: ({ pageParam }) =>
-      api.get<ListResponse<ConsentEvent>>("/api/consent-events", {
-        ...params,
-        ...(pageParam ? { cursor: pageParam as string } : {}),
-      }),
+      unwrap(
+        client.api["consent-events"].$get({
+          query: toQuery({
+            ...params,
+            ...(pageParam ? { cursor: pageParam as string } : {}),
+          }),
+        })
+      ),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (last) => last.nextCursor ?? undefined,
   })

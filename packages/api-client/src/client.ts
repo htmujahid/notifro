@@ -1,15 +1,23 @@
-import { ApiClientError } from "./error"
-import type { ListParams } from "./types"
+import { hc } from "hono/client"
 
-function buildQueryString(params: ListParams): string {
-  const entries = Object.entries(params).filter(
-    ([, v]) => v !== undefined && v !== "" && v !== null
-  )
-  if (entries.length === 0) return ""
-  return (
-    "?" +
-    new URLSearchParams(entries.map(([k, v]) => [k, String(v)])).toString()
-  )
+import type { AppType } from "api/app-type"
+
+import { ApiClientError } from "./error"
+
+// Re-exported so consumers can derive request/response types from the client
+// without taking a direct dependency on `hono`.
+export type { InferRequestType, InferResponseType } from "hono/client"
+
+// Compute the heavy hc<AppType> client type ONCE and reuse via the alias so
+// consumers don't re-instantiate it at every call site. The `baseURL` field is
+// preserved for the few callers that build raw URLs (e.g. MCP, sandbox fetch).
+const _typedClient = hc<AppType>("")
+export type ApiClient = typeof _typedClient & { baseURL: string }
+
+export function createApiClient(baseURL: string): ApiClient {
+  const base = baseURL.replace(/\/$/, "")
+  const client = hc<AppType>(base, { init: { credentials: "include" } })
+  return Object.assign(client, { baseURL: base })
 }
 
 async function parseError(res: Response): Promise<never> {
@@ -37,56 +45,46 @@ async function parseError(res: Response): Promise<never> {
   throw new ApiClientError(code, message, res.status, details)
 }
 
-export interface ApiClient {
-  baseURL: string
-  get<T>(path: string, params?: ListParams): Promise<T>
-  post<T>(path: string, body?: unknown): Promise<T>
-  patch<T>(path: string, body?: unknown): Promise<T>
-  put<T>(path: string, body?: unknown): Promise<T>
-  delete<T>(path: string, body?: unknown): Promise<T>
+/**
+ * Structural shape of a Hono `hc` response. Accepting any object with this
+ * shape (rather than the exact `ClientResponse` union) lets `unwrap` infer the
+ * body from any `$get`/`$post`/... call. The generic distributes over routes
+ * that declare multiple status codes (a `ClientResponse` union), so the return
+ * type is the union of their JSON bodies.
+ */
+type AnyJsonResponse = {
+  ok: boolean
+  status: number
+  json: () => Promise<unknown>
 }
 
-export function createApiClient(baseURL: string): ApiClient {
-  const base = baseURL.replace(/\/$/, "")
+type ResponseBody<R extends AnyJsonResponse> = Awaited<ReturnType<R["json"]>>
 
-  async function request<T>(
-    method: string,
-    path: string,
-    body?: unknown,
-    params?: ListParams
-  ): Promise<T> {
-    const qs = params ? buildQueryString(params) : ""
-    const url = `${base}${path}${qs}`
+/**
+ * Awaits an `hc` call, throwing a structured `ApiClientError` on non-2xx so
+ * existing `isApiError()` handling keeps working with React Query. Returns the
+ * parsed JSON body, or `undefined` for 204 responses.
+ */
+export async function unwrap<R extends AnyJsonResponse>(
+  resPromise: Promise<R>
+): Promise<ResponseBody<R>> {
+  const res = await resPromise
+  if (!res.ok) await parseError(res as unknown as Response)
+  if (res.status === 204) return undefined as ResponseBody<R>
+  return (await res.json()) as ResponseBody<R>
+}
 
-    const res = await fetch(url, {
-      method,
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
-    })
-
-    if (!res.ok) {
-      await parseError(res)
-    }
-
-    if (res.status === 204) {
-      return undefined as T
-    }
-
-    return res.json() as Promise<T>
+/**
+ * Serializes list/query params for `hc`'s `$get({ query })`, which expects
+ * string values. Drops `undefined`/`null`/empty entries (mirrors the previous
+ * fetch client's query-string builder).
+ */
+export function toQuery(
+  params: Record<string, unknown>
+): Record<string, string> {
+  const out: Record<string, string> = {}
+  for (const [k, v] of Object.entries(params)) {
+    if (v !== undefined && v !== null && v !== "") out[k] = String(v)
   }
-
-  return {
-    baseURL: base,
-    get: <T>(path: string, params?: ListParams) =>
-      request<T>("GET", path, undefined, params),
-    post: <T>(path: string, body?: unknown) => request<T>("POST", path, body),
-    patch: <T>(path: string, body?: unknown) => request<T>("PATCH", path, body),
-    put: <T>(path: string, body?: unknown) => request<T>("PUT", path, body),
-    delete: <T>(path: string, body?: unknown) =>
-      request<T>("DELETE", path, body),
-  }
+  return out
 }

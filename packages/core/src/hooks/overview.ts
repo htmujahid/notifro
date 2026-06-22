@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
+import { unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
 
 import { inboxKeys } from "./inbox"
@@ -40,22 +41,19 @@ export const overviewKeys = {
 }
 
 export function useOverview() {
-  const api = useApiClient()
+  const client = useApiClient()
   return useQuery({
     queryKey: overviewKeys.overview(),
-    queryFn: () => api.get<OverviewData>("/api/overview"),
+    queryFn: () => unwrap(client.api.overview.$get()),
     refetchInterval: 60_000,
   })
 }
 
 export function useSendTest() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: () =>
-      api.post<{ ok: boolean; notificationId: string }>(
-        "/api/overview/test-send"
-      ),
+    mutationFn: () => unwrap(client.api.overview["test-send"].$post()),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: overviewKeys.all })
       qc.invalidateQueries({ queryKey: inboxKeys.all })
@@ -64,14 +62,14 @@ export function useSendTest() {
 }
 
 export function useOnboarding() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (body: {
       dismiss?: boolean
       step?: string
       completed?: boolean
-    }) => api.patch<{ ok: boolean }>("/api/onboarding", body),
+    }) => unwrap(client.api.onboarding.$patch({ json: body })),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: overviewKeys.all })
     },

@@ -166,7 +166,7 @@ const setChannelPriorityRoute = createRoute({
 const authedRouter = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 authedRouter.use("*", requireAuth)
 
-authedRouter.openapi(generateTokenRoute, async (c) => {
+const authedRoutes = authedRouter.openapi(generateTokenRoute, async (c) => {
   const { recipientId } = c.req.valid("json")
   const userId = c.var.user!.id
   const secret = await getSecret(c.env)
@@ -186,7 +186,7 @@ authedRouter.openapi(generateTokenRoute, async (c) => {
   return c.json({ token, expiresAt: new Date(exp).toISOString() })
 })
 
-authedRouter.openapi(recipientPrefsRoute, async (c) => {
+  .openapi(recipientPrefsRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
 
@@ -208,7 +208,7 @@ authedRouter.openapi(recipientPrefsRoute, async (c) => {
   return c.json({ data: prefs as z.infer<typeof PreferenceDtoSchema>[] })
 })
 
-authedRouter.openapi(adminSetPreferenceRoute, async (c) => {
+  .openapi(adminSetPreferenceRoute, async (c) => {
   const { id } = c.req.param()
   const { preferences } = c.req.valid("json")
   const userId = c.var.user!.id
@@ -262,7 +262,7 @@ authedRouter.openapi(adminSetPreferenceRoute, async (c) => {
   return c.json({ updated: preferences.length })
 })
 
-authedRouter.openapi(channelPriorityRoute, async (c) => {
+  .openapi(channelPriorityRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
 
@@ -287,7 +287,7 @@ authedRouter.openapi(channelPriorityRoute, async (c) => {
   >)
 })
 
-authedRouter.openapi(setChannelPriorityRoute, async (c) => {
+  .openapi(setChannelPriorityRoute, async (c) => {
   const { id } = c.req.param()
   const { order } = c.req.valid("json")
   const userId = c.var.user!.id
@@ -432,7 +432,7 @@ async function verifyToken(c: { env: CloudflareBindings }, token: string) {
   return verifyPreferenceToken(token, secret)
 }
 
-publicRouter.openapi(prefCenterGetRoute, async (c) => {
+const publicRoutes = publicRouter.openapi(prefCenterGetRoute, async (c) => {
   const { token } = c.req.valid("query")
   const claims = await verifyToken(c, token)
   if (!claims) throw Errors.unauthenticated()
@@ -490,7 +490,7 @@ publicRouter.openapi(prefCenterGetRoute, async (c) => {
   return c.json({ recipientId, topics: topicData, globalOptOut })
 })
 
-publicRouter.openapi(prefCenterPostRoute, async (c) => {
+  .openapi(prefCenterPostRoute, async (c) => {
   const { token } = c.req.valid("query")
   const { preferences } = c.req.valid("json")
   const claims = await verifyToken(c, token)
@@ -553,7 +553,7 @@ publicRouter.openapi(prefCenterPostRoute, async (c) => {
   return c.json({ updated: preferences.length })
 })
 
-publicRouter.openapi(unsubscribeGetRoute, async (c) => {
+  .openapi(unsubscribeGetRoute, async (c) => {
   const { token } = c.req.valid("query")
   const claims = await verifyToken(c, token)
   if (!claims) throw Errors.unauthenticated()
@@ -568,7 +568,7 @@ publicRouter.openapi(unsubscribeGetRoute, async (c) => {
   return c.json({ recipientId, email: recipient?.email ?? null, ok: true })
 })
 
-publicRouter.openapi(unsubscribePostRoute, async (c) => {
+  .openapi(unsubscribePostRoute, async (c) => {
   const { token } = c.req.valid("query")
   const claims = await verifyToken(c, token)
   if (!claims) throw Errors.unauthenticated()
@@ -642,7 +642,4 @@ publicRouter.openapi(unsubscribePostRoute, async (c) => {
   return c.json({ ok: true })
 })
 
-router.route("", authedRouter)
-router.route("", publicRouter)
-
-export default router
+export default router.route("", authedRoutes).route("", publicRoutes)

@@ -137,7 +137,7 @@ function now() {
   return new Date().toISOString()
 }
 
-router.openapi(listGatesRoute, async (c) => {
+export default router.openapi(listGatesRoute, async (c) => {
   const rows = await c.var.db
     .selectFrom("mcp_approval_gate")
     .where("userId", "=", c.var.user!.id)
@@ -147,7 +147,7 @@ router.openapi(listGatesRoute, async (c) => {
   return c.json({ data: rows })
 })
 
-router.openapi(upsertGateRoute, async (c) => {
+  .openapi(upsertGateRoute, async (c) => {
   const body = c.req.valid("json")
   const userId = c.var.user!.id
   const db = c.var.db
@@ -182,7 +182,7 @@ router.openapi(upsertGateRoute, async (c) => {
   return c.json(row)
 })
 
-router.openapi(deleteGateRoute, async (c) => {
+  .openapi(deleteGateRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
   const db = c.var.db
@@ -203,7 +203,7 @@ router.openapi(deleteGateRoute, async (c) => {
   return c.body(null, 204)
 })
 
-router.openapi(listPendingRoute, async (c) => {
+  .openapi(listPendingRoute, async (c) => {
   const rows = await c.var.db
     .selectFrom("mcp_pending_action")
     .where("userId", "=", c.var.user!.id)
@@ -222,7 +222,7 @@ router.openapi(listPendingRoute, async (c) => {
   return c.json({ data: rows })
 })
 
-router.openapi(createPendingRoute, async (c) => {
+  .openapi(createPendingRoute, async (c) => {
   const body = c.req.valid("json")
   const userId = c.var.user!.id
   const db = c.var.db
@@ -261,7 +261,7 @@ router.openapi(createPendingRoute, async (c) => {
   return c.json(row, 201)
 })
 
-router.openapi(approveRoute, async (c) => {
+  .openapi(approveRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
   const db = c.var.db
@@ -317,7 +317,7 @@ router.openapi(approveRoute, async (c) => {
   return c.json({ approved: true, result })
 })
 
-router.openapi(rejectRoute, async (c) => {
+  .openapi(rejectRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
   const db = c.var.db
@@ -339,5 +339,3 @@ router.openapi(rejectRoute, async (c) => {
     .execute()
   return c.json({ rejected: true })
 })
-
-export default router

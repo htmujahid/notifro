@@ -170,7 +170,7 @@ export function CreateView() {
         },
         channels: [...selected],
       })
-      setResult(data)
+      setResult(data as NotificationWithDeliveries)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Send failed")
     }

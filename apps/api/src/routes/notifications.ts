@@ -180,7 +180,7 @@ const IDEMPOTENCY_TTL_MS = 24 * 60 * 60 * 1000
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)
 
-router.openapi(sendRoute, async (c) => {
+export default router.openapi(sendRoute, async (c) => {
   const rawPayload = c.req.valid("json")
   const { db } = c.var
   const userId = c.var.user!.id
@@ -1085,7 +1085,7 @@ router.openapi(sendRoute, async (c) => {
   return c.json({ ...(notification as typeof notification), deliveries }) as any
 })
 
-router.openapi(listRoute, async (c) => {
+  .openapi(listRoute, async (c) => {
   const parsed = c.req.valid("query")
   const userId = c.var.user!.id
   const baseQuery = c.var.db
@@ -1108,7 +1108,7 @@ router.openapi(listRoute, async (c) => {
   })
 })
 
-router.openapi(detailRoute, async (c) => {
+  .openapi(detailRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
 
@@ -1130,5 +1130,3 @@ router.openapi(detailRoute, async (c) => {
 
   return c.json({ ...(notification as typeof notification), deliveries })
 })
-
-export default router

@@ -5,8 +5,8 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
+import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
-import type { ListResponse } from "@renderical/api-client/types"
 
 export interface InboxMessage {
   id: string
@@ -33,33 +33,38 @@ export const inboxKeys = {
 }
 
 export function useInbox(filter: InboxFilter = "all") {
-  const api = useApiClient()
+  const client = useApiClient()
   return useInfiniteQuery({
     queryKey: inboxKeys.list(filter),
     queryFn: ({ pageParam }) =>
-      api.get<ListResponse<InboxMessage>>("/api/inbox", {
-        filter,
-        ...(pageParam ? { cursor: pageParam as string } : {}),
-      }),
+      unwrap(
+        client.api.inbox.$get({
+          query: toQuery({
+            filter,
+            ...(pageParam ? { cursor: pageParam as string } : {}),
+          }),
+        })
+      ),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (last) => last.nextCursor ?? undefined,
   })
 }
 
 export function useUnreadCount() {
-  const api = useApiClient()
+  const client = useApiClient()
   return useQuery({
     queryKey: inboxKeys.unreadCount(),
-    queryFn: () => api.get<{ count: number }>("/api/inbox/unread-count"),
+    queryFn: () => unwrap(client.api.inbox["unread-count"].$get()),
     refetchInterval: 30_000,
   })
 }
 
 export function useMarkRead() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => api.post<InboxMessage>(`/api/inbox/${id}/read`),
+    mutationFn: (id: string) =>
+      unwrap(client.api.inbox[":id"].read.$post({ param: { id } })),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: inboxKeys.lists() })
       qc.invalidateQueries({ queryKey: inboxKeys.unreadCount() })
@@ -68,10 +73,10 @@ export function useMarkRead() {
 }
 
 export function useMarkAllRead() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: () => api.post<{ updated: number }>("/api/inbox/read-all"),
+    mutationFn: () => unwrap(client.api.inbox["read-all"].$post()),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: inboxKeys.lists() })
       qc.invalidateQueries({ queryKey: inboxKeys.unreadCount() })

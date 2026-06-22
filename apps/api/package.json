@@ -1,10 +1,18 @@
 {
   "name": "api",
   "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./app-type": {
+      "types": "./dist-types/src/app-type.d.ts",
+      "default": "./src/app-type.ts"
+    }
+  },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "dev": "wrangler dev",
+    "build:types": "tsc -p tsconfig.types.json",
     "deploy": "wrangler deploy --minify",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "generate": "npx auth@latest generate --config ./src/lib/auth.ts --output migrations/0000_auth_schema.sql --yes",

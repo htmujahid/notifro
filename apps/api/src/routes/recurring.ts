@@ -162,7 +162,7 @@ const runsRoute = createRoute({
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)
 
-router.openapi(createRoute_, async (c) => {
+export default router.openapi(createRoute_, async (c) => {
   const { payload, channels, cron, timezone } = c.req.valid("json")
   const userId = c.var.user!.id
 
@@ -207,7 +207,7 @@ router.openapi(createRoute_, async (c) => {
   return c.json(row as z.infer<typeof RecurringSendDtoSchema>, 201)
 })
 
-router.openapi(listRoute, async (c) => {
+  .openapi(listRoute, async (c) => {
   const parsed = c.req.valid("query")
   const userId = c.var.user!.id
 
@@ -231,7 +231,7 @@ router.openapi(listRoute, async (c) => {
   })
 })
 
-router.openapi(patchRoute, async (c) => {
+  .openapi(patchRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
   const body = c.req.valid("json")
@@ -287,7 +287,7 @@ router.openapi(patchRoute, async (c) => {
   return c.json(row as z.infer<typeof RecurringSendDtoSchema>)
 })
 
-router.openapi(deleteRoute, async (c) => {
+  .openapi(deleteRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
 
@@ -309,7 +309,7 @@ router.openapi(deleteRoute, async (c) => {
   return c.json({ ok: true as const })
 })
 
-router.openapi(runsRoute, async (c) => {
+  .openapi(runsRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
   const parsed = c.req.valid("query")
@@ -353,5 +353,3 @@ router.openapi(runsRoute, async (c) => {
     nextCursor: page.nextCursor,
   })
 })
-
-export default router

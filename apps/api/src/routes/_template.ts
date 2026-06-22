@@ -67,7 +67,7 @@ const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 
 router.use("*", requireAuth)
 
-router.openapi(listRoute, async (c) => {
+export default router.openapi(listRoute, async (c) => {
   const parsed = c.req.valid("query")
   const userId = c.var.user!.id
   const baseQuery = c.var.db
@@ -89,7 +89,7 @@ router.openapi(listRoute, async (c) => {
   })
 })
 
-router.openapi(createRoute_, async (c) => {
+  .openapi(createRoute_, async (c) => {
   const body = c.req.valid("json")
   if (!body.name) throw Errors.badRequest("Name is required")
   return c.json(
@@ -97,5 +97,3 @@ router.openapi(createRoute_, async (c) => {
     201
   )
 })
-
-export default router

@@ -111,7 +111,7 @@ function now() {
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)
 
-router.openapi(listRoute, async (c) => {
+export default router.openapi(listRoute, async (c) => {
   const parsed = c.req.valid("query")
   const userId = c.var.user!.id
   const baseQuery = c.var.db
@@ -131,7 +131,7 @@ router.openapi(listRoute, async (c) => {
   })
 })
 
-router.openapi(createRoute_, async (c) => {
+  .openapi(createRoute_, async (c) => {
   const body = c.req.valid("json")
   const userId = c.var.user!.id
   const ts = now()
@@ -155,7 +155,7 @@ router.openapi(createRoute_, async (c) => {
   return c.json(row as z.infer<typeof FallbackChainDtoSchema>, 201)
 })
 
-router.openapi(patchRoute, async (c) => {
+  .openapi(patchRoute, async (c) => {
   const { id } = c.req.param()
   const body = c.req.valid("json")
   const userId = c.var.user!.id
@@ -183,7 +183,7 @@ router.openapi(patchRoute, async (c) => {
   return c.json(row as z.infer<typeof FallbackChainDtoSchema>)
 })
 
-router.openapi(deleteRoute, async (c) => {
+  .openapi(deleteRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
   const existing = await c.var.db
@@ -196,5 +196,3 @@ router.openapi(deleteRoute, async (c) => {
   await c.var.db.deleteFrom("fallback_chain").where("id", "=", id).execute()
   return new Response(null, { status: 204 })
 })
-
-export default router

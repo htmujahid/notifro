@@ -4,8 +4,13 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
+import type {
+  ApiClient,
+  InferRequestType,
+} from "@renderical/api-client/client"
+import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
-import type { ListParams, ListResponse } from "@renderical/api-client/types"
+import type { ListParams } from "@renderical/api-client/types"
 
 export interface Connection {
   id: string
@@ -20,21 +25,13 @@ export interface Connection {
   updatedAt: string
 }
 
-export interface CreateConnectionInput {
-  type: string
-  name: string
-  config?: Record<string, unknown>
-  credentials?: Record<string, unknown>
-  scopes?: string[]
-}
+export type CreateConnectionInput = InferRequestType<
+  ApiClient["api"]["connections"]["$post"]
+>["json"]
 
-export interface UpdateConnectionInput {
-  name?: string
-  config?: Record<string, unknown>
-  credentials?: Record<string, unknown>
-  status?: string
-  scopes?: string[]
-}
+export type UpdateConnectionInput = InferRequestType<
+  ApiClient["api"]["connections"][":id"]["$patch"]
+>["json"]
 
 export const connectionKeys = {
   all: ["connections"] as const,
@@ -44,35 +41,41 @@ export const connectionKeys = {
 }
 
 export function useConnections(params: ListParams = {}) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useInfiniteQuery({
     queryKey: connectionKeys.list(params),
     queryFn: ({ pageParam }) =>
-      api.get<ListResponse<Connection>>("/api/connections", {
-        ...params,
-        ...(pageParam ? { cursor: pageParam as string } : {}),
-      }),
+      unwrap(
+        client.api.connections.$get({
+          query: toQuery({
+            ...params,
+            ...(pageParam ? { cursor: pageParam as string } : {}),
+          }),
+        })
+      ),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (last) => last.nextCursor ?? undefined,
   })
 }
 
 export function useCreateConnection() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (input: CreateConnectionInput) =>
-      api.post<Connection>("/api/connections", input),
+      unwrap(client.api.connections.$post({ json: input })),
     onSuccess: () => qc.invalidateQueries({ queryKey: connectionKeys.lists() }),
   })
 }
 
 export function useUpdateConnection(id: string) {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (input: UpdateConnectionInput) =>
-      api.patch<Connection>(`/api/connections/${id}`, input),
+      unwrap(
+        client.api.connections[":id"].$patch({ param: { id }, json: input })
+      ),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: connectionKeys.lists() })
       qc.invalidateQueries({ queryKey: connectionKeys.detail(id) })
@@ -81,23 +84,21 @@ export function useUpdateConnection(id: string) {
 }
 
 export function useDeleteConnection() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (id: string) =>
-      api.delete<{ ok: boolean }>(`/api/connections/${id}`),
+      unwrap(client.api.connections[":id"].$delete({ param: { id } })),
     onSuccess: () => qc.invalidateQueries({ queryKey: connectionKeys.lists() }),
   })
 }
 
 export function useConnectionHealth(id: string) {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: () =>
-      api.post<{ ok: boolean; message?: string; checkedAt: string }>(
-        `/api/connections/${id}/health`
-      ),
+      unwrap(client.api.connections[":id"].health.$post({ param: { id } })),
     onSuccess: () =>
       qc.invalidateQueries({ queryKey: connectionKeys.detail(id) }),
   })

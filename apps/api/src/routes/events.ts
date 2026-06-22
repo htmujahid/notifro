@@ -33,7 +33,7 @@ const triggerRoute = createRoute({
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)
 
-router.openapi(triggerRoute, async (c) => {
+export default router.openapi(triggerRoute, async (c) => {
   const { name, recipientId, payload } = c.req.valid("json")
   const { db } = c.var
   const userId = c.var.user!.id
@@ -128,5 +128,3 @@ router.openapi(triggerRoute, async (c) => {
 
   return c.json({ eventId, journeysTriggered })
 })
-
-export default router

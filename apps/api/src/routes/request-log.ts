@@ -55,7 +55,7 @@ const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 
 router.use("/request-log", requireAuth)
 
-router.openapi(listRoute, async (c) => {
+export default router.openapi(listRoute, async (c) => {
   const parsed = c.req.valid("query")
   const userId = c.var.user!.id
   const db = c.var.db
@@ -79,5 +79,3 @@ router.openapi(listRoute, async (c) => {
     nextCursor: page.nextCursor,
   })
 })
-
-export default router

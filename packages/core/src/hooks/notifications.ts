@@ -5,12 +5,9 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
+import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
-import type {
-  ComposePayload,
-  ListParams,
-  ListResponse,
-} from "@renderical/api-client/types"
+import type { ComposePayload, ListParams } from "@renderical/api-client/types"
 
 export interface Delivery {
   id: string
@@ -49,36 +46,40 @@ export const notificationKeys = {
 }
 
 export function useSendNotification() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (payload: ComposePayload) =>
-      api.post<NotificationWithDeliveries>("/api/notifications", payload),
+      unwrap(client.api.notifications.$post({ json: payload })),
     onSuccess: () =>
       qc.invalidateQueries({ queryKey: notificationKeys.lists() }),
   })
 }
 
 export function useNotifications(params: ListParams = {}) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useInfiniteQuery({
     queryKey: notificationKeys.list(params),
     queryFn: ({ pageParam }) =>
-      api.get<ListResponse<Notification>>("/api/notifications", {
-        ...params,
-        ...(pageParam ? { cursor: pageParam as string } : {}),
-      }),
+      unwrap(
+        client.api.notifications.$get({
+          query: toQuery({
+            ...params,
+            ...(pageParam ? { cursor: pageParam as string } : {}),
+          }),
+        })
+      ),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (last) => last.nextCursor ?? undefined,
   })
 }
 
 export function useNotification(id: string) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useQuery({
     queryKey: notificationKeys.detail(id),
     queryFn: () =>
-      api.get<NotificationWithDeliveries>(`/api/notifications/${id}`),
+      unwrap(client.api.notifications[":id"].$get({ param: { id } })),
     enabled: Boolean(id),
   })
 }

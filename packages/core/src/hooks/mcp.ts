@@ -1,11 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
+import { unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
-import type {
-  ListResponse,
-  McpApprovalGate,
-  McpPendingAction,
-} from "@renderical/api-client/types"
 
 export const mcpKeys = {
   all: ["mcp"] as const,
@@ -14,60 +10,58 @@ export const mcpKeys = {
 }
 
 export function useMcpGates() {
-  const api = useApiClient()
+  const client = useApiClient()
   return useQuery({
     queryKey: mcpKeys.gates(),
-    queryFn: () => api.get<ListResponse<McpApprovalGate>>("/api/mcp/gates"),
+    queryFn: () => unwrap(client.api.mcp.gates.$get()),
   })
 }
 
 export function useUpsertMcpGate() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (body: { tool: string; requiresApproval: boolean }) =>
-      api.post<McpApprovalGate>("/api/mcp/gates", body),
+      unwrap(client.api.mcp.gates.$post({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: mcpKeys.gates() }),
   })
 }
 
 export function useDeleteMcpGate() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => api.delete(`/api/mcp/gates/${id}`),
+    mutationFn: (id: string) =>
+      unwrap(client.api.mcp.gates[":id"].$delete({ param: { id } })),
     onSuccess: () => qc.invalidateQueries({ queryKey: mcpKeys.gates() }),
   })
 }
 
 export function useMcpPending() {
-  const api = useApiClient()
+  const client = useApiClient()
   return useQuery({
     queryKey: mcpKeys.pending(),
-    queryFn: () => api.get<ListResponse<McpPendingAction>>("/api/mcp/pending"),
+    queryFn: () => unwrap(client.api.mcp.pending.$get()),
     refetchInterval: 15_000,
   })
 }
 
 export function useApproveMcpAction() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (id: string) =>
-      api.post<{ approved: boolean; result: unknown }>(
-        `/api/mcp/pending/${id}/approve`,
-        {}
-      ),
+      unwrap(client.api.mcp.pending[":id"].approve.$post({ param: { id } })),
     onSuccess: () => qc.invalidateQueries({ queryKey: mcpKeys.pending() }),
   })
 }
 
 export function useRejectMcpAction() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (id: string) =>
-      api.post<{ rejected: boolean }>(`/api/mcp/pending/${id}/reject`, {}),
+      unwrap(client.api.mcp.pending[":id"].reject.$post({ param: { id } })),
     onSuccess: () => qc.invalidateQueries({ queryKey: mcpKeys.pending() }),
   })
 }

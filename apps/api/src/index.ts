@@ -97,7 +97,9 @@ app.use("*", async (c, next) => {
   await next()
 })
 
-registerRoutes(app)
+const routes = registerRoutes(app)
+
+export type AppType = typeof routes
 
 export default {
   fetch: app.fetch.bind(app),

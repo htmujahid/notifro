@@ -169,7 +169,7 @@ function toDto(row: WebhookRow): z.infer<typeof WebhookDtoSchema> {
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)
 
-router.openapi(listRoute, async (c) => {
+export default router.openapi(listRoute, async (c) => {
   const parsed = c.req.valid("query")
   const userId = c.var.user!.id
   const baseQuery = c.var.db
@@ -189,7 +189,7 @@ router.openapi(listRoute, async (c) => {
   return c.json({ data: page.data.map(toDto), nextCursor: page.nextCursor })
 })
 
-router.openapi(createRoute_, async (c) => {
+  .openapi(createRoute_, async (c) => {
   const body = c.req.valid("json")
   const userId = c.var.user!.id
 
@@ -223,7 +223,7 @@ router.openapi(createRoute_, async (c) => {
   return c.json({ ...toDto(row as WebhookRow), secret }, 201)
 })
 
-router.openapi(updateRoute, async (c) => {
+  .openapi(updateRoute, async (c) => {
   const { id } = c.req.param()
   const body = c.req.valid("json")
   const userId = c.var.user!.id
@@ -261,7 +261,7 @@ router.openapi(updateRoute, async (c) => {
   return c.json(toDto(row as WebhookRow))
 })
 
-router.openapi(deleteRoute, async (c) => {
+  .openapi(deleteRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
 
@@ -283,7 +283,7 @@ router.openapi(deleteRoute, async (c) => {
   return c.json({ ok: true })
 })
 
-router.openapi(testRoute, async (c) => {
+  .openapi(testRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
 
@@ -327,5 +327,3 @@ router.openapi(testRoute, async (c) => {
     error: result.error,
   })
 })
-
-export default router

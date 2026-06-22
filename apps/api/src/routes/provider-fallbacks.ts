@@ -60,7 +60,7 @@ const deleteRoute = createRoute({
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)
 
-router.openapi(listRoute, async (c) => {
+export default router.openapi(listRoute, async (c) => {
   const { db } = c.var
   const userId = c.var.user!.id
   const rows = await db
@@ -72,7 +72,7 @@ router.openapi(listRoute, async (c) => {
   return c.json({ data: rows, nextCursor: null })
 })
 
-router.openapi(createRoute_, async (c) => {
+  .openapi(createRoute_, async (c) => {
   const body = c.req.valid("json")
   const { db } = c.var
   const userId = c.var.user!.id
@@ -104,7 +104,7 @@ router.openapi(createRoute_, async (c) => {
   return c.json(row, 201)
 })
 
-router.openapi(deleteRoute, async (c) => {
+  .openapi(deleteRoute, async (c) => {
   const { db } = c.var
   const userId = c.var.user!.id
   const id = c.req.param("id")
@@ -118,5 +118,3 @@ router.openapi(deleteRoute, async (c) => {
   await db.deleteFrom("provider_fallback").where("id", "=", id).execute()
   return new Response(null, { status: 204 })
 })
-
-export default router

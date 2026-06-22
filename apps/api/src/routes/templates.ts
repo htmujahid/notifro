@@ -169,7 +169,7 @@ function now(): string {
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)
 
-router.openapi(listRoute, async (c) => {
+export default router.openapi(listRoute, async (c) => {
   const parsed = c.req.valid("query")
   const userId = c.var.user!.id
 
@@ -193,7 +193,7 @@ router.openapi(listRoute, async (c) => {
   })
 })
 
-router.openapi(createRoute_, async (c) => {
+  .openapi(createRoute_, async (c) => {
   const body = c.req.valid("json")
   const userId = c.var.user!.id
   const ts = now()
@@ -238,7 +238,7 @@ router.openapi(createRoute_, async (c) => {
   return c.json(row as z.infer<typeof TemplateDtoSchema>, 201)
 })
 
-router.openapi(detailRoute, async (c) => {
+  .openapi(detailRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
 
@@ -253,7 +253,7 @@ router.openapi(detailRoute, async (c) => {
   return c.json(row as z.infer<typeof TemplateDtoSchema>)
 })
 
-router.openapi(patchRoute, async (c) => {
+  .openapi(patchRoute, async (c) => {
   const { id } = c.req.param()
   const body = c.req.valid("json")
   const userId = c.var.user!.id
@@ -332,7 +332,7 @@ router.openapi(patchRoute, async (c) => {
   return c.json(row as z.infer<typeof TemplateDtoSchema>)
 })
 
-router.openapi(deleteRoute, async (c) => {
+  .openapi(deleteRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
 
@@ -354,7 +354,7 @@ router.openapi(deleteRoute, async (c) => {
   return new Response(null, { status: 204 })
 })
 
-router.openapi(renderRoute, async (c) => {
+  .openapi(renderRoute, async (c) => {
   const { id } = c.req.param()
   const { data, locale } = c.req.valid("json")
   const userId = c.var.user!.id
@@ -374,5 +374,3 @@ router.openapi(renderRoute, async (c) => {
 
   return c.json({ content, templateId: id, locale: resolvedLocale })
 })
-
-export default router

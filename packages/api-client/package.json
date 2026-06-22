@@ -9,6 +9,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "api": "workspace:*",
+    "hono": "^4.12.26",
     "react": "^19.2.6"
   },
   "devDependencies": {

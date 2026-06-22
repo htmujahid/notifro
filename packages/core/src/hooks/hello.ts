@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 
+import { unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
 
 export const helloKeys = {
@@ -7,9 +8,9 @@ export const helloKeys = {
 }
 
 export function useHello() {
-  const api = useApiClient()
+  const client = useApiClient()
   return useQuery({
     queryKey: helloKeys.all,
-    queryFn: () => api.get<{ message: string }>("/api/hello"),
+    queryFn: () => unwrap(client.api.hello.$get()),
   })
 }

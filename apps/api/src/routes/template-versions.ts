@@ -75,7 +75,7 @@ function now(): string {
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)
 
-router.openapi(listVersionsRoute, async (c) => {
+export default router.openapi(listVersionsRoute, async (c) => {
   const { id } = c.req.param()
   const parsed = c.req.valid("query")
   const userId = c.var.user!.id
@@ -110,7 +110,7 @@ router.openapi(listVersionsRoute, async (c) => {
   })
 })
 
-router.openapi(restoreVersionRoute, async (c) => {
+  .openapi(restoreVersionRoute, async (c) => {
   const { id, version } = c.req.param()
   const userId = c.var.user!.id
   const ts = now()
@@ -173,5 +173,3 @@ router.openapi(restoreVersionRoute, async (c) => {
     message: `Restored to version ${version}; new version is ${nextVersion}`,
   })
 })
-
-export default router

@@ -50,7 +50,7 @@ const getRoute = createRoute({
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)
 
-router.openapi(getRoute, async (c) => {
+export default router.openapi(getRoute, async (c) => {
   const userId = c.var.user!.id
 
   const profile = await c.var.db
@@ -72,7 +72,7 @@ router.openapi(getRoute, async (c) => {
   return c.json(profile)
 })
 
-router.openapi(patchRoute, async (c) => {
+  .openapi(patchRoute, async (c) => {
   const userId = c.var.user!.id
   const body = c.req.valid("json")
   const ts = new Date().toISOString()
@@ -119,5 +119,3 @@ router.openapi(patchRoute, async (c) => {
 
   return c.json(profile)
 })
-
-export default router

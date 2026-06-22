@@ -4,13 +4,17 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
-import { useApiClient } from "@renderical/api-client/context"
 import type {
-  FallbackChain,
-  ListParams,
-  ListResponse,
-  RoutingRule,
-} from "@renderical/api-client/types"
+  ApiClient,
+  InferRequestType,
+} from "@renderical/api-client/client"
+import { toQuery, unwrap } from "@renderical/api-client/client"
+import { useApiClient } from "@renderical/api-client/context"
+import type { ListParams } from "@renderical/api-client/types"
+
+type ResolveRouteBody = InferRequestType<
+  ApiClient["api"]["routing"]["resolve"]["$post"]
+>["json"]
 
 export const routingRuleKeys = {
   all: ["routingRules"] as const,
@@ -25,21 +29,25 @@ export const fallbackChainKeys = {
 }
 
 export function useRoutingRules(params: ListParams = {}) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useInfiniteQuery({
     queryKey: routingRuleKeys.list(params),
     queryFn: ({ pageParam }) =>
-      api.get<ListResponse<RoutingRule>>("/api/routing/rules", {
-        ...params,
-        ...(pageParam ? { cursor: pageParam as string } : {}),
-      }),
+      unwrap(
+        client.api.routing.rules.$get({
+          query: toQuery({
+            ...params,
+            ...(pageParam ? { cursor: pageParam as string } : {}),
+          }),
+        })
+      ),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (last) => last.nextCursor ?? undefined,
   })
 }
 
 export function useCreateRoutingRule() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (body: {
@@ -48,14 +56,14 @@ export function useCreateRoutingRule() {
       match: Record<string, unknown>
       targetChainId?: string
       targetChannel?: string
-    }) => api.post<RoutingRule>("/api/routing/rules", body),
+    }) => unwrap(client.api.routing.rules.$post({ json: body })),
     onSuccess: () =>
       qc.invalidateQueries({ queryKey: routingRuleKeys.lists() }),
   })
 }
 
 export function useUpdateRoutingRule() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({
@@ -68,38 +76,46 @@ export function useUpdateRoutingRule() {
       match?: Record<string, unknown>
       targetChainId?: string | null
       targetChannel?: string | null
-    }) => api.patch<RoutingRule>(`/api/routing/rules/${id}`, body),
+    }) =>
+      unwrap(
+        client.api.routing.rules[":id"].$patch({ param: { id }, json: body })
+      ),
     onSuccess: () =>
       qc.invalidateQueries({ queryKey: routingRuleKeys.lists() }),
   })
 }
 
 export function useDeleteRoutingRule() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => api.delete(`/api/routing/rules/${id}`),
+    mutationFn: (id: string) =>
+      unwrap(client.api.routing.rules[":id"].$delete({ param: { id } })),
     onSuccess: () =>
       qc.invalidateQueries({ queryKey: routingRuleKeys.lists() }),
   })
 }
 
 export function useFallbackChains(params: ListParams = {}) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useInfiniteQuery({
     queryKey: fallbackChainKeys.list(params),
     queryFn: ({ pageParam }) =>
-      api.get<ListResponse<FallbackChain>>("/api/routing/chains", {
-        ...params,
-        ...(pageParam ? { cursor: pageParam as string } : {}),
-      }),
+      unwrap(
+        client.api.routing.chains.$get({
+          query: toQuery({
+            ...params,
+            ...(pageParam ? { cursor: pageParam as string } : {}),
+          }),
+        })
+      ),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (last) => last.nextCursor ?? undefined,
   })
 }
 
 export function useCreateFallbackChain() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (body: {
@@ -110,14 +126,14 @@ export function useCreateFallbackChain() {
         waitForDeliveryMs: number
         successOn: ("delivered" | "opened" | "clicked")[]
       }>
-    }) => api.post<FallbackChain>("/api/routing/chains", body),
+    }) => unwrap(client.api.routing.chains.$post({ json: body })),
     onSuccess: () =>
       qc.invalidateQueries({ queryKey: fallbackChainKeys.lists() }),
   })
 }
 
 export function useUpdateFallbackChain() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({
@@ -132,26 +148,32 @@ export function useUpdateFallbackChain() {
         waitForDeliveryMs: number
         successOn: ("delivered" | "opened" | "clicked")[]
       }>
-    }) => api.patch<FallbackChain>(`/api/routing/chains/${id}`, body),
+    }) =>
+      unwrap(
+        client.api.routing.chains[":id"].$patch({ param: { id }, json: body })
+      ),
     onSuccess: () =>
       qc.invalidateQueries({ queryKey: fallbackChainKeys.lists() }),
   })
 }
 
 export function useDeleteFallbackChain() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => api.delete(`/api/routing/chains/${id}`),
+    mutationFn: (id: string) =>
+      unwrap(client.api.routing.chains[":id"].$delete({ param: { id } })),
     onSuccess: () =>
       qc.invalidateQueries({ queryKey: fallbackChainKeys.lists() }),
   })
 }
 
 export function useResolveRoute() {
-  const api = useApiClient()
+  const client = useApiClient()
   return useMutation({
     mutationFn: (body: { priority?: string; messageType?: string }) =>
-      api.post<{ result: unknown }>("/api/routing/resolve", body),
+      unwrap(
+        client.api.routing.resolve.$post({ json: body as ResolveRouteBody })
+      ),
   })
 }

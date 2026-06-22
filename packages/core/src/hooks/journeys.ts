@@ -4,13 +4,20 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
-import { useApiClient } from "@renderical/api-client/context"
 import type {
-  Journey,
-  JourneyRun,
-  ListParams,
-  ListResponse,
-} from "@renderical/api-client/types"
+  ApiClient,
+  InferRequestType,
+} from "@renderical/api-client/client"
+import { toQuery, unwrap } from "@renderical/api-client/client"
+import { useApiClient } from "@renderical/api-client/context"
+import type { ListParams } from "@renderical/api-client/types"
+
+type CreateJourneyBody = InferRequestType<
+  ApiClient["api"]["journeys"]["$post"]
+>["json"]
+type UpdateJourneyBody = InferRequestType<
+  ApiClient["api"]["journeys"][":id"]["$patch"]
+>["json"]
 
 export const journeyKeys = {
   all: ["journeys"] as const,
@@ -21,24 +28,28 @@ export const journeyKeys = {
 }
 
 export function useJourneys(params: ListParams = {}) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useInfiniteQuery({
     queryKey: journeyKeys.list(params),
     queryFn: ({ pageParam }) =>
-      api.get<ListResponse<Journey>>("/api/journeys", {
-        ...params,
-        ...(pageParam ? { cursor: pageParam as string } : {}),
-      }),
+      unwrap(
+        client.api.journeys.$get({
+          query: toQuery({
+            ...params,
+            ...(pageParam ? { cursor: pageParam as string } : {}),
+          }),
+        })
+      ),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (last) => last.nextCursor ?? undefined,
   })
 }
 
 export function useJourney(id: string) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useInfiniteQuery({
     queryKey: journeyKeys.detail(id),
-    queryFn: () => api.get<Journey>(`/api/journeys/${id}`),
+    queryFn: () => unwrap(client.api.journeys[":id"].$get({ param: { id } })),
     initialPageParam: undefined as undefined,
     getNextPageParam: () => undefined,
     enabled: !!id,
@@ -46,14 +57,19 @@ export function useJourney(id: string) {
 }
 
 export function useJourneyRuns(journeyId: string, params: ListParams = {}) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useInfiniteQuery({
     queryKey: journeyKeys.runs(journeyId),
     queryFn: ({ pageParam }) =>
-      api.get<ListResponse<JourneyRun>>(`/api/journeys/${journeyId}/runs`, {
-        ...params,
-        ...(pageParam ? { cursor: pageParam as string } : {}),
-      }),
+      unwrap(
+        client.api.journeys[":id"].runs.$get({
+          param: { id: journeyId },
+          query: toQuery({
+            ...params,
+            ...(pageParam ? { cursor: pageParam as string } : {}),
+          }),
+        })
+      ),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (last) => last.nextCursor ?? undefined,
     enabled: !!journeyId,
@@ -61,20 +77,20 @@ export function useJourneyRuns(journeyId: string, params: ListParams = {}) {
 }
 
 export function useCreateJourney() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (body: {
       name: string
       trigger?: Record<string, unknown>
       steps: Record<string, unknown>
-    }) => api.post<Journey>("/api/journeys", body),
+    }) => unwrap(client.api.journeys.$post({ json: body as CreateJourneyBody })),
     onSuccess: () => qc.invalidateQueries({ queryKey: journeyKeys.lists() }),
   })
 }
 
 export function useUpdateJourney() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({
@@ -86,7 +102,13 @@ export function useUpdateJourney() {
       trigger?: Record<string, unknown> | null
       steps?: Record<string, unknown>
       status?: "paused"
-    }) => api.patch<Journey>(`/api/journeys/${id}`, body),
+    }) =>
+      unwrap(
+        client.api.journeys[":id"].$patch({
+          param: { id },
+          json: body as UpdateJourneyBody,
+        })
+      ),
     onSuccess: (_data, { id }) => {
       qc.invalidateQueries({ queryKey: journeyKeys.lists() })
       qc.invalidateQueries({ queryKey: journeyKeys.detail(id) })
@@ -95,20 +117,21 @@ export function useUpdateJourney() {
 }
 
 export function useDeleteJourney() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => api.delete(`/api/journeys/${id}`),
+    mutationFn: (id: string) =>
+      unwrap(client.api.journeys[":id"].$delete({ param: { id } })),
     onSuccess: () => qc.invalidateQueries({ queryKey: journeyKeys.lists() }),
   })
 }
 
 export function useActivateJourney() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (id: string) =>
-      api.post<Journey>(`/api/journeys/${id}/activate`, {}),
+      unwrap(client.api.journeys[":id"].activate.$post({ param: { id } })),
     onSuccess: (_data, id) => {
       qc.invalidateQueries({ queryKey: journeyKeys.lists() })
       qc.invalidateQueries({ queryKey: journeyKeys.detail(id) })
@@ -117,7 +140,7 @@ export function useActivateJourney() {
 }
 
 export function useEnrollRecipient() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({
@@ -127,9 +150,12 @@ export function useEnrollRecipient() {
       journeyId: string
       recipientId: string
     }) =>
-      api.post<JourneyRun>(`/api/journeys/${journeyId}/enroll`, {
-        recipientId,
-      }),
+      unwrap(
+        client.api.journeys[":id"].enroll.$post({
+          param: { id: journeyId },
+          json: { recipientId },
+        })
+      ),
     onSuccess: (_data, { journeyId }) => {
       qc.invalidateQueries({ queryKey: journeyKeys.runs(journeyId) })
     },
@@ -137,16 +163,12 @@ export function useEnrollRecipient() {
 }
 
 export function useTriggerEvent() {
-  const api = useApiClient()
+  const client = useApiClient()
   return useMutation({
     mutationFn: (body: {
       name: string
       recipientId?: string
       payload?: Record<string, unknown>
-    }) =>
-      api.post<{ eventId: string; journeysTriggered: number }>(
-        "/api/events",
-        body
-      ),
+    }) => unwrap(client.api.events.$post({ json: body })),
   })
 }

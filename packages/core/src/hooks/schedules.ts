@@ -5,14 +5,20 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
+import type {
+  ApiClient,
+  InferRequestType,
+} from "@renderical/api-client/client"
+import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
 import type {
   ListParams,
-  ListResponse,
   RecipientPreferences,
-  RecurringSend,
-  ScheduledMessage,
 } from "@renderical/api-client/types"
+
+type UpdatePrefsBody = InferRequestType<
+  ApiClient["api"]["recipients"]["preferences"]["$patch"]
+>["json"]
 
 export const scheduleKeys = {
   all: ["schedules"] as const,
@@ -22,39 +28,43 @@ export const scheduleKeys = {
 }
 
 export function useSchedules(params: ListParams = {}) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useInfiniteQuery({
     queryKey: scheduleKeys.list(params),
     queryFn: ({ pageParam }) =>
-      api.get<ListResponse<ScheduledMessage>>("/api/schedules", {
-        ...params,
-        ...(pageParam ? { cursor: pageParam as string } : {}),
-      }),
+      unwrap(
+        client.api.schedules.$get({
+          query: toQuery({
+            ...params,
+            ...(pageParam ? { cursor: pageParam as string } : {}),
+          }),
+        })
+      ),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (last) => last.nextCursor ?? undefined,
   })
 }
 
 export function useCancelSchedule() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (id: string) =>
-      api.delete<{ ok: boolean }>(`/api/schedules/${id}`),
+      unwrap(client.api.schedules[":id"].$delete({ param: { id } })),
     onSuccess: () => qc.invalidateQueries({ queryKey: scheduleKeys.lists() }),
   })
 }
 
 export function useRecipientPreferences() {
-  const api = useApiClient()
+  const client = useApiClient()
   return useQuery({
     queryKey: scheduleKeys.preferences(),
-    queryFn: () => api.get<RecipientPreferences>("/api/recipients/preferences"),
+    queryFn: () => unwrap(client.api.recipients.preferences.$get()),
   })
 }
 
 export function useUpdateRecipientPreferences() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (
@@ -64,7 +74,12 @@ export function useUpdateRecipientPreferences() {
           "timezone" | "quietHoursStart" | "quietHoursEnd"
         >
       >
-    ) => api.patch<RecipientPreferences>("/api/recipients/preferences", body),
+    ) =>
+      unwrap(
+        client.api.recipients.preferences.$patch({
+          json: body as UpdatePrefsBody,
+        })
+      ),
     onSuccess: () =>
       qc.invalidateQueries({ queryKey: scheduleKeys.preferences() }),
   })
@@ -78,21 +93,25 @@ export const recurringKeys = {
 }
 
 export function useRecurringSends(params: ListParams = {}) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useInfiniteQuery({
     queryKey: recurringKeys.list(params),
     queryFn: ({ pageParam }) =>
-      api.get<ListResponse<RecurringSend>>("/api/recurring", {
-        ...params,
-        ...(pageParam ? { cursor: pageParam as string } : {}),
-      }),
+      unwrap(
+        client.api.recurring.$get({
+          query: toQuery({
+            ...params,
+            ...(pageParam ? { cursor: pageParam as string } : {}),
+          }),
+        })
+      ),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (last) => last.nextCursor ?? undefined,
   })
 }
 
 export function useCreateRecurringSend() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (body: {
@@ -100,13 +119,13 @@ export function useCreateRecurringSend() {
       channels: string[]
       cron: string
       timezone?: string
-    }) => api.post<RecurringSend>("/api/recurring", body),
+    }) => unwrap(client.api.recurring.$post({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: recurringKeys.lists() }),
   })
 }
 
 export function usePatchRecurringSend() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({
@@ -117,29 +136,35 @@ export function usePatchRecurringSend() {
       enabled?: number
       cron?: string
       timezone?: string
-    }) => api.patch<RecurringSend>(`/api/recurring/${id}`, body),
+    }) =>
+      unwrap(client.api.recurring[":id"].$patch({ param: { id }, json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: recurringKeys.lists() }),
   })
 }
 
 export function useDeleteRecurringSend() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (id: string) =>
-      api.delete<{ ok: boolean }>(`/api/recurring/${id}`),
+      unwrap(client.api.recurring[":id"].$delete({ param: { id } })),
     onSuccess: () => qc.invalidateQueries({ queryKey: recurringKeys.lists() }),
   })
 }
 
 export function useRecurringSendRuns(id: string) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useInfiniteQuery({
     queryKey: recurringKeys.runs(id),
     queryFn: ({ pageParam }) =>
-      api.get<ListResponse<ScheduledMessage>>(`/api/recurring/${id}/runs`, {
-        ...(pageParam ? { cursor: pageParam as string } : {}),
-      }),
+      unwrap(
+        client.api.recurring[":id"].runs.$get({
+          param: { id },
+          query: toQuery({
+            ...(pageParam ? { cursor: pageParam as string } : {}),
+          }),
+        })
+      ),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (last) => last.nextCursor ?? undefined,
   })

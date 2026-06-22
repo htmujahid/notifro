@@ -56,7 +56,7 @@ function now(): string {
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)
 
-router.openapi(getRoute, async (c) => {
+export default router.openapi(getRoute, async (c) => {
   const userId = c.var.user!.id
 
   const row = await c.var.db
@@ -69,7 +69,7 @@ router.openapi(getRoute, async (c) => {
   return c.json(row as z.infer<typeof BrandKitDtoSchema>)
 })
 
-router.openapi(putRoute, async (c) => {
+  .openapi(putRoute, async (c) => {
   const body = c.req.valid("json")
   const userId = c.var.user!.id
   const ts = now()
@@ -115,5 +115,3 @@ router.openapi(putRoute, async (c) => {
 
   return c.json(row as z.infer<typeof BrandKitDtoSchema>)
 })
-
-export default router

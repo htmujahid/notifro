@@ -101,14 +101,14 @@ function mapKey(k: {
   }
 }
 
-router.openapi(listRoute, async (c) => {
+export default router.openapi(listRoute, async (c) => {
   const result = await authInstance.api.listApiKeys({
     headers: c.req.raw.headers,
   })
   return c.json({ data: result.apiKeys.map(mapKey), nextCursor: null })
 })
 
-router.openapi(createRoute_, async (c) => {
+  .openapi(createRoute_, async (c) => {
   const body = c.req.valid("json")
   const result = await authInstance.api.createApiKey({
     body: {
@@ -121,7 +121,7 @@ router.openapi(createRoute_, async (c) => {
   return c.json({ ...mapKey(result), key: result.key }, 201)
 })
 
-router.openapi(deleteRoute, async (c) => {
+  .openapi(deleteRoute, async (c) => {
   const { id } = c.req.param()
   const result = await authInstance.api.deleteApiKey({
     body: { keyId: id },
@@ -130,5 +130,3 @@ router.openapi(deleteRoute, async (c) => {
   if (!result.success) throw Errors.notFound("api_key")
   return c.body(null, 204)
 })
-
-export default router

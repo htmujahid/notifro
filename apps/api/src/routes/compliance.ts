@@ -137,7 +137,7 @@ const listConsentEventsRoute = createRoute({
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)
 
-router.openapi(listSuppressionsRoute, async (c) => {
+export default router.openapi(listSuppressionsRoute, async (c) => {
   const parsed = c.req.valid("query")
   const userId = c.var.user!.id
   const baseQuery = c.var.db
@@ -157,7 +157,7 @@ router.openapi(listSuppressionsRoute, async (c) => {
   })
 })
 
-router.openapi(addSuppressionRoute, async (c) => {
+  .openapi(addSuppressionRoute, async (c) => {
   const { channel, address, reason } = c.req.valid("json")
   const userId = c.var.user!.id
   const ts = new Date().toISOString()
@@ -194,7 +194,7 @@ router.openapi(addSuppressionRoute, async (c) => {
   return c.json(row as z.infer<typeof SuppressionDtoSchema>, 201)
 })
 
-router.openapi(deleteSuppressionRoute, async (c) => {
+  .openapi(deleteSuppressionRoute, async (c) => {
   const { id } = c.req.param()
   const userId = c.var.user!.id
   const row = await c.var.db
@@ -212,7 +212,7 @@ router.openapi(deleteSuppressionRoute, async (c) => {
   return new Response(null, { status: 204 })
 })
 
-router.openapi(listConsentEventsRoute, async (c) => {
+  .openapi(listConsentEventsRoute, async (c) => {
   const parsed = c.req.valid("query")
   const userId = c.var.user!.id
   const baseQuery = c.var.db
@@ -231,5 +231,3 @@ router.openapi(listConsentEventsRoute, async (c) => {
     nextCursor: page.nextCursor,
   })
 })
-
-export default router

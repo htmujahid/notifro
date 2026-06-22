@@ -75,7 +75,7 @@ function now(): string {
 const router = new OpenAPIHono<AppEnv>({ defaultHook: validationHook })
 router.use("*", requireAuth)
 
-router.openapi(subscribeRoute, async (c) => {
+export default router.openapi(subscribeRoute, async (c) => {
   const { endpoint, keys, userAgent } = c.req.valid("json")
   const userId = c.var.user!.id
   const { db } = c.var
@@ -116,7 +116,7 @@ router.openapi(subscribeRoute, async (c) => {
   return c.json({ ok: true })
 })
 
-router.openapi(unsubscribeRoute, async (c) => {
+  .openapi(unsubscribeRoute, async (c) => {
   const { endpoint } = c.req.valid("json")
   const userId = c.var.user!.id
   const { db } = c.var
@@ -135,9 +135,7 @@ router.openapi(unsubscribeRoute, async (c) => {
   return c.json({ ok: true })
 })
 
-router.openapi(vapidKeyRoute, async (c) => {
+  .openapi(vapidKeyRoute, async (c) => {
   const key = c.env.VAPID_PUBLIC_KEY ?? ""
   return c.json({ publicKey: key })
 })
-
-export default router

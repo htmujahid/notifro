@@ -10,6 +10,7 @@ import { Textarea } from "@renderical/ui/components/textarea"
 
 import {
   type Connection,
+  type CreateConnectionInput,
   useConnectionHealth,
   useCreateConnection,
   useDeleteConnection,
@@ -274,7 +275,12 @@ export function ConnectionDialog({
         })
         toast.success(`${form!.title} updated`)
       } else {
-        await create.mutateAsync({ type, name, config, credentials })
+        await create.mutateAsync({
+          type: type as CreateConnectionInput["type"],
+          name,
+          config,
+          credentials,
+        })
         toast.success(`${form!.title} connected`)
       }
       setOpen(false)

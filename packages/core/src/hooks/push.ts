@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react"
 
+import { unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
 
 function isWebPushSupported(): boolean {
@@ -62,8 +63,8 @@ export function usePushRegistration(): UsePushRegistrationResult {
       setPermission(perm as PushPermission)
       if (perm !== "granted") return
 
-      const { publicKey } = await client.get<{ publicKey: string }>(
-        "/api/push/vapid-public-key"
+      const { publicKey } = await unwrap(
+        client.api.push["vapid-public-key"].$get()
       )
 
       const sub = await reg.pushManager.subscribe({
@@ -72,11 +73,15 @@ export function usePushRegistration(): UsePushRegistrationResult {
       })
 
       const json = sub.toJSON()
-      await client.post("/api/push/subscribe", {
-        endpoint: json.endpoint!,
-        keys: { p256dh: json.keys!.p256dh!, auth: json.keys!.auth! },
-        userAgent: navigator.userAgent,
-      })
+      await unwrap(
+        client.api.push.subscribe.$post({
+          json: {
+            endpoint: json.endpoint!,
+            keys: { p256dh: json.keys!.p256dh!, auth: json.keys!.auth! },
+            userAgent: navigator.userAgent,
+          },
+        })
+      )
 
       setSubscribed(true)
     } finally {
@@ -91,7 +96,9 @@ export function usePushRegistration(): UsePushRegistrationResult {
       const reg = await navigator.serviceWorker.ready
       const sub = await reg.pushManager.getSubscription()
       if (sub) {
-        await client.post("/api/push/unsubscribe", { endpoint: sub.endpoint })
+        await unwrap(
+          client.api.push.unsubscribe.$post({ json: { endpoint: sub.endpoint } })
+        )
         await sub.unsubscribe()
       }
       setSubscribed(false)

@@ -4,12 +4,9 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
+import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
-import type {
-  ListParams,
-  ListResponse,
-  RateLimitRule,
-} from "@renderical/api-client/types"
+import type { ListParams } from "@renderical/api-client/types"
 
 export const rateLimitKeys = {
   all: ["rateLimits"] as const,
@@ -18,34 +15,38 @@ export const rateLimitKeys = {
 }
 
 export function useRateLimits(params: ListParams = {}) {
-  const api = useApiClient()
+  const client = useApiClient()
   return useInfiniteQuery({
     queryKey: rateLimitKeys.list(params),
     queryFn: ({ pageParam }) =>
-      api.get<ListResponse<RateLimitRule>>("/api/rate-limits", {
-        ...params,
-        ...(pageParam ? { cursor: pageParam as string } : {}),
-      }),
+      unwrap(
+        client.api["rate-limits"].$get({
+          query: toQuery({
+            ...params,
+            ...(pageParam ? { cursor: pageParam as string } : {}),
+          }),
+        })
+      ),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (last) => last.nextCursor ?? undefined,
   })
 }
 
 export function useUpsertRateLimit() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (body: {
       channel: string
       maxCount: number
       windowSeconds: number
-    }) => api.post<RateLimitRule>("/api/rate-limits", body),
+    }) => unwrap(client.api["rate-limits"].$post({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: rateLimitKeys.lists() }),
   })
 }
 
 export function useUpdateRateLimit() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({
@@ -55,16 +56,20 @@ export function useUpdateRateLimit() {
       id: string
       maxCount?: number
       windowSeconds?: number
-    }) => api.patch<RateLimitRule>(`/api/rate-limits/${id}`, body),
+    }) =>
+      unwrap(
+        client.api["rate-limits"][":id"].$patch({ param: { id }, json: body })
+      ),
     onSuccess: () => qc.invalidateQueries({ queryKey: rateLimitKeys.lists() }),
   })
 }
 
 export function useDeleteRateLimit() {
-  const api = useApiClient()
+  const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => api.delete(`/api/rate-limits/${id}`),
+    mutationFn: (id: string) =>
+      unwrap(client.api["rate-limits"][":id"].$delete({ param: { id } })),
     onSuccess: () => qc.invalidateQueries({ queryKey: rateLimitKeys.lists() }),
   })
 }
