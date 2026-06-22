@@ -1,18 +1,18 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 
-import { useAuth } from "@renderical/app/auth/context"
 import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 
+import { useChangePassword } from "../../hooks/auth"
 import {
   type ChangePasswordValues,
   changePasswordSchema,
 } from "../../schemas/account"
 
 export function ChangePasswordForm() {
-  const auth = useAuth()
+  const changePassword = useChangePassword()
 
   const form = useForm<ChangePasswordValues>({
     resolver: zodResolver(changePasswordSchema),
@@ -24,7 +24,7 @@ export function ChangePasswordForm() {
   })
 
   async function handleSubmit(values: ChangePasswordValues) {
-    const { error } = await auth.changePassword({
+    const { error } = await changePassword.mutateAsync({
       currentPassword: values.currentPassword,
       newPassword: values.newPassword,
       revokeOtherSessions: true,

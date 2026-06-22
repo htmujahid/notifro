@@ -4,31 +4,13 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
-import type { ApiClient, InferRequestType } from "@renderical/api-client/client"
+import type { ApiClient, InferRequestType, InferResponseType } from "@renderical/api-client/client"
 import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
 import type { ListParams } from "@renderical/api-client/types"
 
-export interface Connection {
-  id: string
-  userId: string
-  type: string
-  name: string
-  status: string
-  config: string
-  scopes: string
-  health: string | null
-  createdAt: string
-  updatedAt: string
-}
-
-export type CreateConnectionInput = InferRequestType<
-  ApiClient["api"]["connections"]["$post"]
->["json"]
-
-export type UpdateConnectionInput = InferRequestType<
-  ApiClient["api"]["connections"][":id"]["$patch"]
->["json"]
+export type Connection = InferResponseType<ApiClient["api"]["connections"]["$get"], 200>["data"][number]
+export type CreateConnectionInput = InferRequestType<ApiClient["api"]["connections"]["$post"]>["json"]
 
 export const connectionKeys = {
   all: ["connections"] as const,
@@ -59,7 +41,7 @@ export function useCreateConnection() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (input: CreateConnectionInput) =>
+    mutationFn: (input: InferRequestType<ApiClient["api"]["connections"]["$post"]>["json"]) =>
       unwrap(client.api.connections.$post({ json: input })),
     onSuccess: () => qc.invalidateQueries({ queryKey: connectionKeys.lists() }),
   })
@@ -69,7 +51,7 @@ export function useUpdateConnection(id: string) {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (input: UpdateConnectionInput) =>
+    mutationFn: (input: InferRequestType<ApiClient["api"]["connections"][":id"]["$patch"]>["json"]) =>
       unwrap(
         client.api.connections[":id"].$patch({ param: { id }, json: input })
       ),

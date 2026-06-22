@@ -5,38 +5,12 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
+import type { ApiClient, InferRequestType, InferResponseType } from "@renderical/api-client/client"
 import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
-import type { ComposePayload, ListParams } from "@renderical/api-client/types"
+import type { ListParams } from "@renderical/api-client/types"
 
-export interface Delivery {
-  id: string
-  userId: string
-  notificationId: string
-  channel: string
-  recipient: string
-  status: string
-  providerMessageId: string | null
-  error: string | null
-  attempts: number
-  createdAt: string
-  updatedAt: string
-}
-
-export interface Notification {
-  id: string
-  userId: string
-  subject: string | null
-  channels: string
-  mode: string
-  status: string
-  createdAt: string
-  updatedAt: string
-}
-
-export interface NotificationWithDeliveries extends Notification {
-  deliveries: Delivery[]
-}
+export type NotificationWithDeliveries = InferResponseType<ApiClient["api"]["notifications"][":id"]["$get"], 200>
 
 export const notificationKeys = {
   all: ["notifications"] as const,
@@ -49,7 +23,7 @@ export function useSendNotification() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (payload: ComposePayload) =>
+    mutationFn: (payload: InferRequestType<ApiClient["api"]["notifications"]["$post"]>["json"]) =>
       unwrap(client.api.notifications.$post({ json: payload })),
     onSuccess: () =>
       qc.invalidateQueries({ queryKey: notificationKeys.lists() }),

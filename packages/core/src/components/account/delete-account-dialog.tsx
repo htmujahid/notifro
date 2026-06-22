@@ -2,14 +2,11 @@ import { useState } from "react"
 
 import { useNavigate } from "react-router"
 
-import { useQueryClient } from "@tanstack/react-query"
-
-import { useAuth } from "@renderical/app/auth/context"
-import { SESSION_QUERY_KEY } from "@renderical/app/auth/use-session"
 import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 
+import { useDeleteUser } from "../../hooks/auth"
 import {
   ResponsiveModal,
   ResponsiveModalBody,
@@ -21,30 +18,26 @@ import {
 } from "../responsive-modal"
 
 export function DeleteAccountDialog() {
-  const auth = useAuth()
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
+  const deleteUser = useDeleteUser()
   const [open, setOpen] = useState(false)
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
 
   async function handleDelete() {
-    setLoading(true)
     setError(null)
     try {
-      const { error } = await auth.deleteUser({
+      const { error } = await deleteUser.mutateAsync({
         password: password || undefined,
       })
       if (error) {
         setError(error.message ?? "An error occurred")
         return
       }
-      queryClient.removeQueries({ queryKey: SESSION_QUERY_KEY })
       setOpen(false)
       navigate("/auth/sign-in")
-    } finally {
-      setLoading(false)
+    } catch {
+      setError("An error occurred")
     }
   }
 
@@ -87,10 +80,10 @@ export function DeleteAccountDialog() {
             </Button>
             <Button
               variant="destructive"
-              disabled={loading}
+              disabled={deleteUser.isPending}
               onClick={handleDelete}
             >
-              {loading ? "Deleting…" : "Delete my account"}
+              {deleteUser.isPending ? "Deleting…" : "Delete my account"}
             </Button>
           </ResponsiveModalFooter>
         </ResponsiveModalContent>

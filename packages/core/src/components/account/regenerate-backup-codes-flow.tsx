@@ -3,7 +3,6 @@ import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 
-import { useAuth } from "@renderical/app/auth/context"
 import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
@@ -12,12 +11,13 @@ import {
   type TwoFactorPasswordValues,
   twoFactorPasswordSchema,
 } from "../../schemas/auth"
+import { useTwoFactorGenerateBackupCodes } from "../../hooks/auth"
 import { BackupCodeGrid } from "./backup-code-grid"
 
 type BackupStep = "idle" | "password" | "codes"
 
 export function RegenerateBackupCodesFlow({ onDone }: { onDone: () => void }) {
-  const auth = useAuth()
+  const generateBackupCodes = useTwoFactorGenerateBackupCodes()
   const [step, setStep] = useState<BackupStep>("password")
   const [codes, setCodes] = useState<string[]>([])
 
@@ -27,7 +27,7 @@ export function RegenerateBackupCodesFlow({ onDone }: { onDone: () => void }) {
   })
 
   async function handleGenerate(values: TwoFactorPasswordValues) {
-    const { data, error } = await auth.twoFactor.generateBackupCodes({
+    const { data, error } = await generateBackupCodes.mutateAsync({
       password: values.password,
     })
     if (error) {

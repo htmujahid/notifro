@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
+import type { ApiClient, InferRequestType } from "@renderical/api-client/client"
 import { unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
 
@@ -21,7 +22,7 @@ export function useUpsertMcpGate() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: { tool: string; requiresApproval: boolean }) =>
+    mutationFn: (body: InferRequestType<ApiClient["api"]["mcp"]["gates"]["$post"]>["json"]) =>
       unwrap(client.api.mcp.gates.$post({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: mcpKeys.gates() }),
   })

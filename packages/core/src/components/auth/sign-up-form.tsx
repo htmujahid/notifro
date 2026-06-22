@@ -1,5 +1,3 @@
-import { useState } from "react"
-
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Controller } from "react-hook-form"
@@ -8,21 +6,22 @@ import { useNavigate } from "react-router"
 import { useQueryClient } from "@tanstack/react-query"
 
 import { useApp } from "@renderical/app/app/context"
-import { useAuth } from "@renderical/app/auth/context"
 import { SESSION_QUERY_KEY } from "@renderical/app/auth/use-session"
 import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 
+import { useSignInSocial, useSignUpEmail } from "../../hooks/auth"
 import { type SignUpValues, signUpSchema } from "../../schemas/auth"
 import { GoogleIcon, OrDivider } from "./auth-icons"
 
 export function SignUpForm() {
-  const auth = useAuth()
   const { appBaseURL, isWeb } = useApp()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const [googleLoading, setGoogleLoading] = useState(false)
+
+  const signInSocial = useSignInSocial()
+  const signUpEmail = useSignUpEmail()
 
   const form = useForm<SignUpValues>({
     resolver: zodResolver(signUpSchema),
@@ -30,33 +29,28 @@ export function SignUpForm() {
   })
 
   async function handleGoogleSignIn() {
-    setGoogleLoading(true)
-    try {
-      const { error } = await auth.signIn.social({
-        provider: "google",
-        callbackURL: `${appBaseURL.replace(/\/$/, "")}/`,
-      })
-      if (error) form.setError("root", { message: error.message })
-    } finally {
-      setGoogleLoading(false)
-    }
+    const result = await signInSocial.mutateAsync({
+      provider: "google",
+      callbackURL: `${appBaseURL.replace(/\/$/, "")}/`,
+    })
+    if (result.error) form.setError("root", { message: result.error.message })
   }
 
   async function handleSubmit(values: SignUpValues) {
-    const { error } = await auth.signUp.email({
+    const result = await signUpEmail.mutateAsync({
       name: values.name,
       email: values.email,
       password: values.password,
     })
-    if (error) {
-      form.setError("root", { message: error.message })
+    if (result.error) {
+      form.setError("root", { message: result.error.message })
       return
     }
     await queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY })
     navigate(`/auth/verify-email?email=${encodeURIComponent(values.email)}`)
   }
 
-  const busy = form.formState.isSubmitting || googleLoading
+  const busy = form.formState.isSubmitting || signInSocial.isPending
 
   return (
     <div className="flex flex-col gap-6">
@@ -81,7 +75,7 @@ export function SignUpForm() {
             onClick={handleGoogleSignIn}
           >
             <GoogleIcon />
-            {googleLoading ? "Redirecting…" : "Continue with Google"}
+            {signInSocial.isPending ? "Redirecting…" : "Continue with Google"}
           </Button>
           <OrDivider />
         </>

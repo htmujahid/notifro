@@ -1,39 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
+import type { ApiClient, InferRequestType } from "@renderical/api-client/client"
 import { unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
 
 import { inboxKeys } from "./inbox"
-
-export interface OnboardingSteps {
-  connect_channel: boolean
-  send_test: boolean
-  explore_templates: boolean
-}
-
-export interface Onboarding {
-  complete: boolean
-  dismissed: boolean
-  steps: OnboardingSteps
-}
-
-export interface RecentActivityItem {
-  id: string
-  subject: string | null
-  channels: string
-  status: string
-  createdAt: string
-}
-
-export interface OverviewData {
-  channels: number
-  sent7d: number
-  sent30d: number
-  successRate: number
-  recentActivity: RecentActivityItem[]
-  unreadInbox: number
-  onboarding: Onboarding
-}
 
 export const overviewKeys = {
   all: ["overview"] as const,
@@ -65,11 +36,8 @@ export function useOnboarding() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: {
-      dismiss?: boolean
-      step?: string
-      completed?: boolean
-    }) => unwrap(client.api.onboarding.$patch({ json: body })),
+    mutationFn: (body: InferRequestType<ApiClient["api"]["onboarding"]["$patch"]>["json"]) =>
+      unwrap(client.api.onboarding.$patch({ json: body })),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: overviewKeys.all })
     },

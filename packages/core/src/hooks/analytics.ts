@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 
+import type { ApiClient, InferRequestType } from "@renderical/api-client/client"
 import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
 
@@ -15,25 +16,9 @@ export const analyticsKeys = {
     [...analyticsKeys.all, "top-topics", params] as const,
 }
 
-export interface SummaryParams {
-  from?: string
-  to?: string
-  channel?: string
-}
-
-export interface TimeseriesParams {
-  from?: string
-  to?: string
-  granularity?: "hour" | "day" | "week"
-  channel?: string
-}
-
-export interface RangeParams {
-  from?: string
-  to?: string
-}
-
-export function useAnalyticsSummary(params: SummaryParams = {}) {
+export function useAnalyticsSummary(
+  params: InferRequestType<ApiClient["api"]["analytics"]["summary"]["$get"]>["query"] = {},
+) {
   const client = useApiClient()
   const p: Record<string, string | undefined> = {
     from: params.from,
@@ -48,7 +33,9 @@ export function useAnalyticsSummary(params: SummaryParams = {}) {
   })
 }
 
-export function useAnalyticsTimeseries(params: TimeseriesParams = {}) {
+export function useAnalyticsTimeseries(
+  params: InferRequestType<ApiClient["api"]["analytics"]["timeseries"]["$get"]>["query"] = {},
+) {
   const client = useApiClient()
   const p: Record<string, string | undefined> = {
     from: params.from,
@@ -64,7 +51,9 @@ export function useAnalyticsTimeseries(params: TimeseriesParams = {}) {
   })
 }
 
-export function useAnalyticsChannels(params: RangeParams = {}) {
+export function useAnalyticsChannels(
+  params: InferRequestType<ApiClient["api"]["analytics"]["channels"]["$get"]>["query"] = {},
+) {
   const client = useApiClient()
   const p: Record<string, string | undefined> = {
     from: params.from,
@@ -78,7 +67,9 @@ export function useAnalyticsChannels(params: RangeParams = {}) {
   })
 }
 
-export function useAnalyticsTopTopics(params: RangeParams = {}) {
+export function useAnalyticsTopTopics(
+  params: InferRequestType<ApiClient["api"]["analytics"]["top-topics"]["$get"]>["query"] = {},
+) {
   const client = useApiClient()
   const p: Record<string, string | undefined> = {
     from: params.from,

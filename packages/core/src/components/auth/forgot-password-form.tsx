@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form"
 import { Controller } from "react-hook-form"
 import { useNavigate } from "react-router"
 
-import { useAuth } from "@renderical/app/auth/context"
 import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
@@ -12,9 +11,10 @@ import {
   type ForgotPasswordValues,
   forgotPasswordSchema,
 } from "../../schemas/auth"
+import { useForgotPassword } from "../../hooks/auth"
 
 export function ForgotPasswordForm() {
-  const auth = useAuth()
+  const forgotPassword = useForgotPassword()
   const navigate = useNavigate()
   const form = useForm<ForgotPasswordValues>({
     resolver: zodResolver(forgotPasswordSchema),
@@ -22,7 +22,7 @@ export function ForgotPasswordForm() {
   })
 
   async function handleSubmit(values: ForgotPasswordValues) {
-    const { error } = await auth.emailOtp.requestPasswordReset({
+    const { error } = await forgotPassword.mutateAsync({
       email: values.email,
     })
     if (error) {

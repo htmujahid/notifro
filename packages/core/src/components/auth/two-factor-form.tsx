@@ -6,7 +6,6 @@ import { useNavigate, useSearchParams } from "react-router"
 
 import { useQueryClient } from "@tanstack/react-query"
 
-import { useAuth } from "@renderical/app/auth/context"
 import { SESSION_QUERY_KEY } from "@renderical/app/auth/use-session"
 import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
@@ -21,18 +20,27 @@ import {
   type TwoFactorVerifyValues,
   twoFactorVerifySchema,
 } from "../../schemas/auth"
+import {
+  useTwoFactorSendOtp,
+  useTwoFactorVerifyBackupCode,
+  useTwoFactorVerifyOtp,
+  useTwoFactorVerifyTotp,
+} from "../../hooks/auth"
 
 type Mode = "totp" | "otp" | "backup"
 
 export function TwoFactorForm() {
-  const auth = useAuth()
+  const sendOtp = useTwoFactorSendOtp()
+  const verifyTotp = useTwoFactorVerifyTotp()
+  const verifyOtp = useTwoFactorVerifyOtp()
+  const verifyBackupCode = useTwoFactorVerifyBackupCode()
+
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [searchParams] = useSearchParams()
   const next = searchParams.get("next") ?? "/"
   const [mode, setMode] = useState<Mode>("totp")
   const [otpSent, setOtpSent] = useState(false)
-  const [sendingOtp, setSendingOtp] = useState(false)
 
   const form = useForm<TwoFactorVerifyValues>({
     resolver: zodResolver(twoFactorVerifySchema),
@@ -40,33 +48,28 @@ export function TwoFactorForm() {
   })
 
   async function handleSendOtp() {
-    setSendingOtp(true)
-    try {
-      const { error } = await auth.twoFactor.sendOtp()
-      if (error) {
-        form.setError("root", { message: error.message })
-        return
-      }
-      setOtpSent(true)
-    } finally {
-      setSendingOtp(false)
+    const { error } = await sendOtp.mutateAsync(undefined)
+    if (error) {
+      form.setError("root", { message: error.message })
+      return
     }
+    setOtpSent(true)
   }
 
   async function handleSubmit(values: TwoFactorVerifyValues) {
     let result
     if (mode === "totp") {
-      result = await auth.twoFactor.verifyTotp({
+      result = await verifyTotp.mutateAsync({
         code: values.code,
         trustDevice: true,
       })
     } else if (mode === "otp") {
-      result = await auth.twoFactor.verifyOtp({
+      result = await verifyOtp.mutateAsync({
         code: values.code,
         trustDevice: true,
       })
     } else {
-      result = await auth.twoFactor.verifyBackupCode({ code: values.code })
+      result = await verifyBackupCode.mutateAsync({ code: values.code })
     }
 
     if (result.error) {
@@ -109,10 +112,10 @@ export function TwoFactorForm() {
             type="button"
             variant="outline"
             className="w-full"
-            disabled={sendingOtp}
+            disabled={sendOtp.isPending}
             onClick={handleSendOtp}
           >
-            {sendingOtp ? "Sending…" : "Send code to my email"}
+            {sendOtp.isPending ? "Sending…" : "Send code to my email"}
           </Button>
         ) : (
           <Controller

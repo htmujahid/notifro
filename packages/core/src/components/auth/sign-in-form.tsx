@@ -1,30 +1,25 @@
-import { useState } from "react"
-
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Controller } from "react-hook-form"
 import { useNavigate, useSearchParams } from "react-router"
 
-import { useQueryClient } from "@tanstack/react-query"
-
 import { useApp } from "@renderical/app/app/context"
-import { useAuth } from "@renderical/app/auth/context"
-import { SESSION_QUERY_KEY } from "@renderical/app/auth/use-session"
 import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 
 import { type SignInValues, signInSchema } from "../../schemas/auth"
+import { useSignInEmail, useSignInSocial } from "../../hooks/auth"
 import { GoogleIcon, OrDivider } from "./auth-icons"
 
 export function SignInForm() {
-  const auth = useAuth()
   const { appBaseURL, isWeb } = useApp()
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
   const [searchParams] = useSearchParams()
   const next = searchParams.get("next") ?? "/"
-  const [googleLoading, setGoogleLoading] = useState(false)
+
+  const signInEmail = useSignInEmail()
+  const signInSocial = useSignInSocial()
 
   const form = useForm<SignInValues>({
     resolver: zodResolver(signInSchema),
@@ -32,21 +27,16 @@ export function SignInForm() {
   })
 
   async function handleGoogleSignIn() {
-    setGoogleLoading(true)
-    try {
-      const base = appBaseURL.replace(/\/$/, "")
-      const { error } = await auth.signIn.social({
-        provider: "google",
-        callbackURL: next === "/" ? `${base}/` : `${base}${next}`,
-      })
-      if (error) form.setError("root", { message: error.message })
-    } finally {
-      setGoogleLoading(false)
-    }
+    const base = appBaseURL.replace(/\/$/, "")
+    const { error } = await signInSocial.mutateAsync({
+      provider: "google",
+      callbackURL: next === "/" ? `${base}/` : `${base}${next}`,
+    })
+    if (error) form.setError("root", { message: error.message })
   }
 
   async function handleSubmit(values: SignInValues) {
-    const { data, error } = await auth.signIn.email({
+    const { data, error } = await signInEmail.mutateAsync({
       email: values.email,
       password: values.password,
     })
@@ -58,11 +48,10 @@ export function SignInForm() {
       navigate(`/auth/two-factor?next=${encodeURIComponent(next)}`)
       return
     }
-    await queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY })
     navigate(next)
   }
 
-  const busy = form.formState.isSubmitting || googleLoading
+  const busy = form.formState.isSubmitting || signInSocial.isPending
 
   return (
     <div className="flex flex-col gap-6">
@@ -85,7 +74,7 @@ export function SignInForm() {
             onClick={handleGoogleSignIn}
           >
             <GoogleIcon />
-            {googleLoading ? "Redirecting…" : "Continue with Google"}
+            {signInSocial.isPending ? "Redirecting…" : "Continue with Google"}
           </Button>
           <OrDivider />
         </>

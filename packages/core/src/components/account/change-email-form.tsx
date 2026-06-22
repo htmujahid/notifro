@@ -2,18 +2,18 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 
 import { useApp } from "@renderical/app/app/context"
-import { useAuth } from "@renderical/app/auth/context"
 import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 
+import { useChangeEmail } from "../../hooks/auth"
 import {
   type ChangeEmailValues,
   changeEmailSchema,
 } from "../../schemas/account"
 
 export function ChangeEmailForm() {
-  const auth = useAuth()
+  const changeEmail = useChangeEmail()
   const { appBaseURL } = useApp()
 
   const form = useForm<ChangeEmailValues>({
@@ -22,7 +22,7 @@ export function ChangeEmailForm() {
   })
 
   async function handleSubmit(values: ChangeEmailValues) {
-    const { error } = await auth.changeEmail({
+    const { error } = await changeEmail.mutateAsync({
       newEmail: values.newEmail,
       callbackURL: `${appBaseURL.replace(/\/$/, "")}/`,
     })

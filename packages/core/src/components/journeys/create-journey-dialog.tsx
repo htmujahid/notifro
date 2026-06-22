@@ -4,7 +4,7 @@ import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 
-import { useCreateJourney } from "../../hooks/journeys"
+import { type CreateJourneyInput, useCreateJourney } from "../../hooks/journeys"
 import {
   ResponsiveModal,
   ResponsiveModalBody,
@@ -35,9 +35,9 @@ export function CreateJourneyDialog({
   }
 
   function handleSubmit() {
-    let parsedSteps: Record<string, unknown>
+    let parsedSteps: CreateJourneyInput["steps"]
     try {
-      parsedSteps = JSON.parse(steps) as Record<string, unknown>
+      parsedSteps = JSON.parse(steps) as CreateJourneyInput["steps"]
     } catch {
       setStepsError("Steps must be valid JSON.")
       return
@@ -45,7 +45,7 @@ export function CreateJourneyDialog({
     setStepsError(null)
 
     const trigger = triggerEvent.trim()
-      ? { event: triggerEvent.trim() }
+      ? ({ type: "event" as const, event: triggerEvent.trim() } satisfies NonNullable<CreateJourneyInput["trigger"]>)
       : undefined
 
     create.mutate(

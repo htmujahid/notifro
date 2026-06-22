@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form"
 import { Controller } from "react-hook-form"
 import { useNavigate, useSearchParams } from "react-router"
 
-import { useAuth } from "@renderical/app/auth/context"
 import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import {
@@ -13,13 +12,14 @@ import {
 } from "@renderical/ui/components/input-otp"
 import { Label } from "@renderical/ui/components/label"
 
+import { useResetPassword } from "../../hooks/auth"
 import {
   type ResetPasswordValues,
   resetPasswordSchema,
 } from "../../schemas/auth"
 
 export function ResetPasswordForm() {
-  const auth = useAuth()
+  const resetPassword = useResetPassword()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const email = searchParams.get("email") ?? ""
@@ -30,7 +30,7 @@ export function ResetPasswordForm() {
   })
 
   async function handleSubmit(values: ResetPasswordValues) {
-    const { error } = await auth.emailOtp.resetPassword({
+    const { error } = await resetPassword.mutateAsync({
       email,
       otp: values.otp,
       password: values.password,

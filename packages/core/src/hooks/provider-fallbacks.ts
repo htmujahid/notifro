@@ -1,17 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
+import type { ApiClient, InferRequestType } from "@renderical/api-client/client"
 import { unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
 
-export const failoverKeys = {
+export const providerFallbackKeys = {
   all: ["providerFallbacks"] as const,
-  list: () => [...failoverKeys.all, "list"] as const,
+  list: () => [...providerFallbackKeys.all, "list"] as const,
 }
 
 export function useProviderFallbacks() {
   const client = useApiClient()
   return useQuery({
-    queryKey: failoverKeys.list(),
+    queryKey: providerFallbackKeys.list(),
     queryFn: () => unwrap(client.api["provider-fallbacks"].$get()),
   })
 }
@@ -20,12 +21,9 @@ export function useCreateProviderFallback() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: {
-      channel: string
-      primaryConnectionId: string
-      fallbackConnectionId: string
-    }) => unwrap(client.api["provider-fallbacks"].$post({ json: body })),
-    onSuccess: () => qc.invalidateQueries({ queryKey: failoverKeys.all }),
+    mutationFn: (body: InferRequestType<ApiClient["api"]["provider-fallbacks"]["$post"]>["json"]) =>
+      unwrap(client.api["provider-fallbacks"].$post({ json: body })),
+    onSuccess: () => qc.invalidateQueries({ queryKey: providerFallbackKeys.all }),
   })
 }
 
@@ -37,6 +35,6 @@ export function useDeleteProviderFallback() {
       unwrap(
         client.api["provider-fallbacks"][":id"].$delete({ param: { id } })
       ),
-    onSuccess: () => qc.invalidateQueries({ queryKey: failoverKeys.all }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: providerFallbackKeys.all }),
   })
 }

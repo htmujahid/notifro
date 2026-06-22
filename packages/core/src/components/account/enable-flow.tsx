@@ -3,7 +3,6 @@ import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 
-import { useAuth } from "@renderical/app/auth/context"
 import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import {
@@ -13,6 +12,10 @@ import {
 } from "@renderical/ui/components/input-otp"
 import { Label } from "@renderical/ui/components/label"
 
+import {
+  useTwoFactorEnable,
+  useTwoFactorVerifyTotp,
+} from "../../hooks/auth"
 import {
   type TwoFactorPasswordValues,
   type TwoFactorVerifyValues,
@@ -30,7 +33,8 @@ interface SetupData {
 }
 
 export function EnableFlow({ onDone }: { onDone: () => void }) {
-  const auth = useAuth()
+  const enableMutation = useTwoFactorEnable()
+  const verifyTotpMutation = useTwoFactorVerifyTotp()
   const [step, setStep] = useState<EnableStep>("password")
   const [setupData, setSetupData] = useState<SetupData | null>(null)
   const [secret, setSecret] = useState("")
@@ -46,7 +50,7 @@ export function EnableFlow({ onDone }: { onDone: () => void }) {
   })
 
   async function handleEnable(values: TwoFactorPasswordValues) {
-    const { data, error } = await auth.twoFactor.enable({
+    const { data, error } = await enableMutation.mutateAsync({
       password: values.password,
     })
     if (error) {
@@ -63,7 +67,7 @@ export function EnableFlow({ onDone }: { onDone: () => void }) {
   }
 
   async function handleVerify(values: TwoFactorVerifyValues) {
-    const { error } = await auth.twoFactor.verifyTotp({ code: values.code })
+    const { error } = await verifyTotpMutation.mutateAsync({ code: values.code })
     if (error) {
       verifyForm.setError("root", { message: error.message })
       return

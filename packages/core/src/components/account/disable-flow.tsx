@@ -1,22 +1,18 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 
-import { useQueryClient } from "@tanstack/react-query"
-
-import { useAuth } from "@renderical/app/auth/context"
-import { SESSION_QUERY_KEY } from "@renderical/app/auth/use-session"
 import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 
+import { useTwoFactorDisable } from "../../hooks/auth"
 import {
   type TwoFactorPasswordValues,
   twoFactorPasswordSchema,
 } from "../../schemas/auth"
 
 export function DisableFlow({ onDone }: { onDone: () => void }) {
-  const auth = useAuth()
-  const queryClient = useQueryClient()
+  const disableMutation = useTwoFactorDisable()
 
   const form = useForm<TwoFactorPasswordValues>({
     resolver: zodResolver(twoFactorPasswordSchema),
@@ -24,14 +20,13 @@ export function DisableFlow({ onDone }: { onDone: () => void }) {
   })
 
   async function handleDisable(values: TwoFactorPasswordValues) {
-    const { error } = await auth.twoFactor.disable({
+    const { error } = await disableMutation.mutateAsync({
       password: values.password,
     })
     if (error) {
       form.setError("root", { message: error.message })
       return
     }
-    await queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY })
     onDone()
   }
 

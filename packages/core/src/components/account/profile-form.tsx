@@ -3,10 +3,7 @@ import { useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 
-import { useQueryClient } from "@tanstack/react-query"
-
-import { useAuth } from "@renderical/app/auth/context"
-import { SESSION_QUERY_KEY, useSession } from "@renderical/app/auth/use-session"
+import { useSession } from "@renderical/app/auth/use-session"
 import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
@@ -15,10 +12,10 @@ import {
   type UpdateProfileValues,
   updateProfileSchema,
 } from "../../schemas/account"
+import { useUpdateUser } from "../../hooks/auth"
 
 export function ProfileForm() {
-  const auth = useAuth()
-  const queryClient = useQueryClient()
+  const updateUser = useUpdateUser()
   const { data: session } = useSession()
 
   const form = useForm<UpdateProfileValues>({
@@ -36,15 +33,13 @@ export function ProfileForm() {
   }, [session?.user, form])
 
   async function handleSubmit(values: UpdateProfileValues) {
-    const { error } = await auth.updateUser({
+    const result = await updateUser.mutateAsync({
       name: values.name,
       image: values.image || undefined,
     })
-    if (error) {
-      form.setError("root", { message: error.message })
-      return
+    if (result?.error) {
+      form.setError("root", { message: result.error.message })
     }
-    await queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY })
   }
 
   return (

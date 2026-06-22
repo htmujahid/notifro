@@ -8,14 +8,7 @@ import {
 import type { ApiClient, InferRequestType } from "@renderical/api-client/client"
 import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
-import type {
-  ListParams,
-  RecipientPreferences,
-} from "@renderical/api-client/types"
-
-type UpdatePrefsBody = InferRequestType<
-  ApiClient["api"]["recipients"]["preferences"]["$patch"]
->["json"]
+import type { ListParams } from "@renderical/api-client/types"
 
 export const scheduleKeys = {
   all: ["schedules"] as const,
@@ -65,16 +58,13 @@ export function useUpdateRecipientPreferences() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (
-      body: Partial<
-        Pick<
-          RecipientPreferences,
-          "timezone" | "quietHoursStart" | "quietHoursEnd"
-        >
-      >
+      body: InferRequestType<
+        ApiClient["api"]["recipients"]["preferences"]["$patch"]
+      >["json"]
     ) =>
       unwrap(
         client.api.recipients.preferences.$patch({
-          json: body as UpdatePrefsBody,
+          json: body,
         })
       ),
     onSuccess: () =>
@@ -111,12 +101,9 @@ export function useCreateRecurringSend() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: {
-      payload: Record<string, unknown>
-      channels: string[]
-      cron: string
-      timezone?: string
-    }) => unwrap(client.api.recurring.$post({ json: body })),
+    mutationFn: (
+      body: InferRequestType<ApiClient["api"]["recurring"]["$post"]>["json"]
+    ) => unwrap(client.api.recurring.$post({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: recurringKeys.lists() }),
   })
 }
@@ -128,12 +115,9 @@ export function usePatchRecurringSend() {
     mutationFn: ({
       id,
       ...body
-    }: {
-      id: string
-      enabled?: number
-      cron?: string
-      timezone?: string
-    }) =>
+    }: { id: string } & InferRequestType<
+      ApiClient["api"]["recurring"][":id"]["$patch"]
+    >["json"]) =>
       unwrap(client.api.recurring[":id"].$patch({ param: { id }, json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: recurringKeys.lists() }),
   })

@@ -1,27 +1,25 @@
 import {
   useInfiniteQuery,
   useMutation,
-  useQuery,
   useQueryClient,
 } from "@tanstack/react-query"
 
+import type { ApiClient, InferRequestType } from "@renderical/api-client/client"
 import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
 import type { ListParams } from "@renderical/api-client/types"
 
-export const developerKeys = {
+export const apiKeyKeys = {
   all: ["developers"] as const,
-  apiKeys: () => [...developerKeys.all, "keys"] as const,
+  apiKeys: () => [...apiKeyKeys.all, "keys"] as const,
   apiKeyList: (params: ListParams) =>
-    [...developerKeys.apiKeys(), params] as const,
-  requestLog: (params: ListParams) =>
-    [...developerKeys.all, "request-log", params] as const,
+    [...apiKeyKeys.apiKeys(), params] as const,
 }
 
 export function useApiKeys(params: ListParams = {}) {
   const client = useApiClient()
   return useInfiniteQuery({
-    queryKey: developerKeys.apiKeyList(params),
+    queryKey: apiKeyKeys.apiKeyList(params),
     queryFn: ({ pageParam }) =>
       unwrap(
         client.api.keys.$get({
@@ -40,10 +38,10 @@ export function useCreateApiKey() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: { name: string; mode: "live" | "test" }) =>
+    mutationFn: (body: InferRequestType<ApiClient["api"]["keys"]["$post"]>["json"]) =>
       unwrap(client.api.keys.$post({ json: body })),
     onSuccess: () =>
-      qc.invalidateQueries({ queryKey: developerKeys.apiKeys() }),
+      qc.invalidateQueries({ queryKey: apiKeyKeys.apiKeys() }),
   })
 }
 
@@ -54,16 +52,6 @@ export function useRevokeApiKey() {
     mutationFn: (id: string) =>
       unwrap(client.api.keys[":id"].$delete({ param: { id } })),
     onSuccess: () =>
-      qc.invalidateQueries({ queryKey: developerKeys.apiKeys() }),
-  })
-}
-
-export function useRequestLog(params: ListParams = {}) {
-  const client = useApiClient()
-  return useQuery({
-    queryKey: developerKeys.requestLog(params),
-    queryFn: () =>
-      unwrap(client.api["request-log"].$get({ query: toQuery(params) })),
-    refetchInterval: 30_000,
+      qc.invalidateQueries({ queryKey: apiKeyKeys.apiKeys() }),
   })
 }

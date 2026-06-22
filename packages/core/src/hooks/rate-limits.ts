@@ -4,6 +4,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
+import type { ApiClient, InferRequestType } from "@renderical/api-client/client"
 import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
 import type { ListParams } from "@renderical/api-client/types"
@@ -36,11 +37,8 @@ export function useUpsertRateLimit() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: {
-      channel: string
-      maxCount: number
-      windowSeconds: number
-    }) => unwrap(client.api["rate-limits"].$post({ json: body })),
+    mutationFn: (body: InferRequestType<ApiClient["api"]["rate-limits"]["$post"]>["json"]) =>
+      unwrap(client.api["rate-limits"].$post({ json: body })),
     onSuccess: () => qc.invalidateQueries({ queryKey: rateLimitKeys.lists() }),
   })
 }
@@ -49,14 +47,7 @@ export function useUpdateRateLimit() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({
-      id,
-      ...body
-    }: {
-      id: string
-      maxCount?: number
-      windowSeconds?: number
-    }) =>
+    mutationFn: ({ id, ...body }: { id: string } & InferRequestType<ApiClient["api"]["rate-limits"][":id"]["$patch"]>["json"]) =>
       unwrap(
         client.api["rate-limits"][":id"].$patch({ param: { id }, json: body })
       ),

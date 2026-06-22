@@ -2,7 +2,7 @@ import { useState } from "react"
 
 import { useNavigate, useSearchParams } from "react-router"
 
-import { useAuth } from "@renderical/app/auth/context"
+import { useSendVerificationOtp, useVerifyEmail } from "../../hooks/auth"
 import { Button } from "@renderical/ui/components/button"
 import {
   InputOTP,
@@ -11,44 +11,41 @@ import {
 } from "@renderical/ui/components/input-otp"
 
 export function VerifyEmailCard() {
-  const auth = useAuth()
+  const verifyEmail = useVerifyEmail()
+  const sendVerificationOtp = useSendVerificationOtp()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const email = searchParams.get("email") ?? ""
 
   const [otp, setOtp] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [resending, setResending] = useState(false)
   const [error, setError] = useState<string>()
   const [verified, setVerified] = useState(false)
 
   async function handleVerify() {
     if (otp.length < 6) return
-    setLoading(true)
     setError(undefined)
     try {
-      const { error: err } = await auth.emailOtp.verifyEmail({ email, otp })
+      const { error: err } = await verifyEmail.mutateAsync({ email, otp })
       if (err) {
         setError(err.message)
       } else {
         setVerified(true)
       }
-    } finally {
-      setLoading(false)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Verification failed")
     }
   }
 
   async function handleResend() {
-    setResending(true)
     setError(undefined)
     try {
-      const { error: err } = await auth.emailOtp.sendVerificationOtp({
+      const { error: err } = await sendVerificationOtp.mutateAsync({
         email,
         type: "email-verification",
       })
       if (err) setError(err.message)
-    } finally {
-      setResending(false)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to resend code")
     }
   }
 
@@ -170,9 +167,9 @@ export function VerifyEmailCard() {
         <Button
           className="w-full"
           onClick={handleVerify}
-          disabled={otp.length < 6 || loading}
+          disabled={otp.length < 6 || verifyEmail.isPending}
         >
-          {loading ? "Verifying…" : "Verify email"}
+          {verifyEmail.isPending ? "Verifying…" : "Verify email"}
         </Button>
       </div>
 
@@ -183,10 +180,10 @@ export function VerifyEmailCard() {
         <button
           type="button"
           onClick={handleResend}
-          disabled={resending}
+          disabled={sendVerificationOtp.isPending}
           className="text-sm font-medium text-foreground underline-offset-4 hover:underline disabled:opacity-50"
         >
-          {resending ? "Sending…" : "Resend code"}
+          {sendVerificationOtp.isPending ? "Sending…" : "Resend code"}
         </button>
       </div>
 

@@ -11,7 +11,7 @@ import {
   useApiKeys,
   useCreateApiKey,
   useRevokeApiKey,
-} from "../../hooks/developers"
+} from "../../hooks/keys"
 
 export function ApiKeysSection() {
   const { data, isLoading } = useApiKeys()

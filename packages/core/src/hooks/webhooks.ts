@@ -4,46 +4,12 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
+import type { ApiClient, InferRequestType, InferResponseType } from "@renderical/api-client/client"
 import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
 import type { ListParams } from "@renderical/api-client/types"
 
-export interface WebhookEndpoint {
-  id: string
-  userId: string
-  url: string
-  secretLast4: string
-  headers: Record<string, string> | null
-  description: string | null
-  enabled: boolean
-  createdAt: string
-  updatedAt: string
-}
-
-export interface WebhookEndpointWithSecret extends WebhookEndpoint {
-  secret: string
-}
-
-export interface CreateWebhookInput {
-  url: string
-  headers?: Record<string, string>
-  description?: string
-  enabled?: boolean
-}
-
-export interface UpdateWebhookInput {
-  url?: string
-  headers?: Record<string, string> | null
-  description?: string | null
-  enabled?: boolean
-}
-
-export interface WebhookTestResult {
-  ok: boolean
-  status: number | null
-  latencyMs: number
-  error?: string
-}
+export type WebhookEndpoint = InferResponseType<ApiClient["api"]["channels"]["webhooks"]["$get"], 200>["data"][number]
 
 export const webhookKeys = {
   all: ["webhooks"] as const,
@@ -73,7 +39,7 @@ export function useCreateWebhook() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (input: CreateWebhookInput) =>
+    mutationFn: (input: InferRequestType<ApiClient["api"]["channels"]["webhooks"]["$post"]>["json"]) =>
       unwrap(client.api.channels.webhooks.$post({ json: input })),
     onSuccess: () => qc.invalidateQueries({ queryKey: webhookKeys.lists() }),
   })
@@ -83,7 +49,7 @@ export function useUpdateWebhook(id: string) {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (input: UpdateWebhookInput) =>
+    mutationFn: (input: InferRequestType<ApiClient["api"]["channels"]["webhooks"][":id"]["$patch"]>["json"]) =>
       unwrap(
         client.api.channels.webhooks[":id"].$patch({
           param: { id },

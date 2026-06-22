@@ -4,6 +4,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 
+import type { ApiClient, InferRequestType } from "@renderical/api-client/client"
 import { toQuery, unwrap } from "@renderical/api-client/client"
 import { useApiClient } from "@renderical/api-client/context"
 import type { ListParams } from "@renderical/api-client/types"
@@ -39,11 +40,8 @@ export function useAddSuppression() {
   const client = useApiClient()
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: {
-      channel: string
-      address: string
-      reason: "hard_bounce" | "complaint" | "unsubscribe" | "manual"
-    }) => unwrap(client.api.suppressions.$post({ json: body })),
+    mutationFn: (body: InferRequestType<ApiClient["api"]["suppressions"]["$post"]>["json"]) =>
+      unwrap(client.api.suppressions.$post({ json: body })),
     onSuccess: () =>
       qc.invalidateQueries({ queryKey: complianceKeys.suppressions }),
   })
