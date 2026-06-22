@@ -2,7 +2,7 @@ import { BellIcon, SearchIcon } from "lucide-react"
 import { useNavigate } from "react-router"
 
 import { RendericalMark } from "../../components/renderical-logo"
-import { useUnreadCount } from "../../hooks/inbox"
+import { useUnreadCount } from "../../queries/inbox"
 
 export function MobileHeader({ onSearchOpen }: { onSearchOpen: () => void }) {
   const navigate = useNavigate()

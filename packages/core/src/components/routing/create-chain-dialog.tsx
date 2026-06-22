@@ -4,7 +4,7 @@ import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 
-import { useCreateFallbackChain } from "../../hooks/routing"
+import { useCreateFallbackChain } from "../../queries/routing"
 import {
   ResponsiveModal,
   ResponsiveModalBody,

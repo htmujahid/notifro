@@ -2,7 +2,7 @@ import { useState } from "react"
 
 import { useNavigate, useSearchParams } from "react-router"
 
-import { useSendVerificationOtp, useVerifyEmail } from "../../hooks/auth"
+import { useSendVerificationOtp, useVerifyEmail } from "../../queries/auth"
 import { Button } from "@renderical/ui/components/button"
 import {
   InputOTP,

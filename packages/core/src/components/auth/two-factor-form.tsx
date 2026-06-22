@@ -25,7 +25,7 @@ import {
   useTwoFactorVerifyBackupCode,
   useTwoFactorVerifyOtp,
   useTwoFactorVerifyTotp,
-} from "../../hooks/auth"
+} from "../../queries/auth"
 
 type Mode = "totp" | "otp" | "backup"
 

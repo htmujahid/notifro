@@ -18,7 +18,7 @@ import {
   useAnalyticsChannels,
   useAnalyticsSummary,
   useAnalyticsTimeseries,
-} from "../../hooks/analytics"
+} from "../../queries/analytics"
 
 type Granularity = "hour" | "day" | "week"
 

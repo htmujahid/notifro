@@ -7,8 +7,8 @@ import type { ListResponse } from "@renderical/api-client/types"
 import { PageHeader } from "@renderical/ui-primitives/components/page-header"
 import { Button } from "@renderical/ui/components/button"
 
-import { useInbox, useMarkAllRead, useMarkRead } from "../../hooks/inbox"
-import type { InboxFilter, InboxMessage } from "../../hooks/inbox"
+import { useInbox, useMarkAllRead, useMarkRead } from "../../queries/inbox"
+import type { InboxFilter, InboxMessage } from "../../queries/inbox"
 
 const TABS: { label: string; value: InboxFilter }[] = [
   { label: "All", value: "all" },

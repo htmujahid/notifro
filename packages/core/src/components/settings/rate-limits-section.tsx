@@ -9,7 +9,7 @@ import {
   useDeleteRateLimit,
   useRateLimits,
   useUpsertRateLimit,
-} from "../../hooks/rate-limits"
+} from "../../queries/rate-limits"
 
 export function RateLimitsSection() {
   const { data } = useRateLimits()

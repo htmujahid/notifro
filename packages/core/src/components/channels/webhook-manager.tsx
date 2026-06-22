@@ -5,7 +5,7 @@ import { toast } from "sonner"
 
 import { Button } from "@renderical/ui/components/button"
 
-import { useWebhooks } from "../../hooks/webhooks"
+import { useWebhooks } from "../../queries/webhooks"
 import {
   ResponsiveModal,
   ResponsiveModalBody,

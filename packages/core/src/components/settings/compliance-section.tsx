@@ -10,7 +10,7 @@ import {
   useConsentEvents,
   useDeleteSuppression,
   useSuppressions,
-} from "../../hooks/compliance"
+} from "../../queries/compliance"
 
 export function ComplianceSection() {
   const { data: suppData } = useSuppressions()

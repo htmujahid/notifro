@@ -5,7 +5,7 @@ import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 
-import { useTwoFactorDisable } from "../../hooks/auth"
+import { useTwoFactorDisable } from "../../queries/auth"
 import {
   type TwoFactorPasswordValues,
   twoFactorPasswordSchema,

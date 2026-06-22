@@ -2,7 +2,7 @@ import { RefreshCwIcon, ScrollIcon } from "lucide-react"
 
 import { Button } from "@renderical/ui/components/button"
 
-import { useRequestLog } from "../../hooks/request-log"
+import { useRequestLog } from "../../queries/request-log"
 
 export function RequestLogSection() {
   const { data, isLoading, refetch, isFetching } = useRequestLog({ limit: 20 })

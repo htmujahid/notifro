@@ -13,7 +13,7 @@ import {
   useTemplate,
   useTemplateVersions,
   useUpdateTemplate,
-} from "../../hooks/templates"
+} from "../../queries/templates"
 import { VersionRow } from "./version-row"
 
 interface Props {

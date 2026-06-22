@@ -11,7 +11,7 @@ import {
   type TwoFactorPasswordValues,
   twoFactorPasswordSchema,
 } from "../../schemas/auth"
-import { useTwoFactorGenerateBackupCodes } from "../../hooks/auth"
+import { useTwoFactorGenerateBackupCodes } from "../../queries/auth"
 import { BackupCodeGrid } from "./backup-code-grid"
 
 type BackupStep = "idle" | "password" | "codes"

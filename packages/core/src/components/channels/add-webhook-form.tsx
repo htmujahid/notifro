@@ -7,7 +7,7 @@ import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 import { Textarea } from "@renderical/ui/components/textarea"
 
-import { useCreateWebhook } from "../../hooks/webhooks"
+import { useCreateWebhook } from "../../queries/webhooks"
 
 export function AddWebhookForm({
   onCreated,
@@ -52,7 +52,7 @@ export function AddWebhookForm({
         <Label htmlFor="wh-url">Endpoint URL</Label>
         <Input
           id="wh-url"
-          placeholder="https://example.com/hooks/renderical"
+          placeholder="https://example.com/queries/renderical"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
         />

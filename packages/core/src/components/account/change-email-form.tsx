@@ -6,7 +6,7 @@ import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 
-import { useChangeEmail } from "../../hooks/auth"
+import { useChangeEmail } from "../../queries/auth"
 import {
   type ChangeEmailValues,
   changeEmailSchema,

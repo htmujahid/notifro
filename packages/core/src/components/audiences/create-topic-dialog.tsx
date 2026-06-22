@@ -5,7 +5,7 @@ import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 import { Switch } from "@renderical/ui/components/switch"
 
-import { useCreateTopic } from "../../hooks/preferences"
+import { useCreateTopic } from "../../queries/preferences"
 import {
   ResponsiveModal,
   ResponsiveModalBody,

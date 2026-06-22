@@ -12,7 +12,7 @@ import {
 } from "@renderical/ui/components/input-otp"
 import { Label } from "@renderical/ui/components/label"
 
-import { useResetPassword } from "../../hooks/auth"
+import { useResetPassword } from "../../queries/auth"
 import {
   type ResetPasswordValues,
   resetPasswordSchema,

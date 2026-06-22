@@ -11,7 +11,7 @@ import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 
-import { useSignInSocial, useSignUpEmail } from "../../hooks/auth"
+import { useSignInSocial, useSignUpEmail } from "../../queries/auth"
 import { type SignUpValues, signUpSchema } from "../../schemas/auth"
 import { GoogleIcon, OrDivider } from "./auth-icons"
 

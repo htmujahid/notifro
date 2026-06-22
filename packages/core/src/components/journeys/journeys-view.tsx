@@ -12,7 +12,7 @@ import {
   useActivateJourney,
   useDeleteJourney,
   useJourneys,
-} from "../../hooks/journeys"
+} from "../../queries/journeys"
 import { CreateJourneyDialog } from "./create-journey-dialog"
 
 function statusBadge(status: string) {

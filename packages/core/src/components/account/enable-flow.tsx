@@ -15,7 +15,7 @@ import { Label } from "@renderical/ui/components/label"
 import {
   useTwoFactorEnable,
   useTwoFactorVerifyTotp,
-} from "../../hooks/auth"
+} from "../../queries/auth"
 import {
   type TwoFactorPasswordValues,
   type TwoFactorVerifyValues,

@@ -4,7 +4,7 @@ import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 
-import { useCreateRecipient } from "../../hooks/recipients"
+import { useCreateRecipient } from "../../queries/recipients"
 import {
   ResponsiveModal,
   ResponsiveModalBody,

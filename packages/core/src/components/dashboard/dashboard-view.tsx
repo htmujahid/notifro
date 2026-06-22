@@ -1,4 +1,4 @@
-import { useOverview } from "../../hooks/overview"
+import { useOverview } from "../../queries/overview"
 import { DashboardSkeleton } from "./dashboard-skeleton"
 import { OnboardingChecklist } from "./onboarding-checklist"
 import { OverviewMetrics } from "./overview-metrics"

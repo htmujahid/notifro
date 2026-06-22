@@ -12,7 +12,7 @@ import {
   type UpdateProfileValues,
   updateProfileSchema,
 } from "../../schemas/account"
-import { useUpdateUser } from "../../hooks/auth"
+import { useUpdateUser } from "../../queries/auth"
 
 export function ProfileForm() {
   const updateUser = useUpdateUser()

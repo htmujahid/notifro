@@ -11,7 +11,7 @@ import {
   type ForgotPasswordValues,
   forgotPasswordSchema,
 } from "../../schemas/auth"
-import { useForgotPassword } from "../../hooks/auth"
+import { useForgotPassword } from "../../queries/auth"
 
 export function ForgotPasswordForm() {
   const forgotPassword = useForgotPassword()

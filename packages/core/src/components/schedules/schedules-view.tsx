@@ -24,7 +24,7 @@ import {
   usePatchRecurringSend,
   useRecurringSends,
   useSchedules,
-} from "../../hooks/schedules"
+} from "../../queries/schedules"
 import { RecurringRow } from "./recurring-row"
 
 export function SchedulesView() {

@@ -11,7 +11,7 @@ import {
   StatCardGrid,
 } from "@renderical/ui-primitives/components/stat-card"
 
-import { useOverview } from "../../hooks/overview"
+import { useOverview } from "../../queries/overview"
 import { AnalyticsSection } from "./analytics-section"
 import { DashboardSkeleton } from "./dashboard-skeleton"
 

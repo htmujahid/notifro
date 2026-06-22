@@ -5,7 +5,7 @@ import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 
-import { useChangePassword } from "../../hooks/auth"
+import { useChangePassword } from "../../queries/auth"
 import {
   type ChangePasswordValues,
   changePasswordSchema,

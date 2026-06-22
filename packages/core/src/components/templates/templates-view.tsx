@@ -19,7 +19,7 @@ import {
   EmptyTitle,
 } from "@renderical/ui/components/empty"
 
-import { useDeleteTemplate, useTemplates } from "../../hooks/templates"
+import { useDeleteTemplate, useTemplates } from "../../queries/templates"
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString(undefined, {

@@ -25,7 +25,7 @@ import { SESSION_QUERY_KEY, useSession } from "@renderical/app/auth/use-session"
 import { Avatar, AvatarFallback } from "@renderical/ui/components/avatar"
 import { Drawer, DrawerContent } from "@renderical/ui/components/drawer"
 
-import { useUnreadCount } from "../../hooks/inbox"
+import { useUnreadCount } from "../../queries/inbox"
 import { QuickCreateDialog } from "./quick-create-dialog"
 
 const MORE_NAV = [

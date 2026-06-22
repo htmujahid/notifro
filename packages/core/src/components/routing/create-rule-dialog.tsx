@@ -6,7 +6,7 @@ import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 import { Switch } from "@renderical/ui/components/switch"
 
-import { useCreateRoutingRule } from "../../hooks/routing"
+import { useCreateRoutingRule } from "../../queries/routing"
 import {
   ResponsiveModal,
   ResponsiveModalBody,

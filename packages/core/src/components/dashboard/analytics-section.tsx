@@ -11,7 +11,7 @@ import {
 import {
   useAnalyticsSummary,
   useAnalyticsTimeseries,
-} from "../../hooks/analytics"
+} from "../../queries/analytics"
 import { MiniLineChart } from "./mini-line-chart"
 
 function pct(n: number) {

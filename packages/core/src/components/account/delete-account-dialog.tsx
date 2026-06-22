@@ -6,7 +6,7 @@ import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 
-import { useDeleteUser } from "../../hooks/auth"
+import { useDeleteUser } from "../../queries/auth"
 import {
   ResponsiveModal,
   ResponsiveModalBody,

@@ -19,7 +19,7 @@ import {
   useMcpPending,
   useRejectMcpAction,
   useUpsertMcpGate,
-} from "../../hooks/mcp"
+} from "../../queries/mcp"
 
 const MCP_TOOLS = [
   "send_notification",

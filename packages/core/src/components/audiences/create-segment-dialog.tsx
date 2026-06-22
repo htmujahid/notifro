@@ -4,7 +4,7 @@ import { Button } from "@renderical/ui/components/button"
 import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 
-import { useCreateSegment } from "../../hooks/segments"
+import { useCreateSegment } from "../../queries/segments"
 import {
   ResponsiveModal,
   ResponsiveModalBody,

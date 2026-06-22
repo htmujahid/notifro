@@ -30,12 +30,12 @@ import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 import { Textarea } from "@renderical/ui/components/textarea"
 
-import { useConnections } from "../../hooks/connections"
+import { useConnections } from "../../queries/connections"
 import {
   type NotificationWithDeliveries,
   useSendNotification,
-} from "../../hooks/notifications"
-import { useWebhooks } from "../../hooks/webhooks"
+} from "../../queries/notifications"
+import { useWebhooks } from "../../queries/webhooks"
 
 const CREATE_OPTIONS = [
   {

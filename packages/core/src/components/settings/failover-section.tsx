@@ -9,7 +9,7 @@ import {
   useCreateProviderFallback,
   useDeleteProviderFallback,
   useProviderFallbacks,
-} from "../../hooks/provider-fallbacks"
+} from "../../queries/provider-fallbacks"
 
 export function FailoverSection() {
   const { data } = useProviderFallbacks()

@@ -15,7 +15,7 @@ import {
   useCreateConnection,
   useDeleteConnection,
   useUpdateConnection,
-} from "../../hooks/connections"
+} from "../../queries/connections"
 import {
   ResponsiveModal,
   ResponsiveModalBody,

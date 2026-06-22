@@ -6,7 +6,7 @@ import { Kbd } from "@renderical/ui/components/kbd"
 import { Separator } from "@renderical/ui/components/separator"
 import { SidebarTrigger } from "@renderical/ui/components/sidebar"
 
-import { useUnreadCount } from "../../hooks/inbox"
+import { useUnreadCount } from "../../queries/inbox"
 
 // Electron requires -webkit-app-region for draggable window chrome.
 // Only applied when running as a desktop app with a hidden system titlebar.

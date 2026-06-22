@@ -13,7 +13,7 @@ import { PageHeader } from "@renderical/ui-primitives/components/page-header"
 import { useDataTable } from "@renderical/ui-primitives/components/use-data-table"
 import { Button } from "@renderical/ui/components/button"
 
-import { useDeliveries, useRetryDelivery } from "../../hooks/deliveries"
+import { useDeliveries, useRetryDelivery } from "../../queries/deliveries"
 
 const TABS = ["All", "Delivered", "Failed", "Bounced"] as const
 type Tab = (typeof TABS)[number]

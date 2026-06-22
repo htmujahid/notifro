@@ -9,7 +9,7 @@ import {
   useDeleteWebhook,
   useTestWebhook,
   useUpdateWebhook,
-} from "../../hooks/webhooks"
+} from "../../queries/webhooks"
 
 export function WebhookRow({ endpoint }: { endpoint: WebhookEndpoint }) {
   const update = useUpdateWebhook(endpoint.id)

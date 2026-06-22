@@ -9,7 +9,7 @@ import { Input } from "@renderical/ui/components/input"
 import { Label } from "@renderical/ui/components/label"
 
 import { type SignInValues, signInSchema } from "../../schemas/auth"
-import { useSignInEmail, useSignInSocial } from "../../hooks/auth"
+import { useSignInEmail, useSignInSocial } from "../../queries/auth"
 import { GoogleIcon, OrDivider } from "./auth-icons"
 
 export function SignInForm() {

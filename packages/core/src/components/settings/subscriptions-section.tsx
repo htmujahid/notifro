@@ -9,7 +9,7 @@ import {
   useCreateTopic,
   useDeleteTopic,
   useTopics,
-} from "../../hooks/preferences"
+} from "../../queries/preferences"
 
 export function SubscriptionsSection() {
   const { data } = useTopics()

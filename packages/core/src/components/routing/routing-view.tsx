@@ -14,7 +14,7 @@ import {
   useFallbackChains,
   useRoutingRules,
   useUpdateRoutingRule,
-} from "../../hooks/routing"
+} from "../../queries/routing"
 import { CreateChainDialog } from "./create-chain-dialog"
 import { CreateRuleDialog } from "./create-rule-dialog"
 

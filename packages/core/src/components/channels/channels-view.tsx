@@ -17,9 +17,9 @@ import {
   CardTitle,
 } from "@renderical/ui/components/card"
 
-import { useConnections } from "../../hooks/connections"
-import { usePushRegistration } from "../../hooks/push"
-import { useWebhooks } from "../../hooks/webhooks"
+import { useConnections } from "../../queries/connections"
+import { usePushRegistration } from "../../queries/push"
+import { useWebhooks } from "../../queries/webhooks"
 import { ConnectionDialog } from "./connection-dialog"
 import { WebhookManager } from "./webhook-manager"
 

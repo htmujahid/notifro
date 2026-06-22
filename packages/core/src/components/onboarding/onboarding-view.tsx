@@ -10,7 +10,7 @@ import { toast } from "sonner"
 
 import { Button } from "@renderical/ui/components/button"
 
-import { useOnboarding, useOverview, useSendTest } from "../../hooks/overview"
+import { useOnboarding, useOverview, useSendTest } from "../../queries/overview"
 import { StepIcon } from "./step-icon"
 
 export function OnboardingView() {
