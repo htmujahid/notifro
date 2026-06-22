@@ -20,6 +20,9 @@ export interface SendContext {
     | "CONNECTION_ENC_KEY"
     | "BETTER_AUTH_URL"
     | "APNS_RELAY_URL"
+    | "TWILIO_ACCOUNT_SID"
+    | "TWILIO_AUTH_TOKEN"
+    | "TWILIO_FROM_NUMBER"
   >
 }
 
@@ -33,5 +36,8 @@ export interface ChannelAdapter<Config = unknown, Provider = unknown> {
     ctx: SendContext
   ): Promise<SendResult>
   parseReceipt?(raw: unknown): ReceiptUpdate
-  healthCheck?(conn: Connection): Promise<HealthResult>
+  healthCheck?(
+    conn: Connection,
+    env?: SendContext["env"]
+  ): Promise<HealthResult>
 }

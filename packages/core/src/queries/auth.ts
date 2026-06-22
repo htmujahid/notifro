@@ -156,6 +156,25 @@ export function useUpdateUser() {
   })
 }
 
+export function useSendPhoneOtp() {
+  const auth = useAuth()
+  return useMutation({
+    mutationFn: (args: Parameters<typeof auth.phoneNumber.sendOtp>[0]) =>
+      auth.phoneNumber.sendOtp(args),
+  })
+}
+
+export function useVerifyPhoneNumber() {
+  const auth = useAuth()
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (args: Parameters<typeof auth.phoneNumber.verify>[0]) =>
+      auth.phoneNumber.verify(args),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: SESSION_QUERY_KEY }),
+  })
+}
+
 export function useChangeEmail() {
   const auth = useAuth()
   return useMutation({

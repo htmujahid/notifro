@@ -1,21 +1,14 @@
 import { registerTransform } from "../compose/transform"
-import { decrypt } from "../lib/crypto"
 import type { ChannelAdapter } from "./adapter"
 import { registerAdapter } from "./registry"
 import type { ComposePayload, Connection } from "./types"
 
 export interface WhatsAppProvider {
-  to: string
   body: string
 }
 
 interface WhatsAppConfig {
   [key: string]: unknown
-}
-
-interface WhatsAppCredentials {
-  accountSid: string
-  authToken: string
 }
 
 function withWhatsAppPrefix(value: string): string {
@@ -38,30 +31,21 @@ const whatsappAdapter: ChannelAdapter<WhatsAppConfig, WhatsAppProvider> = {
   },
 
   transform(payload, _ctx): WhatsAppProvider {
-    const recipient = payload.recipient as { type: string; phone?: string }
-    const phone =
-      recipient.type === "contact" && recipient.phone ? recipient.phone : ""
-    if (!phone) throw new Error("WhatsApp recipient requires contact.phone")
-
     return {
-      to: withWhatsAppPrefix(phone),
       body: buildBody(payload).slice(0, 1600),
     }
   },
 
   async send(provider, conn, ctx) {
-    const encKey = ctx.env?.CONNECTION_ENC_KEY
-    if (!encKey)
+    const accountSid = ctx.env?.TWILIO_ACCOUNT_SID
+    const authToken = ctx.env?.TWILIO_AUTH_TOKEN
+    const fromNumber = ctx.env?.TWILIO_FROM_NUMBER
+    if (!accountSid || !authToken || !fromNumber) {
       return {
         providerMessageId: null,
         ok: false,
-        error: "CONNECTION_ENC_KEY not configured",
-      }
-    if (!conn.credentials) {
-      return {
-        providerMessageId: null,
-        ok: false,
-        error: "No Twilio credentials — add accountSid and authToken",
+        error:
+          "Twilio is not configured — set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_FROM_NUMBER",
       }
     }
 
@@ -75,41 +59,22 @@ const whatsappAdapter: ChannelAdapter<WhatsAppConfig, WhatsAppProvider> = {
         providerMessageId: null,
         ok: false,
         error:
-          "No verified phone number on account — verify your phone number in account settings",
+          "No verified phone number on account — add and verify your phone number in account settings first",
       }
     }
-    const from = withWhatsAppPrefix(user.phoneNumber)
-
-    let creds: WhatsAppCredentials
-    try {
-      creds = JSON.parse(
-        await decrypt(conn.credentials, encKey)
-      ) as WhatsAppCredentials
-    } catch {
-      return {
-        providerMessageId: null,
-        ok: false,
-        error: "Failed to decrypt Twilio credentials",
-      }
-    }
-    if (!creds.accountSid || !creds.authToken) {
-      return {
-        providerMessageId: null,
-        ok: false,
-        error: "Twilio credentials missing accountSid or authToken",
-      }
-    }
+    const to = withWhatsAppPrefix(user.phoneNumber)
+    const from = withWhatsAppPrefix(fromNumber)
 
     try {
-      const url = `https://api.twilio.com/2010-04-01/Accounts/${creds.accountSid}/Messages.json`
+      const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`
       const res = await fetch(url, {
         method: "POST",
         headers: {
-          Authorization: `Basic ${btoa(`${creds.accountSid}:${creds.authToken}`)}`,
+          Authorization: `Basic ${btoa(`${accountSid}:${authToken}`)}`,
           "Content-Type": "application/x-www-form-urlencoded",
         },
         body: new URLSearchParams({
-          To: provider.to,
+          To: to,
           From: from,
           Body: provider.body,
         }),
@@ -135,17 +100,17 @@ const whatsappAdapter: ChannelAdapter<WhatsAppConfig, WhatsAppProvider> = {
     }
   },
 
-  async healthCheck(conn) {
-    if (!conn.credentials) {
-      return {
-        ok: false,
-        message: "No credentials — add accountSid and authToken",
-        checkedAt: new Date().toISOString(),
-      }
-    }
+  async healthCheck(_conn, env) {
+    const configured = !!(
+      env?.TWILIO_ACCOUNT_SID &&
+      env?.TWILIO_AUTH_TOKEN &&
+      env?.TWILIO_FROM_NUMBER
+    )
     return {
-      ok: true,
-      message: "Credentials present",
+      ok: configured,
+      message: configured
+        ? "Twilio configured from environment"
+        : "Twilio not configured — set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_FROM_NUMBER",
       checkedAt: new Date().toISOString(),
     }
   },

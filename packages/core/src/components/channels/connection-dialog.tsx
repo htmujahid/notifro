@@ -47,57 +47,15 @@ interface ChannelForm {
 export const CHANNEL_FORMS: Record<string, ChannelForm> = {
   sms: {
     title: "SMS (Twilio)",
-    blurb: "Send text messages through your Twilio account.",
-    fields: [
-      {
-        key: "from",
-        label: "From number",
-        placeholder: "+15551234567",
-        group: "config",
-        required: true,
-      },
-      {
-        key: "accountSid",
-        label: "Twilio Account SID",
-        placeholder: "AC…",
-        group: "credentials",
-        required: true,
-      },
-      {
-        key: "authToken",
-        label: "Twilio Auth Token",
-        group: "credentials",
-        secret: true,
-        required: true,
-      },
-    ],
+    blurb:
+      "Send text messages through Twilio. The Twilio account and sender number are read from the server environment. Messages are delivered to your verified account phone number — add and verify it under Account → Profile first.",
+    fields: [],
   },
   whatsapp: {
     title: "WhatsApp (Twilio)",
-    blurb: "Send WhatsApp messages through Twilio using a whatsapp: sender.",
-    fields: [
-      {
-        key: "from",
-        label: "From number",
-        placeholder: "whatsapp:+15551234567",
-        group: "config",
-        required: true,
-      },
-      {
-        key: "accountSid",
-        label: "Twilio Account SID",
-        placeholder: "AC…",
-        group: "credentials",
-        required: true,
-      },
-      {
-        key: "authToken",
-        label: "Twilio Auth Token",
-        group: "credentials",
-        secret: true,
-        required: true,
-      },
-    ],
+    blurb:
+      "Send WhatsApp messages through Twilio. The Twilio account and sender number are read from the server environment. Messages are delivered to your verified account phone number — add and verify it under Account → Profile first.",
+    fields: [],
   },
   telegram: {
     title: "Telegram Bot",

@@ -1,4 +1,6 @@
+import { PhoneNumberForm } from "@renderical/core/components/account/phone-number-form"
 import { ProfileForm } from "@renderical/core/components/account/profile-form"
+import { Separator } from "@renderical/ui/components/separator"
 
 export default function AccountProfilePage() {
   return (
@@ -10,6 +12,19 @@ export default function AccountProfilePage() {
         </p>
       </div>
       <ProfileForm />
+
+      <Separator />
+
+      <section className="flex flex-col gap-6">
+        <div>
+          <h3 className="text-base font-medium">Phone number</h3>
+          <p className="mt-0.5 text-sm text-muted-foreground">
+            A verified phone number is required to receive SMS and WhatsApp
+            notifications.
+          </p>
+        </div>
+        <PhoneNumberForm />
+      </section>
     </div>
   )
 }

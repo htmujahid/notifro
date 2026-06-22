@@ -232,7 +232,7 @@ export default router
       return c.json(result)
     }
 
-    const result = await adapter.healthCheck(existing as any)
+    const result = await adapter.healthCheck(existing as any, c.env)
 
     await c.var.db
       .updateTable("connection")

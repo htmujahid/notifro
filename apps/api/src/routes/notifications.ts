@@ -34,10 +34,16 @@ function now(): string {
 async function resolveRecipientAddress(
   db: ReturnType<(typeof import("../db/client"))["db"]>,
   channel: string,
-  recipient: Record<string, unknown>
+  recipient: Record<string, unknown>,
+  userId: string
 ): Promise<string> {
   if (channel === "sms" || channel === "whatsapp") {
-    return (recipient.phone as string | undefined) ?? ""
+    const account = await db
+      .selectFrom("user")
+      .where("id", "=", userId)
+      .select("phoneNumber")
+      .executeTakeFirst()
+    return account?.phoneNumber ?? (recipient.phone as string | undefined) ?? ""
   }
   if (recipient.type === "contact" && recipient.email)
     return recipient.email as string
@@ -253,7 +259,8 @@ export default router
       const recipientAddr = await resolveRecipientAddress(
         db,
         channel,
-        payload.recipient as Record<string, unknown>
+        payload.recipient as Record<string, unknown>,
+        userId
       )
 
       const rlResult = await checkRateLimit(
